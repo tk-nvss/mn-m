@@ -9,7 +9,7 @@ export default function ServicesPage() {
   const services = [
     {
       title: "Game Topup APIs",
-      desc: "Get our lowest prices for your business. Fast delivery and big profits via API.",
+      desc: "Integrate our seamless top-up APIs to unlock wholesale rates, ensuring lightning-fast delivery and maximum profitability for your business.",
       icon: FiCode,
       badge: "API ACCESS",
       active: true,
@@ -17,7 +17,7 @@ export default function ServicesPage() {
     },
     {
       title: "Free Manual Web / Link in Bio",
-      desc: "Start your own brand. Get a full website with your name and easy payments.",
+      desc: "Launch your brand instantly with a fully customizable Link-in-Bio website, complete with integrated payment gateways and your own unique identity.",
       icon: FiGlobe,
       badge: "FAST SETUP",
       active: true,
@@ -25,7 +25,7 @@ export default function ServicesPage() {
     },
     {
       title: "Free Online Gameplay",
-      desc: "Play games directly online for free. Instantly accessible.",
+      desc: "Dive into a vast library of instant-play games directly from your browser. No downloads, zero latency, just pure entertainment.",
       icon: FiZap,
       badge: "PLAY NOW",
       active: true,
@@ -33,7 +33,7 @@ export default function ServicesPage() {
     },
     {
       title: "Custom Web Dev",
-      desc: "We build special websites with the look and features you want.",
+      desc: "Elevate your online presence with bespoke web development solutions tailored to your brand's unique aesthetics and complex technical requirements.",
       icon: FiGlobe,
       badge: "EXCLUSIVE",
       active: true,
@@ -41,7 +41,7 @@ export default function ServicesPage() {
     },
     {
       title: "WhatsApp Bot / Telegram Bot",
-      desc: "Automate your customer support and orders directly through chat.",
+      desc: "Streamline operations, automate order processing, and scale customer support effortlessly with custom WhatsApp and Telegram automation bots.",
       icon: FiMessageCircle,
       badge: "AUTOMATION",
       active: true,
@@ -51,7 +51,7 @@ export default function ServicesPage() {
 
   return (
     <section className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pb-20 transition-colors duration-300 px-3 sm:px-6">
-      <div className="max-w-3xl mx-auto pt-12 md:pt-16 relative z-10">
+      <div className="max-w-5xl mx-auto pt-12 md:pt-16 relative z-10">
 
         {/* HEADER */}
         <motion.div
@@ -102,7 +102,7 @@ export default function ServicesPage() {
                       {service.badge}
                     </span>
                   </div>
-                  <p className="text-[var(--muted)] text-[10px] md:text-[11px] leading-tight opacity-80 font-bold uppercase tracking-tight">
+                  <p className="text-[var(--muted)] text-[10px] md:text-[11px] leading-normal opacity-80 font-bold uppercase tracking-tight mt-1">
                     {service.desc}
                   </p>
                 </div>

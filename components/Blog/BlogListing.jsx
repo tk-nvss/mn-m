@@ -88,7 +88,7 @@ export default function BlogListing({ initialGame = "all" }) {
   return (
     <main className="min-h-screen bg-[var(--background)] relative pb-32 transition-colors duration-300 px-6">
 
-      <div className="max-w-4xl mx-auto pt-8 md:pt-12 relative z-10">
+      <div className="max-w-6xl mx-auto pt-8 md:pt-12 relative z-10">
 
         <motion.header
           className="mb-10"
@@ -201,9 +201,9 @@ export default function BlogListing({ initialGame = "all" }) {
         </motion.header>
 
         {/* 📄 BLOG GRID */}
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {loading ? (
-            <div className="flex justify-center py-20">
+            <div className="col-span-1 md:col-span-2 lg:col-span-3 flex justify-center py-20">
               <div className="w-6 h-6 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
             </div>
           ) : (
@@ -217,7 +217,7 @@ export default function BlogListing({ initialGame = "all" }) {
                   key="empty"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="text-center py-20 text-[var(--muted)] text-[10px] font-black uppercase tracking-[0.3em] italic opacity-20"
+                  className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20 text-[var(--muted)] text-[10px] font-black uppercase tracking-[0.3em] italic opacity-20"
                 >
                   No Articles Discovered
                 </motion.div>

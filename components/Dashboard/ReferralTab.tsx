@@ -87,7 +87,7 @@ export default function ReferralTab({
     }, [page]);
 
     return (
-        <div className="max-w-xl mx-auto space-y-6">
+        <div className="max-w-4xl mx-auto space-y-6">
             {/* OVERVIEW STATS */}
             <div className="relative p-4 sm:p-5 rounded-3xl bg-[var(--card)]/30 border border-white/5 flex items-center justify-between overflow-hidden shadow-sm">
                 <div className="relative z-10">
@@ -152,7 +152,7 @@ export default function ReferralTab({
                         </div>
                         <div>
                             <span className="text-[10px] font-black uppercase tracking-tight italic text-[var(--foreground)] block">Get Rewards</span>
-                            <span className="text-[8px] font-bold text-[var(--muted)]/50 uppercase tracking-tighter">Share your code. Get a bonus for every friend who signs up.</span>
+                            <p className="text-[8px] font-bold text-[var(--muted)]/50 uppercase tracking-tighter leading-normal mt-1">Share your code. Get a bonus for every friend who signs up.</p>
                         </div>
                     </div>
                 </div>

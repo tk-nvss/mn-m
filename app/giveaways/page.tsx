@@ -47,7 +47,7 @@ export default function GiveawaysPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto min-h-screen pb-24 pt-4 px-4">
+    <div className="max-w-4xl mx-auto min-h-screen pb-24 pt-8 md:pt-12 px-6">
       
       <div className="mb-5 flex items-center gap-2 px-1">
         <FiGift className="text-[var(--accent)]" size={18} />
@@ -64,7 +64,7 @@ export default function GiveawaysPage() {
           <p className="text-xs font-bold text-[var(--muted)]">No active drops right now.</p>
         </div>
       ) : (
-        <div className="space-y-2.5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {giveaways.map(g => {
             const isFull = g.maxEntries > 0 && g.entryCount >= g.maxEntries;
             
@@ -143,7 +143,7 @@ export default function GiveawaysPage() {
             <FiAward className="text-yellow-500" size={18} />
             <h2 className="text-sm font-black text-[var(--foreground)] tracking-tight">Your Past Wins</h2>
           </div>
-          <div className="space-y-2.5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {wonGiveaways.map(g => (
               <div key={g._id} className="relative flex items-center gap-3 p-3 rounded-[1.25rem] bg-[var(--foreground)]/[0.02] border border-yellow-500/20 opacity-80">
                 <div className="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center bg-yellow-500/10 text-yellow-500">
@@ -173,7 +173,7 @@ export default function GiveawaysPage() {
             <FiGift className="text-[var(--muted)]" size={18} />
             <h2 className="text-sm font-black text-[var(--foreground)] tracking-tight">Past Giveaways</h2>
           </div>
-          <div className="space-y-2.5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {pastGiveaways.map(g => (
               <div key={g._id} className="relative flex items-center gap-3 p-3 rounded-[1.25rem] bg-[var(--foreground)]/[0.02] border border-[var(--border)] opacity-70">
                 <div className="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center bg-[var(--foreground)]/5 text-[var(--muted)]">
