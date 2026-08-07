@@ -1,6 +1,7 @@
 "use client";
 
-import { FiX, FiCheck, FiFilter, FiChevronRight } from "react-icons/fi";
+import { FiX, FiCheck, FiFilter, FiChevronRight, FiLayers } from "react-icons/fi";
+import { GiCrown, GiGamepad, GiTicket, GiStarMedal } from "react-icons/gi";
 
 export default function FilterModal({
   open,
@@ -9,6 +10,8 @@ export default function FilterModal({
   setSort,
   hideOOS,
   setHideOOS,
+  activeTab,
+  setActiveTab,
 }) {
   if (!open) return null;
 
@@ -22,42 +25,75 @@ export default function FilterModal({
 
       {/* Modal Container */}
       <div
-        className="relative w-full sm:max-w-md bg-[var(--card)]/80 backdrop-blur-2xl border border-white/5 sm:rounded-[2.5rem] rounded-t-[2.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden"
+        className="relative w-full sm:max-w-md bg-[var(--card)] backdrop-blur-3xl border border-[var(--border)] sm:rounded-[2rem] rounded-t-[2rem] shadow-2xl overflow-hidden"
       >
         {/* Header */}
-        <div className="p-8 pb-4">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-2xl bg-[var(--accent)] flex items-center justify-center text-black shadow-[0_0_20px_var(--accent)]/30">
-                <FiFilter size={20} />
+        <div className="p-5 pb-2">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--accent)] to-indigo-500 flex items-center justify-center text-white shadow-[0_4px_15px_rgba(var(--accent-rgb),0.3)]">
+                <FiFilter size={18} />
               </div>
               <div>
-                <h3 className="text-xl font-black uppercase tracking-tighter italic text-[var(--foreground)]">
+                <h3 className="text-lg font-black uppercase tracking-widest italic text-[var(--foreground)]">
                   Filter & Sort
                 </h3>
-                <p className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-widest">
+                <p className="text-[9px] font-bold text-[var(--muted)] uppercase tracking-widest">
                   Pick how to sort
                 </p>
               </div>
             </div>
             <button aria-label="button"
               onClick={onClose}
-              className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 flex items-center justify-center text-[var(--muted)] hover:text-white shadow-xl"
+              className="w-9 h-9 rounded-xl bg-[var(--background)] hover:bg-[var(--foreground)]/5 border border-[var(--border)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] shadow-sm transition-all"
             >
-              <FiX size={20} />
+              <FiX size={16} />
             </button>
           </div>
 
+          {/* Category Section */}
+          <div className="space-y-3 mb-6">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="h-1 w-6 bg-[var(--accent)] rounded-full" />
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--muted)]">
+                Category
+              </p>
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-2">
+              {[
+                { id: "all", label: "All", icon: FiLayers },
+                { id: "mlbb", label: "MLBB", icon: GiCrown },
+                { id: "others", label: "Others", icon: GiGamepad },
+                { id: "vouchers", label: "Vouchers", icon: GiTicket },
+                { id: "services", label: "Services", icon: GiStarMedal },
+              ].map((cat) => (
+                <button aria-label="button"
+                  key={cat.id}
+                  onClick={() => setActiveTab(cat.id)}
+                  className={`relative flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-xl font-black uppercase tracking-widest text-[8px] border transition-all duration-300
+                    ${activeTab === cat.id
+                      ? "border-transparent bg-[var(--accent)] text-white shadow-[0_2px_8px_rgba(var(--accent-rgb),0.3)]"
+                      : "border-[var(--border)] bg-[var(--background)] text-[var(--muted)] hover:border-[var(--accent)]/50 hover:text-[var(--accent)]"
+                    }`}
+                >
+                  <cat.icon size={11} />
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Sort Section */}
-          <div className="space-y-4 mb-8">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-1 w-8 bg-[var(--accent)] rounded-full" />
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted)]">
+          <div className="space-y-3 mb-6">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="h-1 w-6 bg-[var(--accent)] rounded-full" />
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--muted)]">
                 Sort By
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               {[
                 { id: "az", label: "Name: A to Z" },
                 { id: "za", label: "Name: Z to A" },
@@ -65,18 +101,18 @@ export default function FilterModal({
                 <button aria-label="button"
                   key={option.id}
                   onClick={() => setSort(option.id)}
-                  className={`relative group flex items-center justify-between px-6 py-4 rounded-2xl border-2
+                  className={`relative group flex items-center justify-between px-3 py-2.5 rounded-xl border transition-all duration-300
                     ${sort === option.id
-                      ? "border-[var(--accent)] bg-[var(--accent)]/5 text-[var(--accent)]"
-                      : "border-white/5 bg-white/5 text-[var(--muted)] hover:border-white/10 hover:bg-white/10"
+                      ? "border-[var(--accent)]/50 bg-[var(--accent)]/10 text-[var(--accent)] shadow-sm"
+                      : "border-[var(--border)] bg-[var(--background)] text-[var(--muted)] hover:border-[var(--accent)]/30 hover:text-[var(--foreground)]"
                     }`}
                 >
-                  <span className="text-xs font-black uppercase tracking-widest italic transition-transform">
+                  <span className="text-[10px] font-black uppercase tracking-widest italic transition-transform">
                     {option.label}
                   </span>
                   {sort === option.id && (
-                    <div>
-                      <FiCheck size={14} className="text-[var(--accent)]" />
+                    <div className="w-4 h-4 rounded-full bg-[var(--accent)] text-[var(--background)] flex items-center justify-center">
+                      <FiCheck size={10} />
                     </div>
                   )}
                 </button>
@@ -85,24 +121,24 @@ export default function FilterModal({
           </div>
 
           {/* Status Section */}
-          <div className="space-y-4 mb-8">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-1 w-8 bg-[var(--accent)] rounded-full" />
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted)]">
+          <div className="space-y-3 mb-4">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="h-1 w-6 bg-[var(--accent)] rounded-full" />
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--muted)]">
                 Filter Items
               </p>
             </div>
 
             <div
               onClick={() => setHideOOS(!hideOOS)}
-              className={`flex items-center justify-between p-5 rounded-[2rem] border-2 cursor-pointer
+              className={`flex items-center justify-between p-3 px-4 rounded-xl border cursor-pointer transition-all duration-300
                 ${hideOOS
-                  ? "border-[var(--accent)]/50 bg-[var(--accent)]/5"
-                  : "border-white/5 bg-white/5 hover:border-white/10"
+                  ? "border-[var(--accent)]/50 bg-[var(--accent)]/10 shadow-sm"
+                  : "border-[var(--border)] bg-[var(--background)] hover:border-[var(--accent)]/30"
                 }`}
             >
               <div className="flex flex-col">
-                <span className={`text-[11px] font-black uppercase tracking-widest italic ${hideOOS ? "text-[var(--accent)]" : "text-[var(--foreground)]"}`}>
+                <span className={`text-[10px] font-black uppercase tracking-widest italic ${hideOOS ? "text-[var(--accent)]" : "text-[var(--foreground)]"}`}>
                     Hide sold out items
                 </span>
                 <span className="text-[9px] font-medium text-[var(--muted)]">
@@ -111,24 +147,24 @@ export default function FilterModal({
               </div>
 
               {/* Custom Toggle Switch */}
-              <div className={`relative w-12 h-6 rounded-full p-1 flex items-center ${hideOOS ? "bg-[var(--accent)]" : "bg-white/10"}`}>
+              <div className={`relative w-10 h-5 rounded-full p-0.5 flex items-center transition-colors duration-300 ${hideOOS ? "bg-[var(--accent)]" : "bg-[var(--foreground)]/20"}`}>
                 <div
-                  style={{ transform: hideOOS ? 'translateX(24px)' : 'translateX(0px)' }}
-                  className="w-4 h-4 bg-white rounded-full shadow-lg"
+                  style={{ transform: hideOOS ? 'translateX(20px)' : 'translateX(0px)' }}
+                  className="w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="p-8 pt-4 bg-white/5 border-t border-white/5">
+        <div className="p-6 pb-24 sm:pb-6 bg-[var(--foreground)]/[0.02] border-t border-[var(--border)]">
           <button aria-label="button"
             onClick={onClose}
-            className="group w-full py-5 rounded-[2rem] bg-[var(--accent)] text-black font-black uppercase tracking-[0.2em] italic text-xs shadow-xl flex items-center justify-center gap-3"
+            className="group w-full py-4 rounded-[1.2rem] bg-gradient-to-r from-[var(--accent)] to-indigo-500 text-white font-black uppercase tracking-widest italic text-[11px] shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02] transition-all"
           >
-            Apply
-            <div className="w-6 h-6 rounded-full bg-black/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
-              <FiChevronRight size={16} />
+            Apply Filters
+            <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+              <FiChevronRight size={14} />
             </div>
           </button>
         </div>

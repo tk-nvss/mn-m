@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { FiFilter, FiX, FiSearch, FiGrid, FiList, FiTrendingUp, FiZap, FiPackage, FiTv } from "react-icons/fi";
-import { GiCrown, GiCrossedSwords, GiTicket, GiStarMedal } from "react-icons/gi";
+import { FiFilter, FiX, FiSearch, FiGrid, FiList, FiTrendingUp, FiZap, FiPackage, FiTv, FiLayers } from "react-icons/fi";
+import { GiCrown, GiCrossedSwords, GiTicket, GiStarMedal, GiGamepad } from "react-icons/gi";
 import GameGrid from "@/components/Games/GameGrid";
 import GameList from "@/components/Games/GameList";
 import FilterModal from "@/components/Games/FilterModal";
@@ -202,19 +202,6 @@ function GamesContent() {
     </div>
   );
 
-  const TabButton = ({ id, label, icon: Icon }) => (
-    <button aria-label="button"
-      onClick={() => setActiveTab(id)}
-      className={`flex-1 flex items-center justify-center gap-1.5 px-1.5 py-2 rounded-lg font-black uppercase tracking-tight text-[8px] sm:text-[9px] italic border
-        ${activeTab === id
-          ? "bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/40 shadow-[0_0_10px_rgba(var(--accent-rgb),0.1)]"
-          : "bg-[var(--foreground)]/5 text-[var(--muted)] border-[var(--border)] hover:bg-[var(--foreground)]/10"
-        }`}
-    >
-      <Icon size={12} className={`shrink-0 ${activeTab === id ? "fill-current" : ""}`} />
-      <span className="truncate">{label}</span>
-    </button>
-  );
 
   return (
     <main className="min-h-screen bg-[var(--background)] px-4 py-4 sm:py-6 relative overflow-hidden">
@@ -224,31 +211,34 @@ function GamesContent() {
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* ================= COMPACT SEARCH & CONTROLS ================= */}
-        <div className="space-y-4 mb-16">
-          <div className="bg-[var(--card)]/90 backdrop-blur-3xl border border-[var(--border)] rounded-[1.8rem] p-1.5 sm:p-2 shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex items-center gap-2">
+        <div className="space-y-3 mb-10">
+          <div className="relative bg-[var(--card)] backdrop-blur-3xl border border-[var(--border)] rounded-full p-1 shadow-sm flex items-center gap-1 transition-shadow duration-300 hover:shadow-md focus-within:shadow-[0_4px_15px_rgba(var(--accent-rgb),0.1)] focus-within:border-[var(--accent)]/50">
+            {/* Soft inner glow on focus */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent)]/5 to-transparent rounded-full opacity-0 focus-within:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
             {/* SEARCH */}
-            <div className="relative flex-1 group/search">
-              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within/search:text-[var(--accent)]" size={15} />
+            <div className="relative flex-1 group/search z-10">
+              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within/search:text-[var(--accent)] transition-colors" size={12} />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search..."
-                className="w-full pl-11 pr-10 py-3 rounded-[1.2rem] bg-[var(--background)] border border-[var(--border)] focus:bg-[var(--card)] focus:border-[var(--accent)]/30 outline-none text-[10px] sm:text-xs font-black tracking-widest placeholder:text-[var(--muted)]/50 uppercase italic text-[var(--foreground)]"
+                className="w-full pl-8 pr-7 py-1.5 rounded-full bg-transparent outline-none text-[10px] sm:text-[11px] font-bold tracking-widest placeholder:text-[var(--muted)]/60 text-[var(--foreground)]"
               />
               {searchQuery && (
                 <button aria-label="button"
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-red-500/10 text-red-500/60 hover:text-red-500"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-red-500/10 text-red-500/60 hover:text-red-500 transition-colors"
                 >
-                  <FiX size={14} />
+                  <FiX size={12} />
                 </button>
               )}
             </div>
 
-            {/* ACTION GRID - COMPACT */}
-            <div className="flex items-center gap-2">
+            {/* ACTION GRID */}
+            <div className="flex items-center gap-1 relative z-10 pr-0.5">
               {/* VIEW TOGGLE */}
-              <div className="flex p-1 rounded-xl bg-[var(--border)]/30 border border-[var(--border)]">
+              <div className="flex p-0.5 rounded-full bg-[var(--background)] shadow-inner border border-[var(--border)]/50">
                 {[
                   { id: "grid", icon: FiGrid },
                   { id: "list", icon: FiList },
@@ -256,12 +246,12 @@ function GamesContent() {
                   <button aria-label="button"
                     key={mode.id}
                     onClick={() => setViewMode(mode.id)}
-                    className={`p-2 rounded-lg ${viewMode === mode.id
-                      ? "bg-[var(--accent)] text-[var(--background)] shadow-lg"
-                      : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                    className={`p-1.5 rounded-full transition-all duration-300 ${viewMode === mode.id
+                      ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm scale-[1.02]"
+                      : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
                       }`}
                   >
-                    <mode.icon size={14} />
+                    <mode.icon size={11} />
                   </button>
                 ))}
               </div>
@@ -269,28 +259,19 @@ function GamesContent() {
               {/* FILTER BUTTON */}
               <button aria-label="button"
                 onClick={() => setShowFilter(true)}
-                className={`relative flex items-center gap-2 px-3 py-3 rounded-xl font-black uppercase tracking-tight text-[9px] italic border ${activeFilterCount > 0
-                  ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]"
-                  : "border-[var(--border)] bg-[var(--card)] text-[var(--muted)] hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
+                className={`relative flex items-center justify-center w-7 h-7 rounded-full border transition-all duration-300 ${activeFilterCount > 0
+                  ? "border-transparent bg-gradient-to-br from-[var(--accent)] to-indigo-500 text-white shadow-[0_2px_8px_rgba(var(--accent-rgb),0.3)] hover:scale-105"
+                  : "border-[var(--border)] bg-[var(--background)] text-[var(--muted)] hover:border-[var(--accent)]/50 hover:text-[var(--accent)] hover:shadow-sm"
                   }`}
               >
-                <FiFilter size={13} />
+                <FiFilter size={11} />
                 {activeFilterCount > 0 && (
-                  <span className="flex h-4 w-4 items-center justify-center bg-[var(--accent)] text-black rounded-md text-[8px] font-black">
+                  <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center bg-white text-black rounded-full text-[8px] font-black shadow-md border border-[var(--card)]">
                     {activeFilterCount}
                   </span>
                 )}
               </button>
             </div>
-          </div>
-
-          {/* CATEGORY TABS - ULTRA COMPACT SINGLE ROW */}
-          <div className="flex items-center gap-1.5 w-full">
-            <TabButton id="all" label="All" icon={FiGrid} />
-            <TabButton id="mlbb" label="MLBB" icon={FiZap} />
-            <TabButton id="others" label="Others" icon={FiPackage} />
-            <TabButton id="vouchers" label="Vouchers" icon={FiPackage} />
-            <TabButton id="services" label="Services" icon={FiZap} />
           </div>
         </div>
 
@@ -398,6 +379,8 @@ function GamesContent() {
         setSort={setSort}
         hideOOS={hideOOS}
         setHideOOS={setHideOOS}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
       />
     </main>
   );

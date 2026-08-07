@@ -332,33 +332,35 @@ export default function Header() {
                       </div>
                     ) : (
                       <>
-                        <div className="grid grid-cols-3 gap-1 mb-3">
+                        <div className="grid grid-cols-3 gap-2 mb-4">
                           {HEADER_CONFIG.nav.map((item) => (
-                            <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className={`flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl border transition-all group hover:brightness-125 ${item.colorClass || 'bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--accent)]'}`}>
-                              <span className="mb-0.5 scale-90 drop-shadow-md">{item.icon}</span>
-                              <span className="text-[7px] font-black uppercase tracking-widest text-center">{item.label}</span>
+                            <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className={`relative flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl border transition-all group overflow-hidden ${item.colorClass || 'bg-[var(--card)] border-[var(--border)] text-[var(--accent)] hover:shadow-md'}`}>
+                              <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                              <span className="mb-1 drop-shadow-sm group-hover:-translate-y-0.5 transition-transform">{item.icon}</span>
+                              <span className="text-[8px] font-black uppercase tracking-widest text-center">{item.label}</span>
                             </Link>
                           ))}
                         </div>
 
                         <div className="space-y-1">
                           {/* Main Row: Orders & Wallet side-by-side */}
-                          <div className="grid grid-cols-1 gap-1.5 mb-1.5">
+                          <div className="flex flex-col gap-2 mb-2">
                             {HEADER_CONFIG.userMenu.common.slice(0, 2).map((item) => (
-                              <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className="flex items-center justify-between p-2 rounded-xl bg-[var(--foreground)]/[0.02] border border-[var(--border)] hover:border-[var(--accent)]/30 hover:bg-[var(--accent)]/5 transition-all group">
-                                <div className="flex items-center gap-2 min-w-0 flex-1">
-                                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center border group-hover:scale-105 transition-transform shrink-0 scale-90 ${item.colorClass || "bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/20"}`}>{item.icon}</div>
+                              <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className="relative flex items-center justify-between p-3 rounded-2xl bg-[var(--card)] shadow-sm border border-transparent hover:border-[var(--accent)]/30 hover:shadow-md transition-all group overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="flex items-center gap-3 min-w-0 flex-1 relative z-10">
+                                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-inner ${item.colorClass || "bg-[var(--accent)]/10 text-[var(--accent)]"}`}>{item.icon}</div>
                                   <div className="min-w-0">
-                                    <p className="text-[9px] font-black uppercase tracking-tight text-[var(--foreground)] truncate">{item.label.replace("My ", "")}</p>
-                                    <p className="text-[8px] text-[var(--foreground)] font-bold uppercase tracking-widest opacity-70 line-clamp-2 leading-[1.2] whitespace-normal break-words">{item.desc.split(",")[0].split("&")[0]}</p>
+                                    <p className="text-[11px] font-black uppercase tracking-widest text-[var(--foreground)] truncate leading-none mb-1">{item.label}</p>
+                                    <p className="text-[9px] text-[var(--muted)] font-bold uppercase tracking-widest truncate leading-none">{item.desc}</p>
                                   </div>
                                 </div>
                                 {item.label === "My Wallet" && (
-                                  <div className="shrink-0 ml-1">
+                                  <div className="shrink-0 ml-2 relative z-10">
                                     {balanceLoading ? (
-                                      <div className="h-3 w-8 bg-[var(--foreground)]/10 animate-pulse rounded"></div>
+                                      <div className="h-4 w-10 bg-[var(--foreground)]/10 animate-pulse rounded" />
                                     ) : (
-                                      <span className="text-[10px] font-black text-[var(--accent)]">₹{walletBalance}</span>
+                                      <span className="text-xs font-black text-[var(--accent)]">₹{walletBalance}</span>
                                     )}
                                   </div>
                                 )}
@@ -367,63 +369,68 @@ export default function Header() {
                           </div>
 
                           {/* 4 Items in 2x2 Grid */}
-                          <div className="grid grid-cols-2 gap-1.5">
+                          <div className="grid grid-cols-2 gap-2 mb-2">
                             {HEADER_CONFIG.userMenu.common.slice(2, 6).map((item) => (
-                              <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 p-2 rounded-xl bg-[var(--foreground)]/[0.02] border border-[var(--border)] hover:border-[var(--accent)]/30 hover:bg-[var(--accent)]/5 transition-all group">
-                                <div className={`shrink-0 w-7 h-7 rounded-lg flex items-center justify-center border transition-all ${item.colorClass || "bg-[var(--foreground)]/5 text-[var(--muted)] border-transparent group-hover:text-[var(--accent)]"}`}>{item.icon}</div>
-                                <div className="flex flex-col min-w-0 flex-1">
-                                  <p className="text-[9px] font-bold text-[var(--foreground)] leading-tight uppercase tracking-tight truncate">{item.label}</p>
-                                  <p className="text-[8px] text-[var(--foreground)] font-medium opacity-70 truncate">{item.desc}</p>
+                              <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className="relative flex flex-col p-3 rounded-2xl bg-[var(--card)] shadow-sm border border-transparent hover:border-[var(--accent)]/30 hover:shadow-md transition-all group overflow-hidden gap-2">
+                                <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-inner ${item.colorClass || "bg-[var(--foreground)]/5 text-[var(--foreground)]"}`}>{item.icon}</div>
+                                <div className="flex flex-col min-w-0 relative z-10">
+                                  <p className="text-[10px] font-black text-[var(--foreground)] leading-none uppercase tracking-widest truncate mb-0.5">{item.label}</p>
+                                  <p className="text-[8px] text-[var(--muted)] font-bold uppercase tracking-widest truncate leading-none">{item.desc}</p>
                                 </div>
                               </Link>
                             ))}
                           </div>
 
                           {/* Remaining items list */}
-                          <div className="grid grid-cols-1 gap-1">
+                          <div className="flex flex-col gap-1">
                             {HEADER_CONFIG.userMenu.common.slice(6).map((item) => (
-                              <Link key={item.label} href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined} onClick={() => setUserMenuOpen(false)} className="flex items-center justify-between py-1.5 px-2 rounded-xl bg-[var(--foreground)]/[0.01] border border-transparent hover:border-[var(--accent)]/10 hover:bg-[var(--accent)]/5 transition-all group">
-                                <div className="flex items-center gap-2">
-                                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center border transition-all scale-90 ${item.colorClass || "bg-[var(--foreground)]/5 text-[var(--muted)] border-transparent group-hover:text-[var(--accent)]"}`}>{item.icon}</div>
+                              <Link key={item.label} href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined} onClick={() => setUserMenuOpen(false)} className="flex items-center justify-between py-2.5 px-3 rounded-2xl bg-transparent hover:bg-[var(--card)] hover:shadow-sm transition-all group">
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-7 h-7 rounded-xl flex items-center justify-center shadow-inner transition-transform group-hover:scale-105 ${item.colorClass || "bg-[var(--foreground)]/5 text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:bg-[var(--accent)]/10"}`}>{item.icon}</div>
                                   <div className="flex flex-col">
-                                    <p className="text-[10px] font-bold text-[var(--foreground)] leading-tight">{item.label}</p>
-                                    <p className="text-[8px] text-[var(--foreground)] font-medium opacity-70">{item.desc}</p>
+                                    <p className="text-[11px] font-black uppercase tracking-widest text-[var(--foreground)] leading-none mb-0.5">{item.label}</p>
+                                    <p className="text-[9px] text-[var(--muted)] font-bold uppercase tracking-widest leading-none">{item.desc}</p>
                                   </div>
                                 </div>
-                                <FiChevronRight size={10} className="text-[var(--foreground)] opacity-40 group-hover:text-[var(--accent)] group-hover:translate-x-0.5 transition-all" />
+                                <FiChevronRight size={14} className="text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:translate-x-1 transition-all" />
                               </Link>
                             ))}
                           </div>
                         </div>
 
                         {user?.userType === "owner" && (
-                          <div className="relative mt-4 group">
+                          <div className="relative mt-6 group">
                             <Link
                               href="/owner-panal"
                               onClick={() => setUserMenuOpen(false)}
-                              className="relative flex items-center justify-between p-4 bg-[var(--background)] border border-[var(--border)] rounded-[1.5rem] overflow-hidden transition-all duration-300"
+                              className="relative flex items-center justify-between p-4 bg-gradient-to-r from-gray-900 to-black rounded-[2rem] overflow-hidden transition-all duration-500 shadow-xl border border-gray-800 hover:border-gray-600 hover:shadow-2xl hover:-translate-y-1"
                             >
-                              <div className="flex items-center gap-3 relative z-10 w-full">
+                              {/* Sleek animated background effect */}
+                              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(168,85,247,0.15),transparent_50%)]" />
+                              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 blur-3xl rounded-full" />
+                              
+                              <div className="flex items-center gap-4 relative z-10 w-full">
                                 <div className="relative flex-shrink-0">
-                                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--accent)] to-purple-600 flex items-center justify-center shadow-lg">
-                                    <FiZap size={18} className="text-white" />
+                                  <div className="w-12 h-12 rounded-[1.2rem] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+                                    <FiZap size={22} className="text-white drop-shadow-md" />
                                   </div>
-                                  <div className="absolute -bottom-1 -right-1 flex h-3 w-3">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500 border-2 border-[var(--background)]"></span>
+                                  <div className="absolute -bottom-1 -right-1 flex h-3.5 w-3.5">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-gray-900 shadow-sm"></span>
                                   </div>
                                 </div>
 
                                 <div className="flex flex-col min-w-0 flex-1">
-                                  <h4 className="text-xs font-black uppercase tracking-widest text-[var(--foreground)] mb-1">Admin Console</h4>
+                                  <h4 className="text-sm font-black uppercase tracking-widest text-white mb-1.5 drop-shadow-sm">Admin Console</h4>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-[9px] font-bold text-[var(--accent)] bg-[var(--accent)]/10 px-1.5 py-0.5 rounded-md border border-[var(--accent)]/20 uppercase">Elite Access</span>
-                                    <span className="text-[9px] font-bold text-[#22c55e] flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-[#22c55e]"></span>Active</span>
+                                    <span className="text-[9px] font-bold text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded-lg border border-purple-500/30 uppercase tracking-widest backdrop-blur-md">Elite Access</span>
+                                    <span className="text-[9px] font-bold text-emerald-400 flex items-center gap-1.5 uppercase tracking-widest"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.8)]"></span>Active</span>
                                   </div>
                                 </div>
 
-                                <div className="w-8 h-8 rounded-full bg-[var(--foreground)]/5 group-hover:bg-[var(--accent)]/10 flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--accent)] transition-all flex-shrink-0">
-                                  <FiChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+                                <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 group-hover:bg-white/10 flex items-center justify-center text-white/50 group-hover:text-white transition-all flex-shrink-0 backdrop-blur-sm">
+                                  <FiChevronRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
                                 </div>
                               </div>
                             </Link>
