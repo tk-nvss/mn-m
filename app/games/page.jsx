@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { FiFilter, FiX, FiSearch, FiGrid, FiList, FiTrendingUp, FiZap, FiPackage, FiTv } from "react-icons/fi";
-
+import { GiCrown, GiCrossedSwords, GiTicket, GiStarMedal } from "react-icons/gi";
 import GameGrid from "@/components/Games/GameGrid";
 import GameList from "@/components/Games/GameList";
 import FilterModal from "@/components/Games/FilterModal";
@@ -34,7 +34,7 @@ function GamesContent() {
   const [showFilter, setShowFilter] = useState(false);
   const [sort, setSort] = useState("az");
   const [hideOOS, setHideOOS] = useState(false);
-  const [viewMode, setViewMode] = useState("list");
+  const [viewMode, setViewMode] = useState("grid");
   const [searchQuery, setSearchQuery] = useState("");
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") || "all";
@@ -165,16 +165,14 @@ function GamesContent() {
   /* ================= RENDER COMPONENTS ================= */
   const SectionHeader = ({ title, icon: Icon, count, gradient }) => (
     <div className="group relative flex items-center gap-4 mb-8">
-      {/* Premium Icon Box */}
+      {/* Theme-Adaptive Premium Icon Box */}
       <div className="relative shrink-0 flex items-center justify-center">
-        {/* Animated Glow Behind */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${gradient} blur-xl opacity-30 group-hover:opacity-60 transition-opacity duration-700`} />
+        {/* Elegant soft glow matching the gradient */}
+        <div className={`absolute inset-0 bg-gradient-to-br ${gradient} blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 rounded-[1rem]`} />
         
-        {/* Main Box */}
-        <div className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-[1.2rem] bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-[0_8px_20px_rgba(0,0,0,0.3)] overflow-hidden border border-white/20 transition-all duration-500 group-hover:scale-105 group-hover:rotate-3`}>
-          {/* Glass reflection */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-transparent opacity-50 pointer-events-none" />
-          <Icon size={24} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-500" />
+        {/* Clean, simple theme-adaptive box */}
+        <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-[1rem] bg-[var(--card)] flex items-center justify-center text-[var(--foreground)] shadow-sm border border-[var(--border)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md group-hover:border-[var(--accent)]/50">
+          <Icon size={22} className="relative z-10 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />
         </div>
       </div>
 
@@ -325,7 +323,7 @@ function GamesContent() {
                 <div className="mb-20">
                   <SectionHeader
                     title="MLBB Special"
-                    icon={FiZap}
+                    icon={GiCrown}
                     count={processedMlbbGames.length}
                     gradient="from-blue-500 to-indigo-600"
                   />
@@ -341,7 +339,7 @@ function GamesContent() {
                 <div className="mb-20">
                   <SectionHeader
                     title="Full Armory"
-                    icon={FiPackage}
+                    icon={GiCrossedSwords}
                     count={processedGames.filter(g => activeTab !== "others" || !isMlbbGame(g)).length}
                     gradient="from-[var(--accent)] to-cyan-600"
                   />
@@ -357,7 +355,7 @@ function GamesContent() {
                 <div className="mb-10 border-t border-[var(--border)] pt-10">
                   <SectionHeader
                     title="Premium Vouchers"
-                    icon={FiPackage}
+                    icon={GiTicket}
                     count={processedVouchers.length}
                     gradient="from-amber-400 to-orange-600"
                   />
@@ -375,7 +373,7 @@ function GamesContent() {
                 <div className="mb-10 border-t border-[var(--border)] pt-10">
                   <SectionHeader
                     title="Premium Services"
-                    icon={FiZap}
+                    icon={GiStarMedal}
                     count={processedServices.length}
                     gradient="from-blue-400 to-indigo-600"
                   />

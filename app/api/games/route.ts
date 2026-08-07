@@ -229,7 +229,10 @@ export async function GET() {
       "weeklymonthly-bundle261",
       "asphalt9877",
       "8ballpool498",
-      "mobile-legends-exclusive952"
+      // "mobile-legends-exclusive952",
+
+      "mobile-legends-philippines888",
+      "bgmi226",
     ];
 
     await connectDB();
@@ -276,7 +279,8 @@ export async function GET() {
         g.gameSlug.toLowerCase().includes("mlbbglobal202") ||
 
         g.gameSlug.toLowerCase().includes("mobile-legends-exclusive") ||
-        g.gameSlug.toLowerCase().includes("weeklymonthly-bundle")
+        g.gameSlug.toLowerCase().includes("weeklymonthly-bundle")||
+        g.gameSlug.toLowerCase().includes("mobile-legends-philippines888")
 
 
     );

@@ -8,6 +8,13 @@ import { FiArrowRight, FiZap, FiShield } from "react-icons/fi";
 export default function GameCardList({ game, isOutOfStock, index = 0 }) {
   const disabled = isOutOfStock(game.gameName);
 
+  let displayTagName = game?.tagId?.tagName;
+  if (game?.gameSlug === "mobile-legends-philippines888") {
+    displayTagName = "Mlbb small";
+  } else if (game?.gameSlug === "bgmi226") {
+    displayTagName = "indian";
+  }
+
   return (
     <div>
       <Link
@@ -95,8 +102,8 @@ export default function GameCardList({ game, isOutOfStock, index = 0 }) {
                   borderColor: game.tagId.tagBackground,
                 }}
               >
-                {game.tagId.tagName === "Manual" && <FiZap size={12} fill="currentColor" />}
-                {game.tagId.tagName}
+                {displayTagName === "Manual" && <FiZap size={12} fill="currentColor" />}
+                {displayTagName}
               </span>
             )}
             {disabled && (
