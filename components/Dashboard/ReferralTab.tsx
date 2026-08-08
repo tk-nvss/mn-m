@@ -2,15 +2,8 @@
 
 import { useState, useEffect } from "react";
 import {
-    FiUsers,
-    FiCopy,
-    FiCheckCircle,
-    FiLoader,
-    FiGift,
-    FiShare2,
-    FiDownload,
-    FiActivity,
-    FiZap
+    FiUsers, FiCopy, FiCheckCircle, FiLoader,
+    FiGift, FiShare2, FiDownload, FiRefreshCw, FiArrowRight, FiZap
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/lib/axios";
@@ -23,9 +16,7 @@ interface ReferralTabProps {
     };
 }
 
-export default function ReferralTab({
-    userReferral,
-}: ReferralTabProps) {
+export default function ReferralTab({ userReferral }: ReferralTabProps) {
     const [referralCodeInput, setReferralCodeInput] = useState("");
     const [referralLoading, setReferralLoading] = useState(false);
     const [referralMessage, setReferralMessage] = useState("");
@@ -45,7 +36,6 @@ export default function ReferralTab({
         setReferralLoading(true);
         setReferralMessage("");
         setReferralSuccess(false);
-
         try {
             const { data } = await api.post("/api/wallet/redeem-referral", { referralCode: referralCodeInput });
             if (data.success) {
@@ -55,7 +45,7 @@ export default function ReferralTab({
             } else {
                 setReferralMessage(data.message);
             }
-        } catch (error) {
+        } catch {
             setReferralMessage("Something went wrong. Try again.");
         } finally {
             setReferralLoading(false);
@@ -75,185 +65,219 @@ export default function ReferralTab({
                 setReferrals(data.data);
                 setTotalPages(data.pagination.totalPages);
             }
-        } catch (error) {
-            console.error("Failed to fetch referrals", error);
-        } finally {
-            setLoadingList(false);
-        }
+        } catch { console.error("Failed to fetch referrals"); }
+        finally { setLoadingList(false); }
     };
 
-    useEffect(() => {
-        fetchReferrals();
-    }, [page]);
+    useEffect(() => { fetchReferrals(); }, [page]);
 
     return (
-        <div className="max-w-4xl mx-auto space-y-6">
-            {/* OVERVIEW STATS */}
-            <div className="relative p-4 sm:p-5 rounded-3xl bg-[var(--card)]/30 border border-white/5 flex items-center justify-between overflow-hidden shadow-sm">
-                <div className="relative z-10">
-                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--accent)] mb-1 italic opacity-50">
-                        Total Friends Invited
-                    </p>
-                    <div className="flex items-baseline gap-1.5">
-                        <span className="text-3xl font-black italic tracking-tighter uppercase text-[var(--foreground)]">
-                            {userReferral?.referralCount || 0}
-                        </span>
-                        <span className="text-[8px] font-bold text-[var(--muted)]/40 uppercase tracking-widest leading-none">
-                            friends joined
-                        </span>
+        <div className="max-w-md mx-auto space-y-3 px-2 pb-8">
+
+            {/* ── HERO STAT CARD ── */}
+            <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative overflow-hidden rounded-2xl border border-[var(--accent)]/20 bg-[var(--card)] p-5"
+            >
+                {/* Big decorative number */}
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[120px] font-black text-[var(--accent)]/[0.06] leading-none select-none pointer-events-none tabular-nums">
+                    {userReferral?.referralCount || 0}
+                </span>
+
+                <p className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/40 mb-2">Total Friends Invited</p>
+                <div className="flex items-end gap-3">
+                    <span className="text-6xl font-black text-[var(--foreground)] tabular-nums leading-none">
+                        {userReferral?.referralCount || 0}
+                    </span>
+                    <div className="mb-1.5 space-y-0.5">
+                        <p className="text-[9px] font-bold text-[var(--muted)]/40 uppercase tracking-widest">friends</p>
+                        <p className="text-[9px] font-bold text-[var(--muted)]/40 uppercase tracking-widest">joined</p>
                     </div>
                 </div>
 
-                <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/5 flex items-center justify-center text-[var(--accent)] border border-[var(--accent)]/20 shadow-[0_0_15px_var(--accent)]/5">
-                    <FiActivity size={18} />
+                {/* Earn badge */}
+                <div className="mt-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[var(--accent)]/20 bg-[var(--accent)]/5">
+                    <FiZap size={9} className="text-[var(--accent)]" />
+                    <span className="text-[8px] font-black uppercase tracking-widest text-[var(--accent)]/70">
+                        Earn rewards for every friend
+                    </span>
                 </div>
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* SHARE */}
-                <div className="space-y-3">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-[var(--muted)]/50 flex items-center gap-1.5 px-1">
-                        <FiShare2 className="text-[var(--accent)]" size={10} /> Your Invite Code
-                    </label>
+            {/* ── YOUR INVITE CODE ── */}
+            <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 space-y-3"
+            >
+                <p className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/40">Your Invite Code</p>
 
-                    <div className="w-full p-3 rounded-2xl border border-white/5 bg-[var(--card)]/30 flex items-center justify-between group-hover:border-[var(--accent)]/30 transition-all shadow-sm">
-                        <code className="text-base font-black italic tracking-[0.15em] text-[var(--foreground)] px-1">
-                            {userReferral?.userId || "..."}
-                        </code>
-                        <div className="flex gap-1.5">
-                            <button
-                                onClick={handleCopyCode}
-                                className="p-2 rounded-lg bg-white/[0.03] text-[var(--muted)] hover:text-[var(--accent)] transition-all"
-                                title="Copy code"
-                            >
-                                {copied ? <FiCheckCircle size={14} /> : <FiCopy size={14} />}
-                            </button>
-                            <button aria-label="button"
-                                onClick={() => {
-                                    const shareText = `Join mlbbtopup.in\nCode: ${userReferral?.userId}`;
-                                    if (navigator.share) {
-                                        navigator.share({ title: 'Join me on mlbbtopup.in', text: shareText });
-                                    } else {
-                                        navigator.clipboard.writeText(shareText);
-                                        alert("Link copied to clipboard!");
-                                    }
-                                }}
-                                className="p-2 rounded-lg bg-white/[0.03] text-[var(--muted)] hover:text-[var(--accent)] transition-all"
-                                title="Share your code"
-                            >
-                                <FiShare2 size={14} />
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-purple-500/5 border border-purple-500/10">
-                        <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-500">
-                            <FiGift size={12} />
-                        </div>
-                        <div>
-                            <span className="text-[10px] font-black uppercase tracking-tight italic text-[var(--foreground)] block">Get Rewards</span>
-                            <p className="text-[8px] font-bold text-[var(--muted)]/50 uppercase tracking-tighter leading-normal mt-1">Share your code. Get a bonus for every friend who signs up.</p>
-                        </div>
-                    </div>
+                {/* Code box */}
+                <div className="rounded-xl bg-[var(--accent)]/5 border border-[var(--accent)]/20 px-4 py-3.5">
+                    <code className="text-[15px] font-black tracking-[0.18em] text-[var(--foreground)]">
+                        {userReferral?.userId || "—"}
+                    </code>
                 </div>
 
-                {/* REDEEM */}
-                <div className="space-y-3">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-[var(--muted)]/50 flex items-center gap-1.5 px-1">
-                        <FiDownload className="text-[var(--accent)]" size={10} /> Got a Friend's Code?
-                    </label>
+                {/* Actions */}
+                <div className="grid grid-cols-2 gap-2">
+                    <button
+                        onClick={handleCopyCode}
+                        className={`h-10 rounded-xl border flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-widest transition-all ${
+                            copied
+                                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500"
+                                : "border-[var(--border)] bg-[var(--background)] text-[var(--muted)] hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)]"
+                        }`}
+                    >
+                        {copied ? <><FiCheckCircle size={12} /> Copied!</> : <><FiCopy size={12} /> Copy</>}
+                    </button>
+                    <button
+                        aria-label="button"
+                        onClick={() => {
+                            const shareText = `Join mlbbtopup.in\nCode: ${userReferral?.userId}`;
+                            if (navigator.share) {
+                                navigator.share({ title: 'Join me on mlbbtopup.in', text: shareText });
+                            } else {
+                                navigator.clipboard.writeText(shareText);
+                            }
+                        }}
+                        className="h-10 rounded-xl border border-[var(--border)] bg-[var(--background)] flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-widest text-[var(--muted)] hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] transition-all"
+                    >
+                        <FiShare2 size={12} /> Share
+                    </button>
+                </div>
 
-                    {!userReferral?.referralUsed ? (
-                        <div className="space-y-2.5">
-                            <input
-                                type="text"
-                                placeholder="Type or paste the code here"
-                                value={referralCodeInput}
-                                onChange={(e) => setReferralCodeInput(e.target.value)}
-                                className="w-full p-3 rounded-2xl border border-white/5 bg-[var(--card)]/30 text-sm font-black tracking-widest text-[var(--foreground)] placeholder:text-[var(--muted)]/20 outline-none transition-all uppercase"
-                            />
+                {/* Reward hint */}
+                <div className="flex items-center gap-3 p-3 rounded-xl border border-[var(--accent)]/15 bg-[var(--accent)]/5">
+                    <div className="w-8 h-8 rounded-lg border border-[var(--accent)]/20 bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
+                        <FiGift size={13} />
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-black uppercase tracking-tight text-[var(--foreground)]">Get Rewards</p>
+                        <p className="text-[8px] font-bold text-[var(--muted)]/40 uppercase tracking-wide mt-0.5 leading-relaxed">
+                            Share your code. Get a bonus for every friend who signs up.
+                        </p>
+                    </div>
+                </div>
+            </motion.div>
+
+            {/* ── USE A CODE ── */}
+            <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 space-y-3"
+            >
+                <p className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/40">Got a Friend's Code?</p>
+
+                {!userReferral?.referralUsed ? (
+                    <>
+                        <input
+                            type="text"
+                            placeholder="Paste code here..."
+                            value={referralCodeInput}
+                            onChange={(e) => setReferralCodeInput(e.target.value.toUpperCase())}
+                            className="w-full h-11 px-4 rounded-xl border border-[var(--border)] bg-[var(--background)] text-sm font-black tracking-widest text-[var(--foreground)] placeholder:text-[var(--muted)]/25 outline-none focus:border-[var(--foreground)]/40 transition-colors uppercase"
+                        />
+                        <AnimatePresence>
                             {referralMessage && (
-                                <p className={`text-[8px] font-black uppercase tracking-widest px-1 ${referralSuccess ? "text-green-500" : "text-red-500"}`}>
+                                <motion.p
+                                    initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                                    className={`text-[9px] font-black uppercase tracking-widest ${referralSuccess ? "text-emerald-500" : "text-rose-500"}`}
+                                >
                                     {referralMessage}
-                                </p>
+                                </motion.p>
                             )}
-                            <button aria-label="button"
-                                onClick={handleRedeemReferral}
-                                disabled={referralLoading || !referralCodeInput}
-                                className="w-full p-3 rounded-xl bg-[var(--accent)] text-black font-black uppercase tracking-widest italic text-[10px] shadow-lg hover:scale-[1.01] active:scale-95 disabled:opacity-30 transition-all flex items-center justify-center gap-2"
-                            >
-                                {referralLoading ? <FiLoader className="animate-spin" size={12} /> : "Use Code"}
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="w-full p-4 rounded-2xl border border-dashed border-white/5 bg-[var(--card)]/10 flex items-center justify-center gap-2">
-                            <FiCheckCircle size={14} className="text-green-500" />
-                            <p className="text-[9px] font-black uppercase tracking-widest text-[var(--muted)]">You already used a code</p>
-                        </div>
-                    )}
-                    <p className="text-[7.5px] font-bold text-[var(--muted)]/30 uppercase tracking-[0.15em] px-1">
-                        You can only use a code within 24 hours of joining.
-                    </p>
-                </div>
-            </div>
+                        </AnimatePresence>
+                        <button
+                            aria-label="button"
+                            onClick={handleRedeemReferral}
+                            disabled={referralLoading || !referralCodeInput}
+                            className="w-full h-11 rounded-xl bg-[var(--accent)] text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 disabled:opacity-25 hover:opacity-90 transition-opacity"
+                        >
+                            {referralLoading
+                                ? <FiLoader className="animate-spin" size={13} />
+                                : <><span>Use Code</span><FiArrowRight size={12} /></>
+                            }
+                        </button>
+                        <p className="text-[8px] font-bold text-[var(--muted)]/30 uppercase tracking-widest">
+                            Only usable within 24 hours of joining.
+                        </p>
+                    </>
+                ) : (
+                    <div className="flex items-center gap-2.5 p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
+                        <FiCheckCircle size={14} className="text-emerald-500 shrink-0" />
+                        <p className="text-[9px] font-black uppercase tracking-widest text-emerald-500">You already used a code</p>
+                    </div>
+                )}
+            </motion.div>
 
-            {/* LIST */}
-            <div className="pt-4 border-t border-white/[0.03]">
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-black italic tracking-tighter text-[var(--foreground)] uppercase">
-                        Friends Who Joined
-                    </h3>
-                    <button aria-label="button" onClick={fetchReferrals} className="p-1.5 text-[var(--muted)] hover:text-[var(--accent)] transition-all">
-                        <FiLoader size={12} className={loadingList ? "animate-spin" : ""} />
+            {/* ── FRIENDS LIST ── */}
+            <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 space-y-3"
+            >
+                <div className="flex items-center justify-between">
+                    <p className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/40">Friends Who Joined</p>
+                    <button aria-label="button" onClick={fetchReferrals}
+                        className="w-7 h-7 rounded-lg border border-[var(--border)] bg-[var(--background)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">
+                        <FiRefreshCw size={11} className={loadingList ? "animate-spin" : ""} />
                     </button>
                 </div>
 
                 {loadingList && referrals.length === 0 ? (
-                    <div className="flex justify-center py-6"><FiLoader className="animate-spin text-[var(--accent)]" size={16} /></div>
+                    <div className="flex justify-center py-8">
+                        <FiLoader className="animate-spin text-[var(--muted)]/30" size={18} />
+                    </div>
                 ) : referrals.length === 0 ? (
-                    <div className="text-center py-6 text-[10px] uppercase font-black tracking-widest text-[var(--muted)]/30 italic">No friends joined yet. Share your code to start!</div>
+                    <div className="text-center py-8 space-y-2">
+                        <div className="w-12 h-12 rounded-2xl border border-[var(--border)] mx-auto flex items-center justify-center">
+                            <FiUsers className="text-[var(--muted)]/30" size={20} />
+                        </div>
+                        <p className="text-[9px] font-black uppercase tracking-widest text-[var(--muted)]/30">No friends yet</p>
+                        <p className="text-[8px] text-[var(--muted)]/20 uppercase tracking-wide">Share your code to start earning</p>
+                    </div>
                 ) : (
-                    <div className="space-y-2">
-                        <div className="rounded-2xl border border-white/5 bg-[var(--card)]/20 overflow-hidden">
-                            <table className="w-full text-left">
-                                <thead className="bg-white/[0.02] text-[8px] font-black uppercase tracking-[0.2em] text-[var(--muted)]/50">
-                                    <tr>
-                                        <th className="px-4 py-2">Name</th>
-                                        <th className="px-4 py-2 text-right">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-white/[0.02] text-[10px] text-[var(--foreground)]">
-                                    {referrals.map((ref) => (
-                                        <tr key={ref._id} className="hover:bg-white/[0.01]">
-                                            <td className="px-4 py-2.5">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-6 h-6 rounded-lg bg-[var(--accent)]/5 flex items-center justify-center text-[9px] font-black text-[var(--accent)]">
-                                                        {ref.name?.[0]?.toUpperCase() || "U"}
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-black italic uppercase leading-none">{ref.name || "Unknown user"}</p>
-                                                        <p className="text-[7.5px] text-[var(--muted)]/40 font-mono mt-0.5">{ref.userId}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-4 py-2.5 text-right">
-                                                <span className="text-[8px] font-black uppercase tracking-widest text-green-500/60">Active</span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                    <>
+                        <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+                            <span className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)]/40">Name</span>
+                            <span className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)]/40">Status</span>
+                        </div>
+                        <div className="space-y-0">
+                            {referrals.map((ref, idx) => (
+                                <div key={ref._id}
+                                    className={`flex items-center justify-between py-3 ${idx < referrals.length - 1 ? "border-b border-[var(--border)]/50" : ""}`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-xl border border-[var(--border)] bg-[var(--background)] flex items-center justify-center text-[11px] font-black text-[var(--foreground)]">
+                                            {ref.name?.[0]?.toUpperCase() || "U"}
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-black uppercase tracking-tight text-[var(--foreground)] leading-none">{ref.name || "Unknown user"}</p>
+                                            <p className="text-[8px] text-[var(--muted)]/40 font-mono mt-0.5">{ref.userId}</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-[8px] font-black uppercase tracking-widest text-emerald-500">Active</span>
+                                </div>
+                            ))}
                         </div>
                         {totalPages > 1 && (
-                            <div className="flex justify-center gap-4 pt-2">
-                                <button aria-label="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="text-[9px] font-black uppercase tracking-widest text-[var(--muted)] disabled:opacity-20">Prev</button>
-                                <span className="text-[9px] font-black text-[var(--muted)]/40 italic">Page {page} of {totalPages}</span>
-                                <button aria-label="button" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="text-[9px] font-black uppercase tracking-widest text-[var(--muted)] disabled:opacity-20">Next</button>
+                            <div className="flex justify-center items-center gap-4 pt-2 border-t border-[var(--border)]">
+                                <button aria-label="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                                    className="text-[9px] font-black uppercase tracking-widest text-[var(--muted)] disabled:opacity-25 hover:text-[var(--foreground)] transition-colors">Prev</button>
+                                <span className="text-[9px] font-black text-[var(--muted)]/30">{page} / {totalPages}</span>
+                                <button aria-label="button" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                                    className="text-[9px] font-black uppercase tracking-widest text-[var(--muted)] disabled:opacity-25 hover:text-[var(--foreground)] transition-colors">Next</button>
                             </div>
                         )}
-                    </div>
+                    </>
                 )}
-            </div>
+            </motion.div>
+
         </div>
     );
 }

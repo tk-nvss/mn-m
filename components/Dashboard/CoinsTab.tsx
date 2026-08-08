@@ -518,22 +518,18 @@ export default function CoinsTab() {
   return (
     <div className="max-w-3xl mx-auto space-y-1.5 pb-16 px-2 pt-0.5">
 
-      {/* ── NEW PREMIUM BALANCE CARD ──────────────────────────────────── */}
-      <div
-        className="relative overflow-hidden rounded-[1.5rem] border border-[var(--border)] bg-[var(--card)] p-4 shadow-2xl shadow-blue-500/5 mb-0.5"
-      >
-        <div className="relative flex items-center justify-between gap-4">
+      {/* ── BALANCE CARD ─────────────────────────────────────────────── */}
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 mb-0.5">
+        <div className="flex items-center justify-between gap-4">
 
-          {/* Left Side: Balance & Info */}
-          <div className="flex flex-col items-start gap-0.5">
-            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/5 border border-amber-500/20 mb-0.5">
-              <FiStar className="text-amber-500 text-[8px]" />
-              <span className="text-[7px] font-black uppercase tracking-widest text-amber-500">BBC Coins</span>
+          {/* Left: Balance */}
+          <div className="flex flex-col gap-1">
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-amber-500/25 bg-amber-500/8 w-fit">
+              <FiStar className="text-amber-500" size={8} />
+              <span className="text-[8px] font-black uppercase tracking-widest text-amber-500">BBC Coins</span>
             </div>
-
-            <div className="flex items-center gap-1.5 relative">
-              <span className="text-4xl font-black text-amber-500 tabular-nums leading-none">{coins || 0}</span>
-              
+            <div className="flex items-end gap-2 relative">
+              <span className="text-5xl font-black text-amber-500 tabular-nums leading-none">{coins || 0}</span>
               <AnimatePresence>
                 {lastResult && (
                   <motion.div
@@ -541,7 +537,7 @@ export default function CoinsTab() {
                     initial={{ opacity: 0, y: 10, scale: 0.5 }}
                     animate={{ opacity: 1, y: -25, scale: 1.2 }}
                     exit={{ opacity: 0, y: -40, scale: 0.8 }}
-                    className={`absolute -right-2 top-0 font-black text-lg drop-shadow-lg pointer-events-none ${
+                    className={`absolute -right-2 top-0 font-black text-lg pointer-events-none ${
                       lastResult.amount > 0 ? "text-emerald-400" : "text-rose-500"
                     }`}
                   >
@@ -549,26 +545,22 @@ export default function CoinsTab() {
                   </motion.div>
                 )}
               </AnimatePresence>
-
-              <p className="text-[9px] font-black uppercase tracking-wide text-[var(--muted)]/60 mt-1">
-                ≈ ₹{((coins || 0) / 100).toFixed(2)}
-              </p>
+              <span className="text-[9px] text-[var(--muted)]/50 font-mono mb-1.5">≈ ₹{((coins || 0) / 100).toFixed(2)}</span>
             </div>
           </div>
 
-          {/* Right Side: Quick Stats */}
-          <div className="flex items-center gap-1.5">
-            <div className="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] p-1.5 transition-colors hover:bg-[var(--foreground)]/[0.05]">
+          {/* Right: Stats */}
+          <div className="flex gap-2">
+            <div className="flex flex-col items-center justify-center w-[60px] h-[60px] rounded-xl border border-[var(--border)] bg-[var(--background)] gap-0.5">
               <div className="flex items-center gap-1">
-                <span className="text-xs">🔥</span>
-                <span className="text-xs font-black text-blue-400">{streak}</span>
+                <span className="text-sm">🔥</span>
+                <span className="text-sm font-black text-[var(--foreground)] tabular-nums">{streak}</span>
               </div>
-              <span className="text-[6px] font-black uppercase text-[var(--muted)]/40 mt-0.5">Streak</span>
+              <span className="text-[7px] font-bold uppercase tracking-widest text-[var(--muted)]/50">Streak</span>
             </div>
-
-            <div className="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] p-1.5 transition-colors hover:bg-[var(--foreground)]/[0.05]">
-              <span className="text-xs font-black text-amber-500">+{nextReward}</span>
-              <span className="text-[6px] font-black uppercase text-[var(--muted)]/40 mt-0.5 uppercase text-center leading-tight">Next</span>
+            <div className="flex flex-col items-center justify-center w-[60px] h-[60px] rounded-xl border border-amber-500/30 bg-amber-500/5 gap-0.5">
+              <span className="text-sm font-black text-amber-500">+{nextReward}</span>
+              <span className="text-[7px] font-bold uppercase tracking-widest text-[var(--muted)]/50">Next</span>
             </div>
           </div>
 
@@ -579,53 +571,50 @@ export default function CoinsTab() {
       {!loading && (
         <div className="space-y-2">
 
-          {/* Navigation moved up */}
+          {/* Convert + History */}
           <div className="grid grid-cols-2 gap-2">
             <button aria-label="button"
-              onClick={() => {
-                setActiveTab(activeTab === "convert" ? "checkin" : "convert");
-                setActiveGame(null);
-              }}
-              className={`flex items-center justify-center gap-2 py-3 rounded-2xl border transition-all text-[11px] font-black uppercase tracking-widest ${activeTab === "convert"
-                ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/20"
-                : "bg-[var(--card)]/40 border-[var(--border)] text-[var(--muted)] hover:text-white"
-                }`}
+              onClick={() => { setActiveTab(activeTab === "convert" ? "checkin" : "convert"); setActiveGame(null); }}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-2xl border transition-all text-[10px] font-black uppercase tracking-widest ${
+                activeTab === "convert"
+                ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]"
+                : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--foreground)]/30"
+              }`}
             >
-              <FiTrendingUp size={14} />
+              <FiTrendingUp size={13} />
               Convert
             </button>
             <button aria-label="button"
-              onClick={() => {
-                setActiveTab(activeTab === "history" ? "checkin" : "history");
-                setActiveGame(null);
-              }}
-              className={`flex items-center justify-center gap-2 py-3 rounded-2xl border transition-all text-[11px] font-black uppercase tracking-widest ${activeTab === "history"
-                ? "bg-[var(--accent)] border-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20"
-                : "bg-[var(--card)]/40 border-[var(--border)] text-[var(--muted)] hover:text-white"
-                }`}
+              onClick={() => { setActiveTab(activeTab === "history" ? "checkin" : "history"); setActiveGame(null); }}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-2xl border transition-all text-[10px] font-black uppercase tracking-widest ${
+                activeTab === "history"
+                ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]"
+                : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--foreground)]/30"
+              }`}
             >
-              <FiList size={14} />
+              <FiList size={13} />
               History
             </button>
           </div>
 
-          <div className="grid grid-cols-4 gap-1.5 bg-[var(--card)]/40 p-1 rounded-2xl border border-[var(--border)]">
+          {/* Tab bar */}
+          <div className="grid grid-cols-4 gap-1 bg-[var(--card)] p-1 rounded-2xl border border-[var(--border)]">
             {TABS.map((tab) => (
               <button aria-label="button"
                 key={tab.key}
-                onClick={() => {
-                  setActiveTab(tab.key);
-                  setActiveGame(null);
-                }}
-                className={`relative flex flex-col items-center gap-1 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wide transition-all ${activeTab === tab.key
-                  ? "bg-[var(--accent)] text-white shadow-lg"
+                onClick={() => { setActiveTab(tab.key); setActiveGame(null); }}
+                className={`relative flex flex-col items-center gap-1 py-2 rounded-xl text-[9px] font-black uppercase tracking-wide transition-all ${
+                  activeTab === tab.key
+                  ? "bg-[var(--foreground)] text-[var(--background)]"
                   : "text-[var(--muted)] hover:text-[var(--foreground)]"
-                  }`}
+                }`}
               >
                 {tab.icon}
                 <span>{tab.label}</span>
                 {tab.key === "tasks" && incompleteTasks.length > 0 && (
-                  <span className={`absolute -top-1 -right-1 w-4 h-4 rounded-full text-[7px] font-black flex items-center justify-center ${activeTab === "tasks" ? "bg-white text-[var(--accent)]" : "bg-[var(--accent)] text-white"}`}>
+                  <span className={`absolute -top-1 -right-1 w-4 h-4 rounded-full text-[7px] font-black flex items-center justify-center ${
+                    activeTab === "tasks" ? "bg-[var(--background)] text-[var(--foreground)]" : "bg-[var(--foreground)] text-[var(--background)]"
+                  }`}>
                     {incompleteTasks.length}
                   </span>
                 )}
@@ -638,61 +627,56 @@ export default function CoinsTab() {
             {/* ══ CONVERT ══ */}
             {activeTab === "convert" && (
               <motion.div key="convert" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 p-3 sm:p-4"
+                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 space-y-3"
               >
-                <div className="flex items-center gap-2 mb-4">
-                  <FiTrendingUp className="text-emerald-400 text-sm" />
-                  <p className="text-[11px] font-black uppercase tracking-wide">Convert to Wallet ₹</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)]">Convert to Wallet</p>
+
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <FiStar className="text-amber-500" size={12} />
+                  </div>
+                  <input
+                    type="number"
+                    value={convertCoins}
+                    onChange={(e) => setConvertCoins(e.target.value)}
+                    placeholder="Enter coins (min 100)"
+                    className="w-full pl-9 pr-4 h-11 bg-[var(--background)] border border-[var(--border)] rounded-xl text-sm font-bold outline-none focus:border-[var(--foreground)]/30 transition-colors placeholder:text-[var(--muted)]/40"
+                  />
                 </div>
 
-                <div className="space-y-3">
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                      <FiStar className="text-amber-500 text-xs" />
-                    </div>
-                    <input
-                      type="number"
-                      value={convertCoins}
-                      onChange={(e) => setConvertCoins(e.target.value)}
-                      placeholder="Enter coins (min 100)"
-                      className="w-full pl-9 pr-4 py-3 bg-[var(--background)]/60 border border-[var(--border)] rounded-xl text-sm font-bold outline-none focus:border-amber-500/40 transition-colors"
-                    />
-                  </div>
+                <AnimatePresence>
+                  {convertPreview && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="flex items-center justify-between px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-xl"
+                    >
+                      <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-widest">You'll receive</span>
+                      <span className="text-emerald-500 font-black text-sm">₹{convertPreview}</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-                  <AnimatePresence>
-                    {convertPreview && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="flex items-center justify-between px-3 py-2 bg-emerald-500/5 border border-emerald-500/20 rounded-xl"
-                      >
-                        <span className="text-[10px] font-bold text-[var(--muted)] uppercase">You'll receive</span>
-                        <span className="text-emerald-400 font-black text-sm">₹{convertPreview}</span>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                <motion.button
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleConvert}
+                  disabled={converting || !convertCoins || parseInt(convertCoins) < 100 || parseInt(convertCoins) > coins}
+                  className="w-full h-11 rounded-xl bg-[var(--foreground)] text-[var(--background)] text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-90"
+                >
+                  {converting ? <FiRefreshCw className="animate-spin" /> : <><FiArrowRight size={13} /> Add to Wallet</>}
+                </motion.button>
 
-                  <motion.button
-                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                    onClick={handleConvert}
-                    disabled={converting || !convertCoins || parseInt(convertCoins) < 100 || parseInt(convertCoins) > coins}
-                    className="w-full py-3.5 rounded-xl bg-emerald-500 text-white text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                  >
-                    {converting ? <FiRefreshCw className="animate-spin" /> : <><FiArrowRight /> Add to Wallet</>}
-                  </motion.button>
+                <div className="flex items-center gap-2 px-3 py-2 border border-[var(--border)] rounded-xl">
+                  <FiLock className="text-[var(--muted)]/40" size={11} />
+                  <p className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted)]/40">Min 100 BBC · Instant transfer</p>
+                </div>
 
-                  <div className="flex items-center gap-2 px-3 py-2 bg-[var(--card)]/40 border border-[var(--border)] rounded-xl">
-                    <FiLock className="text-[var(--muted)]/40 text-xs" />
-                    <p className="text-[8px] font-bold uppercase tracking-wide text-[var(--muted)]/40">Min 100 BBC · Instant transfer</p>
-                  </div>
-
-                  <div className="flex items-center gap-2.5 px-3 py-2.5 bg-blue-500/5 border border-blue-500/15 rounded-xl border-dashed">
-                    <FiZap className="text-blue-400 text-[10px] animate-pulse shrink-0" />
-                    <p className="text-[8px] font-bold uppercase tracking-wide text-blue-400/80 leading-relaxed">
-                      🚀 Crypto withdrawal & Listing on Decentralized Exchanges (DEX) coming soon! Hold your coins to maximize value.
-                    </p>
-                  </div>
+                <div className="flex items-start gap-2 px-3 py-2.5 border border-[var(--border)]/50 border-dashed rounded-xl">
+                  <FiZap className="text-[var(--muted)]/40 shrink-0 mt-0.5" size={11} />
+                  <p className="text-[8px] font-bold text-[var(--muted)]/40 uppercase tracking-wide leading-relaxed">
+                    Crypto withdrawal & DEX listing coming soon. Hold your coins.
+                  </p>
                 </div>
               </motion.div>
             )}
@@ -918,65 +902,70 @@ export default function CoinsTab() {
             {/* ══ CHECK-IN ══ */}
             {activeTab === "checkin" && (
               <motion.div key="checkin" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 p-3 sm:p-4 space-y-3"
+                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 space-y-4"
               >
+                {/* Header */}
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                      <FiCalendar className="text-blue-400 text-sm" />
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                      <FiCalendar className="text-blue-400" size={15} />
                     </div>
                     <div>
-                      <p className="text-[11px] font-black uppercase tracking-wide">Daily Check-in Games</p>
-                      <p className="text-[9px] text-[var(--muted)]/60 font-bold uppercase">
+                      <p className="text-xs font-black uppercase tracking-widest text-[var(--foreground)]">Daily Check-in</p>
+                      <p className="text-[9px] text-[var(--muted)]/60 font-bold uppercase tracking-wider mt-0.5">
                         {checkedInToday ? `Day ${streak} complete ✓` : `Next: +${nextReward} BBC`}
                       </p>
                     </div>
                   </div>
                   {streak > 0 && (
-                    <div className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 px-2 py-1 rounded-lg">
-                      <FiZap className="text-amber-400 text-[10px]" />
-                      <span className="text-amber-400 font-black text-[10px]">{streak}/7</span>
+                    <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/25 px-3 py-1.5 rounded-xl">
+                      <span className="text-sm">🔥</span>
+                      <span className="text-amber-400 font-black text-sm">{streak}</span>
+                      <span className="text-amber-400/60 font-bold text-[9px] uppercase">/7</span>
                     </div>
                   )}
                 </div>
 
                 {/* 7-day grid */}
-                <div className="grid grid-cols-7 gap-1.5">
+                <div className="grid grid-cols-7 gap-1">
                   {rewards.map((reward, i) => {
                     const day = i + 1;
                     const isCompleted = day <= (checkedInToday ? streak : streak);
                     const isToday = day === streak && checkedInToday;
                     const isCurrent = day === (checkedInToday ? streak : streak + 1);
                     return (
-                      <div key={day} className={`flex flex-col items-center gap-1 p-1.5 rounded-xl border transition-all ${isToday ? "bg-amber-500/20 border-amber-500/40"
-                        : isCompleted ? "bg-emerald-500/10 border-emerald-500/20"
-                          : isCurrent && !checkedInToday ? "bg-blue-500/10 border-blue-500/30 ring-1 ring-blue-500/20"
-                            : "bg-[var(--card)]/20 border-[var(--border)]/30"
+                      <div key={day} className={`flex flex-col items-center gap-1.5 py-2 px-1 rounded-xl border transition-all ${
+                        isToday ? "bg-amber-500/20 border-amber-500/50 shadow-lg shadow-amber-500/10"
+                        : isCompleted ? "bg-emerald-500/10 border-emerald-500/25"
+                          : isCurrent && !checkedInToday ? "bg-blue-500/10 border-blue-500/30 ring-1 ring-blue-500/30 shadow-sm"
+                            : "bg-[var(--background)]/50 border-[var(--border)]/50"
                         }`}>
-                        <span className="text-[7px] font-black uppercase text-[var(--muted)]/40">{DAY_LABELS[i]}</span>
-                        <span className={`text-[8px] font-black ${isToday || isCompleted ? "text-amber-400" : isCurrent ? "text-blue-400" : "text-[var(--muted)]/30"
+                        <span className="text-[7px] font-black uppercase text-[var(--muted)]/50">{DAY_LABELS[i]}</span>
+                        <span className={`text-[9px] font-black ${
+                          isToday || isCompleted ? "text-amber-400" : isCurrent ? "text-blue-400" : "text-[var(--muted)]/30"
                           }`}>
                           {isToday || isCompleted ? "✓" : reward}
                         </span>
-                        {day === 7 && <span className="text-[6px] text-amber-400 font-black">🎉</span>}
+                        {day === 7 && <span className="text-[8px]">🎉</span>}
                       </div>
                     );
                   })}
                 </div>
 
                 {/* Reward labels */}
-                <div className="flex gap-1 text-[7px] font-black text-center text-[var(--muted)]/30 px-0.5">
+                <div className="flex gap-1 text-[7px] font-bold text-center text-[var(--muted)]/40 tracking-wide">
                   {rewards.map((r, i) => <div key={i} className="flex-1">{r} BBC</div>)}
                 </div>
 
                 <motion.button
                   whileHover={{ scale: checkedInToday ? 1 : 1.02 }}
-                  whileTap={{ scale: checkedInToday ? 1 : 0.98 }}
+                  whileTap={{ scale: checkedInToday ? 1 : 0.97 }}
                   onClick={handleCheckin}
                   disabled={checkedInToday || checkinLoading}
-                  className={`w-full py-3.5 rounded-xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${checkedInToday
-                    ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 cursor-default"
-                    : "bg-amber-500 text-white hover:bg-amber-400 shadow-lg shadow-amber-500/20"
+                  className={`w-full py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${
+                    checkedInToday
+                    ? "bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 cursor-default"
+                    : "bg-amber-400 text-black hover:bg-amber-300 shadow-lg shadow-amber-500/25 active:scale-[0.98]"
                     }`}
                 >
                   {checkinLoading ? (
