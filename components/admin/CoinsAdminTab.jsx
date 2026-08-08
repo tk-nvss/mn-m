@@ -339,25 +339,25 @@ export default function CoinsAdminTab() {
             </button>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--card)]/40">
-            <table className="w-full text-left border-collapse">
-              <thead>
+          <div className="overflow-hidden rounded-[1.5rem] border border-[var(--border)] bg-[var(--card)]/40">
+            <table className="w-full text-left border-collapse block sm:table">
+              <thead className="hidden sm:table-header-group">
                 <tr className="border-b border-[var(--border)] bg-[var(--foreground)]/[0.02]">
                   <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">User</th>
                   <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Status/Role</th>
                   <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[var(--muted)] text-right">Coins Balance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--border)]/40">
+              <tbody className="divide-y divide-[var(--border)]/40 block sm:table-row-group">
                 {loading ? (
-                  <tr>
-                    <td colSpan={3} className="py-10 text-center">
+                  <tr className="block sm:table-row">
+                    <td colSpan={3} className="py-10 text-center block sm:table-cell">
                       <FiRefreshCw className="animate-spin text-xl mx-auto text-[var(--muted)]/30" />
                     </td>
                   </tr>
                 ) : users.length === 0 ? (
-                  <tr>
-                    <td colSpan={3} className="py-10 text-center">
+                  <tr className="block sm:table-row">
+                    <td colSpan={3} className="py-10 text-center block sm:table-cell">
                       <Empty label="No users found" />
                     </td>
                   </tr>
@@ -367,16 +367,16 @@ export default function CoinsAdminTab() {
                       key={u._id}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="hover:bg-[var(--foreground)]/[0.02] transition-colors"
+                      className="hover:bg-[var(--foreground)]/[0.02] transition-colors flex flex-col sm:table-row p-4 sm:p-0 gap-3 sm:gap-0 relative"
                     >
-                      <td className="px-4 py-3">
+                      <td className="px-0 sm:px-4 py-0 sm:py-3 block sm:table-cell">
                         <div className="flex flex-col">
                           <span className="text-[11px] font-black leading-tight">{u.name}</span>
                           <span className="text-[9px] text-[var(--muted)] font-mono">{u.userId}</span>
-                          <span className="text-[8px] text-[var(--muted)]/60">{u.email}</span>
+                          <span className="text-[8px] text-[var(--muted)]/60 truncate">{u.email}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-0 sm:px-4 py-0 sm:py-3 block sm:table-cell">
                         <div className="flex flex-wrap gap-1">
                           <span className="px-1.5 py-0.5 rounded-md bg-[var(--foreground)]/[0.05] border border-[var(--border)] text-[8px] font-black uppercase">
                             {u.userType}
@@ -388,7 +388,7 @@ export default function CoinsAdminTab() {
                           ))}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-0 sm:px-4 py-0 sm:py-3 block sm:table-cell sm:text-right absolute sm:relative top-4 right-4 sm:top-auto sm:right-auto">
                         <div className="flex items-center justify-end gap-3">
                           <div className="flex flex-col items-end">
                             <span className="text-xs font-black text-amber-400">{u.coins || 0} BBC</span>
@@ -396,7 +396,7 @@ export default function CoinsAdminTab() {
                           </div>
                           <button aria-label="button"
                             onClick={() => setAdjModal(u)}
-                            className="p-1.5 rounded-lg bg-[var(--foreground)]/[0.05] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] transition-all"
+                            className="p-1.5 rounded-lg bg-[var(--foreground)]/[0.05] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] transition-all shadow-sm"
                             title="Adjust Balance"
                           >
                             <FiPlus className="text-[10px]" />
@@ -461,9 +461,9 @@ export default function CoinsAdminTab() {
             </div>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--card)]/40">
-            <table className="w-full text-left border-collapse">
-              <thead>
+          <div className="overflow-hidden rounded-[1.5rem] border border-[var(--border)] bg-[var(--card)]/40">
+            <table className="w-full text-left border-collapse block sm:table">
+              <thead className="hidden sm:table-header-group">
                 <tr className="border-b border-[var(--border)] bg-[var(--foreground)]/[0.02]">
                   <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Time / ID</th>
                   <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">User</th>
@@ -471,16 +471,16 @@ export default function CoinsAdminTab() {
                   <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[var(--muted)] text-right">Amount</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--border)]/40">
+              <tbody className="divide-y divide-[var(--border)]/40 block sm:table-row-group">
                 {loading ? (
-                  <tr>
-                    <td colSpan={4} className="py-10 text-center">
+                  <tr className="block sm:table-row">
+                    <td colSpan={4} className="py-10 text-center block sm:table-cell">
                       <FiRefreshCw className="animate-spin text-xl mx-auto text-[var(--muted)]/30" />
                     </td>
                   </tr>
                 ) : history.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="py-10 text-center">
+                  <tr className="block sm:table-row">
+                    <td colSpan={4} className="py-10 text-center block sm:table-cell">
                       <Empty label="No transactions matched" />
                     </td>
                   </tr>
@@ -490,9 +490,9 @@ export default function CoinsAdminTab() {
                       key={h.transactionId}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="hover:bg-[var(--foreground)]/[0.02] transition-colors text-[10px]"
+                      className="hover:bg-[var(--foreground)]/[0.02] transition-colors text-[10px] flex flex-col sm:table-row p-4 sm:p-0 gap-3 sm:gap-0 relative"
                     >
-                      <td className="px-4 py-3">
+                      <td className="px-0 sm:px-4 py-0 sm:py-3 block sm:table-cell">
                         <div className="flex flex-col">
                           <span className="font-mono text-[var(--muted)]/50">{h.transactionId}</span>
                           <span className="text-[9px] text-[var(--muted)] font-bold">
@@ -500,13 +500,13 @@ export default function CoinsAdminTab() {
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-0 sm:px-4 py-0 sm:py-3 block sm:table-cell">
                         <div className="flex flex-col">
                           <span className="font-black truncate max-w-[150px]">{h.userId}</span>
                           <span className="text-[8px] text-[var(--muted)]/40 truncate max-w-[150px]">{h.description}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-0 sm:px-4 py-0 sm:py-3 block sm:table-cell">
                         <div className="flex gap-1.5 items-center">
                           <span className={`px-1.5 py-0.5 rounded uppercase font-black text-[8px] ${h.type === "earn" ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"}`}>
                             {h.type}
@@ -514,7 +514,7 @@ export default function CoinsAdminTab() {
                           <span className="text-[9px] text-[var(--muted)] font-bold uppercase">{h.source}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-0 sm:px-4 py-0 sm:py-3 block sm:table-cell sm:text-right absolute sm:relative top-4 right-4 sm:top-auto sm:right-auto">
                         <span className={`font-black text-xs ${h.type === "earn" ? "text-amber-400" : "text-rose-400"}`}>
                           {h.type === "earn" ? "+" : "-"}{h.coins}
                         </span>

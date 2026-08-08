@@ -115,22 +115,22 @@ export default function BlogListing({ initialGame = "all" }) {
             {/* 🔍 SEARCH & FILTER */}
             <div className="flex items-center gap-2 w-full md:w-auto relative z-20">
               <div className="relative flex-1 md:w-64">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                   <FiSearch className="text-[var(--muted)] opacity-50" size={14} />
                 </div>
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="SEARCH..."
-                  className="w-full h-11 pl-10 pr-6 rounded-xl bg-[var(--card)] border border-[var(--border)] outline-none text-[10px] font-bold tracking-widest uppercase focus:border-[var(--accent)]/40 transition-all font-sans"
+                  className="w-full h-9 pl-9 pr-4 rounded-2xl border border-[var(--border)] bg-[var(--background)] outline-none text-[10px] font-bold tracking-widest uppercase focus:border-[var(--accent)]/50 transition-colors font-sans"
                 />
               </div>
               
               <button aria-label="button"
                 onClick={() => setShowFilters(!showFilters)}
-                className={`h-11 w-11 flex items-center justify-center rounded-xl border transition-all ${showFilters ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'bg-[var(--card)] border-[var(--border)] text-[var(--foreground)] hover:border-[var(--accent)]'}`}
+                className={`h-9 w-9 flex items-center justify-center rounded-2xl border transition-colors ${showFilters ? 'bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]' : 'bg-[var(--background)] border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)]'}`}
               >
-                <FiFilter size={16} />
+                <FiFilter size={14} />
               </button>
 
               {/* 🔖 FILTER DROPDOWN */}
@@ -141,24 +141,24 @@ export default function BlogListing({ initialGame = "all" }) {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 top-[calc(100%+12px)] w-full md:w-80 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-2xl shadow-black/50 z-30"
+                    className="absolute right-0 top-[calc(100%+8px)] w-full md:w-80 bg-[var(--background)] border border-[var(--border)] rounded p-5 shadow-2xl z-30"
                   >
                     <div className="space-y-6">
                         {/* 🎮 GAME FILTER */}
                         {initialGame === "all" && (
                             <div className="space-y-3">
-                                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted)] opacity-60 italic">
+                                <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--muted)] italic">
                                     SELECT SOURCE
                                 </div>
-                                <div className="flex flex-wrap gap-2">
+                                <div className="flex flex-wrap gap-1.5">
                                     {games.map((game) => (
                                         <Link
                                             key={game}
                                             href={game === "all" ? "/blog" : `/blog/${game}`}
-                                            className={`text-[10px] font-bold uppercase tracking-wider transition-all px-3 py-1.5 rounded-lg border ${
+                                            className={`text-[10px] font-bold uppercase tracking-widest transition-colors px-3 py-1.5 rounded border ${
                                                 selectedGame === game
-                                                    ? "bg-[var(--accent)] border-[var(--accent)] text-white"
-                                                    : "bg-[var(--background)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--muted)]"
+                                                    ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]"
+                                                    : "bg-transparent border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--muted)]"
                                             }`}
                                         >
                                             {game === "all" ? "ALL ARTICLES" : game}
@@ -170,10 +170,10 @@ export default function BlogListing({ initialGame = "all" }) {
 
                         {/* 🏷️ CATEGORY FILTER */}
                         <div className="space-y-3">
-                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted)] opacity-60 italic">
+                            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--muted)] italic">
                                 TOPICS
                             </div>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-1.5">
                                 {categories.map((type) => (
                                     <button aria-label="button"
                                         key={type}
@@ -181,10 +181,10 @@ export default function BlogListing({ initialGame = "all" }) {
                                           setSelectedType(type);
                                           setShowFilters(false);
                                         }}
-                                        className={`text-[10px] font-bold uppercase tracking-wider transition-all px-3 py-1.5 rounded-lg border ${
+                                        className={`text-[10px] font-bold uppercase tracking-widest transition-colors px-3 py-1.5 rounded border ${
                                             selectedType === type
-                                                ? "bg-[var(--accent)] border-[var(--accent)] text-white"
-                                                : "bg-[var(--background)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--muted)]"
+                                                ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]"
+                                                : "bg-transparent border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--muted)]"
                                         }`}
                                     >
                                         {type}

@@ -182,17 +182,19 @@ export default function TournamentsAdminTab() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-base font-bold text-[var(--foreground)]">Tournaments</h2>
-          <p className="text-xs text-[var(--muted)] mt-0.5">Create, edit and end tournaments</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[var(--border)]/50">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between sm:justify-start gap-3">
+            <h2 className="text-sm font-bold tracking-tight text-[var(--foreground)] uppercase truncate">Tournaments</h2>
+            <button aria-label="button"
+              onClick={() => { setForm(emptyForm); setEditId(null); setShowForm(true); }}
+              className="flex items-center gap-1.5 px-2.5 py-1 shrink-0 rounded border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-all active:scale-95 text-[10px] font-bold uppercase tracking-widest"
+            >
+              <FiPlus size={10} /> New Tournament
+            </button>
+          </div>
+          <p className="text-[10px] text-[var(--muted)] mt-0.5 font-mono truncate">Create, edit and end tournaments</p>
         </div>
-        <button aria-label="button"
-          onClick={() => { setForm(emptyForm); setEditId(null); setShowForm(true); }}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--accent)] text-xs font-bold hover:bg-[var(--accent)]/20 transition-colors"
-        >
-          <FiPlus size={14} /> New Tournament
-        </button>
       </div>
 
       {msg && (
@@ -334,46 +336,46 @@ export default function TournamentsAdminTab() {
           {tournaments.map((t) => {
             const isPending = confirmAction?.id === t._id;
             return (
-              <div key={t._id} className="rounded-xl border border-[var(--border)] bg-[var(--card)]/40 overflow-hidden">
-                <div className="p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+              <div key={t._id} className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-3 sm:p-4 hover:bg-[var(--foreground)]/[0.01] transition-colors overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20">
+                    <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                      <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-[var(--border)] text-[var(--muted)] bg-[var(--foreground)]/[0.02]">
                         {t.game}
                       </span>
-                      <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border ${STATUS_COLOR[t.status] || STATUS_COLOR.ended}`}>
+                      <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-[var(--border)] text-[var(--foreground)] bg-[var(--foreground)]/[0.05]">
                         {t.status}
                       </span>
                     </div>
-                    <p className="text-sm font-bold text-[var(--foreground)] truncate">{t.title}</p>
-                    <p className="text-[10px] text-[var(--muted)]">{t.format} · Prize: {t.prize}</p>
-                    <div className="flex items-center gap-3 mt-1 text-[9px] text-[var(--muted)]">
-                      <span className="flex items-center gap-1"><FiUsers size={10} /> {t.slotsFilled}/{t.slots} slots</span>
-                      <span className="flex items-center gap-1"><FiAward size={10} /> {t.entryCoins === 0 ? "Free" : `${t.entryCoins} coins`}</span>
+                    <p className="text-sm font-black text-[var(--foreground)] truncate leading-none">{t.title}</p>
+                    <p className="text-[10px] text-[var(--muted)] mt-1.5 font-medium truncate">{t.format} · Prize: {t.prize}</p>
+                    <div className="flex items-center gap-3 mt-1 text-[10px] font-bold text-[var(--muted)]">
+                      <span className="flex items-center gap-1"><FiUsers size={10} className="opacity-70" /> {t.slotsFilled}/{t.slots} slots</span>
+                      <span className="flex items-center gap-1"><FiAward size={10} className="opacity-70" /> {t.entryCoins === 0 ? "Free" : `${t.entryCoins} coins`}</span>
                     </div>
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex flex-wrap items-center gap-1.5 shrink-0 mt-2 sm:mt-0">
                     <button aria-label="button"
                       onClick={() => openEntries(t)}
-                      className="px-3 py-1.5 rounded-lg border border-[var(--accent)]/20 bg-[var(--accent)]/5 text-[10px] font-bold text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors"
+                      className="px-3 py-1.5 rounded border border-[var(--border)] text-[10px] font-bold uppercase tracking-widest text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-colors"
                     >
                       View Entries
                     </button>
                     <button aria-label="button"
                       onClick={() => openEdit(t)}
-                      className="w-8 h-8 rounded-lg border border-[var(--border)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 transition-colors"
+                      className="p-1.5 rounded border border-[var(--border)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-colors"
                       title="Edit"
                     >
-                      <FiEdit2 size={13} />
+                      <FiEdit2 size={12} />
                     </button>
                     {t.status !== "ended" && (
                       <button aria-label="button"
                         onClick={() => endTournament(t._id)}
                         disabled={isPending}
-                        className="px-3 py-1.5 rounded-lg border border-[var(--border)] text-[10px] font-bold text-[var(--muted)] hover:text-orange-400 hover:border-orange-400/30 transition-colors disabled:opacity-40"
+                        className="px-3 py-1.5 rounded border border-[var(--border)] text-[10px] font-bold uppercase tracking-widest text-[var(--muted)] hover:text-orange-400 hover:border-orange-400/30 hover:bg-orange-400/5 transition-colors disabled:opacity-40"
                         title="End tournament"
                       >
                         End
@@ -382,38 +384,38 @@ export default function TournamentsAdminTab() {
                     <button aria-label="button"
                       onClick={() => deleteTournament(t._id)}
                       disabled={isPending}
-                      className="w-8 h-8 rounded-lg border border-[var(--border)] flex items-center justify-center text-[var(--muted)] hover:text-red-400 hover:border-red-400/30 transition-colors disabled:opacity-40"
+                      className="p-1.5 rounded border border-[var(--border)] flex items-center justify-center text-[var(--muted)] hover:text-red-400 hover:bg-red-400/5 hover:border-red-400/30 transition-colors disabled:opacity-40"
                       title="Delete"
                     >
-                      <FiTrash2 size={13} />
+                      <FiTrash2 size={12} />
                     </button>
                   </div>
                 </div>
 
                 {/* Inline confirm strip */}
                 {isPending && (
-                  <div className={`px-4 py-3 border-t flex items-center justify-between gap-3 text-[11px] font-bold ${
+                  <div className={`mt-3 pt-3 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[10px] font-bold ${
                     confirmAction.type === "delete"
-                      ? "bg-red-500/5 border-red-500/20 text-red-400"
-                      : "bg-orange-500/5 border-orange-500/20 text-orange-400"
+                      ? "border-red-500/20 text-red-400"
+                      : "border-orange-500/20 text-orange-400"
                   }`}>
-                    <span className="uppercase tracking-wide">
+                    <span className="uppercase tracking-widest">
                       {confirmAction.type === "delete"
-                        ? "⚠️ Delete this tournament permanently?"
-                        : "Mark this tournament as ENDED?"}
+                        ? "⚠️ Permanently delete tournament?"
+                        : "Mark as ENDED?"}
                     </span>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <button aria-label="button"
                         onClick={executeConfirm}
-                        className={`px-3 py-1 rounded-lg text-white text-[10px] font-black uppercase tracking-widest ${
+                        className={`px-3 py-1.5 rounded text-[10px] font-black uppercase tracking-widest text-white ${
                           confirmAction.type === "delete" ? "bg-red-500 hover:bg-red-400" : "bg-orange-500 hover:bg-orange-400"
                         } transition-colors`}
                       >
-                        Yes, {confirmAction.type === "delete" ? "Delete" : "End"}
+                        Confirm
                       </button>
                       <button aria-label="button"
                         onClick={() => setConfirmAction(null)}
-                        className="px-3 py-1 rounded-lg border border-[var(--border)] text-[10px] font-black uppercase tracking-widest text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                        className="px-3 py-1.5 rounded border border-[var(--border)] text-[10px] font-black uppercase tracking-widest text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
                       >
                         Cancel
                       </button>

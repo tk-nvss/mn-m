@@ -270,58 +270,30 @@ export default function UsersTab() {
         </div>
       </div>
 
-      {/* ================= STATS GRID ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        {/* Active Users Column */}
-        <div className="space-y-2 sm:space-y-3">
-          <div className="flex items-center gap-2 px-1">
-            <Activity size={12} className="text-[var(--accent)]" />
-            <h4 className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Active Users</h4>
-          </div>
-          <div className="grid grid-cols-3 gap-2 sm:gap-3">
-            <InsightCard label="Today" value={activeStats.day} compact color="blue" pulse={activeStats.day > 0} />
-            <InsightCard label="Week" value={activeStats.week} compact color="blue" />
-            <InsightCard label="Month" value={activeStats.month} compact color="blue" />
-          </div>
-        </div>
 
-        {/* New Signups Column */}
-        <div className="space-y-2 sm:space-y-3">
-          <div className="flex items-center gap-2 px-1">
-            <Users size={12} className="text-emerald-500" />
-            <h4 className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">New Signups</h4>
-          </div>
-          <div className="grid grid-cols-3 gap-2 sm:gap-3">
-            <InsightCard label="Today" value={newStats.day} compact color="emerald" pulse={newStats.day > 0} />
-            <InsightCard label="Week" value={newStats.week} compact color="emerald" />
-            <InsightCard label="Month" value={newStats.month} compact color="emerald" />
-          </div>
-        </div>
-      </div>
 
       {/* ================= SEARCH & FILTERS ================= */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/40" size={16} />
+      <div className="flex gap-2 items-center">
+        <div className="relative flex-1 min-w-0">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-50" size={14} />
           <input
             value={search}
             onChange={(e) => {
               setPage(1);
               setSearch(e.target.value);
             }}
-            placeholder="Search by name, email, or user ID..."
-            className="w-full h-11 pl-11 pr-4 rounded-xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] text-sm focus:border-[var(--accent)]/50 outline-none transition-all placeholder:text-[var(--muted)]/40"
+            placeholder="SEARCH USERS..."
+            className="w-full h-9 pl-9 pr-4 rounded-2xl border border-[var(--border)] bg-[var(--background)] outline-none text-[10px] font-bold tracking-widest uppercase focus:border-[var(--accent)]/50 transition-colors font-sans text-[var(--foreground)] placeholder:text-[var(--muted)]/40 text-ellipsis"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 shrink-0">
           <button aria-label="button"
             onClick={() => setShowFilters(true)}
-            className="h-11 px-5 rounded-xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] flex items-center justify-center gap-2.5 hover:bg-[var(--foreground)]/[0.05] transition-all outline-none"
+            className="w-9 h-9 flex items-center justify-center rounded-2xl border transition-colors bg-[var(--background)] border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)] outline-none shrink-0"
           >
-            <Filter size={14} className="text-[var(--accent)]" />
-            <span className="text-sm font-semibold">Filters</span>
+            <Filter size={14} />
           </button>
-          <div className="hidden sm:flex px-4 h-11 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] items-center gap-2.5">
+          <div className="hidden sm:flex px-5 h-11 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] items-center gap-2.5">
             <Users size={14} className="text-[var(--accent)]" />
             <span className="text-xs font-bold text-[var(--foreground)] uppercase tracking-wider">
               {pagination.total} Records
@@ -576,89 +548,97 @@ export default function UsersTab() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-full max-w-md bg-[var(--background)] border-l border-[var(--border)] shadow-2xl z-[1110] flex flex-col"
+              className="fixed right-0 top-0 h-full w-full max-w-[360px] bg-[var(--background)] border-l border-[var(--border)] shadow-2xl z-[1110] flex flex-col"
             >
-              <div className="p-6 border-b border-[var(--border)]">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-bold text-[var(--foreground)]">User Details</h3>
+              {/* Simple Premium Header - Compact */}
+              <div className="p-5 border-b border-[var(--border)] bg-[var(--background)]">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-1.5">
+                    <User size={14} className="text-[var(--muted)]" />
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--foreground)]">User Profile</h3>
+                  </div>
                   <button aria-label="button"
                     onClick={() => setSelectedUser(null)}
-                    className="w-8 h-8 rounded-full bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-red-500/10 transition-all outline-none"
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05] transition-all outline-none"
                   >
-                    <X size={18} />
+                    <X size={14} />
                   </button>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  <Avatar user={selectedUser} size="lg" />
-                  <div className="min-w-0">
-                    <h4 className="text-base font-bold text-[var(--foreground)] truncate">{selectedUser.name}</h4>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className={`px-2 py-0.5 rounded-md border text-[9px] font-bold capitalize ${getRoleClass(selectedUser.userType)}`}>
+                <div className="flex items-center gap-3.5">
+                  <div className="relative">
+                    <Avatar user={selectedUser} size="md" />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[var(--background)]" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-lg font-bold text-[var(--foreground)] truncate leading-none mb-1.5">{selectedUser.name}</h4>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className={`px-2 py-0.5 rounded border text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 ${getRoleClass(selectedUser.userType)}`}>
+                        {getRoleIcon(selectedUser.userType)}
                         {selectedUser.userType}
                       </span>
-                      <span className="text-[10px] text-[var(--muted)]/60 font-mono tracking-tighter">{selectedUser.userId}</span>
-                    </div>
-                    {/* Tags Display In Header */}
-                    <div className="flex flex-wrap gap-1.5 mt-2">
-                      {selectedUser.tags?.map(tag => (
-                        <span key={tag} className={`px-2 py-0.5 rounded-md border text-[8px] font-black lowercase tracking-tight ${getTagColor(tag)}`}>
-                          {tag}
-                        </span>
-                      ))}
+                      <span className="text-[10px] text-[var(--muted)] font-mono">
+                        {selectedUser.userId}
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-6 space-y-8">
-                <DrawerSection icon={<Shield size={18} />} title="Account Management">
-                  <div className="space-y-4 pt-2">
-                    <p className="text-xs font-semibold text-[var(--muted)] px-1">Change User Role</p>
-                    <RoleDropdown
-                      value={selectedUser.userType}
-                      disabled={updatingUserId === selectedUser.userId || selectedUser.userType === "owner"}
-                      onChange={(v) => {
-                        changeUserRole(selectedUser.userId, v);
-                        setSelectedUser(null);
-                      }}
-                    />
-                    {selectedUser.userType === "owner" && (
-                      <p className="text-[11px] text-rose-500 font-medium px-1 italic">Role is restricted and cannot be modified.</p>
-                    )}
+              {/* Scrollable Content - Compact */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-[var(--foreground)]/[0.01]">
+                <DrawerSection icon={<Shield size={14} />} title="Account">
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted)] px-1">Role Assignment</p>
+                      <RoleDropdown
+                        value={selectedUser.userType}
+                        compact
+                        disabled={updatingUserId === selectedUser.userId || selectedUser.userType === "owner"}
+                        onChange={(v) => {
+                          changeUserRole(selectedUser.userId, v);
+                          setSelectedUser(null);
+                        }}
+                      />
+                      {selectedUser.userType === "owner" && (
+                        <p className="text-[9px] text-rose-500/80 font-medium px-2 flex items-center gap-1 mt-1.5 bg-rose-500/10 py-1 rounded border border-rose-500/20">
+                          <ShieldAlert size={10} /> Owner role restricted
+                        </p>
+                      )}
+                    </div>
 
-                    <div className="pt-4 border-t border-[var(--border)]">
-                      <p className="text-xs font-semibold text-[var(--muted)] px-1 mb-2">Session Management</p>
+                    <div className="space-y-1.5 pt-3 border-t border-[var(--border)]/50">
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted)] px-1">Session Action</p>
                       <button aria-label="button"
                         onClick={() => handleForceLogout(selectedUser._id)}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-rose-500/20 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all text-xs font-bold"
+                        className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-500 hover:bg-rose-500 hover:text-white transition-all text-xs font-bold shadow-sm active:scale-[0.98]"
                       >
-                        Force Log Out User
+                        Force Log Out
                       </button>
                     </div>
                   </div>
                 </DrawerSection>
 
-                <DrawerSection icon={<Tag size={18} />} title="User Categories / Tags">
-                  <div className="space-y-4 pt-2">
-                    <p className="text-[10px] font-black lowercase tracking-tight text-[var(--accent)] flex items-center gap-1.5 ml-1">
+                <DrawerSection icon={<Tag size={14} />} title="Tags">
+                  <div className="space-y-2.5">
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted)] flex items-center gap-1 px-1">
                       <Plus size={10} /> Select Category (1 Max)
                     </p>
                     
-                    <div className="flex flex-wrap gap-1.5 p-3 rounded-2xl bg-[var(--foreground)]/[0.02] border border-[var(--border)]">
+                    <div className="flex flex-wrap gap-1.5 p-2 rounded-lg bg-[var(--foreground)]/[0.02] border border-[var(--border)]/30">
                       {ALLOWED_TAGS.map(tag => {
                         const isActive = selectedUser.tags?.includes(tag);
                         return (
                           <button aria-label="button"
                             key={tag}
                             onClick={() => isActive ? removeTagFromUser(selectedUser, tag) : addTagToUser(selectedUser, tag)}
-                            className={`px-3 py-1.5 rounded-xl border text-[10px] font-black lowercase transition-all hover:scale-105 active:scale-95 shadow-sm ${
+                            className={`px-2.5 py-1 rounded-md border text-[9px] font-bold lowercase transition-all active:scale-95 ${
                               isActive 
-                                ? getTagColor(tag).replace('15', '100').replace('600', 'white') + " border-transparent"
-                                : getTagColor(tag) + " opacity-40 hover:opacity-100"
+                                ? getTagColor(tag).replace('15', '100').replace('600', 'white') + " border-transparent shadow-sm"
+                                : getTagColor(tag) + " bg-transparent opacity-60 hover:opacity-100 hover:bg-[var(--foreground)]/[0.03]"
                             }`}
                           >
-                            {isActive ? `✓ ${tag}` : `+ ${tag}`}
+                            {isActive ? `✓ ${tag}` : tag}
                           </button>
                         );
                       })}
@@ -666,27 +646,32 @@ export default function UsersTab() {
                   </div>
                 </DrawerSection>
 
-                <DrawerSection icon={<IdCard size={18} />} title="Basic Information">
-                  <DrawerDetail label="Full Name" value={selectedUser.name} />
-                  <DrawerDetail label="User ID" value={selectedUser.userId} />
-                  <DrawerDetail label="Total Success Orders" value={selectedUser.totalOrders || 0} />
-                  <DrawerDetail label="Member Since" value={new Date(selectedUser.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })} />
+                <DrawerSection icon={<IdCard size={14} />} title="Identity">
+                  <div className="grid grid-cols-2 gap-2">
+                    <DrawerDetail full label="Full Name" value={selectedUser.name} highlight />
+                    <DrawerDetail label="User ID" value={selectedUser.userId} code />
+                    <DrawerDetail label="Orders" value={selectedUser.totalOrders || 0} />
+                  </div>
                 </DrawerSection>
 
-                <DrawerSection icon={<Mail size={18} />} title="Contact Details">
-                  <DrawerDetail label="Email Address" value={selectedUser.email} />
-                  <DrawerDetail label="Phone Number" value={selectedUser.phone || "Not provided"} />
+                <DrawerSection icon={<Mail size={14} />} title="Contact">
+                  <div className="grid grid-cols-1 gap-2">
+                    <DrawerDetail label="Email Address" value={selectedUser.email} />
+                    <DrawerDetail label="Phone Number" value={selectedUser.phone || "Not provided"} />
+                  </div>
                 </DrawerSection>
 
-                <DrawerSection icon={<Activity size={18} />} title="Activity">
-                  <DrawerDetail
-                    label="Last Logged In"
-                    value={selectedUser.lastLogin
-                      ? `${new Date(selectedUser.lastLogin).toLocaleDateString(undefined, { dateStyle: 'long' })} at ${new Date(selectedUser.lastLogin).toLocaleTimeString()}`
-                      : "No record found"
-                    }
-                  />
-                  <DrawerDetail label="Last Login IP" value={selectedUser.lastLoginIp || "Not recorded"} />
+                <DrawerSection icon={<Activity size={14} />} title="Activity">
+                  <div className="grid grid-cols-1 gap-2">
+                    <DrawerDetail
+                      label="Last Logged In"
+                      value={selectedUser.lastLogin
+                        ? `${new Date(selectedUser.lastLogin).toLocaleDateString(undefined, { dateStyle: 'medium' })} at ${new Date(selectedUser.lastLogin).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                        : "No record found"
+                      }
+                    />
+                    <DrawerDetail label="Last Login IP" value={selectedUser.lastLoginIp || "Not recorded"} code />
+                  </div>
                 </DrawerSection>
               </div>
             </motion.div>
@@ -959,42 +944,3 @@ function DrawerDetail({ label, value }) {
   );
 }
 
-function InsightCard({ label, value, icon, color, pulse, compact }) {
-  const colorClasses = {
-    blue: "text-[var(--accent)] border-[var(--accent)]/10 bg-[var(--accent)]/5",
-    emerald: "text-emerald-500 border-emerald-500/10 bg-emerald-500/5",
-    amber: "text-amber-500 border-amber-500/10 bg-amber-500/5",
-  };
-
-  if (compact) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className={`px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl border ${colorClasses[color]} flex flex-col items-center justify-center text-center relative overflow-hidden`}
-      >
-        {pulse && (
-          <span className="absolute top-1 right-1 w-1 h-1 rounded-full bg-current animate-ping" />
-        )}
-        <span className="text-[7px] sm:text-[8px] font-bold uppercase tracking-tight opacity-60 mb-0.5">{label}</span>
-        <span className="text-xs sm:text-sm font-black tabular-nums whitespace-nowrap">{value}</span>
-      </motion.div>
-    );
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={`p-5 rounded-2xl border border-[var(--border)] bg-[var(--card)] flex items-start gap-4 shadow-sm ${colorClasses[color]}`}
-    >
-      <div className="p-3 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)]">
-        {icon}
-      </div>
-      <div>
-        <p className="text-[10px] font-bold uppercase tracking-widest opacity-60 mb-1">{label}</p>
-        <p className="text-2xl font-extrabold">{value}</p>
-      </div>
-    </motion.div>
-  );
-}

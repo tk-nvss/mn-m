@@ -140,34 +140,31 @@ export default function OrdersTab() {
   return (
     <div className="space-y-6 pb-10">
       {/* ================= HEADER ================= */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-3 mb-2">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-[var(--foreground)]">Orders</h2>
-          <p className="text-xs text-[var(--muted)] font-medium mt-1 hidden sm:block">
-             Check customer orders and update them.
-          </p>
+          <h2 className="text-lg font-black tracking-widest uppercase italic text-[var(--foreground)]">Orders</h2>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="px-2 sm:px-3 py-1.5 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] flex items-center gap-2">
+        <div className="flex items-center gap-2">
+          <div className="px-2.5 py-1.5 rounded-full bg-[var(--foreground)]/[0.03] border border-[var(--border)] flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-            <span className="text-[10px] font-bold text-[var(--muted)] uppercase">
-              {pagination.total} TOTAL ORDERS
+            <span className="text-[9px] font-black tracking-widest text-[var(--muted)] uppercase">
+              {pagination.total} ORDERS
             </span>
           </div>
           <button aria-label="button"
             onClick={() => { fetchOrdersList(); }}
-            className="p-2 sm:p-2.5 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] active:scale-95 transition-all"
+            className="p-1.5 rounded-full bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] active:scale-95 transition-all"
           >
-            <RefreshCcw size={16} className={loading ? "animate-spin" : ""} />
+            <RefreshCcw size={13} className={loading ? "animate-spin" : ""} />
           </button>
         </div>
       </div>
 
 
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-row gap-2 mb-2">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/50" size={16} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]/50" size={13} />
           <input
             value={search}
             onChange={(e) => {
@@ -175,16 +172,15 @@ export default function OrdersTab() {
               setSearch(e.target.value);
             }}
             placeholder="Search by Order ID, Email, Method..."
-            className="w-full h-11 pl-11 pr-4 rounded-xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] text-sm focus:border-[var(--accent)]/50 outline-none transition-all placeholder:text-[var(--muted)]/40"
+            className="w-full h-9 pl-9 pr-4 rounded-2xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] text-xs focus:border-[var(--accent)]/50 outline-none transition-all placeholder:text-[var(--muted)]/40"
           />
         </div>
         <div className="flex gap-2">
           <button aria-label="button"
             onClick={() => setShowFilters(true)}
-            className="h-11 px-5 rounded-xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] flex items-center justify-center gap-2.5 hover:bg-[var(--foreground)]/[0.05] transition-all outline-none"
+            className="h-9 w-9 rounded-2xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] flex items-center justify-center hover:bg-[var(--foreground)]/[0.05] transition-all outline-none"
           >
             <Filter size={14} className="text-[var(--accent)]" />
-            <span className="text-sm font-semibold">Filters</span>
           </button>
           
           {(search || filters.status || filters.gameSlug || filters.from || filters.to) && (
@@ -193,7 +189,7 @@ export default function OrdersTab() {
                 setSearch("");
                 setFilters({ status: "", gameSlug: "", from: "", to: "" });
               }}
-              className="px-3 h-11 rounded-xl text-rose-500 hover:bg-rose-500/10 text-[10px] font-black uppercase tracking-widest transition-all"
+              className="px-3 h-9 rounded-full text-rose-500 hover:bg-rose-500/10 text-[9px] font-black uppercase tracking-widest transition-all"
             >
               Clear
             </button>
@@ -296,7 +292,7 @@ export default function OrdersTab() {
             </div>
 
             {/* MOBILE LIST */}
-            <div className="lg:hidden space-y-3">
+            <div className="lg:hidden space-y-2">
               {orders.map((o, idx) => {
                 const meta = statusMeta[o.status] || statusMeta.pending;
                 return (
@@ -306,21 +302,21 @@ export default function OrdersTab() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     onClick={() => setSelectedOrder(o)}
-                    className="p-3.5 sm:p-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] active:bg-[var(--foreground)]/[0.05] transition-all"
+                    className="p-3 rounded-[1.2rem] border border-[var(--border)] bg-[var(--card)] active:bg-[var(--foreground)]/[0.05] transition-all"
                   >
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-lg bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--accent)]">
-                          <Gamepad2 size={14} />
+                    <div className="flex justify-between items-start mb-2.5">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-lg bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--accent)]">
+                          <Gamepad2 size={12} />
                         </div>
                         <div className="flex flex-col min-w-0">
-                          <p className="font-bold text-[var(--foreground)] uppercase text-[11px] leading-none mb-0.5 truncate">{o.gameSlug}</p>
-                          <p className="text-[10px] text-[var(--muted)] font-medium truncate max-w-[140px] lowercase leading-none">{o.email}</p>
+                          <p className="font-bold text-[var(--foreground)] uppercase text-[10px] leading-none mb-0.5 truncate">{o.gameSlug}</p>
+                          <p className="text-[9px] text-[var(--muted)] font-medium truncate max-w-[120px] lowercase leading-none">{o.email}</p>
                         </div>
                       </div>
                       <div className="flex flex-col items-end">
-                        <span className="text-base font-black text-emerald-500 tabular-nums">₹{o.price}</span>
-                        <span className="text-[8px] font-bold text-[var(--muted)] uppercase opacity-60 tracking-tighter">{o.paymentMethod}</span>
+                        <span className="text-sm font-black text-emerald-500 tabular-nums">₹{o.price}</span>
+                        <span className="text-[7px] font-bold text-[var(--muted)] uppercase opacity-60 tracking-tighter">{o.paymentMethod}</span>
                       </div>
                     </div>
 
@@ -404,12 +400,12 @@ export default function OrdersTab() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-full max-w-lg bg-[var(--background)] border-l border-[var(--border)] shadow-2xl z-[1110] flex flex-col"
+              className="fixed right-0 top-0 h-full w-full max-w-lg bg-[var(--background)]/95 backdrop-blur-3xl border-l border-white/5 shadow-[-10px_0_30px_rgba(0,0,0,0.5)] z-[1110] flex flex-col"
             >
-              <div className="p-6 border-b border-[var(--border)] bg-gradient-to-r from-[var(--foreground)]/[0.02] to-transparent">
-                <div className="flex items-start justify-between mb-6">
+              <div className="p-5 md:p-6 border-b border-white/5 bg-gradient-to-b from-[var(--card)]/50 to-transparent">
+                <div className="flex items-start justify-between mb-5">
                   <div className="space-y-0.5">
-                    <p className="text-[9px] font-mono font-black text-[var(--accent)] uppercase tracking-[0.2em] opacity-80 mb-1">#{selectedOrder.orderId.toUpperCase()}</p>
+                    <p className="text-[9px] font-mono font-black text-[var(--accent)] uppercase tracking-[0.2em] opacity-80 mb-1 drop-shadow-[0_0_8px_rgba(var(--accent-rgb),0.5)]">#{selectedOrder.orderId.toUpperCase()}</p>
                     <h3 className="text-xl font-black uppercase tracking-tight text-[var(--foreground)]">Order Details</h3>
                   </div>
                   <button aria-label="button"
@@ -420,9 +416,9 @@ export default function OrdersTab() {
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between p-4.5 rounded-2xl bg-[var(--foreground)]/[0.02] border border-[var(--border)]">
+                <div className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-br from-[var(--card)] to-[var(--background)] border border-[var(--border)] shadow-sm">
                   <div>
-                    <p className="text-[9px] font-bold text-[var(--muted)]/50 uppercase tracking-widest mb-0.5">Settlement</p>
+                    <p className="text-[9px] font-bold text-[var(--muted)] uppercase tracking-widest mb-0.5">Settlement</p>
                     <span className="text-2xl font-black text-emerald-500 tabular-nums leading-none">₹{selectedOrder.price}</span>
                   </div>
                   <StatusDropdown
@@ -442,26 +438,26 @@ export default function OrdersTab() {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-8 space-y-10">
-                <DrawerSection icon={<Gamepad2 size={16} />} title="Item Info">
+              <div className="flex-1 overflow-y-auto p-4 md:p-5 space-y-5 md:space-y-6">
+                <DrawerSection icon={<Gamepad2 size={14} />} title="Item Info">
                   <DrawerDetail label="Game" value={selectedOrder.gameSlug} emphasize />
                   <DrawerDetail label="Item Name" value={selectedOrder.itemName} />
                   <DrawerDetail label="Item Code" value={selectedOrder.itemSlug} />
                 </DrawerSection>
 
-                <DrawerSection icon={<Smartphone size={16} />} title="Player ID Info">
+                <DrawerSection icon={<Smartphone size={14} />} title="Player ID Info">
                   <DrawerDetail label="Player Name" value={selectedOrder.playerName || "Unknown"} />
                   <DrawerDetail label="Player ID" value={selectedOrder.playerId} emphasize />
                   <DrawerDetail label="Server/Zone" value={selectedOrder.zoneId || "GLOBAL"} />
                 </DrawerSection>
 
-                <DrawerSection icon={<CreditCard size={16} />} title="Payment Info">
+                <DrawerSection icon={<CreditCard size={14} />} title="Payment Info">
                   <DrawerDetail label="Payment Method" value={selectedOrder.paymentMethod} />
                   <DrawerDetail label="Payment Status" value={selectedOrder.paymentStatus} emphasize />
                   <DrawerDetail label="Product Status" value={selectedOrder.topupStatus} />
                 </DrawerSection>
 
-                <DrawerSection icon={<User size={16} />} title="Buyer Info">
+                <DrawerSection icon={<User size={14} />} title="Buyer Info">
                   <DrawerDetail label="Email" value={selectedOrder.email || "GUEST"} />
                   <DrawerDetail label="Phone" value={selectedOrder.phone || "N/A"} />
                   <DrawerDetail label="Time" value={new Date(selectedOrder.createdAt).toLocaleString()} />
@@ -672,22 +668,23 @@ function StatusDropdown({ value, onChange, options, disabled, compact }) {
 
 function DrawerSection({ icon, title, children }) {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-3 text-[var(--muted)]/40">
-        <div className="p-2 rounded-lg bg-[var(--foreground)]/[0.05] text-[var(--accent)]">{icon}</div>
-        <h4 className="text-[10px] font-black uppercase tracking-[0.2em]">{title}</h4>
-        <div className="h-px flex-1 bg-[var(--border)]" />
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 text-[var(--foreground)]">
+        <div className="p-1.5 rounded-lg bg-[var(--accent)]/10 text-[var(--accent)] shadow-[0_0_10px_rgba(var(--accent-rgb),0.1)]">{icon}</div>
+        <h4 className="text-[10px] font-black uppercase tracking-widest">{title}</h4>
+        <div className="h-px flex-1 bg-gradient-to-r from-[var(--border)] to-transparent ml-2" />
       </div>
-      <div className="grid grid-cols-1 gap-4 px-1">{children}</div>
+      <div className="flex flex-col gap-3 px-1 mt-1">{children}</div>
     </div>
   );
 }
 
 function DrawerDetail({ label, value, emphasize }) {
   return (
-    <div className="flex justify-between items-baseline gap-4 group">
-      <span className="text-[9px] font-black text-[var(--muted)]/40 uppercase tracking-tight group-hover:text-[var(--muted)]/60 transition-colors whitespace-nowrap">{label}</span>
-      <span className={`text-xs font-bold text-right truncate ${emphasize ? "text-[var(--accent)] italic uppercase" : "text-[var(--foreground)]"}`}>
+    <div className="flex items-end justify-between gap-1 group w-full">
+      <span className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-widest whitespace-nowrap mb-0.5">{label}</span>
+      <div className="flex-1 border-b-2 border-dotted border-[var(--border)]/30 mx-2 mb-1.5 opacity-50 group-hover:opacity-100 transition-opacity" />
+      <span className={`text-xs md:text-sm font-black text-right truncate max-w-[55%] ${emphasize ? "text-[var(--accent)] drop-shadow-[0_0_5px_rgba(var(--accent-rgb),0.3)] italic uppercase" : "text-[var(--foreground)]"}`}>
         {value || "N/A"}
       </span>
     </div>

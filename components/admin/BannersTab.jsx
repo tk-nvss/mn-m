@@ -146,145 +146,134 @@ export default function BannersTab({ banners, onRefresh }) {
     <div className="space-y-10 pb-10">
 
       {/* ================= HEADER SECTION ================= */}
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold tracking-tight text-[var(--foreground)]">Banners</h2>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[var(--border)]/50">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between sm:justify-start gap-3">
+            <h2 className="text-sm font-bold tracking-tight text-[var(--foreground)] uppercase truncate">Banners</h2>
+            <button aria-label="button"
+              onClick={onRefresh}
+              className="p-1.5 shrink-0 rounded border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-all active:scale-95"
+              title="Refresh List"
+            >
+              <RefreshCcw size={12} />
+            </button>
+          </div>
         </div>
-        <button aria-label="button"
-          onClick={onRefresh}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.08] transition-all shrink-0"
-        >
-          <RefreshCcw size={14} />
-          <span className="text-xs font-semibold whitespace-nowrap">Refresh List</span>
-        </button>
       </div>
 
       {/* ================= FORM CARD ================= */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        className={`
-          relative rounded-3xl overflow-hidden border backdrop-blur-3xl transition-all duration-500
-          ${editingId ? "border-[var(--accent)]/50 shadow-[0_0_40px_rgba(var(--accent-rgb),0.05)]" : "border-[var(--border)]"}
-          bg-[var(--card)]
-        `}
-      >
-        <div className="px-6 py-5 border-b border-[var(--border)] flex items-center justify-between">
+      <div className={`relative rounded-xl overflow-hidden border bg-[var(--background)] ${editingId ? "border-[var(--accent)]" : "border-[var(--border)]"}`}>
+        <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${editingId ? "bg-[var(--accent)]/20 text-[var(--accent)]" : "bg-[var(--foreground)]/[0.05] text-[var(--muted)]"}`}>
-              {editingId ? <Edit3 size={18} /> : <Plus size={18} />}
+            <div className={`p-1.5 rounded ${editingId ? "bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20" : "bg-[var(--foreground)]/[0.02] border border-[var(--border)] text-[var(--muted)]"}`}>
+              {editingId ? <Edit3 size={14} /> : <Plus size={14} />}
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[var(--foreground)]">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--foreground)]">
                 {editingId ? "Edit Banner" : "Add New Banner"}
               </h3>
-              <p className="text-[10px] text-[var(--muted)] font-medium mt-0.5">
+              <p className="text-[10px] font-mono text-[var(--muted)] mt-0.5">
                 {editingId ? "Updating existing banner content" : "Enter details for the new banner"}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="p-5 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
           {/* FORM FIELDS */}
-          <div className="lg:col-span-7 space-y-5">
+          <div className="lg:col-span-7 space-y-4">
 
-            <div className="grid md:grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-[var(--muted)] ml-1">Title</label>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Title</label>
                 <input
                   value={form.bannerTitle}
                   onChange={(e) => setForm({ ...form, bannerTitle: e.target.value })}
-                  className="w-full h-11 bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-xl px-4 text-sm text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
+                  className="w-full h-9 bg-[var(--background)] border border-[var(--border)] rounded px-3 text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
                   placeholder="Banner Title"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-[var(--muted)] ml-1">Slug</label>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Slug</label>
                 <input
                   value={form.bannerSlug}
                   onChange={(e) => setForm({ ...form, bannerSlug: e.target.value })}
                   disabled={!!editingId}
-                  className="w-full h-11 bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-xl px-4 text-sm text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none disabled:opacity-50 placeholder:text-[var(--muted)]/40"
+                  className="w-full h-9 bg-[var(--background)] border border-[var(--border)] rounded px-3 text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none disabled:opacity-50 placeholder:text-[var(--muted)]/40"
                   placeholder="banner-slug"
                 />
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-[var(--muted)] ml-1">Image URL</label>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Image URL</label>
               <input
                 value={form.bannerImage}
                 onChange={(e) => setForm({ ...form, bannerImage: e.target.value })}
-                className="w-full h-11 bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-xl px-4 text-sm text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
+                className="w-full h-9 bg-[var(--background)] border border-[var(--border)] rounded px-3 text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
                 placeholder="https://..."
               />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-[var(--muted)] ml-1">Banner Link</label>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Banner Link</label>
                 <input
                   value={form.bannerLink}
                   onChange={(e) => setForm({ ...form, bannerLink: e.target.value })}
-                  className="w-full h-11 bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-xl px-4 text-sm text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
+                  className="w-full h-9 bg-[var(--background)] border border-[var(--border)] rounded px-3 text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
                   placeholder="/games/..."
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-[var(--muted)] ml-1">Associated Games</label>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Associated Games</label>
                 <input
                   value={form.gameId}
                   onChange={(e) => setForm({ ...form, gameId: e.target.value })}
-                  className="w-full h-11 bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-xl px-4 text-sm text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
+                  className="w-full h-9 bg-[var(--background)] border border-[var(--border)] rounded px-3 text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
                   placeholder="mlbb, bgmi"
                 />
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-[var(--muted)] ml-1">Summary</label>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Summary</label>
               <textarea
                 value={form.bannerSummary}
                 onChange={(e) => setForm({ ...form, bannerSummary: e.target.value })}
-                className="w-full min-h-[90px] bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-xl p-4 text-sm text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none resize-none placeholder:text-[var(--muted)]/40"
+                className="w-full min-h-[80px] bg-[var(--background)] border border-[var(--border)] rounded p-3 text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none resize-none placeholder:text-[var(--muted)]/40"
                 placeholder="Short description..."
               />
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-2">
-              <div className="flex bg-[var(--foreground)]/[0.03] p-1.5 rounded-2xl border border-[var(--border)] self-start relative group/toggle">
-                <div
-                  className="absolute top-1.5 bottom-1.5 transition-all duration-500 rounded-xl bg-gradient-to-r from-[var(--accent)] to-purple-600 shadow-[0_0_20px_rgba(var(--accent-rgb),0.3)]"
-                  style={{
-                    left: form.isShow ? "6px" : "calc(50% + 1px)",
-                    width: "calc(50% - 7px)"
-                  }}
-                />
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+              <div className="flex bg-[var(--background)] p-1 rounded border border-[var(--border)] self-start">
                 <button aria-label="button"
                   onClick={() => setForm({ ...form, isShow: true })}
-                  className={`relative z-10 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-500 ${form.isShow ? "text-white" : "text-[var(--muted)] hover:text-[var(--foreground)]"
-                    }`}
+                  className={`px-4 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                    form.isShow ? "bg-[var(--foreground)] text-[var(--background)]" : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
+                  }`}
                 >
                   Visible
                 </button>
                 <button aria-label="button"
                   onClick={() => setForm({ ...form, isShow: false })}
-                  className={`relative z-10 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-500 ${!form.isShow ? "text-white" : "text-[var(--muted)] hover:text-[var(--foreground)]"
-                    }`}
+                  className={`px-4 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                    !form.isShow ? "bg-[var(--foreground)] text-[var(--background)]" : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
+                  }`}
                 >
                   Hidden
                 </button>
               </div>
 
-              <div className="flex gap-3 w-full sm:w-auto">
+              <div className="flex gap-2 w-full sm:w-auto">
                 {editingId && (
                   <button aria-label="button"
                     onClick={resetForm}
-                    className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl border border-[var(--border)] text-[10px] font-bold transition-all text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
+                    className="flex-1 sm:flex-none px-4 py-2 rounded border border-[var(--border)] text-[10px] font-bold uppercase tracking-widest transition-colors text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
                   >
                     Cancel
                   </button>
@@ -292,7 +281,7 @@ export default function BannersTab({ banners, onRefresh }) {
                 <button aria-label="button"
                   onClick={editingId ? updateBanner : addBanner}
                   disabled={isSubmitting}
-                  className="flex-1 sm:flex-none px-8 py-2.5 rounded-xl bg-[var(--accent)] text-white text-[10px] font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 shadow-lg shadow-[var(--accent)]/20"
+                  className="flex-1 sm:flex-none px-6 py-2 rounded border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] text-[10px] font-bold uppercase tracking-widest hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-colors disabled:opacity-50"
                 >
                   {isSubmitting ? "Saving..." : (editingId ? "Update Banner" : "Add Banner")}
                 </button>
@@ -328,7 +317,7 @@ export default function BannersTab({ banners, onRefresh }) {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* ================= LIST SECTION ================= */}
       <div className="space-y-5">

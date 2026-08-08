@@ -49,17 +49,22 @@ const UiSettingsTab = () => {
 
     return (
         <div className="space-y-8 max-w-2xl">
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+        <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
+                <FiLayout className="text-[var(--accent)] text-lg" />
+            </div>
             <div>
-                <h2 className="text-xl font-bold text-[var(--foreground)] flex items-center gap-2">
-                    <FiLayout className="text-[var(--accent)]" />
-                    Top Banners
-                </h2>
-                <p className="text-sm text-[var(--muted)] mt-1">
+                <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Top Banners</h2>
+                <p className="text-[9px] text-[var(--muted)]/50 font-bold uppercase tracking-[0.15em] leading-none mt-0.5">
                     Manage which promotional banners appear on the homepage.
                 </p>
             </div>
+        </div>
+      </div>
 
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden flex flex-col divide-y divide-[var(--border)]">
+            <div className="bg-[var(--card)]/40 border border-[var(--border)] rounded-[1.5rem] overflow-hidden flex flex-col divide-y divide-[var(--border)]/50 shadow-xl shadow-black/5">
                 {['showTopNoticeBanner', 'showHomeEarnPromotion', 'showTradeMarketplaceBanner', 'showCustomWebBanner', 'showGamesWebBanner', 'showGiveawayBanner'].map((bannerKey) => {
                     const toggleBanner = async () => {
                         try {
@@ -97,22 +102,22 @@ const UiSettingsTab = () => {
                     };
 
                     return (
-                        <div key={bannerKey} className="p-6 flex items-center justify-between gap-6">
+                        <div key={bannerKey} className="p-6 md:p-8 flex items-center justify-between gap-6 hover:bg-[var(--foreground)]/[0.02] transition-colors">
                             <div>
-                                <h3 className="font-semibold text-[var(--foreground)]">{formatTitle(bannerKey)}</h3>
+                                <h3 className="text-xs font-black uppercase tracking-wide text-[var(--foreground)]">{formatTitle(bannerKey)}</h3>
                             </div>
                             <button aria-label="button"
                                 onClick={toggleBanner}
                                 disabled={saving}
                                 className={`
-                                  relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none 
-                                  ${settings[bannerKey] ? "bg-[var(--accent)]" : "bg-gray-700"}
+                                  relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-300 ease-in-out focus:outline-none 
+                                  ${settings[bannerKey] ? "bg-[var(--accent)] shadow-lg shadow-[var(--accent)]/30" : "bg-[var(--foreground)]/10 hover:bg-[var(--foreground)]/20"}
                                   ${saving ? "opacity-50 cursor-not-allowed" : ""}
                                 `}
                             >
                                 <span
                                     className={`
-                                    pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out
+                                    pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-300 ease-in-out
                                     ${settings[bannerKey] ? "translate-x-5" : "translate-x-0"}
                                   `}
                                 />
@@ -122,16 +127,22 @@ const UiSettingsTab = () => {
                 })}
             </div>
 
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden mt-8 flex flex-col divide-y divide-[var(--border)]">
-                <div>
-                    <h2 className="text-xl font-bold text-[var(--foreground)] flex items-center gap-2 p-6 pb-2">
-                        <FiLayout className="text-[var(--accent)]" />
-                        Community Popups
-                    </h2>
-                    <p className="text-sm text-[var(--muted)] px-6 pb-6 mt-1">
-                        Manage which community popup appears on the screen.
-                    </p>
-                </div>
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4 mt-12 mb-6">
+        <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
+                <FiLayout className="text-[var(--accent)] text-lg" />
+            </div>
+            <div>
+                <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Community Popups</h2>
+                <p className="text-[9px] text-[var(--muted)]/50 font-bold uppercase tracking-[0.15em] leading-none mt-0.5">
+                    Manage which community popup appears on the screen.
+                </p>
+            </div>
+        </div>
+      </div>
+
+            <div className="bg-[var(--card)]/40 border border-[var(--border)] rounded-[1.5rem] overflow-hidden flex flex-col divide-y divide-[var(--border)]/50 shadow-xl shadow-black/5">
 
                 {['showTelegramPopup', 'showWhatsappPopup', 'showGamesPopup', 'showJoinUsPopup'].map((bannerKey) => {
                     const toggleBanner = async () => {
@@ -170,22 +181,22 @@ const UiSettingsTab = () => {
                     };
 
                     return (
-                        <div key={bannerKey} className="p-6 flex items-center justify-between gap-6">
+                        <div key={bannerKey} className="p-6 md:p-8 flex items-center justify-between gap-6 hover:bg-[var(--foreground)]/[0.02] transition-colors">
                             <div>
-                                <h3 className="font-semibold text-[var(--foreground)]">{formatTitle(bannerKey)}</h3>
+                                <h3 className="text-xs font-black uppercase tracking-wide text-[var(--foreground)]">{formatTitle(bannerKey)}</h3>
                             </div>
                             <button aria-label="button"
                                 onClick={toggleBanner}
                                 disabled={saving}
                                 className={`
-                                  relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none 
-                                  ${settings[bannerKey] ? "bg-[var(--accent)]" : "bg-gray-700"}
+                                  relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-300 ease-in-out focus:outline-none 
+                                  ${settings[bannerKey] ? "bg-[var(--accent)] shadow-lg shadow-[var(--accent)]/30" : "bg-[var(--foreground)]/10 hover:bg-[var(--foreground)]/20"}
                                   ${saving ? "opacity-50 cursor-not-allowed" : ""}
                                 `}
                             >
                                 <span
                                     className={`
-                                    pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out
+                                    pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-300 ease-in-out
                                     ${settings[bannerKey] ? "translate-x-5" : "translate-x-0"}
                                   `}
                                 />
@@ -195,16 +206,22 @@ const UiSettingsTab = () => {
                 })}
             </div>
 
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden mt-8 flex flex-col divide-y divide-[var(--border)]">
-                <div>
-                    <h2 className="text-xl font-bold text-[var(--foreground)] flex items-center gap-2 p-6 pb-2">
-                        <FiLayout className="text-[var(--accent)]" />
-                        Homepage Sections
-                    </h2>
-                    <p className="text-sm text-[var(--muted)] px-6 pb-6 mt-1">
-                        Manage which main sections appear on the homepage.
-                    </p>
-                </div>
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4 mt-12 mb-6">
+        <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
+                <FiLayout className="text-[var(--accent)] text-lg" />
+            </div>
+            <div>
+                <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Homepage Sections</h2>
+                <p className="text-[9px] text-[var(--muted)]/50 font-bold uppercase tracking-[0.15em] leading-none mt-0.5">
+                    Manage which main sections appear on the homepage.
+                </p>
+            </div>
+        </div>
+      </div>
+
+            <div className="bg-[var(--card)]/40 border border-[var(--border)] rounded-[1.5rem] overflow-hidden flex flex-col divide-y divide-[var(--border)]/50 shadow-xl shadow-black/5">
 
                 {['showGameBannerCarousel', 'showStorySlider', 'showFlashSale', 'showHomeQuickActions'].map((bannerKey) => {
                     const toggleBanner = async () => {
@@ -243,22 +260,22 @@ const UiSettingsTab = () => {
                     };
 
                     return (
-                        <div key={bannerKey} className="p-6 flex items-center justify-between gap-6">
+                        <div key={bannerKey} className="p-6 md:p-8 flex items-center justify-between gap-6 hover:bg-[var(--foreground)]/[0.02] transition-colors">
                             <div>
-                                <h3 className="font-semibold text-[var(--foreground)]">{formatTitle(bannerKey)}</h3>
+                                <h3 className="text-xs font-black uppercase tracking-wide text-[var(--foreground)]">{formatTitle(bannerKey)}</h3>
                             </div>
                             <button aria-label="button"
                                 onClick={toggleBanner}
                                 disabled={saving}
                                 className={`
-                                  relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none 
-                                  ${settings[bannerKey] ? "bg-[var(--accent)]" : "bg-gray-700"}
+                                  relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-300 ease-in-out focus:outline-none 
+                                  ${settings[bannerKey] ? "bg-[var(--accent)] shadow-lg shadow-[var(--accent)]/30" : "bg-[var(--foreground)]/10 hover:bg-[var(--foreground)]/20"}
                                   ${saving ? "opacity-50 cursor-not-allowed" : ""}
                                 `}
                             >
                                 <span
                                     className={`
-                                    pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out
+                                    pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-300 ease-in-out
                                     ${settings[bannerKey] ? "translate-x-5" : "translate-x-0"}
                                   `}
                                 />
@@ -268,16 +285,22 @@ const UiSettingsTab = () => {
                 })}
             </div>
 
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden mt-8 flex flex-col divide-y divide-[var(--border)]">
-                <div>
-                    <h2 className="text-xl font-bold text-[var(--foreground)] flex items-center gap-2 p-6 pb-2">
-                        <FiLayout className="text-[var(--accent)]" />
-                        Global UI Elements
-                    </h2>
-                    <p className="text-sm text-[var(--muted)] px-6 pb-6 mt-1">
-                        Manage UI elements that appear across the entire site.
-                    </p>
-                </div>
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4 mt-12 mb-6">
+        <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
+                <FiLayout className="text-[var(--accent)] text-lg" />
+            </div>
+            <div>
+                <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Global UI Elements</h2>
+                <p className="text-[9px] text-[var(--muted)]/50 font-bold uppercase tracking-[0.15em] leading-none mt-0.5">
+                    Manage UI elements that appear across the entire site.
+                </p>
+            </div>
+        </div>
+      </div>
+
+            <div className="bg-[var(--card)]/40 border border-[var(--border)] rounded-[1.5rem] overflow-hidden flex flex-col divide-y divide-[var(--border)]/50 shadow-xl shadow-black/5">
 
                 {['showBottomNav'].map((bannerKey) => {
                     const toggleBanner = async () => {
@@ -316,22 +339,22 @@ const UiSettingsTab = () => {
                     };
 
                     return (
-                        <div key={bannerKey} className="p-6 flex items-center justify-between gap-6">
+                        <div key={bannerKey} className="p-6 md:p-8 flex items-center justify-between gap-6 hover:bg-[var(--foreground)]/[0.02] transition-colors">
                             <div>
-                                <h3 className="font-semibold text-[var(--foreground)]">{formatTitle(bannerKey)}</h3>
+                                <h3 className="text-xs font-black uppercase tracking-wide text-[var(--foreground)]">{formatTitle(bannerKey)}</h3>
                             </div>
                             <button aria-label="button"
                                 onClick={toggleBanner}
                                 disabled={saving}
                                 className={`
-                                  relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none 
-                                  ${settings[bannerKey] ? "bg-[var(--accent)]" : "bg-gray-700"}
+                                  relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-300 ease-in-out focus:outline-none 
+                                  ${settings[bannerKey] ? "bg-[var(--accent)] shadow-lg shadow-[var(--accent)]/30" : "bg-[var(--foreground)]/10 hover:bg-[var(--foreground)]/20"}
                                   ${saving ? "opacity-50 cursor-not-allowed" : ""}
                                 `}
                             >
                                 <span
                                     className={`
-                                    pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out
+                                    pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-300 ease-in-out
                                     ${settings[bannerKey] ? "translate-x-5" : "translate-x-0"}
                                   `}
                                 />
@@ -342,8 +365,8 @@ const UiSettingsTab = () => {
             </div>
 
             {message.text && (
-                <div className={`p-4 flex items-center gap-2 text-sm rounded-xl ${message.type === "success" ? "text-green-500 bg-green-500/10" : "text-red-500 bg-red-500/10"}`}>
-                    {message.type === "success" ? <FiCheckCircle /> : <FiAlertCircle />}
+                <div className={`p-4 md:p-6 mt-6 flex items-center gap-3 text-xs font-bold tracking-wide uppercase rounded-[1.5rem] border ${message.type === "success" ? "text-emerald-500 bg-emerald-500/10 border-emerald-500/20" : "text-rose-500 bg-rose-500/10 border-rose-500/20"}`}>
+                    {message.type === "success" ? <FiCheckCircle className="text-sm" /> : <FiAlertCircle className="text-sm" />}
                     {message.text}
                 </div>
             )}

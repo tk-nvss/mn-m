@@ -69,12 +69,12 @@ export default function OrdersTab() {
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] border border-[var(--accent)]/10 shadow-[0_0_15px_rgba(var(--accent-rgb),0.1)]">
-            <FiShoppingBag size={18} />
+          <div className="w-8 h-8 rounded bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] border border-[var(--accent)]/20">
+            <FiShoppingBag size={14} />
           </div>
           <div className="flex items-center gap-3">
             <h3 className="text-xl font-[900] uppercase italic tracking-tighter text-[var(--foreground)] leading-none mt-1">Your Orders</h3>
-            <div className="px-2.5 py-1 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[9px] font-black uppercase tracking-widest mt-1">
+            <div className="px-2 py-0.5 rounded border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--accent)] text-[8px] font-black uppercase tracking-widest mt-1">
               {loading ? "..." : `${totalCount} Order${totalCount !== 1 ? 's' : ''}`}
             </div>
           </div>
@@ -83,14 +83,14 @@ export default function OrdersTab() {
         {/* SEARCH CONSOLE */}
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <div className="relative w-full sm:w-64 group flex-1">
-            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors" />
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-50 group-focus-within:opacity-100 group-focus-within:text-[var(--accent)] transition-all" size={14} />
             <input
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && setSearch(searchValue)}
               onBlur={() => setSearch(searchValue)}
               placeholder="Search orders..."
-              className="w-full pl-11 pr-4 py-3 rounded-xl bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)] text-[11px] uppercase font-bold tracking-widest outline-none transition-all placeholder:text-[var(--muted)] text-[var(--foreground)]"
+              className="w-full h-9 pl-9 pr-4 rounded-2xl bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)]/50 text-[10px] uppercase font-bold tracking-widest outline-none transition-colors placeholder:text-[var(--muted)]/50 text-[var(--foreground)]"
             />
           </div>
           <FilterDropdown status={statusFilter} setStatus={setStatusFilter} />
@@ -125,7 +125,7 @@ export default function OrdersTab() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: idx * 0.03, type: "spring", stiffness: 300, damping: 30 }}
                 >
-                  <OrderItem order={order} />
+                  <OrderItem order={order} index={idx} />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -189,8 +189,8 @@ function FilterDropdown({ status, setStatus }: { status: string, setStatus: (s: 
 
   return (
     <div className="relative" ref={ref}>
-      <button aria-label="filter" onClick={() => setIsOpen(!isOpen)} className={`p-3.5 rounded-xl border transition-all flex items-center gap-2 text-xs font-bold ${isOpen || status !== 'all' ? 'bg-[var(--accent)]/10 border-[var(--accent)]/40 text-[var(--accent)]' : 'bg-[var(--background)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]'}`}>
-        <FiFilter size={16} />
+      <button aria-label="filter" onClick={() => setIsOpen(!isOpen)} className={`w-9 h-9 flex items-center justify-center rounded-2xl border transition-colors ${isOpen || status !== 'all' ? 'bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]' : 'bg-[var(--background)] border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)]'}`}>
+        <FiFilter size={14} />
       </button>
 
       <AnimatePresence>
@@ -199,14 +199,14 @@ function FilterDropdown({ status, setStatus }: { status: string, setStatus: (s: 
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute right-0 top-full mt-2 w-56 bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-xl z-50 p-4"
+            className="absolute right-0 top-full mt-2 w-56 bg-[var(--background)] border border-[var(--border)] rounded shadow-xl z-50 p-4"
           >
             <div className="space-y-4">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)] mb-2">Status</p>
                 <div className="flex flex-wrap gap-1.5">
                   {["all", "pending", "success", "failed"].map(f => (
-                    <button aria-label="button" key={f} onClick={() => { setStatus(f); setIsOpen(false); }} className={`px-2.5 py-1 rounded-lg text-[10px] font-bold capitalize transition-all ${status === f ? "bg-[var(--accent)] text-black" : "bg-[var(--foreground)]/[0.03] text-[var(--muted)] hover:text-[var(--foreground)]"}`}>
+                    <button aria-label="button" key={f} onClick={() => { setStatus(f); setIsOpen(false); }} className={`px-2 py-1 rounded border text-[9px] font-bold uppercase tracking-widest transition-colors ${status === f ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]" : "bg-transparent border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--muted)]"}`}>
                       {f}
                     </button>
                   ))}

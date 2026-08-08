@@ -7,18 +7,13 @@ export default function GameHeader({ game }) {
   if (!game) return null;
 
   return (
-    <div className="relative max-w-6xl mx-auto mb-3 mt-0">
-      {/* Subtle Ambient Background Glow */}
-      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-48 h-12 bg-[var(--accent)]/10 blur-[40px] opacity-10 -z-10" />
-
-      <div
-        className="relative px-3 py-2 md:px-5 md:py-2 bg-[var(--card)]/60 backdrop-blur-2xl border border-white/10 rounded-2xl md:rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex items-center justify-between gap-4 overflow-hidden group"
-      >
+    <div className="relative max-w-6xl mx-auto mb-2 mt-0">
+      <div className="relative p-2 md:p-2.5 bg-[var(--card)] border border-[var(--border)] rounded-2xl flex items-center justify-between gap-3">
         {/* LEFT: Game Identity */}
-        <div className="relative z-10 flex items-center gap-3 md:gap-4">
+        <div className="relative z-10 flex items-center gap-2.5 md:gap-3">
           {/* Clean Game Icon Container */}
           <div className="relative shrink-0">
-            <div className="relative w-10 h-10 md:w-13 md:h-13 rounded-xl md:rounded-2xl overflow-hidden bg-[var(--background)] ring-1 ring-white/10 shadow-xl">
+            <div className="relative w-9 h-9 md:w-11 md:h-11 rounded-xl overflow-hidden bg-[var(--background)] border border-[var(--border)]">
               <Image
                 src={game.gameImageId?.image || "/logo.png"}
                 alt={game.gameName}
@@ -28,7 +23,7 @@ export default function GameHeader({ game }) {
             </div>
 
             {/* Live Indicator Dot */}
-            <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-[var(--background)] rounded-full flex items-center justify-center p-[1px]">
+            <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[var(--card)] rounded-full flex items-center justify-center p-[2px]">
               <div className="w-full h-full bg-emerald-500 rounded-full" />
             </div>
           </div>
@@ -52,23 +47,23 @@ export default function GameHeader({ game }) {
         </div>
 
         {/* RIGHT: Minimalist Trust Badges */}
-        <div className="flex items-center gap-2 md:gap-3 relative z-10 shrink-0">
+        <div className="flex items-center gap-1.5 relative z-10 shrink-0">
           {/* Instant/Manual Delivery Badge */}
-          <div className={`flex items-center gap-2 px-2.5 py-1.5 md:px-3 md:py-2 rounded-xl border group/badge 
+          <div className={`flex items-center gap-1 px-2 py-1 rounded-full border
             ${game.isValidationRequired === false
-              ? "bg-amber-500/5 border-amber-500/10"
-              : "bg-[var(--accent)]/5 border-[var(--accent)]/10"
+              ? "bg-amber-500/5 border-amber-500/10 text-amber-500"
+              : "bg-[var(--accent)]/5 border-[var(--accent)]/10 text-[var(--accent)]"
             }`}>
-            <FiZap className={`${(game.isValidationRequired === false && game.gameSlug !== 'bgmi-manual') ? "text-amber-500" : "text-[var(--accent)]"}`} size={14} fill="currentColor" />
-            <span className="hidden sm:inline text-[9px] font-black uppercase tracking-widest text-[var(--foreground)] opacity-80">
+            <FiZap size={10} fill="currentColor" />
+            <span className="hidden sm:inline text-[8px] font-bold uppercase tracking-widest text-[var(--foreground)]">
               {(game.isValidationRequired === false && game.gameSlug !== 'bgmi-manual') ? "Manual" : "Instant"}
             </span>
           </div>
 
           {/* Secure Badge */}
-          <div className="flex items-center gap-2 px-2.5 py-1.5 md:px-3 md:py-2 rounded-xl bg-emerald-500/5 border border-emerald-500/10 group/badge">
-            <FiShield className="text-emerald-500" size={14} />
-            <span className="hidden sm:inline text-[9px] font-black uppercase tracking-widest text-[var(--foreground)] opacity-80">Secure</span>
+          <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/5 border border-emerald-500/10 text-emerald-500">
+            <FiShield size={10} />
+            <span className="hidden sm:inline text-[8px] font-bold uppercase tracking-widest text-[var(--foreground)]">Secure</span>
           </div>
         </div>
       </div>

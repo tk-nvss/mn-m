@@ -361,23 +361,23 @@ export default function AdminPanalPage() {
       <section className="min-h-screen bg-[var(--background)] px-2 sm:px-6 py-3">
         <div className="w-full max-w-[1600px] mx-auto">
           {/* HEADER & BALANCE (COMPACT) */}
-          <div className="mb-4 flex items-center justify-between gap-3 bg-gradient-to-r from-[var(--card)] to-[var(--background)] border border-[var(--border)] rounded-lg px-4 py-3 shadow-sm">
+          <div className="mb-3 flex items-center justify-between gap-3 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-3 md:p-4">
             
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 mb-0.5">
-                <h1 className="text-sm font-black tracking-wide text-[var(--foreground)] truncate uppercase">
+              <div className="flex items-center gap-2 mb-1">
+                <h1 className="text-xs md:text-sm font-black tracking-widest text-[var(--foreground)] truncate uppercase italic">
                   Admin Panel
                 </h1>
-                <span className="h-1.5 w-1.5 rounded-sm bg-[var(--accent)] shadow-[0_0_8px_rgba(var(--accent-rgb),0.8)] shrink-0 animate-pulse" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] shrink-0 animate-pulse" />
               </div>
               
               {/* BALANCE BELOW TEXT */}
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-[9px] uppercase tracking-widest text-[var(--muted)] font-black">Balance:</span>
-                <span className="text-sm font-black text-[var(--foreground)] tabular-nums">
-                  {balance !== null ? balance : "---"}
+              <div className="flex items-center gap-1.5">
+                <span className="text-[8px] md:text-[9px] uppercase tracking-widest text-[var(--muted)] font-black">Balance:</span>
+                <span className="text-xs md:text-sm font-black text-[var(--foreground)] tabular-nums">
+                  {balance !== null ? balance : "---"} USD
                 </span>
-                <span className="text-[8px] font-bold text-green-500 uppercase tracking-widest bg-green-500/10 px-1 py-0.5 rounded-sm">
+                <span className="text-[7px] md:text-[8px] font-black text-emerald-500 uppercase tracking-widest border border-emerald-500/20 bg-emerald-500/10 px-1.5 py-0.5 rounded-md ml-1">
                   Active
                 </span>
               </div>
@@ -385,9 +385,9 @@ export default function AdminPanalPage() {
 
             <button aria-label="button" 
               onClick={() => setIsSidebarOpen(true)}
-              className="p-1.5 rounded-md bg-[var(--background)] border border-[var(--border)] hover:bg-[var(--accent)]/10 hover:border-[var(--accent)]/30 hover:text-[var(--accent)] transition-all shadow-sm group shrink-0"
+              className="p-2 rounded-xl bg-[var(--background)] border border-[var(--border)] hover:bg-[var(--foreground)]/5 hover:border-[var(--accent)]/30 transition-all group shrink-0"
             >
-              <FiMenu size={18} className="group-active:scale-95 transition-transform" />
+              <FiMenu size={16} className="text-[var(--foreground)] group-active:scale-95 transition-transform" />
             </button>
           </div>
 

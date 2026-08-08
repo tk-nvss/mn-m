@@ -217,56 +217,63 @@ export default function PricingTab({
   return (
     <div className="space-y-6 pb-20 max-w-full overflow-x-hidden">
       {/* ================= TOP BAR ================= */}
-      <div className="flex flex-wrap items-center justify-between gap-4 px-4 py-3.5 rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-md shadow-black/5">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-black uppercase italic tracking-tighter text-[var(--foreground)]">Pricing <span className="text-[var(--accent)]">Config</span></h2>
-          </div>
-          <p className="text-[10px] text-[var(--muted)] font-bold uppercase tracking-widest opacity-50">Manage profit margins and fixed item prices</p>
+      <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+        <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
+                <Settings2 className="text-[var(--accent)] text-lg" size={20} />
+            </div>
+            <div>
+                <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Pricing Config</h2>
+                <p className="text-[9px] text-[var(--muted)]/50 font-bold uppercase tracking-[0.15em] leading-none mt-0.5">
+                    Manage profit margins and fixed item prices
+                </p>
+            </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-3 ml-auto">
-          {/* Mode Switcher */}
-          <div className="flex bg-[var(--foreground)]/[0.03] p-1 rounded-xl border border-[var(--border)]">
-            {[{ id: "percent", label: "Markup", icon: <Percent size={12} /> }, { id: "fixed", label: "Fixed", icon: <Coins size={12} /> }].map((m) => (
-              <button aria-label="button"
-                key={m.id}
-                onClick={() => setPricingMode(m.id)}
-                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all ${pricingMode === m.id
-                  ? "bg-[var(--accent)] text-white shadow-md shadow-[var(--accent)]/10"
-                  : "text-[var(--muted)] hover:text-[var(--foreground)]"
-                  }`}
-              >
-                {m.icon}
-                {m.label}
-              </button>
-            ))}
-          </div>
+        <div className="flex flex-col lg:flex-row items-center gap-3 w-full lg:w-auto mt-2 lg:mt-0">
+          <div className="flex w-full lg:w-auto items-center justify-between lg:justify-end gap-2">
+            {/* Mode Switcher */}
+            <div className="flex flex-1 lg:flex-none justify-center bg-[var(--foreground)]/[0.03] p-1 rounded-full border border-[var(--border)]/50 shadow-inner">
+              {[{ id: "percent", label: "Markup", icon: <Percent size={12} /> }, { id: "fixed", label: "Fixed", icon: <Coins size={12} /> }].map((m) => (
+                <button aria-label="button"
+                  key={m.id}
+                  onClick={() => setPricingMode(m.id)}
+                  className={`flex-1 lg:flex-none flex justify-center items-center gap-1 px-1.5 sm:px-4 py-1.5 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap active:scale-95 ${pricingMode === m.id
+                    ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20"
+                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
+                    }`}
+                >
+                  <span className="hidden sm:inline">{m.icon}</span>
+                  {m.label}
+                </button>
+              ))}
+            </div>
 
-          <div className="h-6 w-px bg-[var(--border)] opacity-30" />
+            <div className="hidden lg:block h-6 w-px bg-[var(--border)] opacity-30" />
 
-          {/* Role Switcher */}
-          <div className="flex bg-[var(--foreground)]/[0.03] p-1 rounded-xl border border-[var(--border)]">
-            {["user", "member", "admin"].map((type) => (
-              <button aria-label="button"
-                key={type}
-                onClick={() => setPricingType(type)}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all ${pricingType === type
-                  ? "bg-[var(--accent)] text-white"
-                  : "text-[var(--muted)] hover:text-[var(--foreground)]"
-                  }`}
-              >
-                {type}
-              </button>
-            ))}
+            {/* Role Switcher */}
+            <div className="flex flex-1 lg:flex-none justify-center bg-[var(--foreground)]/[0.03] p-1 rounded-full border border-[var(--border)]/50 shadow-inner">
+              {["user", "member", "admin"].map((type) => (
+                <button aria-label="button"
+                  key={type}
+                  onClick={() => setPricingType(type)}
+                  className={`flex-1 lg:flex-none flex justify-center px-1.5 sm:px-4 py-1.5 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap active:scale-95 ${pricingType === type
+                    ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20"
+                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
+                    }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
           </div>
 
           <button aria-label="button"
             onClick={onSave}
             disabled={!canSave || savingPricing}
-            className={`px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
+            className={`w-full lg:w-auto px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center ${
               canSave 
-                ? "bg-[var(--accent)] text-white shadow-xl shadow-[var(--accent)]/20 hover:scale-[1.02] active:scale-[0.98] hover:brightness-110" 
+                ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20" 
                 : "bg-[var(--foreground)]/[0.05] text-[var(--muted)]/40 cursor-not-allowed"
             }`}
           >
@@ -363,29 +370,30 @@ export default function PricingTab({
                 exit={{ opacity: 0, y: -10 }}
                 className="space-y-4"
               >
-                <div className="p-4 sm:p-5 rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 space-y-6">
-                  <div className="flex items-center justify-between">
+                <div className="p-4 sm:p-6 rounded-[1.5rem] border border-[var(--border)] bg-[var(--card)]/40 shadow-xl shadow-black/5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shadow-inner">
-                        <Percent size={20} />
+                      <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner shrink-0">
+                        <Percent className="text-[var(--accent)]" size={18} />
                       </div>
                       <div>
-                        <h3 className="text-sm font-black uppercase italic tracking-tighter text-white">Profit <span className="text-[var(--accent)]">Markup</span></h3>
-                        <p className="text-[9px] text-[var(--muted)] font-bold uppercase tracking-widest opacity-50">Set percentage profit based on price ranges</p>
+                        <h3 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Profit Markup</h3>
+                        <p className="text-[9px] text-[var(--muted)]/50 font-bold uppercase tracking-[0.15em] leading-none mt-0.5">Set percentage profit based on price ranges</p>
                       </div>
                     </div>
                     <button aria-label="button"
                       onClick={addSlab}
-                      className="px-4 py-2 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--accent)] text-[10px] font-black uppercase tracking-widest hover:bg-[var(--accent)]/20 transition-all"
+                      className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[var(--accent)] text-white text-[9px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-[var(--accent)]/20 transition-all active:scale-95 whitespace-nowrap"
                     >
                       + Add Range
                     </button>
                   </div>
-                <div className="space-y-2">
-                  <div className="hidden sm:grid grid-cols-12 gap-3 px-2 text-[10px] font-bold text-[var(--muted)]">
+
+                <div className="space-y-3">
+                  <div className="hidden sm:grid grid-cols-12 gap-3 px-4 text-[9px] font-black uppercase tracking-widest text-[var(--muted)]/60">
                     <div className="col-span-4">Minimum Price (₹)</div>
                     <div className="col-span-4">Maximum Price (₹)</div>
-                    <div className="col-span-3">Add Profit (%)</div>
+                    <div className="col-span-3">Profit (%)</div>
                     <div className="col-span-1"></div>
                   </div>
 
@@ -394,55 +402,61 @@ export default function PricingTab({
                       key={i}
                       initial={{ opacity: 0, x: -5 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-3 items-center p-3 sm:p-3.5 rounded-xl border border-[var(--border)] bg-[var(--foreground)]/[0.01] hover:bg-[var(--foreground)]/[0.03] transition-colors"
+                      className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-3 items-center p-5 sm:p-2 rounded-2xl sm:rounded-xl border sm:border-transparent border-[var(--border)] bg-[var(--background)]/30 sm:bg-transparent hover:bg-[var(--foreground)]/[0.02] transition-colors"
                     >
-                      <div className="col-span-4 space-y-1 sm:space-y-0">
-                        <label className="sm:hidden text-[10px] font-bold text-[var(--muted)] ml-1">Minimum Price (₹)</label>
-                        <input
-                          type="number"
-                          value={s.min}
-                          onChange={(e) => updateSlab(i, "min", e.target.value)}
-                          className="w-full h-10 px-4 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--foreground)] font-semibold text-sm outline-none focus:border-[var(--accent)]/50 transition-all font-mono"
-                          placeholder="0"
-                        />
-                      </div>
-                      <div className="col-span-4 space-y-1 sm:space-y-0">
-                        <label className="sm:hidden text-[10px] font-bold text-[var(--muted)] ml-1">Maximum Price (₹)</label>
-                        <input
-                          type="number"
-                          value={s.max}
-                          onChange={(e) => updateSlab(i, "max", e.target.value)}
-                          className="w-full h-10 px-4 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--foreground)] font-semibold text-sm outline-none focus:border-[var(--accent)]/50 transition-all font-mono"
-                          placeholder="1000"
-                        />
-                      </div>
-                      <div className="col-span-3 space-y-1 sm:space-y-0">
-                        <label className="sm:hidden text-[10px] font-bold text-[var(--muted)] ml-1">Profit (%)</label>
-                        <div className="relative">
+                      <div className="grid grid-cols-2 sm:contents gap-3">
+                        <div className="sm:col-span-4 space-y-2 sm:space-y-0">
+                          <label className="sm:hidden text-[9px] font-black uppercase tracking-widest text-[var(--muted)] ml-1">Min Price (₹)</label>
                           <input
                             type="number"
-                            value={s.percent}
-                            onChange={(e) => updateSlab(i, "percent", e.target.value)}
-                            className="w-full h-10 px-4 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] font-bold text-sm outline-none transition-all placeholder:text-[var(--accent)]/40"
-                            placeholder="5"
+                            value={s.min}
+                            onChange={(e) => updateSlab(i, "min", e.target.value)}
+                            className="w-full h-11 px-4 rounded-xl bg-[var(--background)]/50 sm:bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--foreground)] font-mono font-bold text-sm outline-none focus:border-[var(--accent)]/50 transition-all"
+                            placeholder="0"
                           />
-                          <Percent size={12} className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--accent)]/50" />
+                        </div>
+                        <div className="sm:col-span-4 space-y-2 sm:space-y-0">
+                          <label className="sm:hidden text-[9px] font-black uppercase tracking-widest text-[var(--muted)] ml-1">Max Price (₹)</label>
+                          <input
+                            type="number"
+                            value={s.max}
+                            onChange={(e) => updateSlab(i, "max", e.target.value)}
+                            className="w-full h-11 px-4 rounded-xl bg-[var(--background)]/50 sm:bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--foreground)] font-mono font-bold text-sm outline-none focus:border-[var(--accent)]/50 transition-all"
+                            placeholder="1000"
+                          />
                         </div>
                       </div>
-                      <div className="col-span-1 flex justify-end sm:justify-center">
-                        <button aria-label="button"
-                          onClick={() => deleteSlab(i)}
-                          className="p-2 sm:p-0 text-[var(--muted)] hover:text-rose-500 transition-colors"
-                        >
-                          <Trash2 size={18} />
-                        </button>
+
+                      <div className="flex items-end sm:contents gap-3">
+                        <div className="flex-1 sm:col-span-3 space-y-2 sm:space-y-0">
+                          <label className="sm:hidden text-[9px] font-black uppercase tracking-widest text-[var(--muted)] ml-1">Profit (%)</label>
+                          <div className="relative">
+                            <input
+                              type="number"
+                              value={s.percent}
+                              onChange={(e) => updateSlab(i, "percent", e.target.value)}
+                              className="w-full h-11 px-4 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] font-black text-sm outline-none focus:border-[var(--accent)]/40 transition-all placeholder:text-[var(--accent)]/40"
+                              placeholder="5"
+                            />
+                            <Percent size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--accent)]/60" />
+                          </div>
+                        </div>
+                        <div className="sm:col-span-1 flex justify-center pb-1 sm:pb-0">
+                          <button aria-label="button"
+                            onClick={() => deleteSlab(i)}
+                            className="w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center rounded-full text-[var(--muted)]/50 hover:text-rose-500 hover:bg-rose-500/10 transition-all shrink-0"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </div>
                     </motion.div>
                   ))}
 
                   {!slabs.length && (
-                    <div className="py-16 text-center border border-dashed border-[var(--border)] rounded-2xl">
-                      <p className="text-xs font-medium text-[var(--muted)]">No markup ranges defined.</p>
+                    <div className="py-20 text-center border border-dashed border-[var(--border)] bg-[var(--background)]/30 rounded-2xl flex flex-col items-center justify-center">
+                      <Percent className="text-[var(--muted)]/20 mb-3" size={32} />
+                      <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)]/60">No markup ranges defined</p>
                     </div>
                   )}
                 </div>

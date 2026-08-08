@@ -44,7 +44,7 @@ const getGameName = (slug: string) => {
 
 /* ================= MAIN ITEM COMPONENT ================= */
 
-export default function OrderItem({ order }: { order: OrderType }) {
+export default function OrderItem({ order, index = 0 }: { order: OrderType, index?: number }) {
   const [copied, setCopied] = useState(false);
   const [verifyLoading, setVerifyLoading] = useState(false);
   const [localStatus, setLocalStatus] = useState(order.status);
@@ -121,12 +121,12 @@ export default function OrderItem({ order }: { order: OrderType }) {
   const config = getStatusConfig(rawStatus);
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-[var(--card)]/40 backdrop-blur-xl transition-all duration-300">
+    <div className={`relative overflow-hidden rounded border transition-colors ${index % 2 === 0 ? 'bg-[var(--background)] border-[var(--border)]' : 'bg-[var(--foreground)]/[0.04] border-[var(--foreground)]/[0.1]'}`}>
 
       {/* TOP STATUS BAR */}
       <div
-        className="px-4 py-1.5 flex items-center justify-between border-b border-white/[0.02]"
-        style={{ backgroundColor: `${config.color}03` }}
+        className="px-3.5 py-1.5 flex items-center justify-between border-b border-[var(--border)]/50"
+        style={{ backgroundColor: `${config.color}05` }}
       >
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5" style={{ color: config.color }}>
@@ -140,7 +140,7 @@ export default function OrderItem({ order }: { order: OrderType }) {
             <button aria-label="button"
               onClick={handleVerify}
               disabled={verifyLoading}
-              className="px-1.5 py-0.5 rounded-sm bg-[var(--accent)]/5 border border-[var(--accent)]/20 text-[var(--accent)] text-[7px] font-black uppercase tracking-wider hover:bg-[var(--accent)] hover:text-black transition-all flex items-center gap-1"
+              className="px-2 py-0.5 rounded border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--accent)] text-[7px] font-bold uppercase tracking-widest hover:bg-[var(--accent)] hover:text-white transition-colors flex items-center gap-1"
             >
               {verifyLoading ? <FiLoader className="animate-spin" size={6} /> : "Check Status"}
             </button>
@@ -190,9 +190,9 @@ export default function OrderItem({ order }: { order: OrderType }) {
 
       {/* Additional info for pending UPI status */}
       {config.label === 'PENDING' && order.paymentMethod?.toLowerCase() === 'upi' && (
-        <div className="px-3.5 pb-3.5 mt-[-2px]">
-          <div className="p-2 rounded-lg bg-amber-500/5 border border-amber-500/10">
-            <p className="text-[7.5px] font-bold text-amber-500/80 uppercase tracking-widest leading-relaxed">
+        <div className="px-3.5 pb-3.5 mt-[-4px]">
+          <div className="p-2 rounded bg-amber-500/10 border border-amber-500/20">
+            <p className="text-[7.5px] font-bold text-amber-600 uppercase tracking-widest leading-relaxed">
               Paid via UPI but order still shows pending? Tap "Check Status" above to update it.
             </p>
           </div>

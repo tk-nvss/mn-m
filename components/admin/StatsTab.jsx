@@ -22,7 +22,7 @@ import {
     FiActivity,
     FiMoreVertical
 } from "react-icons/fi";
-import { Loader2, Zap, ArrowUpRight, ArrowDownRight, User, Wallet, ChevronDown, ChevronUp } from "lucide-react";
+import { Loader2, Zap, ArrowUpRight, ArrowDownRight, User, Wallet, ChevronDown, ChevronUp, RefreshCcw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function StatsTab() {
@@ -219,24 +219,24 @@ export default function StatsTab() {
     }, [walletPage, walletSearch, activeTab]);
 
     return (
-        <div className="space-y-4 sm:space-y-8 pb-10">
+        <div className="space-y-4 sm:space-y-6 pb-10">
 
             {/* HEADER */}
-            <div className="flex items-center justify-between gap-2 sm:gap-3">
-                <h2 className="text-base sm:text-lg font-bold tracking-tight text-[var(--foreground)] shrink-0">Wallet</h2>
+            <div className="flex items-center justify-between gap-2 md:gap-3 mb-2">
+                <h2 className="text-base md:text-xl font-black tracking-wide md:tracking-widest text-[var(--foreground)] uppercase italic shrink-0">Wallet</h2>
 
-                <div className="flex items-center justify-end gap-2 flex-1 min-w-0">
+                <div className="flex items-center justify-end gap-1.5 md:gap-2 flex-1 min-w-0">
                     {/* TABS */}
-                    <div className="flex bg-[var(--foreground)]/[0.03] p-0.5 rounded-lg border border-[var(--border)] flex-1 sm:flex-none">
+                    <div className="flex bg-[var(--foreground)]/[0.03] p-0.5 rounded-full border border-[var(--border)] flex-1 md:flex-none">
                         <button aria-label="button"
                             onClick={() => setActiveTab("history")}
-                            className={`flex-1 sm:px-3 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all ${activeTab === 'history' ? 'bg-[var(--card)] text-[var(--foreground)] shadow-sm' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
+                            className={`flex-1 px-2 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${activeTab === 'history' ? 'bg-[var(--card)] text-[var(--foreground)] shadow-sm' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
                         >
                             History
                         </button>
                         <button aria-label="button"
                             onClick={() => setActiveTab("wallets")}
-                            className={`flex-1 sm:px-3 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all ${activeTab === 'wallets' ? 'bg-[var(--card)] text-[var(--foreground)] shadow-sm' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
+                            className={`flex-1 px-2 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${activeTab === 'wallets' ? 'bg-[var(--card)] text-[var(--foreground)] shadow-sm' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
                         >
                             Wallets
                         </button>
@@ -248,12 +248,12 @@ export default function StatsTab() {
                             else fetchWallets();
                         }}
                         disabled={loading || (activeTab === "history" ? historyLoading : walletLoading)}
-                        className="p-1.5 rounded-lg bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] active:scale-95 transition-all outline-none disabled:opacity-50"
+                        className="h-7 w-7 md:h-9 md:w-9 rounded-full bg-[var(--foreground)]/[0.02] border border-[var(--border)] text-[var(--foreground)] flex items-center justify-center hover:bg-[var(--foreground)]/[0.05] transition-all outline-none disabled:opacity-50 shrink-0"
                     >
                         {loading || (activeTab === "history" ? historyLoading : walletLoading) ? (
-                            <Loader2 className="animate-spin" size={12} />
+                            <Loader2 className="animate-spin text-[var(--accent)]" size={12} />
                         ) : (
-                            <FiRefreshCw size={12} />
+                            <RefreshCcw size={12} className="text-[var(--accent)]" />
                         )}
                     </button>
                 </div>
@@ -271,17 +271,17 @@ export default function StatsTab() {
 
 
                     {/* MANUAL WALLET ADJUSTMENT */}
-                    <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-6 relative overflow-hidden">
+                    <div className="bg-[var(--card)] border border-[var(--border)] rounded-[1.25rem] p-4 sm:p-5 relative overflow-hidden mb-2">
                         <div 
                             className="flex items-center justify-between cursor-pointer group"
                             onClick={() => setShowManualForm(!showManualForm)}
                         >
                             <div className="flex items-center gap-2">
                                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
-                                <h3 className="text-base sm:text-lg font-bold text-[var(--foreground)] group-hover:text-[var(--accent)] transition-colors">Add or Remove Money Manually</h3>
+                                <h3 className="text-sm font-black uppercase tracking-widest text-[var(--foreground)] group-hover:text-[var(--accent)] transition-colors">Add/Remove Money</h3>
                             </div>
-                            <div className="p-1 rounded-md bg-[var(--foreground)]/[0.03] text-[var(--muted)] group-hover:text-[var(--foreground)] transition-colors">
-                                {showManualForm ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            <div className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--foreground)]/[0.03] text-[var(--muted)] group-hover:text-[var(--foreground)] group-hover:bg-[var(--foreground)]/[0.05] transition-all">
+                                {showManualForm ? <FiMinus size={16} /> : <FiPlus size={16} />}
                             </div>
                         </div>
 
@@ -362,51 +362,51 @@ export default function StatsTab() {
                         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                             <div className="flex flex-col gap-4">
                                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                                    <h3 className="text-lg font-bold text-[var(--foreground)] flex items-center gap-2">
+                                    <h3 className="text-sm font-black uppercase tracking-widest text-[var(--foreground)] flex items-center gap-2">
                                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
                                         Wallet Action History
                                     </h3>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-3">
                                     {/* SEARCH */}
                                     <div className="sm:col-span-6 relative">
-                                        <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
+                                        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/70" size={14} />
                                         <input
                                             value={historySearch}
                                             onChange={(e) => { setHistorySearch(e.target.value); setHistoryPage(1); }}
                                             placeholder="Search transactions..."
-                                            className="w-full h-10 pl-9 pr-4 rounded-xl bg-[var(--card)] border border-[var(--border)] text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)] transition-all placeholder:text-[var(--muted)]/50"
+                                            className="w-full h-10 md:h-11 pl-10 pr-4 rounded-full bg-[var(--card)] border border-[var(--border)] text-xs sm:text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)] transition-all placeholder:text-[var(--muted)]/40 hover:bg-[var(--foreground)]/[0.01]"
                                         />
                                     </div>
-                                    <div className="sm:col-span-6 grid grid-cols-2 gap-3">
-                                        <div className="relative">
+                                    <div className="sm:col-span-6 grid grid-cols-2 gap-2 sm:gap-3">
+                                        <div className="relative group">
                                             <select
                                                 value={historyType}
                                                 onChange={(e) => { setHistoryType(e.target.value); setHistoryPage(1); }}
-                                                className="w-full h-10 px-3 pr-8 rounded-xl bg-[var(--card)] border border-[var(--border)] text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)] appearance-none cursor-pointer"
+                                                className="w-full h-10 md:h-11 pl-3 sm:pl-4 pr-8 rounded-full bg-[var(--card)] border border-[var(--border)] text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--foreground)] outline-none focus:border-[var(--accent)] appearance-none cursor-pointer transition-all hover:bg-[var(--foreground)]/[0.02]"
                                             >
                                                 <option value="">All Actions</option>
                                                 <option value="credit">Money Added</option>
                                                 <option value="debit">Money Spent</option>
                                             </select>
-                                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--muted)]">
-                                                <FiFilter size={14} />
+                                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--muted)]/70 group-hover:text-[var(--foreground)] transition-colors">
+                                                <FiFilter size={12} />
                                             </div>
                                         </div>
-                                        <div className="relative">
+                                        <div className="relative group">
                                             <select
                                                 value={historyStatus}
                                                 onChange={(e) => { setHistoryStatus(e.target.value); setHistoryPage(1); }}
-                                                className="w-full h-10 px-3 pr-8 rounded-xl bg-[var(--card)] border border-[var(--border)] text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)] appearance-none cursor-pointer"
+                                                className="w-full h-10 md:h-11 pl-3 sm:pl-4 pr-8 rounded-full bg-[var(--card)] border border-[var(--border)] text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--foreground)] outline-none focus:border-[var(--accent)] appearance-none cursor-pointer transition-all hover:bg-[var(--foreground)]/[0.02]"
                                             >
                                                 <option value="">All Status</option>
                                                 <option value="success">Success</option>
                                                 <option value="failed">Failed</option>
                                                 <option value="pending">Pending</option>
                                             </select>
-                                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center w-4 h-4 rounded-full bg-[var(--foreground)]/10 text-[var(--muted)]">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-current" />
+                                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--muted)]/70 group-hover:text-[var(--foreground)] transition-colors">
+                                                <ChevronDown size={14} />
                                             </div>
                                         </div>
                                     </div>
@@ -424,92 +424,93 @@ export default function StatsTab() {
                                     <div className="py-12 text-center text-[var(--muted)]">No transactions found.</div>
                                 ) : (
                                     history.map((txn) => (
-                                        <div key={txn._id} className="p-4 rounded-xl bg-[var(--card)] border border-[var(--border)] space-y-3 relative overflow-hidden">
-
-                                            <div className="flex justify-between items-start z-10 relative">
-                                                <div>
-                                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${txn.type === 'credit'
-                                                        ? 'bg-emerald-500/5 text-emerald-500 border-emerald-500/20'
-                                                        : 'bg-red-500/5 text-red-500 border-red-500/20'
-                                                        }`}>
-                                                        {txn.type === 'credit' ? <FiArrowUp size={10} /> : <FiArrowDown size={10} />}
-                                                        {txn.type}
-                                                    </span>
-                                                    <p className="text-[10px] text-[var(--muted)] font-mono mt-2 tracking-wide uppercase opacity-70">TXN ID</p>
-                                                    <p className="text-xs font-mono text-[var(--foreground)]">{txn.transactionId}</p>
-                                                </div>
-                                                <div className="text-right">
-                                                    <div className={`text-lg font-mono font-bold ${txn.type === 'credit' ? 'text-emerald-500' : 'text-red-500'}`}>
-                                                        {txn.type === 'credit' ? '+' : '-'}{txn.amount.toLocaleString()}
+                                        <div key={txn._id} className="p-3 md:p-4 rounded-[1.25rem] bg-[var(--card)] border border-[var(--border)] active:bg-[var(--foreground)]/[0.05] transition-all relative overflow-hidden">
+                                            
+                                            <div className="flex justify-between items-start mb-2">
+                                                <div className="flex flex-col gap-1 min-w-0">
+                                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                                        <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[7px] font-bold uppercase tracking-wider ${txn.type === 'credit'
+                                                            ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                                                            : 'bg-red-500/10 text-red-500 border-red-500/20'
+                                                            }`}>
+                                                            {txn.type === 'credit' ? <FiArrowUp size={8} /> : <FiArrowDown size={8} />}
+                                                            {txn.type}
+                                                        </span>
+                                                        <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[7px] font-bold uppercase tracking-wider ${txn.status === 'success'
+                                                            ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                                                            : txn.status === 'failed' ? 'bg-red-500/10 text-red-500 border-red-500/20' : 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
+                                                            }`}>
+                                                            {txn.status || 'success'}
+                                                        </span>
                                                     </div>
-                                                    <div className="mt-2 flex justify-end gap-2">
-                                                        <div className="mt-2 flex justify-end gap-2">
-                                                            {txn.status === 'pending' && (
-                                                                <button aria-label="button"
-                                                                    onClick={async () => {
-                                                                        if (!confirm("Verify with Gateway?")) return;
-                                                                        try {
-                                                                            const token = localStorage.getItem("token");
-                                                                            const res = await fetch("/api/admin/wallet/verify", {
-                                                                                method: "POST",
-                                                                                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-                                                                                body: JSON.stringify({ transactionId: txn._id })
-                                                                            });
-                                                                            const json = await res.json();
-                                                                            alert(json.message);
-                                                                            if (json.success) fetchHistory();
-                                                                        } catch (e) {
-                                                                                alert("Verification failed.");
-                                                                        }
-                                                                    }}
-                                                                    className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 transition-colors"
-                                                                    title="Check & Auto Approve"
-                                                                >
-                                                                    <FiRefreshCw size={14} />
-                                                                </button>
-                                                            )}
-                                                            {txn.status !== 'success' && (
-                                                                <button aria-label="button"
-                                                                    onClick={() => handleStatusUpdate(txn._id, 'success')}
-                                                                    className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 transition-colors"
-                                                                    title="Manually Mark Success"
-                                                                >
-                                                                    <FiCheckCircle size={14} />
-                                                                </button>
-                                                            )}
-                                                            {txn.status !== 'failed' && (
-                                                                <button aria-label="button"
-                                                                    onClick={() => handleStatusUpdate(txn._id, 'failed')}
-                                                                    className="p-1.5 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
-                                                                    title="Mark Failed & Deduct"
-                                                                >
-                                                                    <FiXCircle size={14} />
-                                                                </button>
-                                                            )}
+                                                    
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <div className="w-6 h-6 rounded-lg bg-[var(--foreground)]/[0.05] flex items-center justify-center shrink-0">
+                                                            <FiUser size={12} className="text-[var(--accent)]" />
+                                                        </div>
+                                                        <div className="truncate">
+                                                            <p className="font-bold text-[var(--foreground)] uppercase text-[10px] leading-tight truncate">{txn.userId}</p>
+                                                            <p className="text-[9px] text-[var(--muted)]/60 truncate leading-tight lowercase">{txn.userObjectId?.email || "no email"}</p>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                
+                                                <div className="flex flex-col items-end shrink-0">
+                                                    <div className={`text-base font-black tracking-tighter tabular-nums ${txn.type === 'credit' ? 'text-emerald-500' : 'text-red-500'}`}>
+                                                        {txn.type === 'credit' ? '+' : '-'}{txn.amount.toLocaleString()}
+                                                    </div>
+                                                    <span className="text-[8px] font-medium text-[var(--muted)]/40 leading-none mt-1">{new Date(txn.createdAt).toLocaleDateString()}</span>
+                                                    <span className="text-[7px] font-medium text-[var(--muted)]/30 leading-none mt-0.5">{new Date(txn.createdAt).toLocaleTimeString()}</span>
+                                                </div>
                                             </div>
 
-                                            <div className="flex justify-between items-center text-xs pt-3 mt-1 border-t border-[var(--border)]/40 relative z-10">
-                                                <div>
-                                                    <div className="font-semibold text-[var(--foreground)] mb-0.5 flex items-center gap-1.5 flex-wrap">
-                                                        <span>{txn.userId}</span>
-                                                        {txn.userObjectId?.email && (
-                                                            <span className="text-[10px] text-[var(--muted)]/70 font-normal lowercase">({txn.userObjectId.email})</span>
-                                                        )}
-                                                    </div>
-                                                    <div className="text-[10px] text-[var(--muted)] font-mono">{new Date(txn.createdAt).toLocaleString()}</div>
+                                            <div className="flex items-center justify-between gap-3 border-t border-[var(--border)] pt-2 mt-2">
+                                                <span className="text-[9px] font-mono text-[var(--muted)]/40 truncate uppercase">{txn.transactionId}</span>
+                                                
+                                                <div className="flex items-center gap-1.5 shrink-0">
+                                                    {txn.status === 'pending' && (
+                                                        <button aria-label="button"
+                                                            onClick={async () => {
+                                                                if (!confirm("Verify with Gateway?")) return;
+                                                                try {
+                                                                    const token = localStorage.getItem("token");
+                                                                    const res = await fetch("/api/admin/wallet/verify", {
+                                                                        method: "POST",
+                                                                        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                                                                        body: JSON.stringify({ transactionId: txn._id })
+                                                                    });
+                                                                    const json = await res.json();
+                                                                    alert(json.message);
+                                                                    if (json.success) fetchHistory();
+                                                                } catch (e) {
+                                                                        alert("Verification failed.");
+                                                                }
+                                                            }}
+                                                            className="h-6 w-6 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center hover:bg-blue-500/20 transition-colors"
+                                                            title="Check & Auto Approve"
+                                                        >
+                                                            <FiRefreshCw size={10} />
+                                                        </button>
+                                                    )}
+                                                    {txn.status !== 'success' && (
+                                                        <button aria-label="button"
+                                                            onClick={() => handleStatusUpdate(txn._id, 'success')}
+                                                            className="h-6 w-6 rounded-md bg-emerald-500/10 text-emerald-500 flex items-center justify-center hover:bg-emerald-500/20 transition-colors"
+                                                            title="Manually Mark Success"
+                                                        >
+                                                            <FiCheckCircle size={10} />
+                                                        </button>
+                                                    )}
+                                                    {txn.status !== 'failed' && (
+                                                        <button aria-label="button"
+                                                            onClick={() => handleStatusUpdate(txn._id, 'failed')}
+                                                            className="h-6 w-6 rounded-md bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500/20 transition-colors"
+                                                            title="Mark Failed & Deduct"
+                                                        >
+                                                            <FiXCircle size={10} />
+                                                        </button>
+                                                    )}
                                                 </div>
-                                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${txn.status === 'success'
-                                                    ? 'text-emerald-500'
-                                                    : txn.status === 'failed'
-                                                        ? 'text-red-500'
-                                                        : 'text-yellow-500'
-                                                    }`}>
-                                                    <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${txn.status === 'success' ? 'bg-emerald-500' : txn.status === 'failed' ? 'bg-red-500' : 'bg-yellow-500'}`} />
-                                                    {txn.status || 'success'}
-                                                </span>
                                             </div>
                                         </div>
                                     ))
@@ -673,18 +674,18 @@ export default function StatsTab() {
                     {activeTab === "wallets" && (
                         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                                <h3 className="text-lg font-bold text-[var(--foreground)] flex items-center gap-2">
+                                <h3 className="text-sm font-black uppercase tracking-widest text-[var(--foreground)] flex items-center gap-2">
                                     <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
                                     Customer Wallet List
                                 </h3>
 
                                 <div className="relative w-full sm:w-64">
-                                    <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
+                                    <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/70" size={14} />
                                     <input
                                         value={walletSearch}
                                         onChange={(e) => { setWalletSearch(e.target.value); setWalletPage(1); }}
                                         placeholder="Search users..."
-                                        className="w-full h-10 pl-9 pr-4 rounded-xl bg-[var(--card)] border border-[var(--border)] text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)] transition-all placeholder:text-[var(--muted)]/50"
+                                        className="w-full h-10 md:h-11 pl-10 pr-4 rounded-full bg-[var(--card)] border border-[var(--border)] text-xs sm:text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)] transition-all placeholder:text-[var(--muted)]/40 hover:bg-[var(--foreground)]/[0.01]"
                                     />
                                 </div>
                             </div>
@@ -707,49 +708,44 @@ export default function StatsTab() {
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: idx * 0.05 }}
-                                            className="group relative bg-gradient-to-br from-[var(--card)] to-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-2xl p-4 overflow-hidden transition-all hover:border-[var(--accent)]/30"
+                                            className="group relative bg-[var(--card)] border border-[var(--border)] rounded-[1.25rem] p-3 md:p-4 overflow-hidden transition-all hover:border-[var(--accent)]/30 active:bg-[var(--foreground)]/[0.05]"
                                         >
                                             <div className="relative z-10 flex items-center justify-between gap-2 w-full">
-                                                <div className="flex items-center gap-3 flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+                                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-[var(--foreground)]/[0.05] flex items-center justify-center shrink-0">
+                                                        <span className="font-black text-[var(--foreground)] text-xs md:text-sm uppercase">{user.name ? user.name.charAt(0) : '?'}</span>
+                                                    </div>
                                                     <div className="min-w-0 flex-1">
                                                         <div className="flex items-center gap-2 mb-0.5">
-                                                            <h4 className="font-black text-[var(--foreground)] text-sm truncate tracking-tight">{user.name || "Unknown"}</h4>
+                                                            <h4 className="font-bold text-[var(--foreground)] text-xs md:text-sm truncate leading-none">{user.name || "Unknown"}</h4>
                                                             {user.userType === 'owner' && (
-                                                                <span className="px-1.5 py-0.5 rounded text-[7px] bg-red-500/10 text-red-500 border border-red-500/20 font-black uppercase tracking-widest shrink-0">
+                                                                <span className="px-1.5 py-0.5 rounded-md text-[7px] bg-red-500/10 text-red-500 border border-red-500/20 font-black uppercase tracking-widest shrink-0">
                                                                     OWNER
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        <p className="text-[10px] text-[var(--muted)] font-medium opacity-60 truncate lowercase">{user.email}</p>
-                                                        <p className="text-[9px] font-mono text-[var(--muted)] opacity-50 mt-1 truncate">
-                                                            Active: {user.lastLogin ? new Date(user.lastLogin).toLocaleString('en-IN', {day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'}) : 'Never'}
-                                                        </p>
+                                                        <p className="text-[10px] text-[var(--muted)]/80 font-medium truncate lowercase leading-tight mt-1">{user.email}</p>
                                                     </div>
                                                 </div>
 
-                                                <div className="flex items-center gap-3 shrink-0">
+                                                <div className="flex flex-col items-end shrink-0 gap-2 border-l border-[var(--border)] pl-3">
                                                     <div className="text-right">
-                                                        <p className="text-[8px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-1 opacity-40">Wallet</p>
-                                                        <p className="text-xl font-black text-[var(--foreground)] tabular-nums tracking-tighter shadow-sm">
-                                                            <span className="text-[10px] mr-0.5 text-[var(--accent)] font-bold">₹</span>
-                                                            {user.wallet.toLocaleString()}
+                                                        <p className="text-base md:text-lg font-black text-[var(--foreground)] tabular-nums tracking-tighter leading-none">
+                                                            ₹{user.wallet.toLocaleString()}
                                                         </p>
+                                                        <p className="text-[8px] font-bold text-[var(--muted)]/50 uppercase tracking-widest mt-1 leading-none">Wallet</p>
                                                     </div>
-                                                    
                                                     <button aria-label="button"
                                                         onClick={() => {
                                                             setSelectedUserForWallet(user);
                                                             setQuickAmount("");
                                                         }}
-                                                        className="w-10 h-10 rounded-xl bg-[var(--accent)]/10 hover:bg-[var(--accent)] text-[var(--accent)] hover:text-white transition-all flex items-center justify-center shadow-lg shadow-transparent hover:shadow-[var(--accent)]/20 active:scale-95 border border-[var(--accent)]/10"
+                                                        className="w-7 h-7 rounded-full bg-[var(--accent)]/10 hover:bg-[var(--accent)] text-[var(--accent)] hover:text-white transition-all flex items-center justify-center active:scale-95 border border-[var(--accent)]/10"
                                                     >
-                                                        <FiDollarSign size={18} />
+                                                        <FiDollarSign size={14} />
                                                     </button>
                                                 </div>
                                             </div>
-
-                                            {/* Glow effect on hover */}
-                                            <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                                         </motion.div>
                                     ))
                                 )}
@@ -886,70 +882,72 @@ export default function StatsTab() {
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
                             className="relative w-full max-w-sm bg-[var(--background)] border border-[var(--border)] rounded-[2.5rem] shadow-2xl overflow-hidden"
                         >
-                            <div className="p-8 pb-4">
-                                <div className="flex justify-between items-center mb-8">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-2xl bg-[var(--accent)]/10 text-[var(--accent)] flex items-center justify-center">
-                                            <Wallet size={20} />
+                            <div className="p-5 pb-4">
+                                <div className="flex justify-between items-center mb-4">
+                                    <div className="flex items-center gap-2.5">
+                                        <div className="w-8 h-8 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] flex items-center justify-center">
+                                            <Wallet size={14} />
                                         </div>
                                         <div>
-                                            <h3 className="text-xl font-bold text-[var(--foreground)]">Quick Adjust</h3>
-                                            <p className="text-xs text-[var(--muted)]">Manage user balance</p>
+                                            <h3 className="text-[13px] font-black uppercase tracking-widest text-[var(--foreground)] leading-none mb-1">Quick Adjust</h3>
+                                            <p className="text-[9px] text-[var(--muted)] font-medium">Manage user balance</p>
                                         </div>
                                     </div>
                                     <button aria-label="button"
                                         onClick={() => setSelectedUserForWallet(null)}
-                                        className="w-10 h-10 rounded-full bg-[var(--foreground)]/[0.05] text-[var(--muted)] flex items-center justify-center hover:text-[var(--foreground)] transition-all"
+                                        className="w-7 h-7 rounded-full bg-[var(--foreground)]/[0.05] text-[var(--muted)] flex items-center justify-center hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.1] transition-all"
                                     >
-                                        <FiXCircle size={20} />
+                                        <FiXCircle size={14} />
                                     </button>
                                 </div>
 
-                                <div className="bg-[var(--foreground)]/[0.02] border border-[var(--border)] rounded-2xl p-4 mb-6">
-                                    <div className="flex items-center gap-3">
-                                        <Avatar name={selectedUserForWallet.name} type={selectedUserForWallet.userType} />
+                                <div className="bg-[var(--card)] border border-[var(--border)] rounded-[1rem] p-3 mb-4 relative overflow-hidden">
+                                    <div className="flex items-center gap-2.5 relative z-10">
+                                        <div className="w-8 h-8 rounded-full bg-[var(--foreground)]/[0.05] flex items-center justify-center shrink-0">
+                                            <span className="font-black text-[var(--foreground)] text-xs uppercase">{selectedUserForWallet.name ? selectedUserForWallet.name.charAt(0) : '?'}</span>
+                                        </div>
                                         <div className="min-w-0">
-                                            <p className="font-bold text-[var(--foreground)] text-sm truncate">{selectedUserForWallet.name}</p>
-                                            <p className="text-[10px] text-[var(--muted)] font-mono">{selectedUserForWallet.email}</p>
+                                            <p className="font-bold text-[var(--foreground)] text-[12px] truncate">{selectedUserForWallet.name}</p>
+                                            <p className="text-[9px] text-[var(--muted)]/80 font-medium truncate lowercase">{selectedUserForWallet.email}</p>
                                         </div>
                                     </div>
-                                    <div className="mt-4 pt-4 border-t border-[var(--border)] flex justify-between items-center">
-                                        <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-wider">Current Wallet</span>
-                                        <span className="font-black text-[var(--foreground)]">₹{selectedUserForWallet.wallet.toLocaleString()}</span>
+                                    <div className="mt-3 pt-2.5 border-t border-[var(--border)] flex justify-between items-center relative z-10">
+                                        <span className="text-[8px] font-bold text-[var(--muted)]/70 uppercase tracking-widest">Current Wallet</span>
+                                        <span className="font-black text-[var(--foreground)] text-sm tabular-nums tracking-tighter">₹{selectedUserForWallet.wallet.toLocaleString()}</span>
                                     </div>
                                 </div>
 
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-[var(--muted)] uppercase tracking-widest ml-1">Adjustment Amount</label>
+                                <div className="space-y-3">
+                                    <div className="space-y-1.5">
+                                        <label className="text-[8px] font-black text-[var(--muted)] uppercase tracking-widest ml-1">Adjustment Amount</label>
                                         <div className="relative group">
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--accent)] font-bold">₹</span>
+                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--accent)] font-black text-xs">₹</span>
                                             <input
                                                 autoFocus
                                                 type="number"
                                                 value={quickAmount}
                                                 onChange={(e) => setQuickAmount(e.target.value)}
-                                                placeholder="Enter amount..."
-                                                className="w-full h-14 pl-8 pr-4 rounded-2xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--foreground)] font-bold text-lg outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent)]/5 transition-all text-center"
+                                                placeholder="0"
+                                                className="w-full h-10 pl-7 pr-3 rounded-full bg-[var(--foreground)]/[0.02] border border-[var(--border)] text-[var(--foreground)] font-black text-sm outline-none focus:border-[var(--accent)] focus:bg-[var(--foreground)]/[0.05] transition-all placeholder:text-[var(--muted)]/30"
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-3 pt-4">
+                                    <div className="grid grid-cols-2 gap-2 pt-1">
                                         <button aria-label="button"
                                             onClick={() => handleManageWallet("remove", selectedUserForWallet.email, quickAmount)}
                                             disabled={updating || !quickAmount}
-                                            className="h-12 rounded-2xl bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white border border-rose-500/20 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-30 shadow-lg shadow-transparent hover:shadow-rose-500/20"
+                                            className="h-9 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 font-black text-[9px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-30"
                                         >
-                                            {updating ? <Loader2 className="animate-spin" size={16} /> : <FiMinus size={16} />}
+                                            {updating ? <Loader2 className="animate-spin" size={12} /> : <FiMinus size={12} />}
                                             Deduct
                                         </button>
                                         <button aria-label="button"
                                             onClick={() => handleManageWallet("add", selectedUserForWallet.email, quickAmount)}
                                             disabled={updating || !quickAmount}
-                                            className="h-12 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white border border-emerald-500/20 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-30 shadow-lg shadow-transparent hover:shadow-emerald-500/20"
+                                            className="h-9 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20 font-black text-[9px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-30"
                                         >
-                                            {updating ? <Loader2 className="animate-spin" size={16} /> : <FiPlus size={16} />}
+                                            {updating ? <Loader2 className="animate-spin" size={12} /> : <FiPlus size={12} />}
                                             Add
                                         </button>
                                     </div>

@@ -13,100 +13,56 @@ function CompactMetricCard({
   footerStats,
   timeframeLabel
 }) {
-  const themeTokens = {
-    purple: { blob: "bg-purple-500/20", border: "hover:border-purple-500/30", title: "text-purple-500", time: "text-purple-500" },
-    blue: { blob: "bg-blue-500/20", border: "hover:border-blue-500/30", title: "text-blue-500", time: "text-blue-500" },
-    emerald: { blob: "bg-emerald-500/20", border: "hover:border-emerald-500/30", title: "text-emerald-500", time: "text-emerald-500" },
-    amber: { blob: "bg-amber-500/20", border: "hover:border-amber-500/30", title: "text-amber-500", time: "text-amber-500" },
-    indigo: { blob: "bg-indigo-500/20", border: "hover:border-indigo-500/30", title: "text-indigo-500", time: "text-indigo-500" },
-    rose: { blob: "bg-rose-500/20", border: "hover:border-rose-500/30", title: "text-rose-500", time: "text-rose-500" },
-  };
-
-  const statTokens = {
-    purple: { bg: "bg-purple-500/10", text: "text-purple-500", textMuted: "text-purple-500/70", textBright: "text-purple-500/90", solid: "bg-purple-500" },
-    blue: { bg: "bg-blue-500/10", text: "text-blue-500", textMuted: "text-blue-500/70", textBright: "text-blue-500/90", solid: "bg-blue-500" },
-    emerald: { bg: "bg-emerald-500/10", text: "text-emerald-500", textMuted: "text-emerald-500/70", textBright: "text-emerald-500/90", solid: "bg-emerald-500" },
-    amber: { bg: "bg-amber-500/10", text: "text-amber-500", textMuted: "text-amber-500/70", textBright: "text-amber-500/90", solid: "bg-amber-500" },
-    indigo: { bg: "bg-indigo-500/10", text: "text-indigo-500", textMuted: "text-indigo-500/70", textBright: "text-indigo-500/90", solid: "bg-indigo-500" },
-    rose: { bg: "bg-rose-500/10", text: "text-rose-500", textMuted: "text-rose-500/70", textBright: "text-rose-500/90", solid: "bg-rose-500" },
-  };
-
-  const activeTheme = themeTokens[theme] || themeTokens.blue;
-
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 15, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 sm:p-5 group ${activeTheme.border} transition-all duration-500 shadow-sm hover:shadow-xl hover:-translate-y-1`}
-    >
-      <div className={`absolute -right-12 -top-12 w-48 h-48 rounded-full blur-3xl opacity-30 ${activeTheme.blob} group-hover:scale-[2] group-hover:opacity-60 transition-all duration-1000 ease-out pointer-events-none`} />
-      <div className={`absolute -left-12 -bottom-12 w-32 h-32 rounded-full blur-2xl opacity-10 ${activeTheme.blob} group-hover:scale-[1.5] group-hover:opacity-30 transition-all duration-700 ease-out pointer-events-none delay-100`} />
-      
-      <div className="flex items-center gap-2.5 mb-5 relative z-10">
-        <div className={`p-2 rounded-xl bg-[var(--background)] border border-[var(--border)] shadow-sm ${activeTheme.title} group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}>
-          <TitleIcon size={14} strokeWidth={2.5} />
+    <div className="relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--background)] p-3 sm:p-4 hover:bg-[var(--foreground)]/[0.01] transition-colors">
+      <div className="flex items-center gap-2 mb-3">
+        <div className="p-1.5 rounded bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--muted)] shrink-0">
+          <TitleIcon size={12} strokeWidth={2.5} />
         </div>
-        <h4 className="text-[11px] font-bold uppercase tracking-widest text-[var(--muted)] group-hover:text-[var(--foreground)] transition-colors">{title}</h4>
+        <h4 className="text-[10px] font-bold uppercase tracking-widest text-[var(--foreground)] truncate">{title}</h4>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 relative z-10">
-        {primaryStats.map((stat, i) => {
-          const sToken = statTokens[stat.color] || statTokens.blue;
-          return (
-            <div key={i} className="flex items-center gap-3">
-              <div className={`p-2.5 sm:p-3 rounded-2xl ${sToken.bg} ${sToken.text} flex-shrink-0 relative group-hover:scale-105 transition-transform duration-300 shadow-inner`}>
-                {stat.pulse && (
-                  <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${sToken.solid} opacity-75`}></span>
-                    <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${sToken.solid}`}></span>
-                  </span>
-                )}
-                <stat.icon size={18} strokeWidth={2.5} />
+      <div className="grid grid-cols-2 gap-3 relative z-10">
+        {primaryStats.map((stat, i) => (
+          <div key={i} className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="p-1.5 rounded border border-[var(--border)] bg-[var(--background)] shrink-0 text-[var(--muted)]">
+                <stat.icon size={10} strokeWidth={2.5} />
               </div>
-              <div className="flex-1 min-w-0 flex flex-col justify-center">
-                <span className={`text-[9px] font-bold uppercase tracking-widest ${sToken.textMuted} truncate`}>{stat.label}</span>
-                <span className={`text-lg sm:text-2xl font-black tabular-nums whitespace-nowrap ${sToken.text} leading-tight mt-1`}>
-                  {stat.value}
-                </span>
-              </div>
+              <span className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted)] truncate">{stat.label}</span>
             </div>
-          );
-        })}
+            <span className="text-lg font-black tabular-nums whitespace-nowrap text-[var(--foreground)] leading-none truncate">
+              {stat.value}
+            </span>
+          </div>
+        ))}
       </div>
       
-      <div className="mt-5 w-full flex items-center justify-between border-t border-[var(--border)] pt-4 relative z-10">
-        <div className="flex flex-wrap items-center gap-4">
+      <div className="mt-3 w-full flex flex-col gap-1.5 border-t border-[var(--border)]/50 pt-2 relative z-10">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 pr-10">
           {footerStats.map((stat, i) => {
             if (stat.customEl) return <div key={i}>{stat.customEl}</div>;
-            const sToken = statTokens[stat.color] || statTokens.blue;
             return (
-              <div key={i} className="flex items-center gap-1.5 text-[10px] font-bold">
+              <div key={i} className="flex items-center gap-1 text-[9px] font-bold">
                 {stat.pulseDot ? (
-                   <span className="relative flex h-1.5 w-1.5">
-                     <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${sToken.solid} opacity-75`}></span>
-                     <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${sToken.solid}`}></span>
+                   <span className="relative flex h-1.5 w-1.5 shrink-0">
+                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--foreground)] opacity-75"></span>
+                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[var(--foreground)]"></span>
                    </span>
                 ) : (
-                  <span className={`w-1.5 h-1.5 rounded-sm ${sToken.solid} opacity-80`} />
+                  <span className="w-1 h-1 rounded-sm bg-[var(--muted)] shrink-0" />
                 )}
-                <span className={`${sToken.textBright} flex items-center gap-1`}>
-                  {stat.icon && <stat.icon size={10} />}
-                  {stat.label}
+                <span className="text-[var(--muted)] flex items-center gap-1 truncate max-w-[120px]">
+                  {stat.icon && <stat.icon size={8} className="shrink-0" />}
+                  <span className="truncate">{stat.label}</span>
                 </span>
               </div>
             );
           })}
         </div>
-        
-        {timeframeLabel && (
-          <div className={`flex items-center gap-1.5 text-[9px] font-bold opacity-70 ${activeTheme.time}`}>
-            <span className="w-1 h-1 rounded-full bg-current opacity-50" />
-            <span className="uppercase tracking-wider">{timeframeLabel}</span>
-          </div>
-        )}
+        <span className="text-[7px] font-black uppercase tracking-widest text-[var(--muted)]/30 absolute right-0 top-2">{timeframeLabel}</span>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -257,33 +213,35 @@ export default function AnalyticsTab() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       {/* ── Header ── */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h2 className="text-base font-extrabold tracking-tight text-[var(--foreground)]">Platform Analytics</h2>
-          <p className="text-[11px] text-[var(--muted)] mt-0.5">Comprehensive insights and performance metrics</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[var(--border)]/50">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between sm:justify-start gap-3">
+            <h2 className="text-sm font-bold tracking-tight text-[var(--foreground)] uppercase truncate">Platform Analytics</h2>
+            <button aria-label="button"
+              onClick={fetchStats}
+              disabled={loading}
+              className="p-1.5 shrink-0 rounded border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-all active:scale-95 disabled:opacity-50"
+            >
+              <FiRefreshCw size={12} className={loading ? "animate-spin" : ""} />
+            </button>
+          </div>
+          <p className="text-[10px] text-[var(--muted)] mt-0.5 font-mono truncate">Comprehensive insights and performance metrics</p>
         </div>
         <div className="flex items-center gap-2">
           {/* Day toggle */}
-          <div className="flex p-0.5 bg-[var(--border)] rounded-lg gap-0.5">
+          <div className="flex p-0.5 bg-[var(--border)]/50 border border-[var(--border)] rounded-md gap-0.5">
             {[1, 7, 30].map((d) => (
               <button aria-label="button"
                 key={d}
                 onClick={() => setDays(d)}
-                className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest transition-all ${
+                className={`px-3 py-1 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all ${
                   days === d
-                    ? "bg-[var(--accent)] text-black"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                    ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm"
+                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
                 }`}
               >{d}D</button>
             ))}
           </div>
-          <button aria-label="button"
-            onClick={fetchStats}
-            disabled={loading}
-            className="flex items-center gap-1.5 text-[11px] font-bold text-[var(--muted)] hover:text-[var(--accent)] transition-colors px-3 py-1.5 rounded-lg border border-[var(--border)] disabled:opacity-50"
-          >
-            <FiRefreshCw size={12} className={loading ? "animate-spin" : ""} /> Refresh
-          </button>
         </div>
       </div>
 

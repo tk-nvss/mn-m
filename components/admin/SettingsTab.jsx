@@ -104,21 +104,26 @@ const SettingsTab = () => {
 
     return (
         <div className="space-y-8 max-w-2xl">
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+        <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
+                <FiSettings className="text-[var(--accent)] text-lg" />
+            </div>
             <div>
-                <h2 className="text-xl font-bold text-[var(--foreground)] flex items-center gap-2">
-                    <FiSettings className="text-[var(--accent)]" />
-                    Main Settings
-                </h2>
-                <p className="text-sm text-[var(--muted)] mt-1">
-                    Manage website status and settings.
+                <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Main Settings</h2>
+                <p className="text-[9px] text-[var(--muted)]/50 font-bold uppercase tracking-[0.15em] leading-none mt-0.5">
+                    Website Status & Rules
                 </p>
             </div>
+        </div>
+      </div>
 
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden flex flex-col divide-y divide-[var(--border)]">
-                <div className="p-6 flex items-center justify-between gap-6">
+            <div className="bg-[var(--card)]/40 border border-[var(--border)] rounded-[1.5rem] overflow-hidden flex flex-col divide-y divide-[var(--border)]/50 shadow-xl shadow-black/5">
+                <div className="p-6 md:p-8 flex items-center justify-between gap-6 hover:bg-[var(--foreground)]/[0.02] transition-colors">
                     <div>
-                        <h3 className="font-semibold text-[var(--foreground)]">Maintenance Mode</h3>
-                        <p className="text-xs text-[var(--muted)] mt-1">
+                        <h3 className="text-xs font-black uppercase tracking-wide text-[var(--foreground)]">Maintenance Mode</h3>
+                        <p className="text-[10px] text-[var(--muted)]/60 mt-1 leading-relaxed max-w-sm">
                             When enabled, users will see a maintenance message and cannot access the site.
                             You can still access the admin panel.
                         </p>
@@ -128,24 +133,24 @@ const SettingsTab = () => {
                         onClick={toggleMaintenance}
                         disabled={saving}
                         className={`
-              relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none 
-              ${settings.maintenanceMode ? "bg-[var(--accent)]" : "bg-gray-700"}
+              relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-300 ease-in-out focus:outline-none 
+              ${settings.maintenanceMode ? "bg-[var(--accent)] shadow-lg shadow-[var(--accent)]/30" : "bg-[var(--foreground)]/10 hover:bg-[var(--foreground)]/20"}
               ${saving ? "opacity-50 cursor-not-allowed" : ""}
             `}
                     >
                         <span
                             className={`
-                pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out
+                pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-300 ease-in-out
                 ${settings.maintenanceMode ? "translate-x-5" : "translate-x-0"}
               `}
                         />
                     </button>
                 </div>
 
-                <div className="p-6 flex items-center justify-between gap-6">
+                <div className="p-6 md:p-8 flex items-center justify-between gap-6 hover:bg-[var(--foreground)]/[0.02] transition-colors">
                     <div>
-                        <h3 className="font-semibold text-[var(--foreground)]">Disable Taking Orders</h3>
-                        <p className="text-xs text-[var(--muted)] mt-1">
+                        <h3 className="text-xs font-black uppercase tracking-wide text-[var(--foreground)]">Disable Taking Orders</h3>
+                        <p className="text-[10px] text-[var(--muted)]/60 mt-1 leading-relaxed max-w-sm">
                             When enabled, users will see a message saying "Taking new orders is temporarily paused. Please try again later." when they attempt to checkout.
                         </p>
                     </div>
@@ -154,22 +159,22 @@ const SettingsTab = () => {
                         onClick={toggleOrdersDisabled}
                         disabled={saving}
                         className={`
-              relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none 
-              ${settings.ordersDisabled ? "bg-[var(--accent)]" : "bg-gray-700"}
+              relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-300 ease-in-out focus:outline-none 
+              ${settings.ordersDisabled ? "bg-rose-500 shadow-lg shadow-rose-500/30" : "bg-[var(--foreground)]/10 hover:bg-[var(--foreground)]/20"}
               ${saving ? "opacity-50 cursor-not-allowed" : ""}
             `}
                     >
                         <span
                             className={`
-                pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out
+                pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-300 ease-in-out
                 ${settings.ordersDisabled ? "translate-x-5" : "translate-x-0"}
               `}
                         />
                     </button>
                 </div>
                 {message.text && (
-                    <div className={`p-4 flex items-center gap-2 text-sm ${message.type === "success" ? "text-green-500 bg-green-500/10" : "text-red-500 bg-red-500/10"}`}>
-                        {message.type === "success" ? <FiCheckCircle /> : <FiAlertCircle />}
+                    <div className={`p-4 md:p-6 flex items-center gap-3 text-xs font-bold tracking-wide uppercase ${message.type === "success" ? "text-emerald-500 bg-emerald-500/10" : "text-rose-500 bg-rose-500/10"}`}>
+                        {message.type === "success" ? <FiCheckCircle className="text-sm" /> : <FiAlertCircle className="text-sm" />}
                         {message.text}
                     </div>
                 )}

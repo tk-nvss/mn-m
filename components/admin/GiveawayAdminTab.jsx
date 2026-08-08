@@ -186,16 +186,18 @@ export default function GiveawayAdminTab() {
     <div className="space-y-5">
 
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h2 className="text-base font-extrabold tracking-tight text-[var(--foreground)]">Giveaway Manager</h2>
-          <p className="text-[11px] text-[var(--muted)] mt-0.5">Create and manage giveaways, view entries, pick winners</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[var(--border)]/50">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between sm:justify-start gap-3">
+            <h2 className="text-sm font-bold tracking-tight text-[var(--foreground)] uppercase truncate">Giveaway Manager</h2>
+            <button aria-label="button" onClick={fetchGiveaways} className="p-1.5 shrink-0 rounded border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-all active:scale-95">
+              <FiRefreshCw size={12} className={loading ? "animate-spin" : ""} />
+            </button>
+          </div>
+          <p className="text-[10px] text-[var(--muted)] mt-0.5 font-mono truncate">Create and manage giveaways, view entries, pick winners</p>
         </div>
-        <div className="flex gap-2">
-          <button aria-label="button" onClick={fetchGiveaways} className="flex items-center gap-1.5 text-[11px] font-bold text-[var(--muted)] hover:text-[var(--accent)] px-3 py-1.5 rounded-lg border border-[var(--border)] transition-colors">
-            <FiRefreshCw size={12} /> Refresh
-          </button>
-          <button aria-label="button" onClick={() => { setEditTarget(null); setForm({ title: "", description: "", prize: "", prizeCount: 1, status: "draft", startDate: "", endDate: "", tasks: [], maxEntries: 0 }); setShowCreate(true); }} className="flex items-center gap-1.5 text-[11px] font-black bg-[var(--accent)] text-white px-3 py-1.5 rounded-lg transition-opacity hover:opacity-90">
+        <div>
+          <button aria-label="button" onClick={() => { setEditTarget(null); setForm({ title: "", description: "", prize: "", prizeCount: 1, status: "draft", startDate: "", endDate: "", tasks: [], maxEntries: 0 }); setShowCreate(true); }} className="w-full sm:w-auto flex items-center justify-center gap-1.5 text-[10px] font-bold bg-[var(--foreground)] text-[var(--background)] px-3 py-1.5 rounded-md transition-all hover:opacity-90 active:scale-95">
             <FiPlus size={12} /> New Giveaway
           </button>
         </div>
@@ -212,49 +214,51 @@ export default function GiveawayAdminTab() {
           <p className="text-sm text-[var(--muted)]">No giveaways yet. Create one!</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {giveaways.map(g => (
-            <div key={g._id} className={`rounded-xl border bg-[var(--background)] overflow-hidden ${selected?._id === g._id ? "border-yellow-500/40" : "border-[var(--border)]"}`}>
-              <div className="px-4 py-3 flex items-center gap-3 flex-wrap">
-                <div className="w-9 h-9 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 shrink-0">
-                  <FiGift size={16} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-bold text-[var(--foreground)]">{g.title}</p>
-                    <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${STATUS_COLORS[g.status]}`}>{g.status}</span>
+            <div key={g._id} className={`rounded-xl border bg-[var(--background)] hover:bg-[var(--foreground)]/[0.01] transition-all overflow-hidden ${selected?._id === g._id ? "border-[var(--foreground)]/30" : "border-[var(--border)]"}`}>
+              <div className="p-3 sm:p-4 flex items-start sm:items-center gap-3 sm:gap-4 flex-col sm:flex-row">
+                <div className="flex items-center gap-3 w-full sm:w-auto flex-1 min-w-0">
+                  <div className="w-8 h-8 rounded-lg bg-[var(--foreground)]/[0.03] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] shrink-0">
+                    <FiGift size={14} />
                   </div>
-                  <p className="text-[11px] text-[var(--muted)]">{g.prize} · {g.entryCount || 0} entries · {g.prizeCount} winner{g.prizeCount > 1 ? "s" : ""}</p>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                      <p className="text-xs font-bold text-[var(--foreground)] truncate">{g.title}</p>
+                      <span className={`text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded border ${STATUS_COLORS[g.status] || "bg-transparent text-[var(--muted)] border-[var(--border)]"}`}>{g.status}</span>
+                    </div>
+                    <p className="text-[9px] text-[var(--muted)] font-mono truncate">{g.prize} · {g.entryCount || 0} entries · {g.prizeCount} winner{g.prizeCount > 1 ? "s" : ""}</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0 w-full sm:w-auto justify-end">
                   {g.status === "draft" && (
-                    <button aria-label="button" onClick={() => updateStatus(g._id, "live")} className="flex items-center gap-1 text-[11px] font-bold text-green-400 bg-green-400/10 border border-green-400/20 px-2.5 py-1.5 rounded-lg hover:bg-green-400/20 transition-colors">
-                      <FiPlay size={11} /> Go Live
+                    <button aria-label="button" onClick={() => updateStatus(g._id, "live")} className="flex items-center gap-1 text-[9px] font-bold text-emerald-500 hover:bg-emerald-500/5 border border-[var(--border)] hover:border-emerald-500/30 px-2 py-1 rounded transition-colors">
+                      <FiPlay size={10} /> Go Live
                     </button>
                   )}
                   {g.status === "live" && (
-                    <button aria-label="button" onClick={() => updateStatus(g._id, "ended")} className="flex items-center gap-1 text-[11px] font-bold text-red-400 bg-red-400/10 border border-red-400/20 px-2.5 py-1.5 rounded-lg hover:bg-red-400/20 transition-colors">
-                      <FiSquare size={11} /> End
+                    <button aria-label="button" onClick={() => updateStatus(g._id, "ended")} className="flex items-center gap-1 text-[9px] font-bold text-rose-500 hover:bg-rose-500/5 border border-[var(--border)] hover:border-rose-500/30 px-2 py-1 rounded transition-colors">
+                      <FiSquare size={10} /> End
                     </button>
                   )}
                   <button aria-label="button"
                     onClick={() => openEdit(g)}
-                    className="flex items-center gap-1 text-[11px] font-bold text-blue-400 bg-blue-400/10 border border-blue-400/20 px-2.5 py-1.5 rounded-lg hover:bg-blue-400/20 transition-colors"
+                    className="flex items-center gap-1 text-[9px] font-bold text-[var(--muted)] hover:text-blue-400 hover:bg-blue-400/5 border border-[var(--border)] hover:border-blue-400/30 px-2 py-1 rounded transition-colors"
                   >
-                    <FiEdit2 size={11} /> Edit
+                    <FiEdit2 size={10} /> Edit
                   </button>
                   <button aria-label="button"
                     onClick={() => deleteGiveaway(g._id, g.title)}
-                    className="flex items-center gap-1 text-[11px] font-bold text-red-400 bg-red-400/10 border border-red-400/20 px-2.5 py-1.5 rounded-lg hover:bg-red-400/20 transition-colors"
+                    className="flex items-center gap-1 text-[9px] font-bold text-[var(--muted)] hover:text-rose-500 hover:bg-rose-500/5 border border-[var(--border)] hover:border-rose-500/30 px-2 py-1 rounded transition-colors"
                   >
-                    <FiTrash2 size={11} /> Delete
+                    <FiTrash2 size={10} /> Delete
                   </button>
                   <button aria-label="button"
                     onClick={() => setSelected(selected?._id === g._id ? null : g)}
-                    className="flex items-center gap-1 text-[11px] font-bold text-[var(--muted)] bg-[var(--border)]/40 px-2.5 py-1.5 rounded-lg hover:text-[var(--foreground)] transition-colors"
+                    className={`flex items-center gap-1 text-[9px] font-bold border px-2 py-1 rounded transition-colors ${selected?._id === g._id ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]" : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] border-[var(--border)]"}`}
                   >
-                    <FiUsers size={11} /> Entries
-                    {selected?._id === g._id ? <FiChevronUp size={11} /> : <FiChevronDown size={11} />}
+                    <FiUsers size={10} /> Entries
+                    {selected?._id === g._id ? <FiChevronUp size={10} /> : <FiChevronDown size={10} />}
                   </button>
                 </div>
               </div>

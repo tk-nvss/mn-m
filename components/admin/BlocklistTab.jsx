@@ -105,29 +105,42 @@ export default function BlocklistTab() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <FaShieldAlt className="text-2xl text-[var(--accent)]" />
-        <h2 className="text-xl font-bold text-[var(--foreground)]">Blocklist Management</h2>
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+        <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
+                <FaShieldAlt className="text-[var(--accent)] text-lg" />
+            </div>
+            <div>
+                <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Blocklist Management</h2>
+                <p className="text-[9px] text-[var(--muted)]/50 font-bold uppercase tracking-[0.15em] leading-none mt-0.5">
+                    Security & Access Control
+                </p>
+            </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Add Form */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 h-fit shadow-sm">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Add to Blocklist</h3>
+        <div className="bg-[var(--card)]/40 border border-[var(--border)] rounded-[1.5rem] p-6 md:p-8 h-fit shadow-xl shadow-black/5">
+          <h3 className="text-xs font-black uppercase tracking-wide text-[var(--foreground)] mb-6 flex items-center gap-2">
+             <FaPlus className="text-[var(--accent)] text-sm" />
+             Add to Blocklist
+          </h3>
           
           {message.text && (
-            <div className={`mb-4 p-2.5 rounded-lg text-xs font-semibold text-center ${message.type === 'success' ? 'bg-green-500/20 text-green-400 border border-green-500/20' : 'bg-red-500/20 text-red-400 border border-red-500/20'}`}>
+            <div className={`mb-6 p-4 rounded-xl text-xs font-bold tracking-wide uppercase flex items-center gap-2 border ${message.type === 'success' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border-rose-500/20'}`}>
               {message.text}
             </div>
           )}
 
-          <form onSubmit={handleAdd} className="space-y-4">
+          <form onSubmit={handleAdd} className="space-y-5">
             <div>
-              <label className="block text-xs font-medium text-[var(--muted)] mb-1">Type</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--muted)] mb-2">Type</label>
               <select
                 value={formType}
                 onChange={(e) => setFormType(e.target.value)}
-                className="w-full bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] rounded-lg p-2 focus:outline-none focus:border-[var(--accent)]"
+                className="w-full bg-[var(--background)]/50 border border-[var(--border)] text-[var(--foreground)] rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:border-[var(--accent)]/50 transition-colors appearance-none"
               >
                 <option value="ip">IP Address</option>
                 <option value="email">Email Address</option>
@@ -136,99 +149,101 @@ export default function BlocklistTab() {
             </div>
             
             <div>
-              <label className="block text-xs font-medium text-[var(--muted)] mb-1">Value to Block</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--muted)] mb-2">Value to Block</label>
               <input
                 type="text"
                 value={formValue}
                 onChange={(e) => setFormValue(e.target.value)}
                 placeholder={formType === "ip" ? "e.g. 192.168.1.1" : formType === "email" ? "user@gmail.com" : "12345678"}
-                className="w-full bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] rounded-lg p-2 focus:outline-none focus:border-[var(--accent)]"
+                className="w-full bg-[var(--background)]/50 border border-[var(--border)] text-[var(--foreground)] rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:border-[var(--accent)]/50 transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[var(--muted)] mb-1">Reason (Optional)</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--muted)] mb-2">Reason (Optional)</label>
               <input
                 type="text"
                 value={formReason}
                 onChange={(e) => setFormReason(e.target.value)}
                 placeholder="e.g. Suspicious activity"
-                className="w-full bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] rounded-lg p-2 focus:outline-none focus:border-[var(--accent)]"
+                className="w-full bg-[var(--background)]/50 border border-[var(--border)] text-[var(--foreground)] rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:border-[var(--accent)]/50 transition-colors"
               />
             </div>
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 bg-[var(--accent)] text-black font-bold py-2.5 rounded-lg transition-all hover:brightness-110 disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 bg-[var(--accent)] text-white font-black uppercase tracking-widest text-[10px] py-4 rounded-xl transition-all shadow-lg shadow-[var(--accent)]/20 active:scale-[0.98] disabled:opacity-50 mt-4"
             >
-              <FaPlus />
+              <FaPlus className="text-sm" />
               {submitting ? "Adding..." : "Add to Blocklist"}
             </button>
           </form>
         </div>
 
         {/* List */}
-        <div className="lg:col-span-2 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <h3 className="text-lg font-semibold text-[var(--foreground)]">Blocked Entries</h3>
+        <div className="lg:col-span-2 bg-[var(--card)]/40 border border-[var(--border)] rounded-[1.5rem] p-6 md:p-8 shadow-xl shadow-black/5">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <h3 className="text-xs font-black uppercase tracking-wide text-[var(--foreground)]">Blocked Entries</h3>
             
-            <div className="flex bg-[var(--background)] rounded-lg p-1 border border-[var(--border)]">
+            <div className="flex bg-[var(--foreground)]/[0.03] p-1 rounded-full border border-[var(--border)]/50 shadow-inner overflow-x-auto hide-scrollbar max-w-full">
               {["all", "ip", "email", "gameId"].map((type) => (
                 <button
                   key={type}
                   onClick={() => setFilterType(type)}
-                  className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                  className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap active:scale-95 ${
                     filterType === type 
-                      ? "bg-[var(--accent)] text-black" 
-                      : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                      ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20" 
+                      : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
                   }`}
                 >
-                  {type === "all" ? "All" : type.toUpperCase()}
+                  {type === "all" ? "All" : type}
                 </button>
               ))}
             </div>
           </div>
 
           {loading ? (
-            <div className="text-center py-10 text-[var(--muted)] text-sm animate-pulse">Loading blocklist...</div>
+            <div className="text-center py-20 text-[var(--muted)] text-[10px] font-bold uppercase tracking-widest animate-pulse">Loading blocklist...</div>
           ) : filteredItems.length === 0 ? (
-            <div className="text-center py-10 border border-[var(--border)] bg-[var(--background)] rounded-lg">
-              <FaShieldAlt className="text-3xl text-[var(--muted)] mx-auto mb-3 opacity-50" />
-              <p className="text-[var(--muted)] text-sm">No blocked entries found.</p>
+            <div className="text-center py-20 border border-dashed border-[var(--border)] bg-[var(--background)]/50 rounded-2xl flex flex-col items-center justify-center">
+              <FaShieldAlt className="text-4xl text-[var(--muted)]/30 mb-4" />
+              <p className="text-[var(--muted)] text-xs font-bold tracking-wide uppercase">No blocked entries found.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+            <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--background)]/30 hide-scrollbar">
+              <table className="w-full text-left border-collapse min-w-max">
                 <thead>
-                  <tr className="border-b border-[var(--border)] text-[var(--muted)] text-xs uppercase tracking-wider">
-                    <th className="pb-3 font-medium px-2">Type</th>
-                    <th className="pb-3 font-medium px-2">Value</th>
-                    <th className="pb-3 font-medium px-2">Reason</th>
-                    <th className="pb-3 font-medium px-2">Date</th>
-                    <th className="pb-3 font-medium px-2 text-right">Action</th>
+                  <tr className="border-b border-[var(--border)] bg-[var(--foreground)]/[0.02]">
+                    <th className="py-4 px-6 font-black text-[9px] uppercase tracking-widest text-[var(--muted)]/60">Type</th>
+                    <th className="py-4 px-6 font-black text-[9px] uppercase tracking-widest text-[var(--muted)]/60">Value</th>
+                    <th className="py-4 px-6 font-black text-[9px] uppercase tracking-widest text-[var(--muted)]/60">Reason</th>
+                    <th className="py-4 px-6 font-black text-[9px] uppercase tracking-widest text-[var(--muted)]/60">Date</th>
+                    <th className="py-4 px-6 font-black text-[9px] uppercase tracking-widest text-[var(--muted)]/60 text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border)]">
                   {filteredItems.map((item) => (
-                    <tr key={item._id} className="text-sm text-[var(--foreground)] hover:bg-[var(--foreground)]/5 transition-colors">
-                      <td className="py-3 px-2">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                          item.type === "ip" ? "bg-blue-500/20 text-blue-500" :
-                          item.type === "email" ? "bg-purple-500/20 text-purple-500" :
-                          "bg-orange-500/20 text-orange-500"
+                    <tr key={item._id} className="text-xs text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-colors">
+                      <td className="py-4 px-6">
+                        <span className={`px-2.5 py-1 rounded border text-[9px] font-black uppercase tracking-widest ${
+                          item.type === "ip" ? "bg-blue-500/10 text-blue-500 border-blue-500/20" :
+                          item.type === "email" ? "bg-purple-500/10 text-purple-500 border-purple-500/20" :
+                          "bg-amber-500/10 text-amber-500 border-amber-500/20"
                         }`}>
                           {item.type}
                         </span>
                       </td>
-                      <td className="py-3 px-2 font-mono text-xs">{item.value}</td>
-                      <td className="py-3 px-2 text-[var(--muted)] text-xs truncate max-w-[150px]">{item.reason || "-"}</td>
-                      <td className="py-3 px-2 text-[var(--muted)] text-xs">{new Date(item.createdAt).toLocaleDateString()}</td>
-                      <td className="py-3 px-2 text-right">
+                      <td className="py-4 px-6 font-mono font-bold text-[11px] text-[var(--foreground)]">{item.value}</td>
+                      <td className="py-4 px-6 text-[10px] text-[var(--muted)]/80 font-medium truncate max-w-[150px]">{item.reason || "-"}</td>
+                      <td className="py-4 px-6 text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">
+                        {new Date(item.createdAt).toLocaleString("en-IN", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+                      </td>
+                      <td className="py-4 px-6 text-right">
                         <button
                           onClick={() => handleDelete(item._id)}
-                          className="p-1.5 text-[var(--muted)] hover:text-red-500 hover:bg-red-500/10 rounded transition-colors"
+                          className="w-8 h-8 inline-flex items-center justify-center text-[var(--muted)] hover:text-rose-500 hover:bg-rose-500/10 rounded-full transition-all"
                           title="Remove from blocklist"
                         >
                           <FaTrash size={12} />

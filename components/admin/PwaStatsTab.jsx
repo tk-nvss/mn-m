@@ -49,42 +49,44 @@ export default function PwaStatsTab() {
     <div className="space-y-6">
 
       {/* ── Header ── */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h2 className="text-base font-extrabold tracking-tight text-[var(--foreground)]">PWA Install Stats</h2>
-          <p className="text-[11px] text-[var(--muted)] mt-0.5">Real-time install, active &amp; engagement data</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[var(--border)]/50">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between sm:justify-start gap-3">
+            <h2 className="text-sm font-bold tracking-tight text-[var(--foreground)] uppercase truncate">PWA Install Stats</h2>
+            <button aria-label="button"
+              onClick={() => fetchStats(days)}
+              className="p-1.5 shrink-0 rounded border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-all active:scale-95"
+            >
+              <FiRefreshCw size={12} />
+            </button>
+          </div>
+          <p className="text-[10px] text-[var(--muted)] mt-0.5 font-mono truncate">Real-time install, active & engagement data</p>
         </div>
         <div className="flex items-center gap-2">
           {/* Day toggle */}
-          <div className="flex p-0.5 bg-[var(--border)] rounded-lg gap-0.5">
+          <div className="flex p-0.5 bg-[var(--border)]/50 border border-[var(--border)] rounded-md gap-0.5">
             {[1, 7, 30].map((d) => (
               <button aria-label="button"
                 key={d}
                 onClick={() => setDays(d)}
-                className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest transition-all ${
+                className={`px-3 py-1 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all ${
                   days === d
-                    ? "bg-[var(--accent)] text-black"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                    ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm"
+                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
                 }`}
               >{d}D</button>
             ))}
           </div>
-          <button aria-label="button"
-            onClick={() => fetchStats(days)}
-            className="flex items-center gap-1.5 text-[11px] font-bold text-[var(--muted)] hover:text-[var(--accent)] transition-colors px-3 py-1.5 rounded-lg border border-[var(--border)]"
-          >
-            <FiRefreshCw size={12} /> Refresh
-          </button>
         </div>
       </div>
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <StatCard label="Total Installs"  value={data.totalInstalls}  icon={<FiDownload size={16}  />} color="#ef4444" glow="rgba(239,68,68,0.15)"  />
-        <StatCard label={`Installs (${days === 1 ? '1D' : days === 7 ? '7D' : '30D'})`} value={data.periodInstalls || 0} icon={<FiDownload size={16} />} color="#6366f1" glow="rgba(99,102,241,0.15)" />
-        <StatCard label="Active Devices"  value={data.totalActive}    icon={<FiActivity size={16}  />} color="#22c55e" glow="rgba(34,197,94,0.15)"  />
-        <StatCard label="Dismissed"       value={data.dismissCount}   icon={<FiXCircle size={16}   />} color="#f59e0b" glow="rgba(245,158,11,0.15)" />
-        <StatCard label="Conversion Rate" value={`${conversionRate}%`} icon={<FiUser size={16}     />} color="#60a5fa" glow="rgba(96,165,250,0.15)" />
+      <div className="grid grid-cols-6 md:grid-cols-5 gap-2 sm:gap-3">
+        <StatCard className="col-span-3 md:col-span-1" label="Total Installs"  value={data.totalInstalls}  icon={<FiDownload size={16}  />} color="#ef4444" glow="rgba(239,68,68,0.15)"  />
+        <StatCard className="col-span-3 md:col-span-1" label={`Installs (${days === 1 ? '1D' : days === 7 ? '7D' : '30D'})`} value={data.periodInstalls || 0} icon={<FiDownload size={16} />} color="#6366f1" glow="rgba(99,102,241,0.15)" />
+        <StatCard className="col-span-2 md:col-span-1" label="Active Devices"  value={data.totalActive}    icon={<FiActivity size={16}  />} color="#22c55e" glow="rgba(34,197,94,0.15)"  />
+        <StatCard className="col-span-2 md:col-span-1" label="Dismissed"       value={data.dismissCount}   icon={<FiXCircle size={16}   />} color="#f59e0b" glow="rgba(245,158,11,0.15)" />
+        <StatCard className="col-span-2 md:col-span-1" label="Conversion" value={`${conversionRate}%`} icon={<FiUser size={16}     />} color="#60a5fa" glow="rgba(96,165,250,0.15)" />
       </div>
 
       {/* ── Charts row ── */}
@@ -202,19 +204,21 @@ export default function PwaStatsTab() {
 }
 
 /* ── Stat card ── */
-function StatCard({ label, value, icon, color, glow }) {
+function StatCard({ label, value, icon, color, glow, className = "" }) {
   return (
     <div
-      className="relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--background)] p-4"
+      className={`relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--background)] p-2.5 sm:p-4 ${className}`}
       style={{ boxShadow: `0 0 24px ${glow}` }}
     >
       <div className="absolute inset-x-0 top-0 h-0.5" style={{ background: color }} />
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-[10px] uppercase tracking-widest font-bold text-[var(--muted)]">{label}</p>
-          <p className="text-2xl font-black mt-1 leading-none" style={{ color }}>{value}</p>
+      <div className="flex items-center sm:items-start justify-between gap-1.5 sm:gap-2">
+        <div className="min-w-0">
+          <p className="text-[8px] sm:text-[10px] uppercase tracking-wider font-bold text-[var(--muted)] leading-tight line-clamp-2 break-words">{label}</p>
+          <p className="text-[15px] sm:text-2xl font-black mt-0.5 sm:mt-1 leading-none" style={{ color }}>{value}</p>
         </div>
-        <div className="p-2 rounded-lg" style={{ background: glow, color }}>{icon}</div>
+        <div className="p-1 sm:p-2 rounded-md sm:rounded-lg shrink-0" style={{ background: glow, color }}>
+          <div className="scale-75 sm:scale-100 origin-center">{icon}</div>
+        </div>
       </div>
     </div>
   );

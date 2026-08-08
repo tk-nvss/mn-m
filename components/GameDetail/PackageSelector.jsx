@@ -17,10 +17,10 @@ export default function PackageSelector({
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-0">
       {/* ================= HEADER & VIEW TOGGLE ================= */}
-      <div className="mb-5 flex items-center justify-between gap-4 border-b border-[var(--border)] pb-3">
+      <div className="mb-3 flex items-center justify-between gap-3 border-b border-[var(--border)] pb-2">
         <div className="flex flex-col gap-0.5">
-          <h2 className="text-lg font-[1000] tracking-tighter text-[var(--foreground)] uppercase italic leading-none">
-            Pick <span className="text-[var(--accent)] drop-shadow-[0_0_8px_rgba(var(--accent-rgb),0.3)]">Your Pack</span>
+          <h2 className="text-base font-[1000] tracking-tighter text-[var(--foreground)] uppercase italic leading-none">
+            Pick <span className="text-[var(--accent)]">Your Pack</span>
           </h2>
           <p className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/40 flex items-center gap-2">
             <span className="w-3 h-[1px] bg-[var(--accent)]/30 rounded-full" />
@@ -29,16 +29,22 @@ export default function PackageSelector({
         </div>
 
         {/* View Toggle */}
-        <div className="relative bg-[var(--card)]/40 backdrop-blur-3xl p-1 rounded-full border border-[var(--border)] flex items-center shadow-lg">
-          <div 
-            className="absolute h-[calc(100%-8px)] rounded-full bg-gradient-to-r from-[var(--accent)] to-emerald-500 shadow-[0_4px_12px_rgba(var(--accent-rgb),0.3)] transition-all duration-600 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
-            style={{
-              width: "28px",
-              left: viewMode === "grid" ? "4px" : "calc(50% + 2px)",
-            }}
-          />
-          <button aria-label="button" onClick={() => setViewMode("grid")} className={`relative z-10 w-7 h-7 flex items-center justify-center transition-colors duration-300 ${viewMode === "grid" ? "text-white" : "text-[var(--muted)] hover:text-[var(--foreground)]"}`}><FiGrid size={13} /></button>
-          <button aria-label="button" onClick={() => setViewMode("slider")} className={`relative z-10 w-7 h-7 flex items-center justify-center transition-colors duration-300 ${viewMode === "slider" ? "text-white" : "text-[var(--muted)] hover:text-[var(--foreground)]"}`}><FiList size={13} /></button>
+        <div className="flex p-0.5 rounded-full bg-[var(--background)] shadow-inner border border-[var(--border)]/50">
+          {[
+            { id: "grid", icon: FiGrid },
+            { id: "list", icon: FiList },
+          ].map((mode) => (
+            <button aria-label="button"
+              key={mode.id}
+              onClick={() => setViewMode(mode.id)}
+              className={`p-1.5 rounded-full transition-all duration-300 ${viewMode === mode.id
+                ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm scale-[1.02]"
+                : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
+                }`}
+            >
+              <mode.icon size={11} />
+            </button>
+          ))}
         </div>
       </div>
 

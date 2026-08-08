@@ -430,15 +430,16 @@ export default function PromotionalTab() {
             </button>
           </div>
 
-          <div className="flex flex-wrap gap-2 px-1 items-center">
+          <div className="flex flex-wrap gap-1.5 px-1 items-center">
             {["all", "user", "member", "admin", "owner", "external"].map((role) => (
               <button aria-label="button"
                 key={role}
-                onClick={() => { setSelectedRole(role); setPage(1); }} // Reset page on role change
-                className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${selectedRole === role
-                    ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20"
-                    : "bg-[var(--foreground)]/[0.05] text-[var(--muted)] hover:bg-[var(--foreground)]/[0.1]"
-                  }`}
+                onClick={() => { setSelectedRole(role); setPage(1); }}
+                className={`px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                  selectedRole === role
+                    ? "bg-[var(--foreground)] text-[var(--background)]"
+                    : "border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
+                }`}
               >
                 {role}
               </button>
@@ -448,55 +449,54 @@ export default function PromotionalTab() {
           {/* Compact Tag Filter */}
           <div className="px-1">
             <div className="relative group">
-              <Tag className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-40 group-focus-within:opacity-100 transition-opacity" size={14} />
+              <Tag className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-50" size={12} />
               <select
                 value={selectedTag || ""}
-                onChange={(e) => { setSelectedTag(e.target.value || null); setPage(1); }} // Reset page on tag change
-                className="w-full h-10 pl-11 pr-10 rounded-xl border border-[var(--border)] bg-[var(--foreground)]/[0.03] text-[10px] font-black uppercase tracking-widest focus:border-[var(--accent)]/50 focus:ring-4 focus:ring-[var(--accent)]/5 outline-none appearance-none cursor-pointer text-[var(--foreground)]"
+                onChange={(e) => { setSelectedTag(e.target.value || null); setPage(1); }}
+                className="w-full h-9 pl-9 pr-9 rounded border border-[var(--border)] bg-[var(--background)] text-[10px] font-bold uppercase tracking-widest outline-none appearance-none cursor-pointer text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-colors"
               >
-                <option value="" className="bg-[var(--card)] text-[var(--foreground)]">Filter by Category / Tag</option>
+                <option value="" className="bg-[var(--background)] text-[var(--foreground)]">Filter by Category / Tag</option>
                 {uniqueTags.map(tag => (
-                  <option key={tag} value={tag} className="bg-[var(--card)] text-[var(--foreground)]">
+                  <option key={tag} value={tag} className="bg-[var(--background)] text-[var(--foreground)]">
                     #{tag.toLowerCase()}
                   </option>
                 ))}
               </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
-                <Plus size={12} className="rotate-45" />
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
+                <Plus size={10} className="rotate-45" />
               </div>
             </div>
           </div>
 
           {/* Manual Entry */}
-          <div className="flex gap-2 bg-[var(--foreground)]/[0.03] p-3 rounded-2xl border border-dashed border-[var(--border)]">
+          <div className="flex gap-2 px-1">
             <div className="relative flex-1 group">
-              <UserPlus className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-40 group-focus-within:opacity-100 transition-opacity" size={16} />
+              <UserPlus className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-50" size={14} />
               <input
                 type="text"
                 placeholder="Type external Gmail..."
                 value={manualEmail}
                 onChange={(e) => setManualEmail(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && addManualEmail()}
-                className="w-full h-10 pl-11 pr-4 rounded-xl border border-[var(--border)] bg-[var(--foreground)]/[0.03] text-sm focus:border-[var(--accent)]/50 focus:ring-4 focus:ring-[var(--accent)]/5 outline-none transition-all placeholder:text-[var(--muted)]/40 text-[var(--foreground)]"
+                className="w-full h-9 pl-9 pr-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs outline-none transition-colors placeholder:text-[var(--muted)]/40 text-[var(--foreground)] focus:border-[var(--accent)]/50"
               />
             </div>
             <button aria-label="button"
               onClick={addManualEmail}
-              className="px-4 h-10 rounded-xl bg-[var(--accent)] text-white font-bold text-xs flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-[var(--accent)]/10"
+              className="px-4 h-9 rounded border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] font-bold text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-colors shrink-0"
             >
-              <Plus size={16} />
-              <span className="hidden sm:inline">Add</span>
+              <Plus size={14} />
             </button>
           </div>
 
-          <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-40 group-focus-within:opacity-100 transition-opacity" size={16} />
+          <div className="relative group px-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-50" size={14} />
             <input
               type="text"
               placeholder="Search by name or email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-12 pl-12 pr-4 rounded-2xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-sm focus:border-[var(--accent)]/50 focus:ring-4 focus:ring-[var(--accent)]/5 outline-none transition-all placeholder:text-[var(--muted)]/40"
+              className="w-full h-9 pl-9 pr-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs outline-none transition-colors placeholder:text-[var(--muted)]/40 text-[var(--foreground)] focus:border-[var(--accent)]/50"
             />
           </div>
 
@@ -523,11 +523,11 @@ export default function PromotionalTab() {
             </div>
           </div>
 
-          <div className="h-[450px] overflow-y-auto border border-[var(--border)] rounded-2xl bg-[var(--card)] p-2 space-y-1 custom-scrollbar">
+          <div className="h-[450px] overflow-y-auto border border-[var(--border)] rounded bg-[var(--background)] custom-scrollbar">
             {loading ? (
               <div className="h-full flex flex-col items-center justify-center space-y-3">
-                <Loader2 className="animate-spin text-[var(--accent)]" size={28} />
-                <p className="text-xs font-medium text-[var(--muted)]">Loading contact list...</p>
+                <Loader2 className="animate-spin text-[var(--accent)]" size={24} />
+                <p className="text-[10px] uppercase tracking-widest font-bold text-[var(--muted)]">Loading contact list...</p>
               </div>
             ) : filteredUsers.length > 0 ? (
               [...filteredUsers]
@@ -542,26 +542,26 @@ export default function PromotionalTab() {
                   <div
                     key={u._id}
                     onClick={() => toggleSelectUser(u.email)}
-                    className={`flex items-center justify-between p-3.5 rounded-xl cursor-pointer transition-all duration-200 border relative group ${selectedEmails.includes(u.email) ? 'bg-[var(--accent)]/15 border-[var(--accent)]/30 ring-1 ring-[var(--accent)]/20 shadow-sm' : 'bg-transparent border-transparent hover:bg-[var(--foreground)]/[0.04] hover:border-[var(--border)]'}`}
+                    className={`flex items-center justify-between p-3 cursor-pointer transition-colors border-b border-[var(--border)]/50 last:border-0 relative group ${selectedEmails.includes(u.email) ? 'bg-[var(--accent)]/5' : 'bg-transparent hover:bg-[var(--foreground)]/[0.02]'}`}
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${selectedEmails.includes(u.email) ? 'bg-[var(--accent)] text-white' : 'bg-[var(--foreground)]/[0.06] text-[var(--muted)]'}`}>
-                        {u.isManual ? <Globe size={16} /> : (u.name?.charAt(0).toUpperCase() || 'U')}
+                      <div className={`w-8 h-8 rounded flex items-center justify-center font-bold text-[10px] uppercase tracking-widest shrink-0 ${selectedEmails.includes(u.email) ? 'bg-[var(--accent)] text-white' : 'border border-[var(--border)] text-[var(--muted)] bg-[var(--background)]'}`}>
+                        {u.isManual ? <Globe size={14} /> : (u.name?.charAt(0).toUpperCase() || 'U')}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-bold text-[var(--foreground)] truncate leading-tight">{u.name}</p>
-                          {u.isManual && <span className="px-1.5 py-0.5 rounded-md bg-[var(--accent)]/10 text-[var(--accent)] text-[8px] font-black uppercase tracking-widest shrink-0">Manual</span>}
+                          {u.isManual && <span className="px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)] text-[8px] font-black uppercase tracking-widest shrink-0">Manual</span>}
                         </div>
                         <p className="text-[11px] text-[var(--muted)]/60 font-medium truncate lowercase leading-tight mb-1">{u.email}</p>
 
                         {/* Tags Display */}
                         <div className="flex flex-wrap gap-1.5 mt-2">
                           {u.tags?.map(tag => (
-                            <span key={tag} className={`px-2 py-0.5 rounded-md border text-[9px] font-black lowercase tracking-tight flex items-center gap-1.5 transition-all shadow-sm ${getTagColor(tag)}`}>
+                            <span key={tag} className={`px-1.5 py-0.5 rounded border text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5 transition-colors ${getTagColor(tag)}`}>
                               {tag}
                               {!u.isManual && (
-                                <button aria-label="button" onClick={(e) => { e.stopPropagation(); removeTagFromUser(u, tag); }} className="hover:scale-125 transition-transform opacity-60 hover:opacity-100">
+                                <button aria-label="button" onClick={(e) => { e.stopPropagation(); removeTagFromUser(u, tag); }} className="opacity-60 hover:opacity-100 hover:text-[var(--foreground)]">
                                   <X size={10} />
                                 </button>
                               )}
@@ -570,7 +570,7 @@ export default function PromotionalTab() {
                           {!u.isManual && editingTagsUserId !== u._id && (
                             <button aria-label="button"
                               onClick={(e) => { e.stopPropagation(); setEditingTagsUserId(u._id); }}
-                              className="text-[8px] font-black uppercase text-[var(--accent)] hover:underline flex items-center gap-1"
+                              className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)] hover:text-[var(--foreground)] flex items-center gap-1 border border-[var(--border)] rounded px-1.5 py-0.5"
                             >
                               <Plus size={8} /> Tag
                             </button>
@@ -651,43 +651,40 @@ export default function PromotionalTab() {
             <Mail size={14} className="text-[var(--accent)]" /> Email Composer
           </h3>
 
-          <div className="space-y-5 border border-[var(--border)] rounded-[2rem] bg-[var(--card)] p-8 shadow-xl relative overflow-hidden">
-            {/* Decoration */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent)]/5 rounded-full -mr-16 -mt-16 blur-3xl pointer-events-none" />
-
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] ml-1">Subject Line</label>
+          <div className="space-y-4 border border-[var(--border)] rounded-xl bg-[var(--background)] p-5 relative overflow-hidden">
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Subject Line</label>
               <input
                 type="text"
                 placeholder="Ex: Exclusive Offer for You! 🎉"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="w-full h-12 px-5 rounded-2xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-sm font-semibold focus:border-[var(--accent)]/50 focus:ring-4 focus:ring-[var(--accent)]/5 outline-none transition-all"
+                className="w-full h-9 px-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] ml-1">Email Header / Title (Appears in body)</label>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Email Header / Title (Appears in body)</label>
               <input
                 type="text"
                 placeholder="Ex: SPECIAL PROMOTION"
                 value={promoTitle}
                 onChange={(e) => setPromoTitle(e.target.value)}
-                className="w-full h-12 px-5 rounded-2xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-sm font-semibold focus:border-[var(--accent)]/50 focus:ring-4 focus:ring-[var(--accent)]/5 outline-none transition-all"
+                className="w-full h-9 px-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] ml-1">Banner Image URL (Optional)</label>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Banner Image URL (Optional)</label>
               <input
                 type="text"
                 placeholder="Ex: https://example.com/banner.png"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
-                className="w-full h-12 px-5 rounded-2xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-sm focus:border-[var(--accent)]/50 focus:ring-4 focus:ring-[var(--accent)]/5 outline-none transition-all"
+                className="w-full h-9 px-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
               />
               {imageUrl && (
-                <div className="mt-2 rounded-xl overflow-hidden border border-[var(--border)] aspect-video bg-black/5 relative group">
+                <div className="mt-2 rounded overflow-hidden border border-[var(--border)] aspect-video bg-[var(--foreground)]/[0.02] relative group">
                   <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="text-white text-[10px] font-bold uppercase tracking-widest">Image Preview</span>
@@ -696,19 +693,19 @@ export default function PromotionalTab() {
               )}
             </div>
 
-            <div className="space-y-2">
-              <div className="flex justify-between items-center ml-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)]">Message Body</label>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Message Body</label>
                 <div className="flex gap-2">
-                  <span className="text-[9px] font-bold text-[var(--muted)]/40 uppercase tracking-wide">Supports HTML</span>
-                  <span className="text-[9px] font-bold text-[var(--accent)] uppercase tracking-wide cursor-help" title="Use HTML tags like <b>, <br>, <p> etc.">Rich Format</span>
+                  <span className="text-[9px] font-bold text-[var(--muted)]/40 uppercase tracking-widest">Supports HTML</span>
+                  <span className="text-[9px] font-bold text-[var(--accent)] uppercase tracking-widest cursor-help" title="Use HTML tags like <b>, <br>, <p> etc.">Rich Format</span>
                 </div>
               </div>
               <textarea
                 placeholder="Dear customer, we have a special promotion for you..."
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                className="w-full h-[250px] p-5 rounded-2xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-sm focus:border-[var(--accent)]/50 focus:ring-4 focus:ring-[var(--accent)]/5 outline-none transition-all resize-none custom-scrollbar leading-relaxed"
+                className="w-full min-h-[180px] p-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none resize-y custom-scrollbar leading-relaxed placeholder:text-[var(--muted)]/40"
               />
             </div>
 
@@ -718,14 +715,14 @@ export default function PromotionalTab() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className={`p-4 rounded-2xl flex items-center gap-3 text-xs font-bold border ${status.type === 'success'
+                  className={`p-3 rounded flex items-center gap-2 text-xs font-bold border ${status.type === 'success'
                       ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
                       : status.type === 'error'
                         ? 'bg-rose-500/10 border-rose-500/20 text-rose-500'
                         : 'bg-blue-500/10 border-blue-500/20 text-blue-500'
                     }`}
                 >
-                  {status.type === 'info' ? <Loader2 className="animate-spin" size={16} /> : <AlertCircle size={16} />}
+                  {status.type === 'info' ? <Loader2 className="animate-spin" size={14} /> : <AlertCircle size={14} />}
                   {status.message}
                 </motion.div>
               )}
@@ -734,77 +731,77 @@ export default function PromotionalTab() {
             <button aria-label="button"
               onClick={handleSend}
               disabled={sending || selectedEmails.length === 0}
-              className="w-full h-14 rounded-2xl bg-[var(--accent)] text-white font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:brightness-110 active:scale-95 disabled:opacity-40 disabled:active:scale-100 transition-all shadow-xl shadow-[var(--accent)]/20 group relative overflow-hidden"
+              className="w-full h-10 mt-2 rounded border border-[var(--accent)]/20 bg-[var(--accent)]/10 text-[var(--accent)] font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-[var(--accent)] hover:text-white active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-colors"
             >
               {sending ? (
-                <Loader2 className="animate-spin" size={20} />
+                <Loader2 className="animate-spin" size={16} />
               ) : (
                 <>
-                  <Send size={18} className="translate-x-0 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  <Send size={14} />
                   <span>Send to {selectedEmails.length} Recipients</span>
                 </>
               )}
-              {sending && <span className="ml-2">Transmitting...</span>}
+              {sending && <span className="ml-1">Transmitting...</span>}
             </button>
           </div>
         </motion.div>
       </div>
 
-      {/* History Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mt-12 space-y-4"
-      >
-        <div className="flex items-center justify-between px-1">
-          <h3 className="text-xs font-black uppercase tracking-widest text-[var(--muted)] flex items-center gap-2">
-            <span className="w-6 h-6 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] font-bold italic">H</span>
-            Recent Campaigns (Last 10)
-          </h3>
-        </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--foreground)]">
+          Recent Campaigns <span className="text-[var(--muted)]">(Last 10)</span>
+        </h3>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {recentLogs.length > 0 ? (
-            recentLogs.map((log) => (
-              <div
-                key={log._id}
-                className="p-5 rounded-3xl border border-[var(--border)] bg-[var(--card)] hover:border-[var(--accent)]/30 transition-all group overflow-hidden relative"
-              >
-                <div className="flex justify-between items-start mb-3">
-                  <div className="space-y-1 pr-10">
-                    <p className="text-xs font-black text-[var(--foreground)] truncate uppercase tracking-tighter">{log.subject}</p>
-                    <p className="text-[10px] text-[var(--muted)] font-bold">{new Date(log.createdAt).toLocaleString()}</p>
-                  </div>
-                  <button aria-label="button"
-                    onClick={() => useTemplate(log)}
-                    className="shrink-0 px-4 py-2 rounded-xl bg-[var(--accent)]/5 hover:bg-[var(--accent)] text-[var(--accent)] hover:text-white text-[10px] font-black uppercase tracking-widest transition-all"
-                  >
-                    Use Template
-                  </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {recentLogs.length > 0 ? (
+          recentLogs.map((log) => (
+            <div
+              key={log._id}
+              className="p-4 rounded-xl border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--foreground)]/[0.01] transition-colors overflow-hidden flex flex-col"
+            >
+              <div className="flex justify-between items-start mb-3 gap-4">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-black text-[var(--foreground)] truncate uppercase tracking-tight leading-none">{log.subject}</p>
+                  <p className="text-[10px] text-[var(--muted)] font-medium mt-1.5">{new Date(log.createdAt).toLocaleString()}</p>
                 </div>
-                <div className="flex gap-3 text-[10px] font-bold">
-                  <span className="px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-600">✓ {log.successCount} Sent</span>
-                  <span className="px-2 py-1 rounded-md bg-rose-500/10 text-rose-600">✕ {log.failedCount} Failed</span>
-                  <span className="px-2 py-1 rounded-md bg-[var(--foreground)]/[0.05] text-[var(--muted)]">👤 By {log.sentBy}</span>
-                </div>
-
-                {/* Decorative content preview */}
-                <div className="mt-4 p-3 rounded-xl bg-[var(--foreground)]/[0.02] border border-[var(--border)] relative max-h-[100px] overflow-hidden">
-                  <div className="text-[10px] text-[var(--muted)]/60 line-clamp-3 leading-relaxed tabular-nums"
-                    dangerouslySetInnerHTML={{ __html: (log.content || "").replace(/<[^>]*>?/gm, ' ') }}
-                  />
-                  <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--card)] to-transparent pointer-events-none" />
-                </div>
+                <button aria-label="button"
+                  onClick={() => useTemplate(log)}
+                  className="shrink-0 px-3 py-1.5 rounded border border-[var(--accent)]/30 text-[10px] font-bold uppercase tracking-widest text-[var(--accent)] bg-[var(--accent)]/10 hover:bg-[var(--accent)] hover:text-white transition-colors"
+                >
+                  Use Template
+                </button>
               </div>
-            ))
-          ) : (
-            <div className="col-span-full p-12 text-center rounded-[2rem] border border-dashed border-[var(--border)]">
-              <p className="text-sm font-semibold text-[var(--muted)]">No campaign history found yet.</p>
-              <p className="text-xs text-[var(--muted)]/60 mt-1">Sent emails will appear here for quick reuse.</p>
+
+              <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                <span className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-emerald-500/20 text-emerald-600 bg-emerald-500/10">
+                  <span className="mr-1">✓</span>{log.successCount} Sent
+                </span>
+                <span className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-rose-500/20 text-rose-600 bg-rose-500/10">
+                  <span className="mr-1">✕</span>{log.failedCount} Failed
+                </span>
+                <span className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-[var(--accent)]/20 text-[var(--accent)] bg-[var(--accent)]/5 truncate max-w-[120px]">
+                  <span className="mr-1 opacity-70">👤</span>By {log.sentBy}
+                </span>
+              </div>
+
+              {/* Decorative content preview */}
+              <div className="p-3 rounded border border-[var(--border)] bg-[var(--foreground)]/[0.02] mt-auto">
+                <div className="text-[10px] text-[var(--muted)] font-mono line-clamp-2 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: (log.content || "").replace(/<[^>]*>?/gm, ' ') }}
+                />
+              </div>
             </div>
-          )}
-        </div>
-      </motion.div>
+          ))
+        ) : (
+          <div className="col-span-full py-12 text-center rounded-xl border border-dashed border-[var(--border)]">
+            <p className="text-sm font-bold text-[var(--muted)]">No campaign history found yet.</p>
+            <p className="text-[10px] font-mono text-[var(--muted)] mt-1">Sent emails will appear here for quick reuse.</p>
+          </div>
+        )}
+      </div>
+    </div>
     </div>
   );
 }

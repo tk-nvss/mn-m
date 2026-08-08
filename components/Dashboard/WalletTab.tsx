@@ -684,24 +684,22 @@ function TransactionHistorySection({ onResumeUsdt }: { onResumeUsdt: (txn: any) 
         <h3 className="text-lg font-bold tracking-tight text-[var(--foreground)] flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
           Transaction History
-          <TransactionHistoryRefresh />
         </h3>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <div className="relative w-full sm:w-auto flex-1">
+          <div className="relative w-full sm:w-auto flex-1 group">
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-50 group-focus-within:opacity-100 group-focus-within:text-[var(--accent)] transition-all" size={14} />
             <input 
               type="text" 
-              placeholder="Search..."
+              placeholder="SEARCH..."
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && setSearch(searchValue)}
-              className="bg-[var(--card)] border border-[var(--border)] rounded-xl px-3 py-1.5 text-xs text-[var(--foreground)] outline-none focus:border-[var(--accent)] transition-all w-full sm:w-48"
+              className="w-full sm:w-48 h-9 pl-9 pr-4 rounded-2xl bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)]/50 text-[10px] uppercase font-bold tracking-widest outline-none transition-colors placeholder:text-[var(--muted)]/50 text-[var(--foreground)]"
             />
-            <button aria-label="search" onClick={() => setSearch(searchValue)} className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]">
-              <FiSearch size={14} />
-            </button>
           </div>
           <FilterDropdown status={status} setStatus={setStatus} typeFilter={typeFilter} setTypeFilter={setTypeFilter} />
+          <TransactionHistoryRefresh />
         </div>
       </div>
 
@@ -732,9 +730,8 @@ function FilterDropdown({ status, setStatus, typeFilter, setTypeFilter }: any) {
 
   return (
     <div className="relative" ref={ref}>
-      <button aria-label="filter" onClick={() => setIsOpen(!isOpen)} className={`p-2 rounded-xl border transition-all flex items-center gap-2 text-xs font-bold ${isOpen || status !== 'all' || typeFilter !== 'all' ? 'bg-[var(--accent)]/10 border-[var(--accent)]/40 text-[var(--accent)]' : 'bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]'}`}>
+      <button aria-label="filter" onClick={() => setIsOpen(!isOpen)} className={`w-9 h-9 flex items-center justify-center rounded-2xl border transition-colors ${isOpen || status !== 'all' || typeFilter !== 'all' ? 'bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]' : 'bg-[var(--background)] border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)]'}`}>
         <FiFilter size={14} />
-        <span className="hidden sm:inline">Filters</span>
       </button>
 
       <AnimatePresence>
@@ -776,13 +773,19 @@ function FilterDropdown({ status, setStatus, typeFilter, setTypeFilter }: any) {
 }
 
 function TransactionHistoryRefresh() {
+  const [spinning, setSpinning] = useState(false);
+
   return (
     <button aria-label="button"
-      onClick={() => window.dispatchEvent(new Event("refreshTransactionHistory"))}
-      className="p-2 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05] transition-all"
+      onClick={() => {
+        setSpinning(true);
+        window.dispatchEvent(new Event("refreshTransactionHistory"));
+        setTimeout(() => setSpinning(false), 1000);
+      }}
+      className="w-9 h-9 flex items-center justify-center rounded-2xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-colors"
       title="Refresh History"
     >
-      <FiLoader size={14} className="hover:animate-spin" />
+      <FiRefreshCw size={14} className={spinning ? "animate-spin" : ""} />
     </button>
   );
 }

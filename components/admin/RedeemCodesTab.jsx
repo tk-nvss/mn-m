@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FiGift, FiPlus, FiCopy, FiCheck, FiClock, FiUser, FiTrash2 } from "react-icons/fi";
+import { FiGift, FiPlus, FiCopy, FiCheck, FiClock, FiUser, FiTrash2, FiZap, FiHash, FiType } from "react-icons/fi";
 
 export default function RedeemCodesTab() {
     const [amount, setAmount] = useState("");
@@ -112,83 +112,103 @@ export default function RedeemCodesTab() {
 
 
             {/* GENERATOR CARD */}
-            <div className="p-5 rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--foreground)]/[0.03] shadow-xl shadow-black/5">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 mb-6">
+            <div className="p-5 md:p-6 rounded-[1.5rem] border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--foreground)]/[0.02] shadow-2xl shadow-black/5 relative overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 relative z-10">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]">
-                            <FiGift size={18} />
+                        <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0 shadow-inner">
+                            <FiZap size={16} />
                         </div>
                         <div>
-                            <h3 className="text-base font-black uppercase tracking-tight text-[var(--foreground)]">Generator</h3>
-                            <p className="text-[9px] font-bold text-[var(--muted)]/40 uppercase tracking-widest leading-none">Create vouchers</p>
+                            <h3 className="text-sm font-black uppercase tracking-widest text-[var(--foreground)] leading-tight mb-0.5">Generator</h3>
+                            <p className="text-[9px] font-bold text-[var(--muted)]/60 uppercase tracking-[0.15em] leading-none">Create vouchers</p>
                         </div>
                     </div>
 
-                    <div className="flex bg-[var(--foreground)]/[0.05] p-1 rounded-lg border border-[var(--border)]">
+                    <div className="flex bg-[var(--foreground)]/[0.03] p-1 rounded-full border border-[var(--border)]/50 shadow-inner">
                         <button aria-label="button"
                             onClick={() => setIsSeries(false)}
-                            className={`px-4 py-1.5 rounded-md text-[9px] font-black uppercase tracking-widest transition-all ${!isSeries ? 'bg-[var(--accent)] text-white shadow-lg' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
+                            className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 ${!isSeries ? 'bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20' : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]'}`}
                         >
                             Unique
                         </button>
                         <button aria-label="button"
                             onClick={() => setIsSeries(true)}
-                            className={`px-4 py-1.5 rounded-md text-[9px] font-black uppercase tracking-widest transition-all ${isSeries ? 'bg-[var(--accent)] text-white shadow-lg' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
+                            className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 ${isSeries ? 'bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20' : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]'}`}
                         >
                             Series
                         </button>
                     </div>
                 </div>
 
-                <form className="grid grid-cols-1 sm:grid-cols-4 gap-4" onSubmit={handleGenerate}>
+                <form className="grid grid-cols-1 sm:grid-cols-4 gap-4 relative z-10" onSubmit={handleGenerate}>
                     <div className="space-y-1.5">
-                        <label className="text-[9px] font-black uppercase text-[var(--muted)]/50 ml-1 tracking-[0.1em]">Value (₹)</label>
-                        <input
-                            type="number"
-                            value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
-                            placeholder="500"
-                            className="w-full h-11 bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-xl px-4 text-sm focus:border-[var(--accent)]/40 outline-none transition-all font-bold text-[var(--foreground)]"
-                            required
-                        />
+                        <label className="text-[8px] font-black uppercase text-[var(--muted)] ml-2.5 tracking-[0.1em]">Value (₹)</label>
+                        <div className="relative group">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/50 group-focus-within:text-[var(--accent)] transition-colors font-black text-xs">
+                                ₹
+                            </div>
+                            <input
+                                type="number"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                placeholder="500"
+                                className="w-full h-11 bg-[var(--foreground)]/[0.02] border border-[var(--border)] rounded-full pl-9 pr-4 text-xs focus:border-[var(--accent)] focus:bg-[var(--foreground)]/[0.05] outline-none transition-all font-black text-[var(--foreground)] placeholder:text-[var(--muted)]/30 hover:border-[var(--border)]/80"
+                                required
+                            />
+                        </div>
                     </div>
 
                     {isSeries ? (
                         <>
                             <div className="space-y-1.5">
-                                <label className="text-[9px] font-black uppercase text-[var(--muted)]/50 ml-1 tracking-[0.1em]">Code String</label>
-                                <input
-                                    type="text"
-                                    value={customCode}
-                                    onChange={(e) => setCustomCode(e.target.value)}
-                                    placeholder="BONUS500"
-                                    className="w-full h-11 bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-xl px-4 text-sm focus:border-[var(--accent)]/40 outline-none transition-all font-bold uppercase text-[var(--foreground)]"
-                                    required={isSeries}
-                                />
+                                <label className="text-[8px] font-black uppercase text-[var(--muted)] ml-2.5 tracking-[0.1em]">Code String</label>
+                                <div className="relative group">
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/50 group-focus-within:text-[var(--accent)] transition-colors">
+                                        <FiType size={14} />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={customCode}
+                                        onChange={(e) => setCustomCode(e.target.value)}
+                                        placeholder="BONUS"
+                                        className="w-full h-11 bg-[var(--foreground)]/[0.02] border border-[var(--border)] rounded-full pl-10 pr-4 text-xs focus:border-[var(--accent)] focus:bg-[var(--foreground)]/[0.05] outline-none transition-all font-black uppercase text-[var(--foreground)] placeholder:text-[var(--muted)]/30 hover:border-[var(--border)]/80"
+                                        required={isSeries}
+                                    />
+                                </div>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-[9px] font-black uppercase text-[var(--muted)]/50 ml-1 tracking-[0.1em]">Max Uses</label>
-                                <input
-                                    type="number"
-                                    value={maxUses}
-                                    onChange={(e) => setMaxUses(e.target.value)}
-                                    placeholder="100"
-                                    className="w-full h-11 bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-xl px-4 text-sm focus:border-[var(--accent)]/40 outline-none transition-all font-bold text-[var(--foreground)]"
-                                    required={isSeries}
-                                />
+                                <label className="text-[8px] font-black uppercase text-[var(--muted)] ml-2.5 tracking-[0.1em]">Max Uses</label>
+                                <div className="relative group">
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/50 group-focus-within:text-[var(--accent)] transition-colors">
+                                        <FiHash size={14} />
+                                    </div>
+                                    <input
+                                        type="number"
+                                        value={maxUses}
+                                        onChange={(e) => setMaxUses(e.target.value)}
+                                        placeholder="100"
+                                        className="w-full h-11 bg-[var(--foreground)]/[0.02] border border-[var(--border)] rounded-full pl-10 pr-4 text-xs focus:border-[var(--accent)] focus:bg-[var(--foreground)]/[0.05] outline-none transition-all font-black text-[var(--foreground)] placeholder:text-[var(--muted)]/30 hover:border-[var(--border)]/80"
+                                        required={isSeries}
+                                    />
+                                </div>
                             </div>
                         </>
                     ) : (
                         <div className="space-y-1.5 col-span-1 sm:col-span-2">
-                            <label className="text-[9px] font-black uppercase text-[var(--muted)]/50 ml-1 tracking-[0.1em]">Code Count</label>
-                            <input
-                                type="number"
-                                value={quantity}
-                                onChange={(e) => setQuantity(e.target.value)}
-                                placeholder="10"
-                                className="w-full h-11 bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-xl px-4 text-sm focus:border-[var(--accent)]/40 outline-none transition-all font-bold text-[var(--foreground)]"
-                                required={!isSeries}
-                            />
+                            <label className="text-[8px] font-black uppercase text-[var(--muted)] ml-2.5 tracking-[0.1em]">Code Count</label>
+                            <div className="relative group">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/50 group-focus-within:text-[var(--accent)] transition-colors">
+                                    <FiHash size={14} />
+                                </div>
+                                <input
+                                    type="number"
+                                    value={quantity}
+                                    onChange={(e) => setQuantity(e.target.value)}
+                                    placeholder="10"
+                                    className="w-full h-11 bg-[var(--foreground)]/[0.02] border border-[var(--border)] rounded-full pl-10 pr-4 text-xs focus:border-[var(--accent)] focus:bg-[var(--foreground)]/[0.05] outline-none transition-all font-black text-[var(--foreground)] placeholder:text-[var(--muted)]/30 hover:border-[var(--border)]/80"
+                                    required={!isSeries}
+                                />
+                            </div>
                         </div>
                     )}
 
@@ -196,9 +216,9 @@ export default function RedeemCodesTab() {
                         <button aria-label="button"
                             type="submit"
                             disabled={isGenerating}
-                            className="w-full h-11 bg-[var(--accent)] text-white font-black uppercase text-[11px] rounded-xl flex items-center justify-center gap-2 hover:bg-[var(--accent-hover)] transition-all shadow-lg active:scale-95 disabled:opacity-50"
+                            className="w-full h-11 bg-[var(--accent)] text-white font-black uppercase text-[10px] tracking-[0.15em] rounded-full flex items-center justify-center gap-2 hover:bg-[var(--accent-hover)] transition-all shadow-lg shadow-[var(--accent)]/30 active:scale-95 disabled:opacity-50"
                         >
-                            {isGenerating ? "Processing" : <><FiPlus size={14} /> {isSeries ? "Create series" : "Generate unique"}</>}
+                            {isGenerating ? "Processing" : <><FiZap size={14} /> {isSeries ? "Create series" : "Generate unique"}</>}
                         </button>
                     </div>
                 </form>

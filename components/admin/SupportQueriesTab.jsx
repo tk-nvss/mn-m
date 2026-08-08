@@ -189,22 +189,30 @@ export default function SupportQueriesTab() {
   return (
     <div className="space-y-6 pb-6 px-4 md:px-0 max-w-full overflow-x-hidden">
       {/* ================= HEADER ================= */}
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold tracking-tight text-[var(--foreground)]">Support</h2>
+      <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
+        <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
+                <MessageSquare className="text-[var(--accent)] text-[14px]" size={16} />
+            </div>
+            <div>
+                <h2 className="text-xs font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Support</h2>
+                <p className="text-[8px] text-[var(--muted)]/50 font-bold uppercase tracking-[0.15em] leading-none mt-0.5">
+                    Customer Queries
+                </p>
+            </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="px-3 py-1.5 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] flex items-center gap-2">
-            <span className="text-[10px] font-bold text-[var(--muted)] uppercase">
-              {pagination.total} Total
+        <div className="flex flex-wrap items-center justify-end gap-2 ml-auto">
+          <div className="flex bg-[var(--foreground)]/[0.03] px-3 py-1.5 rounded-full border border-[var(--border)]/50 shadow-inner">
+            <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]">
+              <span className="text-[var(--foreground)] mr-1">{pagination.total}</span> Total
             </span>
           </div>
           <button aria-label="button"
             onClick={() => { fetchQueriesStats(); fetchQueriesList(); }}
-            className="p-2 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
+            className="w-7 h-7 rounded-full bg-[var(--foreground)]/[0.03] border border-[var(--border)]/50 flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05] transition-all active:scale-95 shadow-inner"
           >
-            <RefreshCcw size={14} className={loading ? "animate-spin" : ""} />
+            <RefreshCcw size={12} className={loading ? "animate-spin" : ""} />
           </button>
         </div>
       </div>
@@ -225,9 +233,9 @@ export default function SupportQueriesTab() {
       </div>
 
       {/* ================= SEARCH & FILTER ================= */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2 mb-4">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/40" size={16} />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]/40" size={14} />
           <input
             value={search}
             onChange={(e) => {
@@ -235,7 +243,7 @@ export default function SupportQueriesTab() {
               setSearch(e.target.value);
             }}
             placeholder="Search queries..."
-            className="w-full h-11 pl-11 pr-4 rounded-xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] text-sm focus:border-[var(--accent)]/50 outline-none placeholder:text-[var(--muted)]/40"
+            className="w-full h-9 pl-9 pr-4 rounded-xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] text-[10px] font-bold focus:border-[var(--accent)]/50 outline-none placeholder:text-[var(--muted)]/30 transition-colors shadow-inner"
           />
         </div>
       </div>
@@ -257,7 +265,7 @@ export default function SupportQueriesTab() {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-3"
+              className="space-y-1.5"
             >
               {queries.map((q, idx) => {
                 const status = getStatus(q.status);
@@ -270,35 +278,33 @@ export default function SupportQueriesTab() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.03 }}
                     onClick={() => { setActiveQuery(q); setReplyText(q.adminReply || ""); setReplySuccess(""); }}
-                    className="group relative rounded-2xl border border-[var(--border)] bg-[var(--foreground)]/[0.01] hover:bg-[var(--foreground)]/[0.03] transition-all cursor-pointer p-4 flex items-center gap-4"
+                    className="group relative rounded-xl border border-[var(--border)] bg-[var(--card)]/40 hover:bg-[var(--foreground)]/[0.02] transition-colors cursor-pointer px-4 py-2.5 flex items-center gap-3"
                   >
                     <div
-                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full"
                       style={{ backgroundColor: meta.label === 'Open' ? '#f59e0b' : meta.label === 'Resolved' ? '#10b981' : '#3b82f6' }}
                     />
 
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                        <span className={`flex items-center gap-1 px-2 py-0.5 rounded-md border text-[8px] font-bold uppercase tracking-wider ${meta.class}`}>
-                          {meta.icon}
-                          {meta.label}
-                        </span>
-                        <span className="text-[9px] font-medium text-[var(--muted)]/60 truncate">
-                          {new Date(q.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
+                    <div className="flex items-center gap-2 w-full min-w-0">
+                      <span className={`shrink-0 flex items-center gap-1 px-1.5 py-0.5 rounded border text-[7px] font-black uppercase tracking-widest ${meta.class}`}>
+                        {meta.label}
+                      </span>
+                      
+                      <span className="shrink-0 text-[8px] font-bold text-[var(--muted)]/40 w-12 truncate">
+                        {new Date(q.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                      </span>
 
-                      <h4 className="text-sm font-bold text-[var(--foreground)] truncate group-hover:text-[var(--accent)]">
-                        {q.name || q.email || "Unknown User"}
+                      <h4 className="shrink-0 text-[11px] font-black text-[var(--foreground)] truncate group-hover:text-[var(--accent)] transition-colors w-28 sm:w-40">
+                        {q.name || q.email || "Unknown"}
                       </h4>
 
-                      <p className="text-[11px] text-[var(--muted)]/60 truncate mt-0.5">
+                      <p className="flex-1 text-[10px] font-medium text-[var(--muted)]/60 truncate">
                         {q.message}
                       </p>
                     </div>
 
-                    <div className="w-8 h-8 rounded-lg bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--muted)]/40 shrink-0">
-                      <ChevronRight size={16} />
+                    <div className="w-6 h-6 rounded-md flex items-center justify-center text-[var(--muted)]/30 shrink-0 group-hover:bg-[var(--foreground)]/[0.05] group-hover:text-[var(--foreground)] transition-all">
+                      <ChevronRight size={12} />
                     </div>
                   </motion.div>
                 );
@@ -356,37 +362,37 @@ export default function SupportQueriesTab() {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-lg bg-[var(--background)] border border-[var(--border)] rounded-[2rem] shadow-2xl overflow-hidden"
+              className="relative w-full max-w-lg bg-[var(--background)] border border-[var(--border)] rounded-[1.5rem] shadow-2xl overflow-hidden"
             >
-              <div className="px-6 py-4 border-b border-[var(--border)] flex items-center justify-between">
-                <h3 className="text-base font-bold text-[var(--foreground)]">Query Details</h3>
+              <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between">
+                <h3 className="text-xs font-black text-[var(--foreground)] uppercase tracking-widest">Query Details</h3>
                 <button aria-label="button"
                   onClick={() => setActiveQuery(null)}
-                  className="w-8 h-8 rounded-full bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--muted)]/40 hover:text-[var(--foreground)] hover:bg-red-500/20 transition-all"
+                  className="w-7 h-7 rounded-full bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--muted)]/40 hover:text-[var(--foreground)] hover:bg-rose-500/20 transition-all"
                 >
-                  <X size={16} />
+                  <X size={14} />
                 </button>
               </div>
 
-              <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <DetailBlock label="Name" value={activeQuery.name || "N/A"} icon={<Mail size={12} />} />
-                  <DetailBlock label="Email" value={activeQuery.email || "N/A"} icon={<Mail size={12} />} />
-                  <DetailBlock label="Phone" value={activeQuery.phoneNo || activeQuery.phone || "N/A"} icon={<Phone size={12} />} />
-                  <DetailBlock label="Order ID" value={activeQuery.orderId || "N/A"} icon={<MessageSquare size={12} />} />
-                  <DetailBlock label="Type" value={activeQuery.type} emphasize icon={<MessageSquare size={12} />} />
-                  <DetailBlock label="Date" value={new Date(activeQuery.createdAt).toLocaleString()} icon={<Clock size={12} />} />
+              <div className="p-5 space-y-5 max-h-[75vh] overflow-y-auto custom-scrollbar">
+                <div className="grid grid-cols-2 gap-y-4 gap-x-3">
+                  <DetailBlock label="Name" value={activeQuery.name || "N/A"} icon={<Mail size={10} />} />
+                  <DetailBlock label="Email" value={activeQuery.email || "N/A"} icon={<Mail size={10} />} />
+                  <DetailBlock label="Phone" value={activeQuery.phoneNo || activeQuery.phone || "N/A"} icon={<Phone size={10} />} />
+                  <DetailBlock label="Order ID" value={activeQuery.orderId || "N/A"} icon={<MessageSquare size={10} />} />
+                  <DetailBlock label="Type" value={activeQuery.type} emphasize icon={<MessageSquare size={10} />} />
+                  <DetailBlock label="Date" value={new Date(activeQuery.createdAt).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })} icon={<Clock size={10} />} />
                 </div>
 
-                <div className="space-y-2 p-4 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)]">
-                  <p className="text-[10px] font-bold text-[var(--muted)]/40 uppercase">Message</p>
-                  <p className="text-sm font-medium leading-relaxed text-[var(--foreground)]">
+                <div className="space-y-1.5 p-3.5 rounded-xl bg-[var(--foreground)]/[0.02] border border-[var(--border)]">
+                  <p className="text-[9px] font-black text-[var(--muted)]/40 uppercase tracking-widest">Message</p>
+                  <p className="text-xs font-medium leading-relaxed text-[var(--foreground)]">
                     {activeQuery.message}
                   </p>
                 </div>
 
-                <div className="space-y-2 pt-4 border-t border-[var(--border)]">
-                  <p className="text-[10px] font-bold text-[var(--muted)]/40 uppercase ml-1">Status</p>
+                <div className="space-y-1.5 pt-4 border-t border-[var(--border)]">
+                  <p className="text-[9px] font-black text-[var(--muted)]/40 uppercase tracking-widest ml-1">Status</p>
                   <CustomDropdown
                     value={getStatus(activeQuery.status)}
                     onChange={(newStatus) => {
@@ -405,14 +411,14 @@ export default function SupportQueriesTab() {
 
                 {/* ===== ADMIN REPLY ===== */}
                 <div className="space-y-2 pt-4 border-t border-[var(--border)]">
-                  <p className="text-[10px] font-bold text-[var(--muted)]/40 uppercase ml-1 flex items-center gap-1.5">
+                  <p className="text-[9px] font-black text-[var(--muted)]/40 uppercase tracking-widest ml-1 flex items-center gap-1.5">
                     <Send size={10} className="text-[var(--accent)]" /> Admin Reply
                   </p>
 
                   {activeQuery.adminReply && (
                     <div className="p-3 rounded-xl bg-[var(--accent)]/5 border border-[var(--accent)]/20">
-                      <p className="text-[10px] font-bold text-[var(--accent)] uppercase mb-1">Previous reply</p>
-                      <p className="text-sm text-[var(--foreground)] leading-relaxed">{activeQuery.adminReply}</p>
+                      <p className="text-[8px] font-black tracking-widest text-[var(--accent)] uppercase mb-1">Previous reply</p>
+                      <p className="text-xs text-[var(--foreground)] leading-relaxed">{activeQuery.adminReply}</p>
                     </div>
                   )}
 
@@ -420,12 +426,12 @@ export default function SupportQueriesTab() {
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder="Type your reply to the user..."
-                    rows={3}
-                    className="w-full p-3 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-sm text-[var(--foreground)] placeholder:text-[var(--muted)]/30 outline-none focus:border-[var(--accent)]/50 resize-none transition-all"
+                    rows={2}
+                    className="w-full p-3 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-xs text-[var(--foreground)] placeholder:text-[var(--muted)]/30 outline-none focus:border-[var(--accent)]/50 resize-none transition-all shadow-inner"
                   />
 
                   {replySuccess && (
-                    <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest flex items-center gap-1">
+                    <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1">
                       <CheckCircle2 size={10} /> {replySuccess}
                     </p>
                   )}
@@ -433,9 +439,9 @@ export default function SupportQueriesTab() {
                   <button aria-label="button"
                     disabled={!replyText.trim() || sendingReply}
                     onClick={() => sendAdminReply(activeQuery._id, getStatus(activeQuery.status))}
-                    className="w-full h-10 rounded-xl bg-[var(--accent)] text-black text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:brightness-110 active:scale-[0.98] disabled:opacity-30 transition-all"
+                    className="w-full h-9 rounded-full bg-[var(--accent)] text-white text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:brightness-110 shadow-lg shadow-[var(--accent)]/20 active:scale-[0.98] disabled:opacity-30 transition-all"
                   >
-                    {sendingReply ? <Loader2 size={14} className="animate-spin" /> : <><Send size={12} /> Send Reply</>}
+                    {sendingReply ? <Loader2 size={12} className="animate-spin" /> : <><Send size={12} /> Send Reply</>}
                   </button>
                 </div>
               </div>
@@ -518,10 +524,10 @@ function CustomDropdown({ value, onChange, options, disabled }) {
 function DetailBlock({ label, value, emphasize, icon }) {
   return (
     <div className="space-y-0.5">
-      <p className="text-[10px] font-bold text-[var(--muted)]/40 uppercase flex items-center gap-1.5">
+      <p className="text-[8px] font-black text-[var(--muted)]/40 uppercase tracking-widest flex items-center gap-1">
         <span className="text-[var(--accent)]">{icon}</span> {label}
       </p>
-      <p className={`text-sm font-bold ${emphasize ? "text-[var(--accent)] capitalize italic" : "text-[var(--foreground)]"}`}>
+      <p className={`text-[11px] font-black break-all leading-tight ${emphasize ? "text-[var(--accent)] uppercase italic tracking-wider" : "text-[var(--foreground)]"}`}>
         {value}
       </p>
     </div>
@@ -530,23 +536,23 @@ function DetailBlock({ label, value, emphasize, icon }) {
 
 function InsightCard({ label, value, color, pulse }) {
   const colors = {
-    blue: "text-blue-500 bg-blue-500/5 border-blue-500/10",
-    amber: "text-amber-500 bg-amber-500/5 border-amber-500/10",
-    purple: "text-purple-500 bg-purple-500/5 border-purple-500/10",
-    emerald: "text-emerald-500 bg-emerald-500/5 border-emerald-500/10",
+    blue: "text-blue-500 bg-blue-500/10 border-blue-500/20",
+    amber: "text-amber-500 bg-amber-500/10 border-amber-500/20",
+    purple: "text-purple-500 bg-purple-500/10 border-purple-500/20",
+    emerald: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
   };
 
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className={`px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl border ${colors[color]} flex flex-col items-center justify-center text-center relative overflow-hidden bg-[var(--card)]`}
+      className={`px-3 py-2 rounded-xl border ${colors[color]} flex flex-col items-center justify-center text-center relative bg-[var(--card)]/40`}
     >
       {pulse && (
-        <span className="absolute top-1 right-1 w-1 h-1 rounded-full bg-current animate-ping" />
+        <span className="absolute top-1.5 right-1.5 w-1 h-1 rounded-full bg-current animate-ping" />
       )}
-      <span className="text-[7px] sm:text-[8px] font-bold uppercase tracking-tight opacity-60 mb-0.5">{label}</span>
-      <span className="text-xs sm:text-sm font-black tabular-nums whitespace-nowrap">{value}</span>
+      <span className="text-[7px] font-black uppercase tracking-widest opacity-80 mb-0.5">{label}</span>
+      <span className="text-sm font-black tabular-nums whitespace-nowrap leading-none">{value}</span>
     </motion.div>
   );
 }

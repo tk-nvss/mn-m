@@ -65,31 +65,55 @@ export default function UsdtTab() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <h2 className="text-xl font-bold flex items-center gap-2">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+        <h2 className="text-lg md:text-xl font-black uppercase tracking-widest text-[var(--foreground)] flex items-center gap-2">
+           <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
            Crypto Deposits
         </h2>
         
-        <div className="flex flex-wrap gap-1.5 sm:gap-2 bg-[var(--background)] p-1 rounded-xl border border-[var(--border)] max-w-full w-full md:w-auto">
-          {[
-            { id: "waiting", label: "Waiting" },
-            { id: "submitted", label: "Submitted" },
-            { id: "confirmed", label: "Confirmed" },
-            { id: "failed", label: "Failed" },
-            { id: "expired", label: "Expired" }
-          ].map(s => (
-            <button aria-label="button"
-              key={s.id}
-              onClick={() => { setStatus(s.id); setPage(1); }}
-              className={`flex-1 sm:flex-none px-2 sm:px-4 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
-                status === s.id 
-                  ? "bg-green-500 text-black shadow-lg" 
-                  : "text-[var(--muted)] hover:text-[var(--foreground)]"
-              }`}
+        <div className="w-full md:w-auto">
+          {/* MOBILE DROPDOWN */}
+          <div className="md:hidden relative group">
+            <select
+              value={status}
+              onChange={(e) => { setStatus(e.target.value); setPage(1); }}
+              className="w-full h-11 pl-4 pr-10 rounded-full bg-[var(--card)] border border-[var(--border)] text-xs font-black uppercase tracking-[0.15em] text-[var(--foreground)] outline-none focus:border-green-500 appearance-none cursor-pointer shadow-sm transition-all hover:bg-[var(--foreground)]/[0.02]"
             >
-              {s.label}
-            </button>
-          ))}
+              <option value="waiting">Waiting</option>
+              <option value="submitted">Submitted</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="failed">Failed</option>
+              <option value="expired">Expired</option>
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-green-500">
+              <span className="w-2 h-2 rounded-full bg-green-500 block animate-pulse"></span>
+            </div>
+          </div>
+
+          {/* DESKTOP TABS */}
+          <div className="hidden md:flex bg-[var(--card)] p-1.5 rounded-full border border-[var(--border)] shadow-sm">
+            <div className="flex gap-1">
+              {[
+                { id: "waiting", label: "Waiting" },
+                { id: "submitted", label: "Submitted" },
+                { id: "confirmed", label: "Confirmed" },
+                { id: "failed", label: "Failed" },
+                { id: "expired", label: "Expired" }
+              ].map(s => (
+                <button aria-label="button"
+                  key={s.id}
+                  onClick={() => { setStatus(s.id); setPage(1); }}
+                  className={`px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.15em] transition-all whitespace-nowrap active:scale-95 ${
+                    status === s.id 
+                      ? "bg-green-500 text-black shadow-md shadow-green-500/20" 
+                      : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02]"
+                  }`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
