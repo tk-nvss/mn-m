@@ -7,6 +7,7 @@ import HomeServices from "./HomeServices";
 import TrustHighlights from "./TrustHighlights";
 import TopNoticeBanner from "./TopNoticeBanner";
 import StorySlider from "./StorySlider";
+import BattleRoyaleSection from "./BattleRoyaleSection";
 import TradeMarketplaceBanner from "./TradeMarketplaceBanner";
 import HomeEarnPromotion from "./HomeEarnPromotion";
 import SEOContent from "./SEOContent";
@@ -82,6 +83,7 @@ export default function HeroSection({ bannerSettings }: { bannerSettings?: any }
 
       <div className="space-y-1 mt-2">
         {bs.showStorySlider !== false && <StorySlider />}
+        {bs.showBattleRoyaleSection !== false && <BattleRoyaleSection />}
 
         {bs.showFlashSale !== false && <FlashSale />}
       </div>

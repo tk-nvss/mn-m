@@ -27,6 +27,7 @@ const AppSettingsSchema = new mongoose.Schema(
         showJoinUsPopup: { type: Boolean, default: false },
         showGameBannerCarousel: { type: Boolean, default: true },
         showStorySlider: { type: Boolean, default: true },
+        showBattleRoyaleSection: { type: Boolean, default: true },
         showFlashSale: { type: Boolean, default: true },
         showHomeQuickActions: { type: Boolean, default: true },
         showBottomNav: { type: Boolean, default: true },

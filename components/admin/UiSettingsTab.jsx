@@ -223,7 +223,7 @@ const UiSettingsTab = () => {
 
             <div className="bg-[var(--card)]/40 border border-[var(--border)] rounded-[1.5rem] overflow-hidden flex flex-col divide-y divide-[var(--border)]/50 shadow-xl shadow-black/5">
 
-                {['showGameBannerCarousel', 'showStorySlider', 'showFlashSale', 'showHomeQuickActions'].map((bannerKey) => {
+                {['showGameBannerCarousel', 'showStorySlider', 'showBattleRoyaleSection', 'showFlashSale', 'showHomeQuickActions'].map((bannerKey) => {
                     const toggleBanner = async () => {
                         try {
                             setSaving(true);

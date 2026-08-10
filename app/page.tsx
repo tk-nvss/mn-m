@@ -169,6 +169,7 @@ export default async function Page() {
         showGiveawayBanner: settings.showGiveawayBanner,
         showGameBannerCarousel: settings.showGameBannerCarousel,
         showStorySlider: settings.showStorySlider,
+        showBattleRoyaleSection: settings.showBattleRoyaleSection,
         showFlashSale: settings.showFlashSale,
         showHomeQuickActions: settings.showHomeQuickActions
       }} />

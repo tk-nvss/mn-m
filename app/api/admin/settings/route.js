@@ -98,6 +98,7 @@ export async function PATCH(req) {
         if (typeof body.showJoinUsPopup === "boolean") settings.showJoinUsPopup = body.showJoinUsPopup;
         if (typeof body.showGameBannerCarousel === "boolean") settings.showGameBannerCarousel = body.showGameBannerCarousel;
         if (typeof body.showStorySlider === "boolean") settings.showStorySlider = body.showStorySlider;
+        if (typeof body.showBattleRoyaleSection === "boolean") settings.showBattleRoyaleSection = body.showBattleRoyaleSection;
         if (typeof body.showFlashSale === "boolean") settings.showFlashSale = body.showFlashSale;
         if (typeof body.showHomeQuickActions === "boolean") settings.showHomeQuickActions = body.showHomeQuickActions;
         if (typeof body.showBottomNav === "boolean") settings.showBottomNav = body.showBottomNav;

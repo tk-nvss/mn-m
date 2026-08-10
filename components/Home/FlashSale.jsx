@@ -12,7 +12,7 @@ const flashSaleData = [
         name: "Weekly Pass",
         game: "MLBB",
         image: "/game-assets/weeklypass.jpg",
-        price: "₹145",
+        price: "₹151",
         originalPrice: "₹175",
         slug: "mobile-legends270?type=weekly-pass",
         badge: "Hot"
@@ -22,7 +22,7 @@ const flashSaleData = [
         name: "Blessing Welkin",
         game: "Genshin",
         image: "/game-assets/genshin.jpg",
-        price: "₹385",
+        price: "₹390",
         originalPrice: "₹450",
         slug: "genshin-impact742",
         badge: "Sale"
@@ -52,7 +52,7 @@ const flashSaleData = [
         name: "Weekly Bundle",
         game: "MLBB",
         image: "/game-assets/weekly-monthly-bundle.jpg",
-        price: "₹80",
+        price: "₹82",
         originalPrice: "₹100",
         slug: "weeklymonthly-bundle261",
         badge: "Value"
@@ -62,7 +62,7 @@ const flashSaleData = [
         name: "Weekly Card plus",
         game: "HOK",
         image: "/game-assets/hok.jpg",
-        price: "₹368",
+        price: "₹370",
         originalPrice: "₹450",
         slug: "honor-of-kings57",
         badge: "Best"
