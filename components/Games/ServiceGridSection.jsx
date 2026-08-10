@@ -46,7 +46,7 @@ export default function ServiceGridSection({
       )}
 
       {/* GRID SYSTEM (Responsive Columns) */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-6 md:gap-5 px-6 sm:px-0">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-6 md:gap-5 px-2 sm:px-0">
         {items.map((item, index) => (
           <div key={item.slug}>
             <Link

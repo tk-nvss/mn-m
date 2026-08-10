@@ -278,7 +278,7 @@ function GamesContent() {
         {/* ================= GAME CONTENT ================= */}
         <div className="space-y-20">
           {loading ? (
-            <div className={viewMode === "grid" ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4" : "flex flex-col gap-3"}>
+            <div className={viewMode === "grid" ? "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-4" : "flex flex-col gap-3"}>
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
                 viewMode === "grid" ? <ProductCardSkeleton key={i} /> : <ProductListSkeleton key={i} />
               ))}

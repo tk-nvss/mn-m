@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { FiHome, FiCreditCard, FiShoppingBag, FiGrid, FiTarget, FiGift, FiHeadphones, FiZap, FiLayers, FiAward, FiShoppingCart } from "react-icons/fi";
+import { FaTrophy } from "react-icons/fa";
 
 
 const BottomNav = () => {
@@ -27,7 +28,7 @@ const BottomNav = () => {
         { label: "Home", icon: FiHome, path: "/", action: () => router.push("/") },
         { label: "Games", icon: FiGrid, path: "/games", action: () => router.push("/games") },
         { label: "Wallet", icon: FiCreditCard, path: "/dashboard/wallet", action: () => router.push("/dashboard/wallet") },
-        { label: "Trade", icon: FiShoppingCart, path: "/trade", isProminent: true, action: () => router.push("/trade") },
+        { label: "Tournaments", icon: FaTrophy, path: "/dashboard/tournaments", isProminent: true, action: () => router.push("/dashboard/tournaments") },
         { label: "Giveaways", icon: FiGift, path: "/giveaways", action: () => router.push("/giveaways") },
         { label: "Orders", icon: FiShoppingBag, path: "/dashboard/orders", action: () => router.push("/dashboard/orders") },
         { label: "Support", icon: FiHeadphones, path: "/dashboard/support", action: () => router.push("/dashboard/support") },
