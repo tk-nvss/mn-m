@@ -400,37 +400,37 @@ export default function Header() {
                         </div>
 
                         {user?.userType === "owner" && (
-                          <div className="relative mt-6 group">
+                          <div className="relative mt-4 group">
                             <Link
                               href="/owner-panal"
                               onClick={() => setUserMenuOpen(false)}
-                              className="relative flex items-center justify-between p-4 bg-gradient-to-r from-gray-900 to-black rounded-[2rem] overflow-hidden transition-all duration-500 shadow-xl border border-gray-800 hover:border-gray-600 hover:shadow-2xl hover:-translate-y-1"
+                              className="relative flex items-center justify-between p-3 bg-gradient-to-r from-gray-900 to-black rounded-2xl overflow-hidden transition-all duration-500 shadow-xl border border-gray-800 hover:border-gray-600 hover:shadow-2xl hover:-translate-y-1"
                             >
                               {/* Sleek animated background effect */}
                               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(168,85,247,0.15),transparent_50%)]" />
-                              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 blur-3xl rounded-full" />
+                              <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 blur-3xl rounded-full" />
                               
-                              <div className="flex items-center gap-4 relative z-10 w-full">
+                              <div className="flex items-center gap-3 relative z-10 w-full">
                                 <div className="relative flex-shrink-0">
-                                  <div className="w-12 h-12 rounded-[1.2rem] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.4)]">
-                                    <FiZap size={22} className="text-white drop-shadow-md" />
+                                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+                                    <FiZap size={16} className="text-white drop-shadow-md" />
                                   </div>
-                                  <div className="absolute -bottom-1 -right-1 flex h-3.5 w-3.5">
+                                  <div className="absolute -bottom-1 -right-1 flex h-2.5 w-2.5">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-gray-900 shadow-sm"></span>
+                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border border-gray-900 shadow-sm"></span>
                                   </div>
                                 </div>
 
                                 <div className="flex flex-col min-w-0 flex-1">
-                                  <h4 className="text-sm font-black uppercase tracking-widest text-white mb-1.5 drop-shadow-sm">Admin Console</h4>
+                                  <h4 className="text-xs font-black uppercase tracking-widest text-white mb-1 drop-shadow-sm">Admin Console</h4>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-[9px] font-bold text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded-lg border border-purple-500/30 uppercase tracking-widest backdrop-blur-md">Elite Access</span>
-                                    <span className="text-[9px] font-bold text-emerald-400 flex items-center gap-1.5 uppercase tracking-widest"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.8)]"></span>Active</span>
+                                    <span className="text-[8px] font-bold text-purple-300 bg-purple-500/20 px-1.5 py-0.5 rounded-md border border-purple-500/30 uppercase tracking-widest backdrop-blur-md">Elite Access</span>
+                                    <span className="text-[8px] font-bold text-emerald-400 flex items-center gap-1 uppercase tracking-widest"><span className="w-1 h-1 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.8)]"></span>Active</span>
                                   </div>
                                 </div>
 
-                                <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 group-hover:bg-white/10 flex items-center justify-center text-white/50 group-hover:text-white transition-all flex-shrink-0 backdrop-blur-sm">
-                                  <FiChevronRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
+                                <div className="w-7 h-7 rounded-full bg-white/5 border border-white/10 group-hover:bg-white/10 flex items-center justify-center text-white/50 group-hover:text-white transition-all flex-shrink-0 backdrop-blur-sm">
+                                  <FiChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
                                 </div>
                               </div>
                             </Link>

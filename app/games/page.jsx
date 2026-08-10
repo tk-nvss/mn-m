@@ -164,40 +164,26 @@ function GamesContent() {
 
   /* ================= RENDER COMPONENTS ================= */
   const SectionHeader = ({ title, icon: Icon, count, gradient }) => (
-    <div className="group relative flex items-center gap-4 mb-8">
-      {/* Theme-Adaptive Premium Icon Box */}
-      <div className="relative shrink-0 flex items-center justify-center">
-        {/* Elegant soft glow matching the gradient */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${gradient} blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 rounded-[1rem]`} />
-        
-        {/* Clean, simple theme-adaptive box */}
-        <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-[1rem] bg-[var(--card)] flex items-center justify-center text-[var(--foreground)] shadow-sm border border-[var(--border)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md group-hover:border-[var(--accent)]/50">
-          <Icon size={22} className="relative z-10 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />
+    <div className="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-[var(--border)]/40 pb-4">
+      <div className="flex items-center gap-3">
+        {/* Simple elegant icon */}
+        <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--card)] border border-[var(--border)] shadow-sm transition-all duration-300 group-hover:border-[var(--accent)]/40 group-hover:shadow-md">
+          <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${gradient} opacity-10`} />
+          <Icon size={18} className="relative z-10 text-[var(--foreground)] opacity-80 group-hover:opacity-100 transition-opacity" />
         </div>
-      </div>
 
-      {/* Text Content */}
-      <div className="flex flex-col gap-1.5 z-10">
-        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tighter italic text-transparent bg-clip-text bg-gradient-to-r from-[var(--foreground)] to-[var(--muted)] leading-none drop-shadow-sm group-hover:translate-x-1 transition-transform duration-500">
-          {title}
-        </h2>
-        
-        <div className="flex items-center gap-3">
-          {/* Glowing Line */}
-          <div className="relative h-1 w-10 overflow-hidden rounded-full bg-[var(--foreground)]/10">
-            <div className={`absolute inset-y-0 left-0 w-full bg-gradient-to-r ${gradient} shadow-[0_0_10px_currentColor]`} />
+        {/* Text Content */}
+        <div className="flex flex-col">
+          <h2 className="text-lg sm:text-xl font-bold tracking-wider uppercase text-[var(--foreground)] leading-tight">
+            {title}
+          </h2>
+          <div className="flex items-center gap-2 mt-0.5">
+            <div className={`w-1 h-1 rounded-full bg-gradient-to-br ${gradient}`} />
+            <span className="text-[10px] font-medium text-[var(--muted)] uppercase tracking-widest">
+              {count} <span className="opacity-60">Items Found</span>
+            </span>
           </div>
-          
-          <span className="text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] group-hover:text-[var(--foreground)] transition-colors duration-500">
-            {count} <span className="opacity-50">Items Found</span>
-          </span>
         </div>
-      </div>
-
-      {/* Decorative trailing line */}
-      <div className="flex-1 flex items-center ml-4 opacity-30 group-hover:opacity-100 transition-opacity duration-700">
-        <div className={`w-1.5 h-1.5 rotate-45 bg-gradient-to-br ${gradient} shadow-[0_0_8px_currentColor]`} />
-        <div className="flex-1 h-[1px] bg-gradient-to-r from-[var(--border)] to-transparent ml-[2px]" />
       </div>
     </div>
   );
