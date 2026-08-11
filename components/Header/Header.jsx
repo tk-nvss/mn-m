@@ -35,6 +35,7 @@ const HEADER_CONFIG = {
       { label: "Refer & Earn", href: "/dashboard/referral", icon: <FiUsers size={14} />, desc: "Earn rewards", colorClass: "bg-gradient-to-br from-indigo-500/20 to-violet-500/20 text-indigo-400 border-indigo-500/20" },
       { label: "My Tournaments", href: "/dashboard/tournaments", icon: <FiAward size={14} />, desc: "View your joined scrims", colorClass: "bg-gradient-to-br from-rose-500/20 to-orange-500/20 text-rose-400 border-rose-500/20" },
 
+      { label: "My Profile", href: "/dashboard/me", icon: <FiUser size={14} />, desc: "View & Edit Profile", colorClass: "bg-gradient-to-br from-[var(--foreground)]/10 to-[var(--foreground)]/5 text-[var(--foreground)] border-[var(--border)]" },
       { label: "API Setup", href: "https://bluebuff.in", icon: <FiKey size={14} />, desc: "Developer API Access", colorClass: "bg-gradient-to-br from-slate-500/20 to-gray-500/20 text-slate-600 border-slate-500/20" },
       { label: "Support", href: "/dashboard/support", icon: <FiMessageSquare size={14} />, desc: "Get help 24/7", colorClass: "bg-gradient-to-br from-sky-500/20 to-blue-500/20 text-sky-400 border-sky-500/20" },
     ],
@@ -319,7 +320,7 @@ export default function Header() {
                     </div>
                   </div>
 
-                  <div className="relative z-10 flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar">
+                  <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
 
                     {!user ? (
                       <div className="flex flex-col items-center justify-center text-center py-10 space-y-6">
@@ -344,9 +345,9 @@ export default function Header() {
 
                         <div className="space-y-1">
                           {/* Main Row: Orders & Wallet side-by-side */}
-                          <div className="flex flex-col gap-2 mb-2">
+                          <div className="flex flex-col gap-1.5 mb-1.5">
                             {HEADER_CONFIG.userMenu.common.slice(0, 2).map((item) => (
-                              <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className="relative flex items-center justify-between p-3 rounded-2xl bg-[var(--card)] shadow-sm border border-transparent hover:border-[var(--accent)]/30 hover:shadow-md transition-all group overflow-hidden">
+                              <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className="relative flex items-center justify-between p-2.5 rounded-2xl bg-[var(--card)] shadow-sm border border-transparent hover:border-[var(--accent)]/30 hover:shadow-md transition-all group overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                 <div className="flex items-center gap-3 min-w-0 flex-1 relative z-10">
                                   <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-inner ${item.colorClass || "bg-[var(--accent)]/10 text-[var(--accent)]"}`}>{item.icon}</div>
@@ -369,27 +370,27 @@ export default function Header() {
                           </div>
 
                           {/* 4 Items in 2x2 Grid */}
-                          <div className="grid grid-cols-2 gap-2 mb-2">
+                          <div className="grid grid-cols-2 gap-1.5 mb-1.5">
                             {HEADER_CONFIG.userMenu.common.slice(2, 6).map((item) => (
-                              <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className="relative flex flex-col p-3 rounded-2xl bg-[var(--card)] shadow-sm border border-transparent hover:border-[var(--accent)]/30 hover:shadow-md transition-all group overflow-hidden gap-2">
+                              <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className="relative flex items-center p-2.5 rounded-2xl bg-[var(--card)] shadow-sm border border-transparent hover:border-[var(--accent)]/30 hover:shadow-md transition-all group overflow-hidden gap-2">
                                 <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-inner ${item.colorClass || "bg-[var(--foreground)]/5 text-[var(--foreground)]"}`}>{item.icon}</div>
+                                <div className={`w-8 h-8 shrink-0 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-inner ${item.colorClass || "bg-[var(--foreground)]/5 text-[var(--foreground)]"}`}>{item.icon}</div>
                                 <div className="flex flex-col min-w-0 relative z-10">
-                                  <p className="text-[10px] font-black text-[var(--foreground)] leading-none uppercase tracking-widest truncate mb-0.5">{item.label}</p>
-                                  <p className="text-[8px] text-[var(--muted)] font-bold uppercase tracking-widest truncate leading-none">{item.desc}</p>
+                                  <p className="text-[9px] font-black text-[var(--foreground)] leading-none uppercase tracking-widest truncate mb-0.5">{item.label}</p>
+                                  <p className="text-[7px] text-[var(--muted)] font-bold uppercase tracking-widest truncate leading-none">{item.desc}</p>
                                 </div>
                               </Link>
                             ))}
                           </div>
 
                           {/* Remaining items list */}
-                          <div className="flex flex-col gap-1">
+                          <div className="flex flex-col gap-0.5">
                             {HEADER_CONFIG.userMenu.common.slice(6).map((item) => (
-                              <Link key={item.label} href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined} onClick={() => setUserMenuOpen(false)} className="flex items-center justify-between py-2.5 px-3 rounded-2xl bg-transparent hover:bg-[var(--card)] hover:shadow-sm transition-all group">
-                                <div className="flex items-center gap-3">
-                                  <div className={`w-7 h-7 rounded-xl flex items-center justify-center shadow-inner transition-transform group-hover:scale-105 ${item.colorClass || "bg-[var(--foreground)]/5 text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:bg-[var(--accent)]/10"}`}>{item.icon}</div>
+                              <Link key={item.label} href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined} onClick={() => setUserMenuOpen(false)} className="flex items-center justify-between py-2 px-3 rounded-2xl bg-transparent hover:bg-[var(--card)] hover:shadow-sm transition-all group">
+                                <div className="flex items-center gap-2.5">
+                                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center shadow-inner transition-transform group-hover:scale-105 ${item.colorClass || "bg-[var(--foreground)]/5 text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:bg-[var(--accent)]/10"}`}>{item.icon}</div>
                                   <div className="flex flex-col">
-                                    <p className="text-[11px] font-black uppercase tracking-widest text-[var(--foreground)] leading-none mb-0.5">{item.label}</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-[var(--foreground)] leading-none mb-0.5">{item.label}</p>
                                     <p className="text-[9px] text-[var(--muted)] font-bold uppercase tracking-widest leading-none">{item.desc}</p>
                                   </div>
                                 </div>

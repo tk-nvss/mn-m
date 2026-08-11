@@ -9,7 +9,7 @@ import { applyPricingToItems } from "@/lib/pricingUtils";
 /* ================= MEMBERSHIP CONFIG ================= */
 const MEMBERSHIPS = {
   "silver-membership": {
-    gameName: "Silver Membership",
+    gameName: "Membership",
     gameFrom: "Your Platform",
     gameImageId: {
       image: "/membership/silver-m.png",
@@ -21,10 +21,10 @@ const MEMBERSHIPS = {
     gameAvailablity: true,
     itemId: [
       {
-        itemName: "1 Month",
+        itemName: "1 Month ",
         itemSlug: "silver-1m",
-        sellingPrice: 29,
-        dummyPrice: 99,
+        sellingPrice: 99,
+        dummyPrice: 199,
         itemAvailablity: true,
         index: 1,
         itemImageId: {
@@ -32,10 +32,10 @@ const MEMBERSHIPS = {
         },
       },
       {
-        itemName: "3 Months",
+        itemName: "3 Months (Best Value)",
         itemSlug: "silver-3m",
-        sellingPrice: 100,
-        dummyPrice: 299,
+        sellingPrice: 249,
+        dummyPrice: 499,
         itemAvailablity: true,
         index: 2,
         itemImageId: {
@@ -45,8 +45,8 @@ const MEMBERSHIPS = {
       {
         itemName: "6 Months",
         itemSlug: "silver-6m",
-        sellingPrice: 150,
-        dummyPrice: 449,
+        sellingPrice: 449,
+        dummyPrice: 899,
         itemAvailablity: true,
         index: 3,
         itemImageId: {
@@ -56,8 +56,8 @@ const MEMBERSHIPS = {
       {
         itemName: "12 Months",
         itemSlug: "silver-12m",
-        sellingPrice: 300,
-        dummyPrice: 899,
+        sellingPrice: 799,
+        dummyPrice: 1599,
         itemAvailablity: true,
         index: 4,
         itemImageId: {
@@ -67,7 +67,7 @@ const MEMBERSHIPS = {
     ],
   },
   "reseller-membership": {
-    gameName: "Reseller Membership",
+    gameName: "Reseller",
     gameFrom: "Your Platform",
     gameImageId: {
       image: "/membership/reseller-m.png",
@@ -81,7 +81,7 @@ const MEMBERSHIPS = {
       {
         itemName: "1 Month",
         itemSlug: "reseller-1m",
-        sellingPrice: 29,
+        sellingPrice: 69,
         dummyPrice: 99,
         itemAvailablity: true,
         index: 1,
@@ -92,7 +92,7 @@ const MEMBERSHIPS = {
       {
         itemName: "3 Months",
         itemSlug: "reseller-3m",
-        sellingPrice: 100,
+        sellingPrice: 179,
         dummyPrice: 299,
         itemAvailablity: true,
         index: 2,
@@ -103,7 +103,7 @@ const MEMBERSHIPS = {
       {
         itemName: "6 Months",
         itemSlug: "reseller-6m",
-        sellingPrice: 150,
+        sellingPrice: 299,
         dummyPrice: 449,
         itemAvailablity: true,
         index: 3,
@@ -114,7 +114,7 @@ const MEMBERSHIPS = {
       {
         itemName: "12 Months",
         itemSlug: "reseller-12m",
-        sellingPrice: 300,
+        sellingPrice: 549,
         dummyPrice: 899,
         itemAvailablity: true,
         index: 4,
@@ -587,15 +587,20 @@ export async function GET(req, { params }) {
     await connectDB();
     const gameSlug = data.data.gameSlug;
 
+    const [userPricingConfig, memberPricingConfig, adminPricingConfig] = await Promise.all([
+      PricingConfig.findOne({ userType: "user" }).lean(),
+      PricingConfig.findOne({ userType: "member" }).lean(),
+      PricingConfig.findOne({ userType: "admin" }).lean()
+    ]);
+
     // 1. Fetch user role specific pricing
     let pricingConfig = null;
-    if (pricingRole) {
-      pricingConfig = await PricingConfig.findOne({ userType: pricingRole }).lean();
-    }
+    if (pricingRole === "user") pricingConfig = userPricingConfig;
+    else if (pricingRole === "member") pricingConfig = memberPricingConfig;
+    else if (pricingRole === "admin") pricingConfig = adminPricingConfig;
 
     // 2. Check global stock status (using 'user' role as source of truth for stock)
-    const userPricing = await PricingConfig.findOne({ userType: "user" }).lean();
-    const gameConfig = userPricing?.gameConfigs?.find(gc => gc.gameSlug === gameSlug);
+    const gameConfig = userPricingConfig?.gameConfigs?.find(gc => gc.gameSlug === gameSlug);
 
     if (gameConfig?.isOutOfStock) {
       data.data.gameAvailablity = false;
@@ -634,7 +639,17 @@ export async function GET(req, { params }) {
     }
 
     /* ===== APPLY PRICING ===== */
-    data.data.itemId = applyPricingToItems(data.data.itemId, gameSlug, pricingConfig);
+    const baseItems = JSON.parse(JSON.stringify(data.data.itemId));
+    const userItems = applyPricingToItems(baseItems, gameSlug, userPricingConfig);
+    const memberItems = applyPricingToItems(baseItems, gameSlug, memberPricingConfig);
+    const adminItems = applyPricingToItems(baseItems, gameSlug, adminPricingConfig);
+
+    data.data.itemId = applyPricingToItems(baseItems, gameSlug, pricingConfig).map((item, index) => ({
+      ...item,
+      userPrice: userItems[index].sellingPrice,
+      memberPrice: memberItems[index].sellingPrice,
+      adminPrice: adminItems[index].sellingPrice,
+    }));
 
     /* ================= NORMALIZE FOR GENERIC FLOW ================= */
     if (slug.includes("genshin-impact")) {

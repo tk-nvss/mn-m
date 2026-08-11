@@ -50,7 +50,51 @@ export default function GameDetailPage() {
   }, [slug]);
 
   if (!game || !activeItem) {
-    return <Loader />;
+    return (
+      <section className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 py-6">
+        <div className="max-w-6xl mx-auto animate-pulse">
+          {/* Header Skeleton */}
+          <div className="bg-[var(--card)]/50 rounded-3xl p-6 md:p-8 flex items-center gap-6 mb-8 border border-[var(--border)]">
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-[var(--border)] shrink-0" />
+            <div className="space-y-3 w-full">
+              <div className="h-6 md:h-8 bg-[var(--border)] rounded-full w-1/2 md:w-1/3" />
+              <div className="h-3 md:h-4 bg-[var(--border)]/50 rounded-full w-3/4 md:w-1/2" />
+            </div>
+          </div>
+
+          {/* Controls Skeleton */}
+          <div className="flex justify-between items-end mb-6">
+            <div className="space-y-2">
+              <div className="h-5 bg-[var(--border)] rounded-full w-32" />
+              <div className="h-3 bg-[var(--border)]/50 rounded-full w-20" />
+            </div>
+            <div className="h-10 w-20 bg-[var(--border)] rounded-xl" />
+          </div>
+
+          {/* Grid Skeleton */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-[var(--card)]/50 rounded-2xl h-28 border border-[var(--border)] p-4 flex flex-col justify-between">
+                <div className="h-4 bg-[var(--border)] rounded-full w-1/2" />
+                <div className="h-6 bg-[var(--border)] rounded-full w-3/4" />
+              </div>
+            ))}
+          </div>
+
+          {/* Buy Panel Skeleton */}
+          <div className="bg-[var(--card)]/50 rounded-3xl p-6 border border-[var(--border)] flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <div className="w-12 h-12 rounded-xl bg-[var(--border)] shrink-0" />
+              <div className="space-y-2 w-full">
+                <div className="h-3 bg-[var(--border)]/50 rounded-full w-20" />
+                <div className="h-5 bg-[var(--border)] rounded-full w-32" />
+              </div>
+            </div>
+            <div className="h-12 w-full md:w-48 bg-[var(--border)] rounded-xl" />
+          </div>
+        </div>
+      </section>
+    );
   }
 
   /* ================= HELPERS ================= */
@@ -148,11 +192,7 @@ export default function GameDetailPage() {
               desc: "Get help quickly from our top team whenever you have questions or problems.",
               comingSoon: false
             },
-            {
-              title: "API Service",
-              desc: "Connect your system to ours for automatic orders. Built for our members.",
-              comingSoon: false
-            },
+
             {
               title: "Best Prices",
               desc: "Get the lowest and best rates in the market to help you save more.",

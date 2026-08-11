@@ -77,6 +77,14 @@ const storyData = [
     image: "/membership/silver-m.png",
     link: "/games/membership/silver-membership",
   },
+  {
+    id: 8,
+    title: "Reseller",
+    badge: "B2B",
+    color: "#ca8a04", // Yellow/Gold
+    image: "/membership/reseller-m.png",
+    link: "/games/membership/reseller-membership",
+  },
 ];
 
 export default function StorySlider() {

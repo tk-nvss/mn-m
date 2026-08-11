@@ -62,7 +62,7 @@ const OTTS = [
 /* ================= MEMBERSHIP SECTION ================= */
 const MEMBERSHIPS = [
   {
-    gameName: "Silver Membership",
+    gameName: "Membership",
     slug: "silver-membership",
     image: "/membership/silver-m.png",
     gameFrom: "MLBB Topup",
@@ -71,7 +71,16 @@ const MEMBERSHIPS = [
     available: true,
     isManual: true,
   },
-  // },
+  {
+    gameName: "Reseller",
+    slug: "reseller-membership",
+    image: "/membership/reseller-m.png",
+    gameFrom: "MLBB Topup",
+    type: "reseller",
+    category: "Membership",
+    available: true,
+    isManual: true,
+  },
 ];
 
 /* ================= VOUCHER SECTION ================= */
@@ -330,11 +339,11 @@ export async function GET() {
         //   total: OTTS.filter((o) => o.available).length,
         // },
         // 🔥 MEMBERSHIP SECTION
-        // memberships: {
-        //   title: "Memberships & Passes",
-        //   items: MEMBERSHIPS.filter((m) => m.available),
-        //   total: MEMBERSHIPS.filter((m) => m.available).length,
-        // },
+        memberships: {
+          title: "Memberships & Passes",
+          items: MEMBERSHIPS.filter((m) => m.available),
+          total: MEMBERSHIPS.filter((m) => m.available).length,
+        },
 
         // 🔥 VOUCHER SECTION
         vouchers: {

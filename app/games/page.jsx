@@ -317,9 +317,27 @@ function GamesContent() {
                 </div>
               )}
 
+              {/* 5. MEMBERSHIPS SECTION */}
+              {(activeTab === "all" || activeTab === "memberships") && processedMemberships.length > 0 && (
+                <div className="mb-6 border-t border-[var(--border)] pt-6">
+                  <SectionHeader
+                    title="Premium Memberships"
+                    icon={GiCrown}
+                    count={processedMemberships.length}
+                    gradient="from-pink-500 to-rose-600"
+                  />
+                  <ServiceGridSection
+                    title={null}
+                    total={processedMemberships.length}
+                    items={processedMemberships}
+                    hrefPrefix="/games/membership"
+                  />
+                </div>
+              )}
+
               {/* 6. VOUCHERS SECTION */}
               {(activeTab === "all" || activeTab === "vouchers") && processedVouchers.length > 0 && (
-                <div className="mb-10 border-t border-[var(--border)] pt-10">
+                <div className="mb-6 border-t border-[var(--border)] pt-6">
                   <SectionHeader
                     title="Premium Vouchers"
                     icon={GiTicket}
@@ -337,7 +355,7 @@ function GamesContent() {
 
               {/* 7. SERVICES SECTION */}
               {(activeTab === "all" || activeTab === "services") && processedServices.length > 0 && (
-                <div className="mb-10 border-t border-[var(--border)] pt-10">
+                <div className="mb-6 border-t border-[var(--border)] pt-6">
                   <SectionHeader
                     title="Premium Services"
                     icon={GiStarMedal}

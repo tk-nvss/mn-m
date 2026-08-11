@@ -316,6 +316,8 @@ function BuyFlowContent() {
                 </div>
               </div>
 
+              {/* TIER PRICES CARD REMOVED AS PER REQUEST */}
+
               {/* MORE PACKS */}
               {otherItems.length > 0 && (
                 <div className="space-y-3 px-1">

@@ -145,31 +145,6 @@ export default function UsersTab() {
     setPage(1);
   };
 
-  const changeUserRole = async (userId, newUserType) => {
-    try {
-      setUpdatingUserId(userId);
-      const token = localStorage.getItem("token");
-
-      const res = await fetch("/api/admin/users/change-role", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ userId, newUserType }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        alert(data.message || "Failed to update role");
-        return;
-      }
-
-      fetchUsersList();
-    } finally {
-      setUpdatingUserId(null);
-    }
-  };
 
   const handleForceLogout = async (userId) => {
     if (!confirm("Are you sure you want to log out this user forcefully? They will be logged out on their next action.")) return;
@@ -409,13 +384,9 @@ export default function UsersTab() {
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                        <RoleDropdown
-                          value={u.userType}
-                          disabled={updatingUserId === u.userId || u.userType === "owner"}
-                          onChange={(v) => changeUserRole(u.userId, v)}
-                        />
-                      </td>
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wider ${getRoleClass(u.userType)}`}>
+                          {u.userType}
+                        </span>
                     </motion.tr>
                   ))}
                 </tbody>
@@ -485,12 +456,11 @@ export default function UsersTab() {
                           </div>
                         </div>
                       </div>
-                      <RoleDropdown
-                        value={u.userType}
-                        compact
-                        disabled={updatingUserId === u.userId || u.userType === "owner"}
-                        onChange={(v) => changeUserRole(u.userId, v)}
-                      />
+                      <div className="shrink-0">
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[8px] font-black uppercase tracking-wider ${getRoleClass(u.userType)}`}>
+                          {u.userType}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -591,18 +561,14 @@ export default function UsersTab() {
                   <div className="space-y-4">
                     <div className="space-y-1.5">
                       <p className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted)] px-1">Role Assignment</p>
-                      <RoleDropdown
-                        value={selectedUser.userType}
-                        compact
-                        disabled={updatingUserId === selectedUser.userId || selectedUser.userType === "owner"}
-                        onChange={(v) => {
-                          changeUserRole(selectedUser.userId, v);
-                          setSelectedUser(null);
-                        }}
-                      />
+                      <div className="px-2 py-1.5 bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-md">
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wider ${getRoleClass(selectedUser.userType)}`}>
+                          {selectedUser.userType}
+                        </span>
+                      </div>
                       {selectedUser.userType === "owner" && (
                         <p className="text-[9px] text-rose-500/80 font-medium px-2 flex items-center gap-1 mt-1.5 bg-rose-500/10 py-1 rounded border border-rose-500/20">
-                          <ShieldAlert size={10} /> Owner role restricted
+                          <ShieldAlert size={10} /> Owner role
                         </p>
                       )}
                     </div>
@@ -809,86 +775,6 @@ export default function UsersTab() {
   );
 }
 
-/* ================= CUSTOM DROPDOWN ================= */
-function RoleDropdown({ value, onChange, disabled, compact }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef(null);
-
-  const roles = [
-    { value: "user", label: "User", icon: <User size={12} /> },
-    { value: "member", label: "Member", icon: <Crown size={12} /> },
-    { value: "admin", label: "Admin", icon: <ShieldCheck size={12} /> },
-  ];
-
-  if (value === "owner") {
-    roles.push({ value: "owner", label: "Owner", icon: <ShieldAlert size={12} /> });
-  }
-
-  const selectedRole = roles.find((r) => r.value === value);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  return (
-    <div className="relative" ref={containerRef}>
-      <button aria-label="button"
-        onClick={() => !disabled && setIsOpen(!isOpen)}
-        disabled={disabled}
-        className={`
-          flex items-center justify-between gap-3 px-4
-          ${compact ? "h-9 w-[100px]" : "h-11 min-w-[130px] w-full"}
-          rounded-full border border-[var(--border)] bg-[var(--foreground)]/[0.03]
-          text-[10px] font-black uppercase tracking-tight transition-all outline-none
-          ${disabled ? "opacity-40 cursor-not-allowed" : "hover:bg-[var(--foreground)]/[0.06]"}
-          ${isOpen ? "border-[var(--accent)] ring-1 ring-[var(--accent)]/30" : "text-[var(--foreground)]"}
-        `}
-      >
-        <div className="flex items-center gap-2">
-          <span className="text-[var(--accent)]">{selectedRole?.icon}</span>
-          <span className="capitalize">{selectedRole?.label}</span>
-        </div>
-        <ChevronDown size={14} className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
-      </button>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -10 }}
-            animate={{ opacity: 1, scale: 1, y: 5 }}
-            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-            className="absolute z-[1200] right-0 mt-1 w-full min-w-[150px] rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl p-1.5 overflow-hidden backdrop-blur-xl"
-          >
-            {roles.map((role) => (
-              <button aria-label="button"
-                key={role.value}
-                onClick={() => {
-                  onChange(role.value);
-                  setIsOpen(false);
-                }}
-                className={`
-                  w-full flex items-center gap-3 px-4 py-2.5 text-left text-xs font-semibold rounded-lg transition-all outline-none
-                  ${role.value === value
-                    ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20"
-                    : "text-[var(--foreground)]/60 hover:bg-[var(--foreground)]/[0.05] hover:text-[var(--foreground)]"}
-                `}
-              >
-                <span className={role.value === value ? "text-white" : "text-[var(--accent)]"}>{role.icon}</span>
-                <span className="capitalize">{role.label}</span>
-              </button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
 
 /* ================= AVATAR ================= */
 function Avatar({ user, size = "md" }) {

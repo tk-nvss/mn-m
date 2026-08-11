@@ -49,6 +49,15 @@ export async function GET(req) {
       );
     }
 
+    // Check membership expiry
+    if ((user.userType === "member" || user.userType === "admin") && user.membershipExpiry) {
+      if (new Date() > new Date(user.membershipExpiry)) {
+        user.userType = "user";
+        user.membershipExpiry = null;
+        await user.save();
+      }
+    }
+
     return NextResponse.json({
       success: true,
       user: {

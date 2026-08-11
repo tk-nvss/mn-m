@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { FiArrowRight, FiShield } from "react-icons/fi";
+import Link from "next/link";
+import { FiArrowRight, FiShield, FiZap } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 
 export default function BuyPanel({
@@ -33,50 +34,60 @@ export default function BuyPanel({
       ref={buyPanelRef}
       className="relative w-full max-w-4xl mx-auto px-4 mt-8 mb-6 md:static md:p-0"
     >
-      <div className="relative group p-[1px] rounded-2xl bg-gradient-to-br from-white/10 via-transparent to-white/5 overflow-hidden">
-        {/* Static Background Border Subtle Effect */}
-        <div className="absolute inset-[-100%] bg-white/5 group-hover:opacity-10 pointer-events-none" />
+      <div className="relative rounded-2xl overflow-hidden">
+        {/* Animated gradient border */}
+        <div className="absolute inset-0 rounded-2xl p-[1px] bg-gradient-to-br from-[var(--accent)]/40 via-white/5 to-purple-500/20 pointer-events-none z-0" />
 
-        {/* Main Premium Card */}
-        <div className="relative bg-[var(--card)]/80 backdrop-blur-3xl rounded-[15px] p-3 md:p-4 overflow-hidden border border-[var(--border)]">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
+        {/* Main Card */}
+        <div className="relative bg-[var(--card)] rounded-2xl overflow-hidden z-10">
 
-            {/* LEFT: Product Display */}
-            <div className="flex items-center gap-4 w-full md:w-auto">
+          {/* Top accent line */}
+          <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[var(--accent)]/60 to-transparent" />
+
+          <div className="p-4 md:p-5">
+
+            {/* Selected item row */}
+            <div className="flex items-center gap-3 mb-4">
+              {/* Image */}
               <div className="relative shrink-0">
-                <div className="relative w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-white/10 to-transparent p-[1px] rounded-xl shadow-xl">
-                  <div className="w-full h-full bg-[var(--background)] rounded-[11px] overflow-hidden relative border border-[var(--border)]">
-                    <Image
-                      src={itemImage}
-                      alt={activeItem.itemName}
-                      fill
-                      unoptimized
-                      className="object-cover"
-                    />
-                  </div>
+                <div className="relative w-[52px] h-[52px] rounded-xl overflow-hidden border border-white/10 shadow-lg">
+                  <Image
+                    src={itemImage}
+                    alt={activeItem.itemName}
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
                 </div>
                 {discount > 0 && (
-                  <div className="absolute -top-1.5 -left-1.5 bg-rose-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full shadow-lg border border-white/10 z-20">
+                  <div className="absolute -top-1.5 -left-1.5 bg-gradient-to-br from-rose-500 to-red-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full shadow-lg z-20 border border-white/10">
                     -{discount}%
                   </div>
                 )}
               </div>
 
-              <div className="flex flex-col min-w-0 text-left">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-[8px] font-black uppercase tracking-[0.1em] text-[var(--accent)] opacity-80">Selected</span>
-                </div>
-                <h3 className="text-sm md:text-base font-black text-[var(--foreground)] tracking-tight leading-none uppercase italic truncate max-w-[150px] md:max-w-none">
+              {/* Name & badge */}
+              <div className="flex flex-col min-w-0">
+                <span className="text-[8px] font-black uppercase tracking-[0.15em] text-[var(--accent)] mb-0.5 flex items-center gap-1">
+                  <FiZap size={7} /> Selected
+                </span>
+                <h3 className="text-sm md:text-base font-black text-[var(--foreground)] tracking-tight uppercase italic truncate leading-tight">
                   {activeItem.itemName}
                 </h3>
               </div>
             </div>
 
-            {/* RIGHT: Price & Action */}
-            <div className="flex flex-row items-center justify-between md:justify-end gap-6 w-full md:w-auto border-t md:border-t-0 border-[var(--border)] pt-3 md:pt-0">
-              <div className="flex flex-col items-start md:items-end">
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-[20px] md:text-[24px] font-[1000] text-[var(--foreground)] tracking-tighter">
+            {/* Divider */}
+            <div className="h-px bg-gradient-to-r from-transparent via-[var(--border)] to-transparent mb-4" />
+
+            {/* Price + Action row */}
+            <div className="flex items-end justify-between gap-3">
+
+              {/* Price block */}
+              <div className="flex flex-col gap-2">
+                {/* Main price */}
+                <div className="flex items-baseline gap-2">
+                  <span className="text-[26px] md:text-[30px] font-[1000] text-[var(--foreground)] tracking-tighter leading-none">
                     ₹{activeItem.sellingPrice}
                   </span>
                   {activeItem.dummyPrice && (
@@ -85,36 +96,58 @@ export default function BuyPanel({
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-1 opacity-40">
-                  <FiShield size={8} className="text-[var(--accent)]" />
-                  <span className="text-[7px] font-black uppercase tracking-wider text-[var(--foreground)]">Secure</span>
-                </div>
+
+                {/* Member & Reseller pills */}
+                {(activeItem.memberPrice || activeItem.adminPrice) && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {activeItem.memberPrice && (
+                      <Link
+                        href="/games/membership/silver-membership"
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 hover:bg-[var(--accent)]/20 transition-all duration-200 group/pill"
+                      >
+                        <span className="text-[8px] font-black uppercase tracking-wider text-[var(--accent)]">Member</span>
+                        <span className="text-[10px] font-[1000] text-[var(--foreground)] group-hover/pill:text-[var(--accent)] transition-colors">₹{activeItem.memberPrice}</span>
+                      </Link>
+                    )}
+                    {activeItem.adminPrice && (
+                      <a
+                        href={supportUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-all duration-200 group/pill"
+                      >
+                        <span className="text-[8px] font-black uppercase tracking-wider text-purple-400">Reseller</span>
+                        <span className="text-[10px] font-[1000] text-[var(--foreground)] group-hover/pill:text-purple-400 transition-colors">₹{activeItem.adminPrice}</span>
+                      </a>
+                    )}
+                  </div>
+                )}
+
+
               </div>
 
+              {/* CTA Button */}
               {isUnavailable ? (
                 <a
                   href={supportUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative group/btn h-11 md:h-12 px-6 rounded-xl overflow-hidden flex items-center justify-center gap-2 bg-[#25D366] text-black hover:brightness-110 transition-all duration-300 font-[1000] uppercase tracking-tighter text-[10px] md:text-xs text-center shadow-lg shadow-[#25D366]/20"
+                  className="shrink-0 relative h-12 px-5 rounded-xl overflow-hidden flex items-center justify-center gap-2 bg-[#25D366] text-black hover:brightness-110 transition-all duration-300 font-[1000] uppercase tracking-tight text-[10px] shadow-lg shadow-[#25D366]/20 active:scale-95"
                 >
-                  <div className="flex flex-col items-center">
-                    <div className="flex items-center gap-2">
-                      <FaWhatsapp size={14} />
-                      <span className="hidden md:inline">Contact Support</span>
-                      <span className="md:hidden">Contact Support</span>
-                    </div>
-                  </div>
+                  <FaWhatsapp size={15} />
+                  <span>Contact Support</span>
                 </a>
               ) : (
-                <button aria-label="button"
+                <button
+                  aria-label="Order now"
                   onClick={() => goBuy(activeItem)}
                   disabled={redirecting}
                   className={`
-                    relative group/btn h-11 md:h-12 px-6 rounded-xl overflow-hidden flex items-center justify-center gap-2
+                    shrink-0 relative h-12 px-6 rounded-xl overflow-hidden flex items-center justify-center gap-2
+                    transition-all duration-300 active:scale-95 font-[1000] uppercase tracking-tight text-xs
                     ${redirecting
-                      ? 'bg-[var(--muted)]/20 text-[var(--muted)] cursor-not-allowed border border-white/5'
-                      : 'bg-[var(--foreground)] text-[var(--background)] font-[1000] uppercase tracking-tighter text-xs'
+                      ? 'bg-[var(--muted)]/20 text-[var(--muted)] cursor-not-allowed'
+                      : 'bg-gradient-to-br from-[var(--foreground)] to-[var(--foreground)]/90 text-[var(--background)] shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 hover:scale-[1.02]'
                     }
                   `}
                 >
@@ -123,27 +156,29 @@ export default function BuyPanel({
                   ) : (
                     <>
                       <span>Order Now</span>
-                      <FiArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                      <FiArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
                 </button>
               )}
             </div>
-
           </div>
+
+          {/* Unavailable notice */}
           {isUnavailable && (
-            <div className="mt-3 text-center border-t border-[var(--border)] pt-3">
-              <a 
+            <div className="px-4 pb-4 pt-0">
+              <a
                 href={supportUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500 italic hover:text-amber-400 transition-colors flex items-center justify-center gap-2"
+                className="flex items-center justify-center gap-2 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[10px] font-black uppercase tracking-[0.15em] text-amber-400 hover:bg-amber-500/15 transition-colors"
               >
                 <FaWhatsapp size={10} />
                 Contact customer support to buy
               </a>
             </div>
           )}
+
         </div>
       </div>
     </div>

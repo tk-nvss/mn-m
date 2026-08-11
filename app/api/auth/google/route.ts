@@ -69,6 +69,14 @@ export async function POST(req: Request) {
         userType: "user",
       });
     } else {
+      /* ================= MEMBERSHIP EXPIRY CHECK ================= */
+      if ((user.userType === "member" || user.userType === "admin") && user.membershipExpiry) {
+        if (new Date() > new Date(user.membershipExpiry)) {
+          user.userType = "user";
+          user.membershipExpiry = null;
+        }
+      }
+
       /* ================= UPDATE LAST LOGIN ================= */
       const ip = req.headers.get("x-forwarded-for") || "unknown";
       user.lastLogin = new Date();

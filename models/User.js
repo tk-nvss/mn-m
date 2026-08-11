@@ -112,6 +112,11 @@ const UserSchema = new mongoose.Schema(
       default: "user",
     },
 
+    membershipExpiry: {
+      type: Date,
+      default: null,
+    },
+
     /* ================= FORGOT PASSWORD ================= */
     resetOtp: String,
     resetOtpExpiry: Date,

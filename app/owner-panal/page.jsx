@@ -31,6 +31,7 @@ import {
 
 import AuthGuard from "@/components/AuthGuard";
 import UsersTab from "@/components/admin/UsersTab";
+import MembershipsTab from "@/components/admin/MembershipsTab";
 import OrdersTab from "@/components/admin/OrdersTab";
 import PricingTab from "@/components/admin/PricingTab";
 import TransactionsTab from "@/components/admin/TransactionsTab";
@@ -83,6 +84,7 @@ const MENU_CATEGORIES = [
     category: "Platform Management",
     items: [
       { id: "users", label: "Users", icon: FiUsers },
+      { id: "memberships", label: "Memberships", icon: FiShield },
       { id: "queries", label: "Support Queries", icon: FiMessageSquare },
       { id: "pricing", label: "Pricing", icon: FiTag },
       { id: "api-keys", label: "API Keys", icon: FiKey },
@@ -492,6 +494,10 @@ export default function AdminPanalPage() {
             {activeTab === "coins" && <CoinsAdminTab />}
             {activeTab === "users" && (
               <UsersTab />
+            )}
+            
+            {activeTab === "memberships" && (
+              <MembershipsTab />
             )}
 
             {activeTab === "api-keys" && (

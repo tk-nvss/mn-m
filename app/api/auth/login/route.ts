@@ -84,6 +84,14 @@ export async function POST(request: Request) {
       );
     }
 
+    /* ================= MEMBERSHIP EXPIRY CHECK ================= */
+    if ((foundUser.userType === "member" || foundUser.userType === "admin") && foundUser.membershipExpiry) {
+      if (new Date() > new Date(foundUser.membershipExpiry)) {
+        foundUser.userType = "user";
+        foundUser.membershipExpiry = null;
+      }
+    }
+
     /* ================= UPDATE LAST LOGIN ================= */
     foundUser.lastLogin = new Date();
     foundUser.lastLoginIp = ip;
