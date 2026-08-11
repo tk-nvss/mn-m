@@ -10,6 +10,7 @@ export interface UserDetails {
   avatar: string;
   referralUsed: boolean;
   referralCount: number;
+  membershipExpiry?: string;
 }
 
 interface AuthState {
@@ -52,6 +53,7 @@ export const useAuthStore = create<AuthState>()(
             avatar: user.avatar || "",
             referralUsed: user.referralUsed || false,
             referralCount: user.referralCount || 0,
+            membershipExpiry: user.membershipExpiry,
           }
         });
       },
