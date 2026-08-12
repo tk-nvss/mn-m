@@ -360,13 +360,13 @@ export default function GiveawayEntryModal({ giveaway, onClose }: { giveaway: an
                                 {task.link && (
                                   <a href={task.link} target="_blank" rel="noopener noreferrer"
                                     className="gm-task-link"
-                                    onClick={() => { if (task.type === "checkbox") handleVerify(i); }}
+                                    onClick={() => { if (!task.inputLabel) handleVerify(i); }}
                                   >
                                     <FiExternalLink size={10} />
                                     {task.type === "youtube" ? "Open Channel" : task.type === "whatsapp" ? "Join Group" : task.type === "instagram" ? "Follow" : "Open Link"}
                                   </a>
                                 )}
-                                {task.type === "checkbox" && (
+                                {!task.inputLabel && (
                                   <button aria-label="button"
                                     className={`gm-task-done ${taskData[i] ? "checked" : ""}`}
                                     onClick={() => {
@@ -386,7 +386,7 @@ export default function GiveawayEntryModal({ giveaway, onClose }: { giveaway: an
                                 {task.inputLabel && (
                                   <input
                                     className="gm-input"
-                                    value={String(taskData[i] || "")}
+                                    value={taskData[i] === true ? "" : String(taskData[i] || "")}
                                     onChange={e => setTaskData(p => ({ ...p, [i]: e.target.value }))}
                                     placeholder={task.inputLabel}
                                     style={{ marginTop:2 }}
