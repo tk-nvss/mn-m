@@ -81,8 +81,8 @@ const MEMBERSHIPS = {
       {
         itemName: "1 Month",
         itemSlug: "reseller-1m",
-        sellingPrice: 69,
-        dummyPrice: 99,
+        sellingPrice: 39,
+        dummyPrice: 69,
         itemAvailablity: true,
         index: 1,
         itemImageId: {
@@ -92,8 +92,8 @@ const MEMBERSHIPS = {
       {
         itemName: "3 Months",
         itemSlug: "reseller-3m",
-        sellingPrice: 179,
-        dummyPrice: 299,
+        sellingPrice: 99,
+        dummyPrice: 149,
         itemAvailablity: true,
         index: 2,
         itemImageId: {
@@ -103,8 +103,8 @@ const MEMBERSHIPS = {
       {
         itemName: "6 Months",
         itemSlug: "reseller-6m",
-        sellingPrice: 299,
-        dummyPrice: 449,
+        sellingPrice: 179,
+        dummyPrice: 249,
         itemAvailablity: true,
         index: 3,
         itemImageId: {
@@ -114,8 +114,8 @@ const MEMBERSHIPS = {
       {
         itemName: "12 Months",
         itemSlug: "reseller-12m",
-        sellingPrice: 549,
-        dummyPrice: 899,
+        sellingPrice: 299,
+        dummyPrice: 499,
         itemAvailablity: true,
         index: 4,
         itemImageId: {
