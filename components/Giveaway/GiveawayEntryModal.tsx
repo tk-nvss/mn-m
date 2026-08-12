@@ -79,7 +79,7 @@ export default function GiveawayEntryModal({ giveaway, onClose }: { giveaway: an
     for (let i = 0; i < (giveaway.tasks?.length || 0); i++) {
       const t = giveaway.tasks[i];
       if (!t.required) continue;
-      if (t.type === "checkbox" && !taskData[i]) return false;
+      if (!t.inputLabel && !taskData[i]) return false;
       if (t.inputLabel && !String(taskData[i] || "").trim()) return false;
     }
     return true;
