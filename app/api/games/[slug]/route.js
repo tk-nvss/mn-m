@@ -23,8 +23,8 @@ const MEMBERSHIPS = {
       {
         itemName: "1 Month ",
         itemSlug: "silver-1m",
-        sellingPrice: 99,
-        dummyPrice: 199,
+        sellingPrice: 49,
+        dummyPrice: 99,
         itemAvailablity: true,
         index: 1,
         itemImageId: {
@@ -34,8 +34,8 @@ const MEMBERSHIPS = {
       {
         itemName: "3 Months (Best Value)",
         itemSlug: "silver-3m",
-        sellingPrice: 249,
-        dummyPrice: 499,
+        sellingPrice: 129,
+        dummyPrice: 249,
         itemAvailablity: true,
         index: 2,
         itemImageId: {
@@ -45,8 +45,8 @@ const MEMBERSHIPS = {
       {
         itemName: "6 Months",
         itemSlug: "silver-6m",
-        sellingPrice: 449,
-        dummyPrice: 899,
+        sellingPrice: 229,
+        dummyPrice: 449,
         itemAvailablity: true,
         index: 3,
         itemImageId: {
@@ -56,8 +56,8 @@ const MEMBERSHIPS = {
       {
         itemName: "12 Months",
         itemSlug: "silver-12m",
-        sellingPrice: 799,
-        dummyPrice: 1599,
+        sellingPrice: 399,
+        dummyPrice: 799,
         itemAvailablity: true,
         index: 4,
         itemImageId: {
