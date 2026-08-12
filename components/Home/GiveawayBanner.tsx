@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { FiGift, FiChevronRight, FiX } from "react-icons/fi";
-import GiveawayEntryModal from "@/components/Giveaway/GiveawayEntryModal";
+import { useRouter } from "next/navigation";
 
 const ROTATE_INTERVAL = 4000;
 
@@ -10,8 +10,8 @@ export default function GiveawayBanner() {
   const [giveaways, setGiveaways] = useState<any[]>([]);
   const [current, setCurrent]     = useState(0);
   const [visible, setVisible]     = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [animKey, setAnimKey]     = useState(0);
+  const router = useRouter();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function GiveawayBanner() {
       `}</style>
       <section className="w-full max-w-7xl mx-auto px-4 mt-2 mb-1 relative z-30">
         <div 
-          onClick={() => setShowModal(true)}
+          onClick={() => router.push('/giveaways')}
           className="group cursor-pointer relative flex items-center justify-between px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-[2rem] bg-[var(--card)] dark:bg-[var(--accent)]/10 border border-[var(--border)] dark:border-[var(--accent)]/20 transition-all duration-500 overflow-hidden shadow-sm hover:shadow-md hover:border-[var(--accent)]/50"
         >
           {/* Subtle Ambient Glow */}
@@ -99,7 +99,7 @@ export default function GiveawayBanner() {
             {/* Action Button */}
             <button 
               className="h-7 sm:h-8 px-3 sm:px-4 rounded-full sm:rounded-[0.5rem] bg-[var(--accent)] text-white flex items-center justify-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] font-black uppercase tracking-wider shadow-md shadow-[var(--accent)]/20 transition-transform hover:scale-105"
-              onClick={e => { e.stopPropagation(); setShowModal(true); }}
+              onClick={e => { e.stopPropagation(); router.push('/giveaways'); }}
             >
               Enter <FiChevronRight size={12} />
             </button>
@@ -117,8 +117,6 @@ export default function GiveawayBanner() {
             </button>
           </div>
         </div>
-
-        {showModal && <GiveawayEntryModal giveaway={g} onClose={() => setShowModal(false)} />}
       </section>
     </>
   );
