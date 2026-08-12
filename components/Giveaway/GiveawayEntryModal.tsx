@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FiX, FiCheck, FiExternalLink, FiGift, FiAward, FiShare2 } from "react-icons/fi";
+import { FiX, FiCheck, FiExternalLink, FiGift, FiAward, FiShare2, FiClock } from "react-icons/fi";
 
 
 
@@ -15,6 +15,7 @@ export default function GiveawayEntryModal({ giveaway, onClose }: { giveaway: an
   const [loading, setLoading]     = useState(false);
   const [error, setError]         = useState("");
   const [hasEntered, setHasEntered] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const [loggedIn, setLoggedIn]   = useState(false);
   const [winners, setWinners]     = useState<string[]>([]);
   const [currentUserId, setCurrentUserId] = useState("");
@@ -29,7 +30,19 @@ export default function GiveawayEntryModal({ giveaway, onClose }: { giveaway: an
     if (!token) return;
     setLoggedIn(true);
     fetch(`/api/giveaway/${giveaway._id}`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json()).then(d => { if (d.hasEntered) setHasEntered(true); if (d.giveaway?.winners) setWinners(d.giveaway.winners); }).catch(() => {});
+      .then(r => r.json()).then(d => { 
+        if (d.hasEntered) {
+          setHasEntered(true); 
+          setIsVerified(d.isVerified);
+          if (d.userEntry) {
+            setMlbbId(d.userEntry.mlbbId || "");
+            setMlbbServer(d.userEntry.mlbbServer || "");
+            setPhone(d.userEntry.phone || "");
+            setTaskData(d.userEntry.taskData || {});
+          }
+        }
+        if (d.giveaway?.winners) setWinners(d.giveaway.winners); 
+      }).catch(() => {});
     fetch("/api/auth/me", { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json()).then(d => { if (d.user?.userId) setCurrentUserId(d.user.userId); }).catch(() => {});
   }, [giveaway._id]);
@@ -248,22 +261,45 @@ export default function GiveawayEntryModal({ giveaway, onClose }: { giveaway: an
             {step === "success" || hasEntered ? (
               <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:14, padding:"24px 0", textAlign:"center" }}>
                 <div style={{ width:56, height:56, borderRadius:"50%", background:"color-mix(in srgb,var(--accent) 10%,transparent)", border:"1px solid color-mix(in srgb,var(--accent) 25%,transparent)", display:"flex", alignItems:"center", justifyContent:"center", color:"var(--accent)" }}>
-                  <FiCheck size={26} />
+                  {isVerified ? <FiCheck size={26} /> : <FiClock size={26} />}
                 </div>
                 <div>
-                  <p style={{ margin:0, fontWeight:800, fontSize:16, color:"var(--foreground)" }}>You&apos;re in! 🎉</p>
-                  <p style={{ margin:"4px 0 0", fontSize:12, color:"var(--muted)" }}>Your entry has been recorded. Good luck!</p>
+                  <p style={{ margin:0, fontWeight:800, fontSize:16, color:"var(--foreground)" }}>
+                    {isVerified ? "You're Verified! 🎉" : "Entry under Review ⏳"}
+                  </p>
+                  <p style={{ margin:"4px 0 0", fontSize:12, color:"var(--muted)" }}>
+                    {isVerified 
+                      ? "Your tasks are verified. You are now eligible for the draw! Good luck!" 
+                      : "Your tasks are pending verification by an admin. Please wait."}
+                  </p>
                 </div>
-                <a 
-                  href={`https://wa.me/${process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP}?text=${encodeURIComponent(`Hi, I have just joined the giveaway: ${giveaway.title}`)}`}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="gm-submit" 
-                  style={{ maxWidth: 180, display: "inline-block", textAlign: "center", textDecoration: "none" }}
-                  onClick={onClose}
-                >
-                  Notify Admin
-                </a>
+                {!isVerified && (
+                  <p style={{ fontSize: 11, color: "var(--muted)", fontStyle: "italic", maxWidth: 300 }}>
+                    Realized you missed a task? You can redo them before the giveaway ends.
+                  </p>
+                )}
+                
+                <div style={{ display: "flex", gap: 10, width: "100%", justifyContent: "center" }}>
+                  {!isVerified && (
+                    <button 
+                      aria-label="button" 
+                      onClick={() => setHasEntered(false)} 
+                      style={{ padding: "10px 16px", borderRadius: 12, border: "1px solid var(--border)", background: "transparent", color: "var(--foreground)", fontSize: 13, fontWeight: 700, cursor: "pointer" }}
+                    >
+                      Redo Tasks
+                    </button>
+                  )}
+                  <a 
+                    href={`https://wa.me/${process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP}?text=${encodeURIComponent(`Hi, I have just joined the giveaway: ${giveaway.title}`)}`}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="gm-submit" 
+                    style={{ maxWidth: 160, display: "inline-block", textAlign: "center", textDecoration: "none", padding: "10px 16px" }}
+                    onClick={onClose}
+                  >
+                    Notify Admin
+                  </a>
+                </div>
               </div>
 
             ) : !loggedIn ? (

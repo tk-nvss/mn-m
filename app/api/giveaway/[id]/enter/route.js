@@ -44,16 +44,24 @@ export async function POST(req, { params }) {
       return NextResponse.json({ success: false, message: "Giveaway is full" }, { status: 403 });
 
 
-    // Check duplicate
     const existing = await GiveawayEntry.findOne({ giveawayId: id, userId: entryUserId });
-    if (existing)
-      return NextResponse.json({ success: false, message: "Already entered" }, { status: 409 });
 
     const body = await req.json();
     const { mlbbId, mlbbServer, taskData, phone } = body;
 
     if (!phone)
       return NextResponse.json({ success: false, message: "Phone number is required" }, { status: 400 });
+
+    if (existing) {
+      if (existing.isVerified) {
+        return NextResponse.json({ success: false, message: "Entry already verified. Cannot redo tasks." }, { status: 409 });
+      }
+      
+      await GiveawayEntry.findByIdAndUpdate(existing._id, {
+        mlbbId, mlbbServer, phone, taskData: taskData || {}, isVerified: false
+      });
+      return NextResponse.json({ success: true, message: "Entry updated successfully" });
+    }
 
     await GiveawayEntry.create({
       giveawayId: id,

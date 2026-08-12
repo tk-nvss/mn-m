@@ -31,8 +31,8 @@ export async function POST(req, { params }) {
     if (entry.isWinner) return NextResponse.json({ success: false, message: "Already a winner" }, { status: 400 });
     winners = [entry];
   } else {
-    const entries = await GiveawayEntry.find({ giveawayId: id, isWinner: false });
-    if (!entries.length) return NextResponse.json({ success: false, message: "No entries" }, { status: 400 });
+    const entries = await GiveawayEntry.find({ giveawayId: id, isWinner: false, isVerified: true });
+    if (!entries.length) return NextResponse.json({ success: false, message: "No eligible verified entries" }, { status: 400 });
 
     // Fisher-Yates shuffle and pick N
     const shuffled = [...entries].sort(() => Math.random() - 0.5);

@@ -15,6 +15,8 @@ export async function GET(req, { params }) {
 
     // Check if current user already entered
     let hasEntered = false;
+    let isVerified = false;
+    let userEntry = null;
     const authHeader = req.headers.get("authorization");
     if (authHeader?.startsWith("Bearer ")) {
       try {
@@ -33,13 +35,17 @@ export async function GET(req, { params }) {
         if (user && user.userId) possibleIds.push(user.userId);
 
         const entry = await GiveawayEntry.findOne({ giveawayId: id, userId: { $in: possibleIds } });
-        hasEntered = !!entry;
+        if (entry) {
+          hasEntered = true;
+          isVerified = entry.isVerified;
+          userEntry = { mlbbId: entry.mlbbId, mlbbServer: entry.mlbbServer, phone: entry.phone, taskData: entry.taskData };
+        }
       } catch (err) {
         console.error("hasEntered check error:", err);
       }
     }
 
-    return NextResponse.json({ success: true, giveaway, hasEntered });
+    return NextResponse.json({ success: true, giveaway, hasEntered, isVerified, userEntry });
   } catch (err) {
     return NextResponse.json({ success: false }, { status: 500 });
   }

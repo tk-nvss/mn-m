@@ -164,6 +164,22 @@ export default function GiveawayAdminTab() {
     }
   };
 
+  const toggleVerify = async (entryId, currentStatus) => {
+    try {
+      const res = await fetch(`/api/admin/giveaway/${selected._id}/entries`, {
+        method: "PATCH", headers: authHeaders(), body: JSON.stringify({ entryId, isVerified: !currentStatus })
+      });
+      const d = await res.json();
+      if (d.success) {
+        setEntries(entries.map(e => e._id === entryId ? { ...e, isVerified: !currentStatus } : e));
+      } else {
+        alert(d.message || "Error");
+      }
+    } catch (e) {
+      alert("Error occurred");
+    }
+  };
+
   const addTask = () => setForm(f => ({ ...f, tasks: [...f.tasks, { type: "checkbox", label: "", description: "", link: "", inputLabel: "", required: true }] }));
   const removeTask = (i) => setForm(f => ({ ...f, tasks: f.tasks.filter((_, idx) => idx !== i) }));
   const updateTask = (i, field, val) => setForm(f => {
@@ -173,13 +189,17 @@ export default function GiveawayAdminTab() {
   });
 
   const exportCSV = () => {
-    if (!entries.length) return;
-    const headers = ["Name", "Email", "Phone", "MLBB ID", "Server", "Entered At", "Winner"];
-    const rows = entries.map(e => [e.name, e.email, e.phone || "", e.mlbbId, e.mlbbServer, new Date(e.createdAt).toLocaleString(), e.isWinner ? "YES" : ""]);
+    if (!entries.length || !selected) return;
+    const inputTasks = (selected.tasks || []).map((t, i) => ({ label: t.inputLabel, index: i })).filter(t => t.label);
+    const headers = ["Name", "Email", "Phone", "MLBB ID", "Server", "Entered At", "Winner", "Verified", ...inputTasks.map(t => t.label)];
+    const rows = entries.map(e => [
+      e.name, e.email, e.phone || "", e.mlbbId, e.mlbbServer, new Date(e.createdAt).toLocaleString(), e.isWinner ? "YES" : "", e.isVerified ? "YES" : "",
+      ...inputTasks.map(t => (e.taskData?.[t.index] && typeof e.taskData[t.index] === 'string') ? e.taskData[t.index] : "")
+    ]);
     const csv = [headers, ...rows].map(r => r.map(c => `"${c}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href = url; a.download = `entries-${selected?.title}.csv`; a.click();
+    const a = document.createElement("a"); a.href = url; a.download = `entries-${selected.title}.csv`; a.click();
   };
 
   return (
@@ -329,13 +349,32 @@ export default function GiveawayAdminTab() {
                               <td className="px-4 py-2.5 text-[var(--muted)]">{e.phone || "—"}</td>
                               <td className="px-4 py-2.5 font-mono text-[var(--foreground)]">{e.mlbbId}</td>
                               <td className="px-4 py-2.5 text-[var(--muted)]">{e.mlbbServer}</td>
-                              <td className="px-4 py-2.5 text-[var(--muted)]">
-                                {Object.keys(e.taskData || {}).length} / {g.tasks?.length || 0}
+                              <td className="px-4 py-2.5 text-[var(--muted)] align-top">
+                                <div className="font-medium mb-1">
+                                  {Object.keys(e.taskData || {}).length} / {g.tasks?.length || 0}
+                                </div>
+                                <div className="flex flex-col gap-1.5 max-w-[200px]">
+                                  {g.tasks?.map((t, idx) => {
+                                    const val = e.taskData?.[idx];
+                                    if (val && typeof val === 'string' && t.inputLabel) {
+                                      return (
+                                        <div key={idx} className="text-[9px] flex flex-col gap-0.5">
+                                          <span className="text-[8px] text-[var(--muted)] uppercase tracking-wider truncate" title={t.inputLabel}>{t.inputLabel}</span>
+                                          <span className="bg-[var(--foreground)]/[0.03] border border-[var(--border)] px-1.5 py-1 rounded text-[var(--foreground)] break-all">{val}</span>
+                                        </div>
+                                      );
+                                    }
+                                    return null;
+                                  })}
+                                </div>
                               </td>
                               <td className="px-4 py-2.5 text-[var(--muted)] whitespace-nowrap">
                                 {new Date(e.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                               </td>
-                              <td className="px-4 py-2.5">
+                              <td className="px-4 py-2.5 flex items-center gap-2 justify-end">
+                                <button aria-label="button" onClick={() => toggleVerify(e._id, e.isVerified)} className={`text-[9px] font-black px-1.5 py-0.5 rounded transition-all border ${e.isVerified ? 'text-green-400 border-green-500/50 bg-green-500/10 hover:bg-green-500/20' : 'text-[var(--muted)] border-[var(--border)] bg-[var(--background)] hover:border-[var(--foreground)]/50'}`}>
+                                  {e.isVerified ? "VERIFIED" : "VERIFY"}
+                                </button>
                                 {e.isWinner ? (
                                   <div className="flex items-center gap-2">
                                     <span className="text-[9px] font-black text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 px-1.5 py-0.5 rounded">WINNER</span>
