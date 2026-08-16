@@ -32,7 +32,7 @@ const flashSaleData = [
         name: "Starlight Card",
         game: "MLBB",
         image: "/game-assets/starkight.webp",
-        price: "₹230",
+        price: "₹240",
         originalPrice: "₹299",
         slug: "starlight-card-manual",
         badge: "New"

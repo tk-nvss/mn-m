@@ -9,7 +9,6 @@ import {
 } from "react-icons/fi";
 
 import AuthGuard from "@/components/AuthGuard";
-import HelpImagePopup from "../../../../../components/HelpImage/HelpImagePopup";
 import RecentVerifiedPlayers from "../../../../region/RecentVerifiedPlayers";
 import { saveVerifiedPlayer } from "@/utils/storage/verifiedPlayerStorage";
 import { BuyFlowSkeleton } from "@/components/Skeleton/BuyFlowSkeleton";
@@ -264,46 +263,45 @@ function BuyFlowContent() {
           {/* BACK BUTTON */}
           <button aria-label="button"
             onClick={() => router.back()}
-            className="flex items-center gap-1.5 text-[var(--accent)] font-black uppercase tracking-widest text-[9px] mb-4 hover:opacity-70 transition-opacity"
+            className="flex items-center gap-1.5 text-[var(--accent)] font-black uppercase tracking-widest text-[9px] mb-2 hover:opacity-70 transition-opacity"
           >
-            <FiArrowLeft className="text-base" /> Back
+            <FiArrowLeft className="text-sm" /> Back
           </button>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-start">
 
             {/* LEFT COLUMN: ITEM HERO & MORE PACKS */}
-            <div className="lg:col-span-5 space-y-5 lg:sticky lg:top-4">
+            <div className="lg:col-span-5 space-y-3.5 lg:sticky lg:top-4">
 
               {/* HERO CARD */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-[2rem] p-5 sm:p-6 shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent)]/5 rounded-full blur-[60px] -z-0" />
+              <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-3.5 sm:p-4 shadow-sm relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--accent)]/5 rounded-full blur-[40px] -z-0" />
 
                 <div className="relative z-10">
-                  <div className="flex items-center gap-4 sm:gap-6 text-left">
-                    <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0">
-                      <div className="absolute inset-0 bg-[var(--accent)]/10 rounded-2xl blur-2xl group-hover:bg-[var(--accent)]/20 transition-all duration-500" />
+                  <div className="flex items-center gap-3.5 sm:gap-4 text-left">
+                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0">
+                      <div className="absolute inset-0 bg-[var(--accent)]/10 rounded-xl blur-xl group-hover:bg-[var(--accent)]/20 transition-all duration-300" />
                       <img
                         src={item?.itemImageId?.image || fallbackImage || ""}
                         alt={item?.itemName || fallbackName}
-                        className="relative z-10 w-full h-full object-contain drop-shadow-xl group-hover:scale-105 transition-transform duration-500"
+                        className="relative z-10 w-full h-full object-contain drop-shadow-md group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
 
-                    <div className="flex-1 min-w-0 space-y-1.5">
+                    <div className="flex-1 min-w-0 space-y-1">
                       <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-[var(--accent)]/10 rounded-full">
                         <div className="w-1 h-1 rounded-full bg-[var(--accent)] animate-pulse" />
-                        <span className="text-[8px] font-black text-[var(--accent)] uppercase tracking-widest">Instant Delivery</span>
+                        <span className="text-[7.5px] font-black text-[var(--accent)] uppercase tracking-widest">Instant Delivery</span>
                       </div>
 
-                      <h1 className="text-xl sm:text-2xl font-[1000] text-[var(--foreground)] leading-none tracking-tighter uppercase truncate">
+                      <h1 className="text-sm sm:text-base font-black text-[var(--foreground)] leading-tight uppercase truncate">
                         {item?.itemName || fallbackName}
                       </h1>
 
-
                       <div className="flex items-baseline gap-2 pt-0.5">
-                        <span className="text-xl sm:text-2xl font-[1000] text-[var(--accent)]">₹{item?.sellingPrice || 0}</span>
+                        <span className="text-base sm:text-lg font-black text-[var(--accent)]">₹{item?.sellingPrice || 0}</span>
                         {item?.dummyPrice > item?.sellingPrice && (
-                          <span className="text-[10px] font-bold text-[var(--muted)] line-through">₹{item.dummyPrice}</span>
+                          <span className="text-[9px] font-bold text-[var(--muted)] line-through">₹{item.dummyPrice}</span>
                         )}
                       </div>
                     </div>
@@ -311,22 +309,20 @@ function BuyFlowContent() {
                 </div>
 
                 {/* BACKGROUND DECOR */}
-                <div className="absolute bottom-2 right-2 opacity-[0.03]">
-                  <FiShoppingBag className="text-6xl text-[var(--foreground)]" />
+                <div className="absolute bottom-1 right-2 opacity-[0.03]">
+                  <FiShoppingBag className="text-4xl text-[var(--foreground)]" />
                 </div>
               </div>
 
-              {/* TIER PRICES CARD REMOVED AS PER REQUEST */}
-
               {/* MORE PACKS */}
               {otherItems.length > 0 && (
-                <div className="space-y-3 px-1">
-                  <div className="flex items-center gap-2">
-                    <FiShoppingBag className="text-[var(--accent)] text-lg" />
-                    <h2 className="text-[10px] font-[1000] uppercase tracking-[0.2em] text-[var(--foreground)]">More packs you may like</h2>
+                <div className="space-y-2 px-0.5">
+                  <div className="flex items-center gap-1.5">
+                    <FiShoppingBag className="text-[var(--accent)] text-sm" />
+                    <h2 className="text-[9px] font-black uppercase tracking-widest text-[var(--foreground)]">More packs you may like</h2>
                   </div>
 
-                  <div className="flex lg:grid lg:grid-cols-4 items-center gap-2 overflow-x-auto lg:overflow-x-visible pb-4 lg:pb-0 -mx-2 lg:mx-0 px-2 lg:px-0 scrollbar-hide no-scrollbar">
+                  <div className="flex lg:grid lg:grid-cols-3 items-center gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 scrollbar-hide no-scrollbar">
                     {otherItems.map((oi) => {
                       const isActive = oi.itemSlug === itemSlug;
                       return (
@@ -334,21 +330,21 @@ function BuyFlowContent() {
                           key={oi._id}
                           onClick={() => router.push(`/games/${slug}/buy/${oi.itemSlug}`)}
                           className={`
-                            p-3 rounded-2xl transition-all text-left group min-w-[120px] lg:min-w-0 shrink-0 border-2 relative
+                            p-2.5 rounded-xl transition-all text-left group min-w-[105px] lg:min-w-0 shrink-0 border relative
                             ${isActive
-                              ? "bg-[var(--accent)]/5 border-[var(--accent)] shadow-sm"
-                              : "bg-[var(--card)] border-[var(--border)] hover:border-[var(--accent)]/30 hover:shadow-md"}
+                              ? "bg-[var(--accent)]/10 border-[var(--accent)] shadow-sm"
+                              : "bg-[var(--card)] border-[var(--border)] hover:border-[var(--accent)]/30"}
                           `}
                         >
                           {isActive && (
-                            <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-[var(--accent)] text-white rounded-full flex items-center justify-center shadow-sm animate-in zoom-in-50">
-                              <FiCheck size={10} strokeWidth={4} />
+                            <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-[var(--accent)] text-white rounded-full flex items-center justify-center shadow-sm">
+                              <FiCheck size={8} strokeWidth={3} />
                             </div>
                           )}
-                          <p className={`text-[9px] font-black uppercase tracking-widest mb-1 truncate ${isActive ? "text-[var(--accent)]" : "text-[var(--muted)] group-hover:text-[var(--foreground)]"}`}>
+                          <p className={`text-[8.5px] font-black uppercase tracking-wider mb-0.5 truncate ${isActive ? "text-[var(--accent)]" : "text-[var(--muted)] group-hover:text-[var(--foreground)]"}`}>
                             {oi.itemName}
                           </p>
-                          <p className={`text-sm font-[1000] ${isActive ? "text-[var(--foreground)]" : "text-[var(--foreground)]"}`}>₹{oi.sellingPrice}</p>
+                          <p className="text-xs font-black text-[var(--foreground)]">₹{oi.sellingPrice}</p>
                         </button>
                       );
                     })}
@@ -361,41 +357,38 @@ function BuyFlowContent() {
             <div className="lg:col-span-7 space-y-5">
 
               {/* 1. PLAYER INFO CARD */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-[2rem] p-5 sm:p-7 shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-1 h-5 bg-[var(--accent)] rounded-full" />
-                    <h2 className="text-xl font-[1000] text-[var(--foreground)] uppercase tracking-tight italic">1. Player Info</h2>
-                  </div>
-                  <HelpImagePopup />
+              <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-6 shadow-sm">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1 h-4 bg-[var(--accent)] rounded-full" />
+                  <h2 className="text-base sm:text-lg font-black text-[var(--foreground)] uppercase tracking-tight italic">1. Player Info</h2>
                 </div>
 
-                <div className="space-y-5">
+                <div className="space-y-4">
                   {/* INPUTS */}
                   <div className={`grid gap-3 ${gameWithOptions?.inputFieldTwo ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
                     <div className="relative group">
                       <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors">
-                        <FiUser className="text-lg" />
+                        <FiUser className="text-base" />
                       </div>
                       <input
                         type="text"
                         placeholder={fieldOneLabel}
                         value={playerId}
                         onChange={(e) => setPlayerId(e.target.value)}
-                        className="w-full bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent)]/5 rounded-xl py-3 pl-11 pr-3 font-bold text-[var(--foreground)] outline-none transition-all placeholder:text-[var(--muted)] text-sm"
+                        className="w-full bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/10 rounded-xl py-2.5 pl-10 pr-3 font-bold text-[var(--foreground)] outline-none transition-all placeholder:text-[var(--muted)] text-xs sm:text-sm"
                       />
                     </div>
 
                     {gameWithOptions?.inputFieldTwo && (
                       <div className="relative group">
                         <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors z-10 pointer-events-none">
-                          <FiGlobe className="text-lg" />
+                          <FiGlobe className="text-base" />
                         </div>
                         {gameWithOptions?.inputFieldTwoOptions?.length > 0 ? (
                           <select
                             value={zoneId}
                             onChange={(e) => setZoneId(e.target.value)}
-                            className="w-full bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent)]/5 rounded-xl py-3 pl-11 pr-3 font-bold text-[var(--foreground)] outline-none transition-all appearance-none cursor-pointer text-sm"
+                            className="w-full bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/10 rounded-xl py-2.5 pl-10 pr-3 font-bold text-[var(--foreground)] outline-none transition-all appearance-none cursor-pointer text-xs sm:text-sm"
                           >
                             <option value="">{fieldTwoLabel}</option>
                             {gameWithOptions.inputFieldTwoOptions.map(opt => (
@@ -408,7 +401,7 @@ function BuyFlowContent() {
                             placeholder={fieldTwoLabel}
                             value={zoneId}
                             onChange={(e) => setZoneId(e.target.value)}
-                            className="w-full bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent)]/5 rounded-xl py-3 pl-11 pr-3 font-bold text-[var(--foreground)] outline-none transition-all placeholder:text-[var(--muted)] text-sm"
+                            className="w-full bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/10 rounded-xl py-2.5 pl-10 pr-3 font-bold text-[var(--foreground)] outline-none transition-all placeholder:text-[var(--muted)] text-xs sm:text-sm"
                           />
                         )}
                       </div>
@@ -420,9 +413,9 @@ function BuyFlowContent() {
                     <button aria-label="button"
                       onClick={handleValidate}
                       disabled={loading || !playerId}
-                      className="w-full py-3.5 bg-[var(--accent)] text-white font-[1000] uppercase tracking-[0.2em] italic text-[11px] rounded-xl hover:shadow-[0_10px_20px_rgba(var(--accent-rgb),0.3)] disabled:opacity-50 disabled:grayscale transition-all flex items-center justify-center gap-2"
+                      className="w-full py-3 bg-[var(--accent)] text-white font-black uppercase tracking-widest text-[11px] rounded-xl hover:shadow-[0_4px_15px_rgba(var(--accent-rgb),0.3)] disabled:opacity-50 disabled:grayscale transition-all flex items-center justify-center gap-2"
                     >
-                      {loading ? <FiLoader className="animate-spin text-base" /> : <><FiSearch className="text-base" /> Check Name</>}
+                      {loading ? <FiLoader className="animate-spin text-sm" /> : <><FiSearch className="text-sm" /> Check Name</>}
                     </button>
 
                     {/* ERROR MESSAGE */}
@@ -434,14 +427,14 @@ function BuyFlowContent() {
 
                     {/* VERIFIED DISPLAY */}
                     {verifiedAccount && (
-                      <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 flex items-center justify-between animate-in fade-in slide-in-from-top-2">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center">
-                            <FiCheck className="text-xl" />
+                      <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-3 flex items-center justify-between animate-in fade-in slide-in-from-top-2">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center">
+                            <FiCheck className="text-base" />
                           </div>
                           <div>
-                            <p className="text-[10px] font-black text-green-500 uppercase tracking-widest leading-none mb-1">Account Verified</p>
-                            <p className="text-lg font-[1000] text-[var(--foreground)] leading-tight uppercase italic">{verifiedAccount.userName}</p>
+                            <p className="text-[9px] font-black text-green-500 uppercase tracking-widest leading-none mb-0.5">Account Verified</p>
+                            <p className="text-base font-black text-[var(--foreground)] leading-tight uppercase italic">{verifiedAccount.userName}</p>
                           </div>
                         </div>
                       </div>
@@ -449,11 +442,11 @@ function BuyFlowContent() {
                   </div>
 
                   {/* RECENT PLAYERS */}
-                  <div className="pt-4 border-t border-[var(--border)]">
-                    <div className="flex items-center justify-between mb-4 px-1">
-                      <div className="flex items-center gap-2">
-                        <FiUserCheck className="text-[var(--accent)] text-lg" />
-                        <h3 className="text-[10px] font-black text-[var(--muted)] uppercase tracking-widest">Recent Players</h3>
+                  <div className="pt-3 border-t border-[var(--border)]">
+                    <div className="flex items-center justify-between mb-3 px-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <FiUserCheck className="text-[var(--accent)] text-base" />
+                        <h3 className="text-[9.5px] font-black text-[var(--muted)] uppercase tracking-widest">Recent Players</h3>
                       </div>
                       <button aria-label="button"
                         onClick={() => setShowSuggestions(!showSuggestions)}
@@ -465,13 +458,13 @@ function BuyFlowContent() {
 
                     {/* Integrated Recent List */}
                     {showSuggestions && (
-                      <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
+                      <div className="space-y-1.5 animate-in fade-in slide-in-from-top-1">
                         <RecentVerifiedPlayers
                           limit={3}
                           onSelect={(p) => {
                             setPlayerId(p.playerId);
                             setZoneId(p.zoneId);
-                            setVerifiedAccount(null); // Force re-verify for safety or just keep it
+                            setVerifiedAccount(null);
                           }}
                         />
                       </div>
@@ -481,108 +474,108 @@ function BuyFlowContent() {
               </div>
 
               {/* 2. PAYMENT CARD */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-[2rem] p-5 sm:p-7 shadow-sm">
-                <div className="flex items-center gap-2.5 mb-6">
-                  <div className="w-1 h-5 bg-[var(--accent)]/30 rounded-full" />
-                  <h2 className="text-xl font-[1000] text-[var(--foreground)] uppercase tracking-tight italic opacity-40">2. Payment</h2>
+              <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-6 shadow-sm">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1 h-4 bg-[var(--accent)]/30 rounded-full" />
+                  <h2 className="text-base sm:text-lg font-black text-[var(--foreground)] uppercase tracking-tight italic opacity-60">2. Payment</h2>
                 </div>
 
-                <div className="space-y-3.5">
+                <div className="space-y-3">
                   {/* PAYMENT METHOD SELECTION */}
                   <div
                     onClick={() => setPaymentMethod("upi")}
-                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between group
-                      ${paymentMethod === "upi" ? "bg-[var(--background)] border-[var(--accent)] shadow-md" : "bg-[var(--background)]/50 border-[var(--border)] hover:border-[var(--accent)]/30"}
+                    className={`p-3.5 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between group
+                      ${paymentMethod === "upi" ? "bg-[var(--background)] border-[var(--accent)] shadow-sm" : "bg-[var(--background)]/50 border-[var(--border)] hover:border-[var(--accent)]/30"}
                     `}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors
+                    <div className="flex items-center gap-2.5">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors
                         ${paymentMethod === "upi" ? "bg-[var(--accent)] text-white" : "bg-[var(--background)] text-[var(--muted)]"}
                       `}>
-                        <FiSmartphone className="text-xl" />
+                        <FiSmartphone className="text-base" />
                       </div>
                       <div>
-                        <h4 className="font-[1000] text-[var(--foreground)] uppercase tracking-tight text-sm">UPI Gateway</h4>
-                        <p className="text-[9px] font-bold text-[var(--muted)] uppercase tracking-wider">GPay, PhonePe, Paytm</p>
+                        <h4 className="font-black text-[var(--foreground)] uppercase tracking-tight text-xs sm:text-sm">UPI Gateway</h4>
+                        <p className="text-[8.5px] font-bold text-[var(--muted)] uppercase tracking-wider">GPay, PhonePe, Paytm</p>
                       </div>
                     </div>
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all
                       ${paymentMethod === "upi" ? "bg-[var(--accent)] border-[var(--accent)] text-white" : "border-[var(--border)]"}
                     `}>
-                      {paymentMethod === "upi" && <FiCheck className="text-[10px] stroke-[3]" />}
+                      {paymentMethod === "upi" && <FiCheck className="text-[9px] stroke-[3]" />}
                     </div>
                   </div>
 
                   {walletBalance > 0 && (
                     <div
                       onClick={() => setPaymentMethod("wallet")}
-                      className={`p-5 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between group
-                        ${paymentMethod === "wallet" ? "bg-[var(--background)] border-[var(--accent)] shadow-md" : "bg-[var(--background)]/50 border-[var(--border)] hover:border-[var(--accent)]/30"}
+                      className={`p-3.5 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between group
+                        ${paymentMethod === "wallet" ? "bg-[var(--background)] border-[var(--accent)] shadow-sm" : "bg-[var(--background)]/50 border-[var(--border)] hover:border-[var(--accent)]/30"}
                       `}
                     >
-                      <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors
+                      <div className="flex items-center gap-3">
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors
                           ${paymentMethod === "wallet" ? "bg-[var(--accent)] text-white" : "bg-[var(--background)] text-[var(--muted)]"}
                         `}>
-                          <FiCreditCard className="text-2xl" />
+                          <FiCreditCard className="text-lg" />
                         </div>
                         <div>
-                          <h4 className="font-[1000] text-[var(--foreground)] uppercase tracking-tight">My Wallet</h4>
-                          <p className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-wider">Balance: ₹{walletBalance}</p>
+                          <h4 className="font-black text-[var(--foreground)] uppercase tracking-tight text-xs sm:text-sm">My Wallet</h4>
+                          <p className="text-[8.5px] font-bold text-[var(--muted)] uppercase tracking-wider">Balance: ₹{walletBalance}</p>
                         </div>
                       </div>
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all
                         ${paymentMethod === "wallet" ? "bg-[var(--accent)] border-[var(--accent)] text-white" : "border-[var(--border)]"}
                       `}>
-                        {paymentMethod === "wallet" && <FiCheck className="text-sm stroke-[3]" />}
+                        {paymentMethod === "wallet" && <FiCheck className="text-[9px] stroke-[3]" />}
                       </div>
                     </div>
                   )}
 
                   {/* FINAL CHECKOUT SUMMARY */}
-                  <div className="pt-6 mt-4">
+                  <div className="pt-4 mt-2">
                     {verifiedAccount && (
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-2xl p-4 mb-4 space-y-2 shadow-sm animate-in fade-in slide-in-from-bottom-2">
+                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-3 mb-3 space-y-1.5 shadow-sm animate-in fade-in slide-in-from-bottom-2">
                         <div className="flex justify-between items-center">
-                          <span className="text-[9px] font-black text-[var(--muted)] uppercase tracking-widest">Selected Item</span>
-                          <span className="text-[11px] font-[1000] text-[var(--foreground)] uppercase italic truncate ml-4">{item?.itemName}</span>
+                          <span className="text-[8.5px] font-black text-[var(--muted)] uppercase tracking-widest">Selected Item</span>
+                          <span className="text-[10px] font-black text-[var(--foreground)] uppercase italic truncate ml-4">{item?.itemName}</span>
                         </div>
-                        <div className="flex justify-between items-center border-t border-[var(--border)] opacity-50 pt-2">
-                          <span className="text-[9px] font-black text-[var(--muted)] uppercase tracking-widest">Player ID</span>
-                          <span className="text-[11px] font-[1000] text-[var(--foreground)] tracking-tight">{verifiedAccount.playerId}</span>
+                        <div className="flex justify-between items-center border-t border-[var(--border)] opacity-50 pt-1.5">
+                          <span className="text-[8.5px] font-black text-[var(--muted)] uppercase tracking-widest">Player ID</span>
+                          <span className="text-[10px] font-black text-[var(--foreground)] tracking-tight">{verifiedAccount.playerId}</span>
                         </div>
                         {verifiedAccount.zoneId && (
-                          <div className="flex justify-between items-center border-t border-[var(--border)] opacity-50 pt-2">
-                            <span className="text-[9px] font-black text-[var(--muted)] uppercase tracking-widest">Server / Zone</span>
-                            <span className="text-[11px] font-[1000] text-[var(--foreground)] tracking-tight">{verifiedAccount.zoneId}</span>
+                          <div className="flex justify-between items-center border-t border-[var(--border)] opacity-50 pt-1.5">
+                            <span className="text-[8.5px] font-black text-[var(--muted)] uppercase tracking-widest">Server / Zone</span>
+                            <span className="text-[10px] font-black text-[var(--foreground)] tracking-tight">{verifiedAccount.zoneId}</span>
                           </div>
                         )}
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between mb-6 px-2">
-                      <span className="text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em]">Total Amount</span>
-                      <span className="text-3xl font-[1000] text-[var(--foreground)] tracking-tighter italic">₹{item?.sellingPrice || 0}</span>
+                    <div className="flex items-center justify-between mb-4 px-1">
+                      <span className="text-[9.5px] font-black text-[var(--muted)] uppercase tracking-widest">Total Amount</span>
+                      <span className="text-2xl font-black text-[var(--foreground)] tracking-tight italic">₹{item?.sellingPrice || 0}</span>
                     </div>
 
                     <button aria-label="button"
                       onClick={handleProceed}
                       disabled={isProcessing || !verifiedAccount}
-                      className={`w-full py-5 rounded-[1.5rem] font-[1000] uppercase tracking-[0.2em] italic text-sm transition-all flex items-center justify-center gap-3
+                      className={`w-full py-3.5 rounded-xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2
                         ${isProcessing || !verifiedAccount
                           ? "bg-slate-100 text-slate-300 cursor-not-allowed"
-                          : "bg-[var(--accent)] text-white hover:shadow-[0_15px_30px_rgba(var(--accent-rgb),0.3)] hover:-translate-y-1"}
+                          : "bg-[var(--accent)] text-white hover:shadow-[0_8px_20px_rgba(var(--accent-rgb),0.3)]"}
                       `}
                     >
                       {isProcessing ? (
                         <>
-                          <FiLoader className="animate-spin text-xl" />
+                          <FiLoader className="animate-spin text-base" />
                           Processing
                         </>
                       ) : (
                         <>
                           Confirm & Pay
-                          <FiArrowRight className="text-xl" />
+                          <FiArrowRight className="text-base" />
                         </>
                       )}
                     </button>

@@ -5,10 +5,10 @@ export default function TradeMarketplaceBanner() {
   return (
     <section className="w-full max-w-7xl mx-auto px-4 mt-2">
       <Link href="/trade" rel="noopener noreferrer">
-        <div className="group relative flex items-center justify-between px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-[2rem] bg-[var(--card)] border border-[var(--border)] hover:border-[var(--accent)]/30 transition-all duration-500 overflow-hidden shadow-sm">
+        <div className="group relative flex items-center justify-between px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-[2rem] bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 hover:border-amber-500/40 transition-all duration-500 overflow-hidden shadow-sm hover:shadow-md">
           
           {/* Subtle Ambient Glow */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--accent)]/[0.04] to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-100 dark:via-zinc-800 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
           
           <div className="relative z-10 flex items-center gap-3 sm:gap-4">
             

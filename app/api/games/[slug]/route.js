@@ -386,7 +386,7 @@ const STARLIGHT_CONFIG = {
     {
       itemName: "Normal Starlight",
       itemSlug: "starlight-normal",
-      sellingPrice: 230,
+      sellingPrice: 240,
       dummyPrice: 299,
       itemAvailablity: true,
       index: 1,

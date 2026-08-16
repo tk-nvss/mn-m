@@ -23,7 +23,7 @@ export default function ServiceGridSection({
   const Icon = config.icon;
 
   return (
-    <section className="relative mb-16 px-1">
+    <section className="relative mb-4 sm:mb-6 px-1">
       {/* HEADER SYSTEM */}
       {title && (
         <div className="flex items-center gap-4 mb-8">

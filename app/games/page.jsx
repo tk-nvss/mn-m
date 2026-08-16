@@ -164,22 +164,22 @@ function GamesContent() {
 
   /* ================= RENDER COMPONENTS ================= */
   const SectionHeader = ({ title, icon: Icon, count, gradient }) => (
-    <div className="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-[var(--border)]/40 pb-4">
-      <div className="flex items-center gap-3">
+    <div className="group flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 border-b border-[var(--border)]/30 pb-2">
+      <div className="flex items-center gap-2.5">
         {/* Simple elegant icon */}
-        <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--card)] border border-[var(--border)] shadow-sm transition-all duration-300 group-hover:border-[var(--accent)]/40 group-hover:shadow-md">
-          <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${gradient} opacity-10`} />
-          <Icon size={18} className="relative z-10 text-[var(--foreground)] opacity-80 group-hover:opacity-100 transition-opacity" />
+        <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--card)] border border-[var(--border)] shadow-sm transition-all duration-300 group-hover:border-[var(--accent)]/40 group-hover:shadow-md">
+          <div className={`absolute inset-0 rounded-lg bg-gradient-to-br ${gradient} opacity-10`} />
+          <Icon size={15} className="relative z-10 text-[var(--foreground)] opacity-80 group-hover:opacity-100 transition-opacity" />
         </div>
 
         {/* Text Content */}
         <div className="flex flex-col">
-          <h2 className="text-lg sm:text-xl font-bold tracking-wider uppercase text-[var(--foreground)] leading-tight">
+          <h2 className="text-base sm:text-lg font-bold tracking-wider uppercase text-[var(--foreground)] leading-tight">
             {title}
           </h2>
-          <div className="flex items-center gap-2 mt-0.5">
+          <div className="flex items-center gap-1.5 mt-0.5">
             <div className={`w-1 h-1 rounded-full bg-gradient-to-br ${gradient}`} />
-            <span className="text-[10px] font-medium text-[var(--muted)] uppercase tracking-widest">
+            <span className="text-[9px] font-medium text-[var(--muted)] uppercase tracking-widest">
               {count} <span className="opacity-60">Items Found</span>
             </span>
           </div>
@@ -197,7 +197,7 @@ function GamesContent() {
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* ================= COMPACT SEARCH & CONTROLS ================= */}
-        <div className="space-y-3 mb-10">
+        <div className="space-y-3 mb-6">
           <div className="relative bg-[var(--card)] backdrop-blur-3xl border border-[var(--border)] rounded-full p-1 shadow-sm flex items-center gap-1 transition-shadow duration-300 hover:shadow-md focus-within:shadow-[0_4px_15px_rgba(var(--accent-rgb),0.1)] focus-within:border-[var(--accent)]/50">
             {/* Soft inner glow on focus */}
             <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent)]/5 to-transparent rounded-full opacity-0 focus-within:opacity-100 transition-opacity duration-500 pointer-events-none" />
@@ -262,7 +262,7 @@ function GamesContent() {
         </div>
 
         {/* ================= GAME CONTENT ================= */}
-        <div className="space-y-20">
+        <div className="space-y-6 sm:space-y-8">
           {loading ? (
             <div className={viewMode === "grid" ? "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-4" : "flex flex-col gap-3"}>
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
@@ -287,7 +287,7 @@ function GamesContent() {
             <div>
               {/* 2. MLBB VARIANT */}
               {(activeTab === "all" || activeTab === "mlbb") && processedMlbbGames.length > 0 && (
-                <div className="mb-20">
+                <div className="mb-6">
                   <SectionHeader
                     title="MLBB Special"
                     icon={GiCrown}
@@ -303,7 +303,7 @@ function GamesContent() {
 
               {/* 3. ALL GAMES */}
               {(activeTab === "all" || activeTab === "others") && (processedGames.filter(g => activeTab !== "others" || !isMlbbGame(g)).length > 0) && (
-                <div className="mb-20">
+                <div className="mb-6">
                   <SectionHeader
                     title="Full Armory"
                     icon={GiCrossedSwords}
@@ -319,7 +319,7 @@ function GamesContent() {
 
               {/* 5. MEMBERSHIPS SECTION */}
               {(activeTab === "all" || activeTab === "memberships") && processedMemberships.length > 0 && (
-                <div className="mb-6 border-t border-[var(--border)] pt-6">
+                <div className="mb-4 border-t border-[var(--border)]/40 pt-4">
                   <SectionHeader
                     title="Premium Memberships"
                     icon={GiCrown}
@@ -337,7 +337,7 @@ function GamesContent() {
 
               {/* 6. VOUCHERS SECTION */}
               {(activeTab === "all" || activeTab === "vouchers") && processedVouchers.length > 0 && (
-                <div className="mb-6 border-t border-[var(--border)] pt-6">
+                <div className="mb-4 border-t border-[var(--border)]/40 pt-4">
                   <SectionHeader
                     title="Premium Vouchers"
                     icon={GiTicket}
@@ -355,7 +355,7 @@ function GamesContent() {
 
               {/* 7. SERVICES SECTION */}
               {(activeTab === "all" || activeTab === "services") && processedServices.length > 0 && (
-                <div className="mb-6 border-t border-[var(--border)] pt-6">
+                <div className="mb-4 border-t border-[var(--border)]/40 pt-4">
                   <SectionHeader
                     title="Premium Services"
                     icon={GiStarMedal}

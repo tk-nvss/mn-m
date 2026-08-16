@@ -333,12 +333,16 @@ export default function Header() {
                       </div>
                     ) : (
                       <>
-                        <div className="grid grid-cols-3 gap-2 mb-4">
+                        <div className="grid grid-cols-3 gap-2 mb-3">
                           {HEADER_CONFIG.nav.map((item) => (
-                            <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className={`relative flex flex-col items-center justify-center py-2.5 px-1 rounded-2xl border transition-all group overflow-hidden ${item.colorClass || 'bg-[var(--card)] border-[var(--border)] text-[var(--accent)] hover:shadow-md'}`}>
-                              <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                              <span className="mb-1 drop-shadow-sm group-hover:-translate-y-0.5 transition-transform">{item.icon}</span>
-                              <span className="text-[8px] font-black uppercase tracking-widest text-center">{item.label}</span>
+                            <Link 
+                              key={item.label} 
+                              href={item.href} 
+                              onClick={() => setUserMenuOpen(false)} 
+                              className="flex items-center justify-center gap-1.5 py-2 px-1.5 rounded-xl bg-[var(--card)]/60 border border-[var(--border)] hover:border-[var(--accent)]/30 hover:bg-[var(--card)] text-[var(--foreground)] transition-all group shadow-sm"
+                            >
+                              <span className="text-[var(--accent)] group-hover:scale-110 transition-transform">{item.icon}</span>
+                              <span className="text-[9px] font-extrabold uppercase tracking-wider">{item.label}</span>
                             </Link>
                           ))}
                         </div>
@@ -444,8 +448,9 @@ export default function Header() {
 
                   {/* Drawer Footer */}
                   <div className="relative z-10 py-2 px-4 border-t border-[var(--border)] bg-[var(--foreground)]/[0.02]">
-                    <div className="mt-1 mb-1 text-center text-[10px] text-[var(--foreground)] opacity-60 font-mono tracking-widest">
-                      Crafted with love ❤️ by <a href={`https://wa.me/${process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP}?text=hello big fan big fan`} target="_blank" rel="noopener noreferrer" className="text-violet-500 hover:text-violet-400 transition-colors">Tk</a>
+                    <div className="mt-1 mb-1 text-center text-[9px] text-[var(--foreground)] opacity-75 font-mono tracking-wider flex flex-col items-center justify-center gap-0.5">
+                      <span>A Product from <a href="https://bluebuff.in" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] font-bold hover:underline">bluebuff.in</a></span>
+                      <span>Crafted with love ❤️ by <a href={`https://wa.me/${process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP}?text=hello big fan big fan`} target="_blank" rel="noopener noreferrer" className="text-violet-500 hover:text-violet-400 transition-colors">Tk</a></span>
                     </div>
                   </div>
                 </div>

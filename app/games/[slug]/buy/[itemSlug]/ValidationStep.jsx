@@ -1,5 +1,4 @@
 import { FiUser, FiGlobe, FiInfo, FiCheckCircle, FiChevronDown } from "react-icons/fi";
-import HelpImagePopup from "../../../../../components/HelpImage/HelpImagePopup";
 import RecentVerifiedPlayers from "../../../../region/RecentVerifiedPlayers";
 
 export default function ValidationStep({
@@ -39,7 +38,6 @@ export default function ValidationStep({
           </h2>
           <p className="text-[10px] text-[var(--muted)] font-bold uppercase tracking-wider mt-0.5 opacity-70">Enter details to proceed</p>
         </div>
-        <HelpImagePopup />
       </div>
 
       {/* Input Group */}

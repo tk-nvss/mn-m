@@ -1,5 +1,4 @@
 import { FiUser, FiCheckCircle } from "react-icons/fi";
-import HelpImagePopup from "@/components/HelpImage/HelpImagePopup";
 import RecentVerifiedPlayers from "../../../../../region/RecentVerifiedPlayers";
 import { motion } from "framer-motion";
 

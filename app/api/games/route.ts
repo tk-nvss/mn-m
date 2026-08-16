@@ -27,6 +27,7 @@ const STARLIGHT_IMAGE = "/game-assets/starkight.webp";
 const WEEKLY_MONTHLY_IMAGE = "/game-assets/weekly-monthly-bundle.jpg";
 const UNIPIN_IMAGE = "/game-assets/unipin.png";
 const RANK_BOOST_IMAGE = "/game-assets/rankboost.jpg";
+const BGMI_IMAGE = "/game-assets/bgmi_india.png";
 
 
 /* ================= OTT SECTION ================= */
@@ -209,6 +210,12 @@ export async function GET() {
         updatedGame.gameImageId = {
           ...updatedGame.gameImageId,
           image: WEEKLY_MONTHLY_IMAGE,
+        };
+      }
+      if (updatedGame.gameSlug === "bgmi226" || updatedGame.gameName?.toLowerCase().includes("bgmi")) {
+        updatedGame.gameImageId = {
+          ...updatedGame.gameImageId,
+          image: BGMI_IMAGE,
         };
       }
 

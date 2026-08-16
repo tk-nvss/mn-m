@@ -44,7 +44,7 @@ export default function GiveawayBanner() {
       <section className="w-full max-w-7xl mx-auto px-4 mt-2 mb-1 relative z-30">
         <div 
           onClick={() => router.push('/giveaways')}
-          className="group cursor-pointer relative flex items-center justify-between px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-[2rem] bg-[var(--card)] dark:bg-[var(--accent)]/10 border border-[var(--border)] dark:border-[var(--accent)]/20 transition-all duration-500 overflow-hidden shadow-sm hover:shadow-md hover:border-[var(--accent)]/50"
+          className="group cursor-pointer relative flex items-center justify-between px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-[2rem] bg-[var(--card)] border border-[var(--border)] transition-all duration-500 overflow-hidden shadow-sm hover:shadow-md hover:border-[var(--accent)]/50"
         >
           {/* Subtle Ambient Glow */}
           <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-[var(--accent)]/10 to-transparent" />
@@ -52,7 +52,7 @@ export default function GiveawayBanner() {
           <div className="relative z-10 flex items-center gap-3 sm:gap-4 min-w-0">
             {/* Icon */}
             <div className="flex items-center ml-1 shrink-0">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[0.8rem] sm:rounded-[1rem] flex items-center justify-center border-[2px] border-[var(--background)] dark:border-[var(--card)] z-30 shadow-sm transition-transform group-hover:scale-105 bg-[var(--accent)]/10 dark:bg-[var(--accent)]/20 text-[var(--accent)]">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[0.8rem] sm:rounded-[1rem] flex items-center justify-center border border-[var(--accent)]/30 z-30 shadow-sm transition-transform group-hover:scale-105 bg-[var(--accent)]/15 text-[var(--accent)]">
                 <FiGift size={16} className="sm:w-4 sm:h-4 drop-shadow-sm" />
               </div>
             </div>
@@ -65,11 +65,11 @@ export default function GiveawayBanner() {
                   GIVEAWAY LIVE
                 </h3>
                 {g.maxEntries > 0 ? (
-                  <span className="text-[8px] sm:text-[9px] font-bold text-gray-500 dark:text-[var(--muted)] uppercase truncate">
+                  <span className="text-[8px] sm:text-[9px] font-bold text-[var(--muted)] uppercase truncate">
                     • {g.entryCount || 0}/{g.maxEntries} Filled
                   </span>
                 ) : (
-                  <span className="text-[8px] sm:text-[9px] font-bold text-gray-500 dark:text-[var(--muted)] uppercase truncate">
+                  <span className="text-[8px] sm:text-[9px] font-bold text-[var(--muted)] uppercase truncate">
                     • {g.entryCount || 0} Entered
                   </span>
                 )}
@@ -89,7 +89,7 @@ export default function GiveawayBanner() {
                 {giveaways.map((_, i) => (
                   <div
                     key={i}
-                    className={`h-1 rounded-full transition-all duration-300 ${i === current ? "w-3 bg-[var(--accent)]" : "w-1 bg-[var(--accent)]/30"}`}
+                    className={`h-1 rounded-full transition-all duration-300 ${i === current ? "w-3 bg-[var(--accent)]" : "w-1 bg-[var(--muted)]/30"}`}
                     onClick={e => { e.stopPropagation(); setCurrent(i); setAnimKey(k => k+1); }}
                   />
                 ))}
@@ -98,7 +98,7 @@ export default function GiveawayBanner() {
 
             {/* Action Button */}
             <button 
-              className="h-7 sm:h-8 px-3 sm:px-4 rounded-full sm:rounded-[0.5rem] bg-[var(--accent)] text-white flex items-center justify-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] font-black uppercase tracking-wider shadow-md shadow-[var(--accent)]/20 transition-transform hover:scale-105"
+              className="h-7 sm:h-8 px-3 sm:px-4 rounded-full sm:rounded-[0.5rem] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white flex items-center justify-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] font-black uppercase tracking-wider shadow-md shadow-[var(--accent)]/20 transition-all hover:scale-105 active:scale-95"
               onClick={e => { e.stopPropagation(); router.push('/giveaways'); }}
             >
               Enter <FiChevronRight size={12} />
@@ -110,7 +110,7 @@ export default function GiveawayBanner() {
                 e.stopPropagation();
                 setVisible(false);
               }}
-              className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-500/10 transition-all duration-300"
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-red-500 hover:bg-red-500/10 transition-all duration-300"
               aria-label="Close"
             >
               <FiX size={14} />

@@ -6,7 +6,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import {
   FiInstagram,
   FiTwitter,
-  FiYoutube,
+  FiLinkedin,
   FiHeart,
   FiChevronUp,
   FiShield,
@@ -43,7 +43,7 @@ const FOOTER_LINKS = [
 const SOCIALS = [
   { label: "Instagram", href: "https://instagram.com/mlbbtopup.in", icon: FiInstagram },
   { label: "Twitter", href: "https://x.com/tk_dev_", icon: FiTwitter },
-  { label: "YouTube", href: "https://youtube.com", icon: FiYoutube },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/bluebuffesports", icon: FiLinkedin },
 ];
 
 export default function Footer() {
@@ -64,6 +64,12 @@ export default function Footer() {
               <h2 className="text-3xl md:text-4xl font-black italic tracking-tighter lowercase leading-none bg-gradient-to-r from-[var(--accent)] via-[var(--foreground)] to-[var(--accent)] bg-clip-text text-transparent group-hover:brightness-110 transition-all">
                 mlbbtopup.in
               </h2>
+              <div className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[8.5px] font-black uppercase tracking-widest">
+                <span>A Product From</span>
+                <a href="https://bluebuff.in" target="_blank" rel="noopener noreferrer" className="underline hover:text-[var(--accent-hover)] font-black">
+                  bluebuff.in
+                </a>
+              </div>
               <p className="mt-3 text-[10px] font-black uppercase tracking-[0.2em] opacity-70 italic leading-relaxed max-w-[300px]">
                 India's #1 trusted platform for Mobile Legends top-ups. Instant diamond delivery, secure payments, and 24/7 support.
               </p>
@@ -162,7 +168,7 @@ export default function Footer() {
         </div>
 
         {/* BOTTOM STRIP - HIGH-END DENSITY */}
-        <div className="pt-4 border-t border-[var(--border)] flex flex-col md:flex-row items-center justify-between gap-3 opacity-60">
+        <div className="pt-4 border-t border-[var(--border)] flex flex-col md:flex-row items-center justify-between gap-3 opacity-70">
           <div className="flex items-center gap-3 group/india cursor-default">
             <div className="flex gap-1">
               <div className="w-1 h-3 bg-[#FF9933] rounded-full shadow-[0_0_8px_#FF9933]" />
@@ -174,11 +180,18 @@ export default function Footer() {
             </span>
           </div>
 
-          <div className="text-center md:text-right opacity-50">
+          <div className="text-center md:text-right opacity-75">
             <span className="text-[8px] font-black uppercase tracking-[0.2em] italic">
-              © {new Date().getFullYear()} {BRAND.toUpperCase()} • ALL RIGHTS RESERVED
+              © {new Date().getFullYear()} BLUEBUFF.IN • ALL RIGHTS RESERVED
             </span>
           </div>
+        </div>
+
+        {/* 3RD PARTY SERVICE LEGAL DISCLAIMER */}
+        <div className="mt-3 pt-3 border-t border-[var(--border)]/30 text-center opacity-60">
+          <p className="text-[8px] font-medium text-[var(--muted)] leading-relaxed max-w-4xl mx-auto">
+            mlbbtopup.in is an independent 3rd-party service operated by BlueBuff.in. Mobile Legends: Bang Bang and Moonton are registered trademarks of Shanghai Moonton Technology Co., Ltd. All game names, logos, and trademarks belong to their respective owners. We are not officially affiliated with or endorsed by Moonton Games.
+          </p>
         </div>
       </div>
     </footer>

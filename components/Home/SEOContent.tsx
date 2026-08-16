@@ -1,33 +1,41 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { motion, Variants } from "framer-motion";
-import { FiCheck, FiArrowRight, FiInfo } from "react-icons/fi";
+import { motion, AnimatePresence, Variants } from "framer-motion";
+import { 
+  FiChevronDown, 
+  FiGrid, 
+  FiUserCheck, 
+  FiCreditCard, 
+  FiZap,
+  FiHelpCircle
+} from "react-icons/fi";
 
 const FAQS = [
   {
     q: "How do I buy MLBB diamonds in India?",
-    a: "Visit mlbbtopup.in, select your pack, enter your Player ID and Zone ID, choose a payment method, and confirm. Diamonds are delivered within 5 minutes — no login required.",
+    a: "Visit mlbbtopup.in, select your diamond package or Weekly Pass, enter your Player ID and Zone ID, choose your preferred payment method (UPI, GPay, PhonePe, Paytm), and complete payment. Diamonds are credited directly to your Moonton account within 1 to 5 minutes.",
   },
   {
     q: "Is mlbbtopup.in safe and legit?",
-    a: "Yes. We use secure UPI payment gateways and top up directly via Moonton's API. Your account credentials are never required — only your Player ID.",
+    a: "Yes, 100% safe. We process all top-ups official Moonton API integrations using your Player ID and Zone ID only. We NEVER ask for your Moonton password or game login credentials, ensuring zero risk of account ban or security breach.",
   },
   {
     q: "What is the cheapest way to buy MLBB diamonds?",
-    a: "Our pricing is consistently 10–20% cheaper than Codashop. The Weekly Diamond Pass (WDP) starting at ₹89 is the absolute best value for casual players.",
+    a: "Our diamond pricing is consistently 10–20% lower than Codashop and in-game rates. For maximum value, the Weekly Diamond Pass (starting at ₹89) offers the best diamond-to-rupee ratio for regular players.",
   },
   {
     q: "How fast is the diamond delivery?",
-    a: "Delivery is instant — typically within 1 to 5 minutes of successful payment. Our automated delivery system runs 24×7 without any delay.",
+    a: "Top-up delivery is fully automated 24×7. Once your UPI payment is confirmed, your diamonds or Weekly Pass will be credited to your MLBB account within 1 to 5 minutes.",
   },
   {
     q: "Which payment methods are supported?",
-    a: "We support all major Indian payment methods: UPI, PhonePe, Google Pay, Paytm, and bank transfers. No international card needed.",
+    a: "We support all major Indian UPI payment apps including PhonePe, Google Pay, Paytm, BHIM, and net banking transfers. No credit card or international payment required.",
   },
   {
-    q: "Is the MLBB Weekly Diamond Pass worth it?",
-    a: "Absolutely. The Pass gives you 100 diamonds upfront plus 20/day for 7 days (240 total). At ₹89, it's the highest-value purchase available.",
+    q: "Is the MLBB Weekly Diamond Pass worth buying?",
+    a: "Absolutely! The Weekly Diamond Pass grants 100 diamonds instantly plus 20 bonus diamonds daily for 7 days (total 240 diamonds), plus Starlight points and choice chests. At ₹89, it is the highest-value MLBB pack available.",
   },
 ];
 
@@ -40,73 +48,60 @@ const containerVariants: Variants = {
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } }
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } }
 };
 
 export default function SEOContent() {
+  const [openFaq, setOpenFaq] = useState<number | null>(0); // First open by default
+
+  const toggleFaq = (index: number) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
+
   return (
-    <section className="py-8 relative overflow-hidden bg-[var(--background)]">
-      {/* Ultra-subtle background accent */}
+    <section className="py-10 relative overflow-hidden bg-[var(--background)]">
+      {/* Subtle Ambient Background Accent */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--accent)_0%,_transparent_70%)] opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-10 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12 relative z-10">
         
-        {/* ── Section 1: About & Features (Minimal Grid) ────────────────── */}
+        {/* ── Section 1: About Header ────────────────────────────── */}
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-20px" }}
+          viewport={{ once: true, margin: "-30px" }}
           variants={containerVariants}
-          className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
+          className="max-w-4xl space-y-3"
         >
-          {/* Left Text Block */}
-          <motion.div variants={itemVariants} className="lg:col-span-5 space-y-4">
-            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tighter text-[var(--foreground)] leading-none">
+          <motion.div variants={itemVariants} className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[9px] font-black uppercase tracking-widest">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+              <span>India's #1 MLBB Store</span>
+            </div>
+
+            <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-[var(--foreground)] leading-tight">
               Cheapest <span className="text-[var(--accent)]">MLBB Diamond</span> Top Up In India
             </h2>
-            <div className="space-y-3">
-              <p className="text-[11px] sm:text-xs text-[var(--muted)] leading-relaxed">
-                <strong className="text-[var(--foreground)]">mlbbtopup.in</strong> is India's most affordable Mobile Legends: Bang Bang diamond top-up platform. Enjoy instant recharges via UPI, PhonePe, Google Pay, and Paytm without ever logging into Moonton. Provide your <strong className="text-[var(--foreground)]">Player ID and Zone ID</strong> to receive diamonds instantly.
+            
+            <div className="space-y-3 text-[12px] sm:text-xs text-[var(--muted)] leading-relaxed">
+              <p>
+                <strong className="text-[var(--foreground)]">mlbbtopup.in</strong> (an official product from <a href="https://bluebuff.in" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] hover:underline font-bold">bluebuff.in</a>) is India's most trusted and affordable Mobile Legends: Bang Bang top-up platform. Enjoy instant recharges via UPI, PhonePe, Google Pay, and Paytm without ever sharing your login credentials.
               </p>
-              <p className="text-[11px] sm:text-xs text-[var(--muted)] leading-relaxed">
-                Whether you're buying the <strong className="text-[var(--foreground)]">Weekly Diamond Pass</strong> or stocking up for an event, our pricing remains <strong className="text-[var(--accent)]">10–20% cheaper than Codashop</strong>. Trusted by thousands of Indian MLBB players.
+              <p>
+                Whether you're renewing your <strong className="text-[var(--foreground)]">Weekly Diamond Pass</strong> or preparing for Starlight events, our prices remain <strong className="text-[var(--accent)] font-bold">10–20% cheaper than Codashop</strong>. Trusted by over 100,000+ Indian gamers.
               </p>
-            </div>
-          </motion.div>
-
-          {/* Right Features Grid */}
-          <motion.div variants={itemVariants} className="lg:col-span-7">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 p-5 sm:p-6 rounded-2xl bg-[var(--card)]/30 border border-[var(--border)] shadow-sm backdrop-blur-md">
-              {[
-                ["Lowest Prices in India", "Consistently beats Codashop & in-game rates."],
-                ["Instant 24×7 Delivery", "Diamonds credited to your account in 1–5 mins."],
-                ["No Login Required", "100% safe. Only Player ID & Zone ID needed."],
-                ["All UPI Supported", "PhonePe, Google Pay, Paytm, and any UPI VPA."],
-                ["100% Verified & Safe", "Zero bans. Thousands of successful orders."],
-                ["Weekly Pass Specialists", "Best WDP prices in the country, starting at ₹89."],
-              ].map(([title, desc], i) => (
-                <div key={i} className="flex gap-3 items-start group">
-                  <div className="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-[var(--accent)]/10 flex items-center justify-center border border-[var(--accent)]/20 group-hover:bg-[var(--accent)] transition-colors">
-                    <FiCheck size={10} className="text-[var(--accent)] group-hover:text-white transition-colors" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-[var(--foreground)] mb-0.5 leading-none">{title}</h4>
-                    <p className="text-[10px] text-[var(--muted)] leading-tight">{desc}</p>
-                  </div>
-                </div>
-              ))}
             </div>
           </motion.div>
         </motion.div>
 
-        {/* ── Section 2: How to Top Up (Sleek Bar) ──────────────────── */}
+        {/* ── Section 2: How to Top Up (Compact Step Bar) ─────────────── */}
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-20px" }}
+          viewport={{ once: true, margin: "-30px" }}
           variants={containerVariants}
-          className="space-y-4"
+          className="space-y-3"
         >
           <div className="flex items-center justify-between">
             <h2 className="text-lg sm:text-xl font-black uppercase tracking-tight text-[var(--foreground)]">
@@ -115,55 +110,97 @@ export default function SEOContent() {
           </div>
           
           <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 backdrop-blur-md overflow-hidden">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[var(--border)]">
+            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y divide-x-0 sm:divide-y-0 sm:divide-x divide-[var(--border)]">
               {[
-                { step: "1", title: "Select Package", desc: "Pick a diamond pack or Weekly Pass." },
-                { step: "2", title: "Enter Details", desc: "Input Player ID & Zone ID safely." },
-                { step: "3", title: "Make Payment", desc: "Pay instantly via UPI, GPay, or Paytm." },
-                { step: "4", title: "Instant Delivery", desc: "Diamonds arrive in 1–5 minutes." },
-              ].map((item, i) => (
-                <div key={item.step} className="p-4 sm:p-5 group hover:bg-[var(--accent)]/[0.02] transition-colors">
-                  <div className="text-[9px] font-black tracking-widest uppercase text-[var(--accent)] mb-2 flex items-center gap-1.5">
-                    Step {item.step}
-                    <FiArrowRight size={10} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                { step: "01", title: "Select Package", desc: "Choose diamond pack or Weekly Pass.", icon: FiGrid },
+                { step: "02", title: "Enter Details", desc: "Provide your Player ID & Zone ID.", icon: FiUserCheck },
+                { step: "03", title: "Make Payment", desc: "Pay via UPI, GPay, or Paytm.", icon: FiCreditCard },
+                { step: "04", title: "Instant Delivery", desc: "Receive diamonds in 1–5 minutes.", icon: FiZap },
+              ].map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div 
+                    key={item.step} 
+                    className="p-3.5 sm:p-4 flex items-start gap-3 group hover:bg-[var(--accent)]/[0.03] transition-colors"
+                  >
+                    <div className="shrink-0 w-7 h-7 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 flex items-center justify-center text-[var(--accent)] group-hover:scale-105 transition-transform">
+                      <Icon size={14} />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[8px] font-black uppercase tracking-widest text-[var(--accent)] font-mono block mb-0.5">
+                        STEP {item.step}
+                      </span>
+                      <h3 className="text-xs font-bold text-[var(--foreground)] leading-tight">{item.title}</h3>
+                      <p className="text-[10px] text-[var(--muted)] leading-snug mt-0.5">{item.desc}</p>
+                    </div>
                   </div>
-                  <h3 className="text-sm font-bold text-[var(--foreground)] mb-1 leading-none">{item.title}</h3>
-                  <p className="text-[10px] text-[var(--muted)] leading-tight">{item.desc}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </motion.div>
         </motion.div>
 
-        {/* ── Section 3: FAQ (Minimal List) ────────────────────────────── */}
+        {/* ── Section 3: FAQ (Interactive Accordion UX) ────────────────────── */}
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-20px" }}
+          viewport={{ once: true, margin: "-30px" }}
           variants={containerVariants}
-          className="space-y-4"
+          className="space-y-5"
         >
-          <h2 className="text-lg sm:text-xl font-black uppercase tracking-tight text-[var(--foreground)]">
-            Frequently Asked <span className="text-[var(--accent)]">Questions</span>
-          </h2>
+          <div className="flex items-center gap-2">
+            <FiHelpCircle className="text-[var(--accent)] size-5" />
+            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[var(--foreground)]">
+              Frequently Asked <span className="text-[var(--accent)]">Questions</span>
+            </h2>
+          </div>
           
-          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-1">
-            {FAQS.map((faq, i) => (
-              <div 
-                key={faq.q} 
-                className="py-3 border-b border-[var(--border)]/50 hover:border-[var(--accent)]/30 transition-colors group"
-              >
-                <div className="flex items-start gap-2 mb-1">
-                  <FiInfo size={12} className="text-[var(--accent)] mt-0.5 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity" />
-                  <h3 className="text-xs sm:text-sm font-bold text-[var(--foreground)] group-hover:text-[var(--accent)] transition-colors leading-tight">
-                    {faq.q}
-                  </h3>
+          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-3.5 items-start">
+            {FAQS.map((faq, i) => {
+              const isOpen = openFaq === i;
+              return (
+                <div 
+                  key={i} 
+                  className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                    isOpen 
+                      ? "border-[var(--accent)]/40 bg-[var(--card)] shadow-md" 
+                      : "border-[var(--border)] bg-[var(--card)]/30 hover:border-[var(--accent)]/30 hover:bg-[var(--card)]/60"
+                  }`}
+                >
+                  <button
+                    onClick={() => toggleFaq(i)}
+                    className="w-full text-left p-4 flex items-center justify-between gap-3 cursor-pointer group"
+                    aria-expanded={isOpen}
+                  >
+                    <span className={`text-xs sm:text-sm font-bold transition-colors leading-snug ${
+                      isOpen ? "text-[var(--accent)]" : "text-[var(--foreground)] group-hover:text-[var(--accent)]"
+                    }`}>
+                      {faq.q}
+                    </span>
+                    <div className={`shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-300 ${
+                      isOpen ? "rotate-180 bg-[var(--accent)]/10 text-[var(--accent)]" : "text-[var(--muted)] group-hover:text-[var(--foreground)]"
+                    }`}>
+                      <FiChevronDown size={15} />
+                    </div>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.28, ease: "easeInOut" }}
+                      >
+                        <div className="px-4 pb-4 pt-1 text-[11px] sm:text-xs text-[var(--muted)] leading-relaxed border-t border-[var(--border)]/40 mt-1">
+                          {faq.a}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-                <p className="text-[10px] sm:text-[11px] text-[var(--muted)] leading-relaxed pl-5">
-                  {faq.a}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </motion.div>
         </motion.div>
 
