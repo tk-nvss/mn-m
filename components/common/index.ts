@@ -15,3 +15,5 @@ export type { PaginationProps } from "./Pagination";
 
 export { default as LoadingSpinner, LoadingSpinner as Spinner, PageLoader } from "./LoadingSpinner";
 export type { LoadingSpinnerProps, PageLoaderProps } from "./LoadingSpinner";
+
+export { default as Icons, Icons as IconCatalog } from "../icons";

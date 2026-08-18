@@ -3,7 +3,8 @@
 import { motion, useScroll, useSpring } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { FiClock, FiCalendar, FiArrowLeft, FiShare2, FiArrowRight, FiUser } from "react-icons/fi";
+import { Icons } from "@/components/icons";
+import { CopyButton } from "@/components/common";
 import { ReactNode, useMemo, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { BLOGS_DATA } from "@/lib/blogData";
@@ -251,7 +252,7 @@ export default function BlogPostLayout({
               className="flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 transition-all mr-1 md:mr-2 group"
               aria-label="Back to Blog"
             >
-              <FiArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+              <Icons.arrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
             </Link>
             <Link href="/blog" className="hover:text-[var(--accent)] transition-colors">
               Insights
@@ -287,18 +288,18 @@ export default function BlogPostLayout({
               </span>
               <span className="opacity-20 hidden sm:inline">|</span>
               <span className="flex items-center gap-1 text-[var(--muted)]">
-                <FiUser size={10} className="text-[var(--accent)]" /> {author}
+                <Icons.user size={10} className="text-[var(--accent)]" /> {author}
               </span>
               <span className="opacity-20 hidden sm:inline">|</span>
               <span className="flex items-center gap-1 text-[var(--muted)]">
-                <FiClock size={10} className="text-[var(--accent)]" /> {readTime}
+                <Icons.clock size={10} className="text-[var(--accent)]" /> {readTime}
               </span>
               <span className="opacity-20 hidden sm:inline">|</span>
               <time
                 dateTime={isoPubDate}
                 className="flex items-center gap-1 text-[var(--muted)]"
               >
-                <FiCalendar size={10} className="text-[var(--accent)]" /> {date}
+                <Icons.calendar size={10} className="text-[var(--accent)]" /> {date}
               </time>
             </div>
 
@@ -428,7 +429,7 @@ export default function BlogPostLayout({
                 }}
               >
                 <div className="w-10 h-10 rounded-lg bg-[var(--background)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:border-[var(--accent)]/50 transition-all shadow-sm">
-                  <FiShare2 size={16} />
+                  <Icons.share size={16} />
                 </div>
                 <span className="text-[6px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">
                   {label}

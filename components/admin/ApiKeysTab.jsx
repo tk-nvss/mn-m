@@ -2,20 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-    Key,
-    User,
-    Activity,
-    RefreshCcw,
-    Loader2,
-    Shield,
-    Mail,
-    Calendar,
-    Wifi,
-    WifiOff,
-    Clock
-} from "lucide-react";
-import { StatusBadge } from "@/components/common";
+import { Icons } from "@/components/icons";
+import { StatusBadge, EmptyState, LoadingSpinner } from "@/components/common";
+import { formatCurrency, formatDate } from "@/utils";
 
 export default function ApiKeysTab() {
     const [keys, setKeys] = useState([]);
@@ -249,10 +238,11 @@ export default function ApiKeysTab() {
                         </div>
 
                         {!keys.length && (
-                            <div className="py-20 text-center border border-dashed border-[var(--border)] rounded-[2rem]">
-                                <Key size={48} className="mx-auto text-[var(--muted)]/20 mb-4" />
-                                <p className="text-sm font-medium text-[var(--muted)]">No active API keys found.</p>
-                            </div>
+                            <EmptyState
+                                icon={Icons.key}
+                                title="No Active API Keys Found"
+                                description="Generated developer and merchant keys will appear here."
+                            />
                         )}
                     </motion.div>
                 )}

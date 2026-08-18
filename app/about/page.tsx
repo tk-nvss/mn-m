@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { FiCheck, FiZap, FiShield, FiTrendingUp, FiArrowRight } from "react-icons/fi";
+import { Icons } from "@/components/icons";
 
 const BRAND = process.env.NEXT_PUBLIC_BRAND_NAME || "Blue Buff";
 
@@ -74,7 +74,7 @@ export default function AboutPage() {
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3 py-3 border-b border-[var(--border)] last:border-0 md:last:border-b">
                   <div className="w-5 h-5 rounded-full bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]">
-                    <FiCheck size={12} />
+                    <Icons.check size={12} />
                   </div>
                   <span className="text-[10px] font-black uppercase tracking-widest opacity-60 italic">{item}</span>
                 </div>
@@ -101,17 +101,17 @@ export default function AboutPage() {
             {[
               {
                 title: "Speed",
-                icon: FiZap,
+                icon: Icons.zap,
                 desc: "Credits are added to your ID quickly after payment confirmation."
               },
               {
                 title: "Safety",
-                icon: FiShield,
+                icon: Icons.shield,
                 desc: "Strong security and verified gateways protect every payment."
               },
               {
                 title: "Best Prices",
-                icon: FiTrendingUp,
+                icon: Icons.trendingUp,
                 desc: "We keep prices low so you get better value for each rupee."
               }
             ].map((feature, i) => (

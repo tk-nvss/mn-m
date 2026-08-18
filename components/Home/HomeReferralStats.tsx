@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FiUsers, FiCopy, FiCheck, FiArrowRight, FiUserPlus } from "react-icons/fi";
+import { FiUsers, FiArrowRight, FiUserPlus } from "react-icons/fi";
+import { Icons } from "@/components/icons";
+import { CopyButton } from "@/components/common";
 
 export default function HomeReferralStats() {
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -34,14 +35,6 @@ export default function HomeReferralStats() {
 
         fetchUser();
     }, []);
-
-    const copyToClipboard = () => {
-        if (user?.userId) {
-            navigator.clipboard.writeText(user.userId);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        }
-    };
 
     if (!user && !loading) return null;
     if (loading) return null;
@@ -75,20 +68,10 @@ export default function HomeReferralStats() {
                                     </div>
 
                                     {/* Code */}
-                                    <button aria-label="button"
-                                        onClick={copyToClipboard}
-                                        className="flex items-center gap-1.5 group/code hover:opacity-100 transition-opacity"
-                                    >
-                                        <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--muted)] opacity-60 group-hover/code:text-[var(--accent)]">Code</span>
-                                        <div className="px-1.5 py-0.5 rounded-md bg-[var(--background)]/50 border border-[var(--border)] group-hover/code:border-[var(--accent)]/40 transition-all flex items-center gap-1.5">
-                                            <span className="text-[11px] font-mono font-bold text-[var(--foreground)] tracking-tight uppercase">{user.userId}</span>
-                                            {copied ? (
-                                                <FiCheck size={10} className="text-emerald-500" />
-                                            ) : (
-                                                <FiCopy size={9} className="text-[var(--accent)] opacity-40 group-hover/code:opacity-100" />
-                                            )}
-                                        </div>
-                                    </button>
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--muted)] opacity-60">Code</span>
+                                        <CopyButton text={user.userId} label={user.userId} size="xs" variant="outline" />
+                                    </div>
                                 </div>
 
                                 {/* Footer */}

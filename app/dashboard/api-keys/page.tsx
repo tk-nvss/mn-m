@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiKey, FiPlus, FiTrash2, FiCopy, FiCheck, FiCode, FiExternalLink, FiShield, FiAlertTriangle, FiBookOpen, FiTerminal, FiDatabase, FiRefreshCw, FiZap, FiLock, FiInfo, FiLayers } from "react-icons/fi";
-import { CopyButton, LoadingSpinner } from "@/components/common";
+import { Icons } from "@/components/icons";
+import { CopyButton, EmptyState, LoadingSpinner } from "@/components/common";
+import { formatCurrency, formatDate } from "@/utils";
 import Link from "next/link";
 import { useUser } from "../layout";
 import { ApiKeySkeleton } from "../../../components/Skeleton/Skeleton";
@@ -29,7 +30,6 @@ export default function ApiKeysPage() {
     const [loading, setLoading] = useState(true);
     const [newKeyName, setNewKeyName] = useState("");
     const [isCreating, setIsCreating] = useState(false);
-    const [copiedKey, setCopiedKey] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [newlyCreatedKey, setNewlyCreatedKey] = useState<string | null>(null);
 
@@ -140,12 +140,6 @@ export default function ApiKeysPage() {
         }
     };
 
-    const copyToClipboard = (text: string) => {
-        navigator.clipboard.writeText(text);
-        setCopiedKey(text);
-        setTimeout(() => setCopiedKey(null), 2000);
-    };
-
     const startEditing = (key: ApiKey) => {
         setEditingId(key._id);
         setEditValues({
@@ -230,12 +224,7 @@ export default function ApiKeysPage() {
                     </div>
                     <div className="flex items-center gap-2 p-4 rounded-xl bg-black/40 border border-white/10 font-mono text-sm leading-none">
                         <span className="flex-1 truncate text-[var(--accent)]">{newlyCreatedKey}</span>
-                        <button aria-label="button"
-                            onClick={() => copyToClipboard(newlyCreatedKey)}
-                            className="p-2 rounded-lg bg-[var(--accent)]/20 text-[var(--accent)] hover:bg-[var(--accent)]/30 transition-all"
-                        >
-                            {copiedKey === newlyCreatedKey ? <FiCheck /> : <FiCopy />}
-                        </button>
+                        <CopyButton text={newlyCreatedKey} label="Copy Secret" variant="subtle" size="sm" />
                     </div>
                 </motion.div>
             )}
@@ -247,10 +236,11 @@ export default function ApiKeysPage() {
                         <ApiKeySkeleton />
                     </div>
                 ) : keys.length === 0 ? (
-                    <div className="p-12 text-center rounded-3xl border border-dashed border-white/10 opacity-40">
-                        <FiKey className="mx-auto mb-4" size={32} />
-                        <p className="text-sm font-bold uppercase tracking-widest">No API keys active</p>
-                    </div>
+                    <EmptyState
+                        icon={Icons.key}
+                        title="No API Keys Active"
+                        description="Generate your first API key above to start integrating with our topup APIs."
+                    />
                 ) : (
                     <AnimatePresence>
                         {keys.map((key: ApiKey) => (
@@ -268,7 +258,7 @@ export default function ApiKeysPage() {
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-3">
                                                     <div className="p-2 rounded-xl bg-[var(--accent)]/10 text-[var(--accent)]">
-                                                        <FiShield size={20} />
+                                                        <Icons.shield size={20} />
                                                     </div>
                                                     <div>
                                                         <h3 className="font-black italic uppercase text-base leading-none mb-1">{key.name}</h3>
@@ -292,7 +282,7 @@ export default function ApiKeysPage() {
                                                         onClick={() => editingId === key._id ? setEditingId(null) : startEditing(key)}
                                                         className={`p-2 rounded-xl transition-all ${editingId === key._id ? 'bg-white/10 text-white' : 'bg-[var(--accent)]/10 text-[var(--accent)] hover:bg-[var(--accent)]/20'}`}
                                                     >
-                                                        {editingId === key._id ? <FiX /> : <FiEdit2 />}
+                                                        {editingId === key._id ? <Icons.close size={14} /> : <Icons.edit size={14} />}
                                                     </button>
                                                 </div>
                                             </div>
@@ -300,8 +290,8 @@ export default function ApiKeysPage() {
                                             {/* Usage Progress */}
                                             <div className="space-y-1.5 pt-2">
                                                 <div className="flex justify-between text-[10px] font-black uppercase italic">
-                                                    <span className="text-white/40 flex items-center gap-1"><FiBarChart /> Daily Budget</span>
-                                                    <span className="text-[var(--accent)]">₹{key.usedToday || 0} / ₹{key.dailyLimit || 10000}</span>
+                                                    <span className="text-white/40 flex items-center gap-1"><Icons.trendingUp size={12} /> Daily Budget</span>
+                                                    <span className="text-[var(--accent)]">{formatCurrency(key.usedToday || 0)} / {formatCurrency(key.dailyLimit || 10000)}</span>
                                                 </div>
                                                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                                                     <motion.div
@@ -314,11 +304,11 @@ export default function ApiKeysPage() {
 
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="p-3 rounded-2xl bg-white/5 border border-white/5">
-                                                    <p className="text-[8px] font-bold uppercase text-white/30 mb-1 flex items-center gap-1"><FiGlobe /> Last IP</p>
+                                                    <p className="text-[8px] font-bold uppercase text-white/30 mb-1 flex items-center gap-1"><Icons.globe size={12} /> Last IP</p>
                                                     <p className="text-xs font-mono text-white/80">{key.lastUsedIp || "Never used"}</p>
                                                 </div>
                                                 <div className="p-3 rounded-2xl bg-white/5 border border-white/5">
-                                                    <p className="text-[8px] font-bold uppercase text-white/30 mb-1 flex items-center gap-1"><FiMapPin /> Status</p>
+                                                    <p className="text-[8px] font-bold uppercase text-white/30 mb-1 flex items-center gap-1"><Icons.mapPin size={12} /> Status</p>
                                                     <p className="text-xs font-black italic uppercase text-green-500">Live & Secure</p>
                                                 </div>
                                             </div>
@@ -338,13 +328,13 @@ export default function ApiKeysPage() {
                                                         />
                                                     </div>
                                                     <div className="space-y-1">
-                                                        <label className="text-[9px] font-black uppercase text-white/40 ml-1">Allowed IPs (Optional - Comma separated)</label>
+                                                        <label className="text-[9px] font-black uppercase text-white/40 ml-1">IP Whitelist (comma separated)</label>
                                                         <input
                                                             type="text"
-                                                            placeholder="Leave empty for all"
+                                                            placeholder="192.168.1.1, 10.0.0.1"
                                                             value={editValues.allowedIpString}
                                                             onChange={(e) => setEditValues({ ...editValues, allowedIpString: e.target.value })}
-                                                            className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-1.5 text-xs outline-none focus:border-[var(--accent)] transition-all font-mono"
+                                                            className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-1.5 text-xs outline-none focus:border-[var(--accent)] transition-all"
                                                         />
                                                     </div>
                                                     <div className="flex gap-2">
@@ -353,7 +343,7 @@ export default function ApiKeysPage() {
                                                             disabled={isUpdating}
                                                             className="flex-1 bg-[var(--accent)] text-black font-black uppercase italic text-[10px] py-2 rounded-xl flex items-center justify-center gap-2"
                                                         >
-                                                            {isUpdating ? "..." : <><FiSave /> Save</>}
+                                                            {isUpdating ? <LoadingSpinner size="xs" color="current" /> : <><Icons.save size={12} /> Save</>}
                                                         </button>
                                                     </div>
                                                 </div>
@@ -363,13 +353,13 @@ export default function ApiKeysPage() {
                                                         onClick={() => handleRegenerateKey(key._id)}
                                                         className="w-full p-3 rounded-2xl bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 transition-all flex items-center justify-center gap-2 text-xs font-black uppercase italic"
                                                     >
-                                                        <FiRefreshCw size={14} /> Regenerate
+                                                        <Icons.refresh size={14} /> Regenerate
                                                     </button>
                                                     <button aria-label="button"
                                                         onClick={() => handleRevokeKey(key._id)}
                                                         className="w-full p-3 rounded-2xl bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all flex items-center justify-center gap-2 text-xs font-black uppercase italic"
                                                     >
-                                                        <FiTrash2 size={14} /> Revoke Key
+                                                        <Icons.trash size={14} /> Revoke Key
                                                     </button>
 
                                                     <div className="pt-2 text-[8px] text-white/20 text-center font-bold uppercase tracking-widest leading-relaxed">

@@ -8,6 +8,7 @@ import ThemeToggle from "../ThemeToggle/ThemeToggle";
 import CustomWebBanner from "../Home/CustomWebBanner";
 import api from "@/lib/axios";
 import { FiHeart, FiChevronRight, FiChevronDown, FiLogOut, FiCheckCircle, FiShield, FiZap, FiMenu, FiX, FiLayers, FiCompass, FiGrid, FiShoppingBag, FiMessageSquare, FiUser, FiUsers, FiKey, FiGift, FiAward, FiDownload } from "react-icons/fi";
+import { CopyButton } from "@/components/common";
 
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -118,14 +119,6 @@ export default function Header() {
     setTimeout(() => {
       window.location.href = "/";
     }, 2000);
-  };
-
-  const [idCopied, setIdCopied] = useState(false);
-  const copyId = (id) => {
-    if (!id) return;
-    navigator.clipboard.writeText(id);
-    setIdCopied(true);
-    setTimeout(() => setIdCopied(false), 2000);
   };
 
   /* ================= SCROLL ================= */
@@ -293,16 +286,8 @@ export default function Header() {
                                 {user.userType === "owner" ? "owner" : user.userType === "admin" ? "reseller" : user.userType === "member" ? "member" : "user"}
                               </span>
                             </div>
-                            <span className="text-[10px] font-medium text-[var(--foreground)] opacity-70 truncate italic leading-tight">{user.email}</span>
-                            <button aria-label="button"
-                              onClick={() => copyId(user.userId)}
-                              className="w-fit flex items-center gap-1 mt-0.5 px-1 py-0.5 rounded bg-[var(--foreground)]/[0.03] border border-[var(--border)] hover:border-[var(--accent)]/30 hover:bg-[var(--accent)]/5 transition-all group"
-                            >
-                              <span className="text-[8px] font-bold text-[var(--foreground)] opacity-80 group-hover:opacity-100 group-hover:text-[var(--accent)] tracking-tighter truncate max-w-[80px]">ID: {user.userId}</span>
-                              <div className="w-3 h-3 rounded-sm flex items-center justify-center text-[var(--foreground)] opacity-80 group-hover:opacity-100 group-hover:text-[var(--accent)] shrink-0">
-                                {idCopied ? <FiCheckCircle size={9} /> : <FiLayers size={9} />}
-                              </div>
-                            </button>
+                            <span className="text-[10px] font-medium text-[var(--foreground)] opacity-70 truncate italic leading-tight mb-1">{user.email}</span>
+                            <CopyButton text={user.userId} label={`ID: ${user.userId}`} size="xs" variant="subtle" />
                           </div>
                         </>
                       ) : (

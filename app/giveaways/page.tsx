@@ -6,12 +6,14 @@ import {
   FiChevronRight, 
   FiShare2, 
   FiAward, 
-  FiCheckCircle,
-  FiZap,
-  FiArchive,
-  FiKey
+  FiCheckCircle, 
+  FiZap, 
+  FiArchive, 
+  FiKey 
 } from "react-icons/fi";
 import { motion } from "framer-motion";
+import { Icons } from "@/components/icons";
+import { EmptyState } from "@/components/common";
 import GiveawayEntryModal from "@/components/Giveaway/GiveawayEntryModal";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -135,15 +137,12 @@ export default function GiveawaysPage() {
               ))}
             </div>
           ) : giveaways.length === 0 ? (
-            <div className="text-center py-12 px-4 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)]/20 backdrop-blur-sm max-w-md mx-auto space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 flex items-center justify-center text-[var(--accent)] mx-auto">
-                <FiGift size={20} />
-              </div>
-              <h3 className="text-sm font-bold text-[var(--foreground)]">No Active Drops Right Now</h3>
-              <p className="text-[11px] text-[var(--muted)] max-w-xs mx-auto leading-relaxed">
-                All giveaway slots have been filled. New MLBB diamond drops & redeem code giveaways are posted daily!
-              </p>
-            </div>
+            <EmptyState
+              icon={Icons.gift}
+              title="No Active Drops Right Now"
+              description="All giveaway slots have been filled. New MLBB diamond drops & redeem code giveaways are posted daily!"
+              size="md"
+            />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
               {giveaways.map(g => {

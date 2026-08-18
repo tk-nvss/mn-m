@@ -2,12 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  FiStar, FiPlus, FiCheck, FiX, FiRefreshCw, FiToggleLeft, FiToggleRight,
-  FiTrash2, FiEdit3, FiClock, FiList, FiAlertCircle, FiYoutube,
-  FiSmartphone, FiGlobe, FiMessageCircle, FiChevronLeft, FiChevronRight,
-  FiEye, FiSearch
-} from "react-icons/fi";
+import { Icons } from "@/components/icons";
+import { StatusBadge, SearchInput, EmptyState, Pagination, LoadingSpinner } from "@/components/common";
+import { formatCurrency, formatCoins, formatNumber, formatDate, formatDateTime } from "@/utils";
 
 const TASK_TYPES = ["url_visit", "yt_watch", "app_install", "wp_join", "custom"];
 const typeLabels = {
@@ -567,9 +564,13 @@ export default function CoinsAdminTab() {
           </div>
 
           {loading ? (
-            <div className="text-center py-10"><FiRefreshCw className="animate-spin text-2xl mx-auto text-[var(--muted)]/30" /></div>
+            <div className="text-center py-10 flex justify-center"><LoadingSpinner size="lg" color="accent" /></div>
           ) : claims.length === 0 ? (
-            <Empty label={`No ${claimStatus} claims`} />
+            <EmptyState
+              icon={Icons.list}
+              title={`No ${claimStatus} claims`}
+              description="User submitted task claims will appear here."
+            />
           ) : (
             <div className="space-y-3">
               {claims.map((claim) => (
@@ -583,22 +584,20 @@ export default function CoinsAdminTab() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="text-[11px] font-black truncate">{claim.userName}</p>
                       <span className="text-[8px] font-mono text-[var(--muted)]/40">{claim.userId}</span>
-                      <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border ${statusColor(claim.status)}`}>
-                        {claim.status}
-                      </span>
+                      <StatusBadge status={claim.status} size="xs" />
                     </div>
                     <p className="text-[9px] text-[var(--muted)]/60">
                       Task: <span className="font-bold text-[var(--foreground)]">{claim.taskTitle}</span>
                     </p>
                     <div className="flex items-center gap-3 flex-wrap">
-                      <span className="text-amber-400 font-black text-xs">+{claim.coins} BBC</span>
+                      <span className="text-amber-400 font-black text-xs">+{formatCoins(claim.coins, true)}</span>
                       <span className="text-[8px] font-mono text-[var(--muted)]/40">
-                        {new Date(claim.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                        {formatDateTime(claim.createdAt)}
                       </span>
                       {claim.proofUrl && (
                         <a href={claim.proofUrl} target="_blank" rel="noopener noreferrer"
                           className="text-[8px] text-blue-400 underline flex items-center gap-0.5">
-                          <FiEye size={9} /> Proof
+                          <Icons.eye size={10} /> Proof
                         </a>
                       )}
                       {claim.rejectionReason && (
@@ -616,7 +615,7 @@ export default function CoinsAdminTab() {
                         disabled={actionLoading === claim.claimId}
                         className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500 text-white text-[10px] font-black uppercase disabled:opacity-50"
                       >
-                        {actionLoading === claim.claimId ? <FiRefreshCw className="animate-spin" /> : <FiCheck />}
+                        {actionLoading === claim.claimId ? <LoadingSpinner size="xs" color="white" /> : <Icons.check size={12} />}
                         Approve
                       </motion.button>
                       <motion.button

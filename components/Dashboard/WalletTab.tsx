@@ -20,6 +20,9 @@ import {
   FiArrowDownLeft,
   FiArrowUpRight,
 } from "react-icons/fi";
+import { Icons } from "@/components/icons";
+import { CopyButton, LoadingSpinner } from "@/components/common";
+import { formatCurrency, formatNumber } from "@/utils";
 import { TransactionSkeleton } from "../Skeleton/Skeleton";
 import api from "@/lib/axios";
 
@@ -281,7 +284,7 @@ export default function WalletTab({
             </p>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl md:text-4xl font-black italic tracking-tighter uppercase text-[var(--foreground)]">
-                ₹{walletBalance}
+                {formatCurrency(walletBalance)}
               </span>
               <span className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-widest leading-none">
                 Available
@@ -572,12 +575,7 @@ export default function WalletTab({
                     <p className="text-[9px] font-bold text-[var(--muted)] uppercase tracking-widest mb-2">Deposit Address ({usdtDeposit.network})</p>
                     <div className="flex items-center gap-2 p-3 rounded-2xl bg-[var(--card)] border border-green-500/20">
                       <span className="font-mono text-[10px] text-green-400 break-all flex-1">{usdtDeposit.depositAddress}</span>
-                      <button aria-label="button"
-                        onClick={() => copyToClipboard(usdtDeposit.depositAddress, "address")}
-                        className="p-2 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/30 transition-colors flex-shrink-0"
-                      >
-                        {copiedAddress ? <FiCheckCircle size={14} /> : <FiCopy size={14} />}
-                      </button>
+                      <CopyButton text={usdtDeposit.depositAddress} size="sm" variant="subtle" />
                     </div>
                   </div>
 

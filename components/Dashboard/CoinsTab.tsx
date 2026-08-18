@@ -9,6 +9,9 @@ import {
   FiExternalLink, FiAlertCircle, FiUsers, FiChevronLeft, FiChevronRight, 
   FiPlay, FiTarget, FiBox, FiArrowLeft, FiGift, FiInfo, FiAlertTriangle, FiPlus
 } from "react-icons/fi";
+import { Icons } from "@/components/icons";
+import { Pagination, EmptyState, LoadingSpinner } from "@/components/common";
+import { formatCoins, formatCurrency, formatNumber, formatDate, formatDateTime } from "@/utils";
 import Link from "next/link";
 import RouletteGame from "./RouletteGame";
 import TreasureGame from "./TreasureGame";
@@ -712,31 +715,23 @@ export default function CoinsTab() {
                           <div>
                             <p className="text-[10px] font-black truncate max-w-[200px]">{item.description}</p>
                             <p className="text-[8px] text-[var(--muted)]/40 font-mono">
-                              {new Date(item.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "2-digit" })}
+                              {formatDate(item.createdAt, { style: "short" })}
                             </p>
                           </div>
                         </div>
                         <span className={`font-black text-[11px] ${item.type === "earn" ? "text-amber-400" : "text-rose-400"}`}>
-                          {item.type === "earn" ? "+" : "-"}{item.coins}
+                          {item.type === "earn" ? "+" : "-"}{formatCoins(item.coins)}
                         </span>
                       </div>
                     ))}
 
-                    {historyPages > 1 && (
-                      <div className="flex items-center justify-center gap-3 pt-4">
-                        <button aria-label="button" onClick={() => setHistoryPage(p => Math.max(1, p - 1))} disabled={historyPage === 1}
-                          className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 disabled:opacity-30">
-                          <FiChevronLeft className="text-xs" />
-                        </button>
-                        <span className="text-[10px] font-black uppercase tracking-wide text-[var(--muted)]">
-                          {historyPage} / {historyPages}
-                        </span>
-                        <button aria-label="button" onClick={() => setHistoryPage(p => Math.min(historyPages, p + 1))} disabled={historyPage === historyPages}
-                          className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 disabled:opacity-30">
-                          <FiChevronRight className="text-xs" />
-                        </button>
-                      </div>
-                    )}
+                    <Pagination
+                      page={historyPage}
+                      totalPages={historyPages}
+                      onPageChange={setHistoryPage}
+                      size="sm"
+                      hideOnSinglePage
+                    />
                   </div>
                 )}
               </motion.div>

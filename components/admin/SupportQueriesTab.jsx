@@ -2,23 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Search,
-  RefreshCcw,
-  Mail,
-  Phone,
-  Clock,
-  MessageSquare,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-  X,
-  ChevronRight,
-  ChevronDown,
-  Filter,
-  Inbox,
-  Send
-} from "lucide-react";
+import { Icons } from "@/components/icons";
+import { StatusBadge, SearchInput, EmptyState, Pagination, LoadingSpinner } from "@/components/common";
+import { formatDate, formatTime, formatDateTime, formatRelativeTime } from "@/utils";
 
 export default function SupportQueriesTab() {
   const [queries, setQueries] = useState([]);
@@ -233,19 +219,17 @@ export default function SupportQueriesTab() {
       </div>
 
       {/* ================= SEARCH & FILTER ================= */}
-      <div className="flex flex-col gap-2 mb-4">
-        <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]/40" size={14} />
-          <input
-            value={search}
-            onChange={(e) => {
-              setPage(1);
-              setSearch(e.target.value);
-            }}
-            placeholder="Search queries..."
-            className="w-full h-9 pl-9 pr-4 rounded-xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] text-[10px] font-bold focus:border-[var(--accent)]/50 outline-none placeholder:text-[var(--muted)]/30 transition-colors shadow-inner"
-          />
-        </div>
+      <div className="mb-4">
+        <SearchInput
+          value={search}
+          onChange={(val) => {
+            setPage(1);
+            setSearch(val);
+          }}
+          placeholder="Search queries by customer name, email, or message..."
+          loading={loading}
+          size="sm"
+        />
       </div>
 
       {/* ================= CONTENT ================= */}
@@ -258,8 +242,8 @@ export default function SupportQueriesTab() {
               exit={{ opacity: 0 }}
               className="py-20 flex flex-col items-center justify-center space-y-3"
             >
-              <Loader2 className="animate-spin text-[var(--accent)]" size={32} />
-              <p className="text-xs font-bold text-[var(--muted)]/40 uppercase tracking-widest">Loading...</p>
+              <LoadingSpinner size="lg" color="accent" />
+              <p className="text-xs font-bold text-[var(--muted)]/40 uppercase tracking-widest">Loading Queries...</p>
             </motion.div>
           ) : (
             <motion.div
@@ -268,30 +252,20 @@ export default function SupportQueriesTab() {
               className="space-y-1.5"
             >
               {queries.map((q, idx) => {
-                const status = getStatus(q.status);
-                const meta = statusMeta[status];
-
                 return (
                   <motion.div
                     key={q._id}
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: idx * 0.03 }}
+                    transition={{ delay: idx * 0.02 }}
                     onClick={() => { setActiveQuery(q); setReplyText(q.adminReply || ""); setReplySuccess(""); }}
                     className="group relative rounded-xl border border-[var(--border)] bg-[var(--card)]/40 hover:bg-[var(--foreground)]/[0.02] transition-colors cursor-pointer px-4 py-2.5 flex items-center gap-3"
                   >
-                    <div
-                      className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full"
-                      style={{ backgroundColor: meta.label === 'Open' ? '#f59e0b' : meta.label === 'Resolved' ? '#10b981' : '#3b82f6' }}
-                    />
-
-                    <div className="flex items-center gap-2 w-full min-w-0">
-                      <span className={`shrink-0 flex items-center gap-1 px-1.5 py-0.5 rounded border text-[7px] font-black uppercase tracking-widest ${meta.class}`}>
-                        {meta.label}
-                      </span>
+                    <div className="flex items-center gap-2.5 w-full min-w-0">
+                      <StatusBadge status={q.status} size="xs" />
                       
-                      <span className="shrink-0 text-[8px] font-bold text-[var(--muted)]/40 w-12 truncate">
-                        {new Date(q.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                      <span className="shrink-0 text-[9px] font-bold text-[var(--muted)]/50 w-16 truncate">
+                        {formatDate(q.createdAt, { style: "monthDay" })}
                       </span>
 
                       <h4 className="shrink-0 text-[11px] font-black text-[var(--foreground)] truncate group-hover:text-[var(--accent)] transition-colors w-28 sm:w-40">
@@ -304,43 +278,29 @@ export default function SupportQueriesTab() {
                     </div>
 
                     <div className="w-6 h-6 rounded-md flex items-center justify-center text-[var(--muted)]/30 shrink-0 group-hover:bg-[var(--foreground)]/[0.05] group-hover:text-[var(--foreground)] transition-all">
-                      <ChevronRight size={12} />
+                      <Icons.chevronRight size={12} />
                     </div>
                   </motion.div>
                 );
               })}
 
               {!queries.length && (
-                <div className="py-16 text-center border border-dashed border-[var(--border)] rounded-2xl">
-                  <Inbox className="mx-auto text-[var(--muted)]/20 mb-2" size={32} />
-                  <p className="text-[10px] font-bold text-[var(--muted)]/40 uppercase tracking-widest">No queries found</p>
-                </div>
+                <EmptyState
+                  icon={Icons.message}
+                  title="No Queries Found"
+                  description="All customer support queries have been addressed."
+                />
               )}
 
               {/* ================= PAGINATION ================= */}
-              {pagination.totalPages > 1 && (
-                <div className="flex items-center justify-between pt-6">
-                  <p className="text-[10px] font-bold text-[var(--muted)]/40 uppercase">
-                    Page {pagination.page} / {pagination.totalPages}
-                  </p>
-                  <div className="flex gap-2">
-                    <button aria-label="button"
-                      onClick={() => setPage((p) => Math.max(1, p - 1))}
-                      disabled={page === 1}
-                      className="px-4 py-2 rounded-xl border border-[var(--border)] text-[10px] font-bold uppercase text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-20 transition-all"
-                    >
-                      Prev
-                    </button>
-                    <button aria-label="button"
-                      onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
-                      disabled={page === pagination.totalPages}
-                      className="px-4 py-2 rounded-xl border border-[var(--border)] text-[10px] font-bold uppercase text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-20 transition-all"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              )}
+              <Pagination
+                page={page}
+                totalPages={pagination.totalPages}
+                totalItems={pagination.total}
+                itemLabel="Queries"
+                onPageChange={setPage}
+                variant="numbered"
+              />
             </motion.div>
           )}
         </AnimatePresence>
@@ -376,12 +336,12 @@ export default function SupportQueriesTab() {
 
               <div className="p-5 space-y-5 max-h-[75vh] overflow-y-auto custom-scrollbar">
                 <div className="grid grid-cols-2 gap-y-4 gap-x-3">
-                  <DetailBlock label="Name" value={activeQuery.name || "N/A"} icon={<Mail size={10} />} />
-                  <DetailBlock label="Email" value={activeQuery.email || "N/A"} icon={<Mail size={10} />} />
-                  <DetailBlock label="Phone" value={activeQuery.phoneNo || activeQuery.phone || "N/A"} icon={<Phone size={10} />} />
-                  <DetailBlock label="Order ID" value={activeQuery.orderId || "N/A"} icon={<MessageSquare size={10} />} />
-                  <DetailBlock label="Type" value={activeQuery.type} emphasize icon={<MessageSquare size={10} />} />
-                  <DetailBlock label="Date" value={new Date(activeQuery.createdAt).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })} icon={<Clock size={10} />} />
+                  <DetailBlock label="Name" value={activeQuery.name || "N/A"} icon={<Icons.user size={10} />} />
+                  <DetailBlock label="Email" value={activeQuery.email || "N/A"} icon={<Icons.mail size={10} />} />
+                  <DetailBlock label="Phone" value={activeQuery.phoneNo || activeQuery.phone || "N/A"} icon={<Icons.phone size={10} />} />
+                  <DetailBlock label="Order ID" value={activeQuery.orderId || "N/A"} icon={<Icons.message size={10} />} />
+                  <DetailBlock label="Type" value={activeQuery.type} emphasize icon={<Icons.message size={10} />} />
+                  <DetailBlock label="Date" value={formatDateTime(activeQuery.createdAt)} icon={<Icons.clock size={10} />} />
                 </div>
 
                 <div className="space-y-1.5 p-3.5 rounded-xl bg-[var(--foreground)]/[0.02] border border-[var(--border)]">
@@ -412,7 +372,7 @@ export default function SupportQueriesTab() {
                 {/* ===== ADMIN REPLY ===== */}
                 <div className="space-y-2 pt-4 border-t border-[var(--border)]">
                   <p className="text-[9px] font-black text-[var(--muted)]/40 uppercase tracking-widest ml-1 flex items-center gap-1.5">
-                    <Send size={10} className="text-[var(--accent)]" /> Admin Reply
+                    <Icons.send size={10} className="text-[var(--accent)]" /> Admin Reply
                   </p>
 
                   {activeQuery.adminReply && (
@@ -432,7 +392,7 @@ export default function SupportQueriesTab() {
 
                   {replySuccess && (
                     <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1">
-                      <CheckCircle2 size={10} /> {replySuccess}
+                      <Icons.checkCircle size={10} /> {replySuccess}
                     </p>
                   )}
 
