@@ -177,7 +177,7 @@ export default function ApiKeysPage() {
                                     disabled={isCreating || !newKeyName.trim()}
                                     className="px-4 py-2 rounded-xl bg-[var(--accent)] text-black font-black italic uppercase text-xs flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50"
                                 >
-                                    {isCreating ? <LoadingSpinner size="sm" color="current" /> : <FiPlus />}
+                                    {isCreating ? <LoadingSpinner size="sm" color="current" /> : <Icons.plus size={14} />}
                                     Create Key
                                 </button>
                             </form>
@@ -186,7 +186,7 @@ export default function ApiKeysPage() {
                                 href="/dashboard/support"
                                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase italic hover:bg-amber-500/20 transition-all"
                             >
-                                <FiLock /> Only Member Feature - Contact Support
+                                <Icons.lock size={12} /> Only Member Feature - Contact Support
                             </Link>
                         )
                     )}
@@ -199,7 +199,7 @@ export default function ApiKeysPage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center gap-3 text-red-500 text-sm font-bold"
                 >
-                    <FiAlertCircle />
+                    <Icons.alertCircle size={16} />
                     {error}
                 </motion.div>
             )}
@@ -379,7 +379,7 @@ export default function ApiKeysPage() {
             <div className="grid md:grid-cols-2 gap-4">
                 <div className="p-6 rounded-[2rem] bg-amber-500/5 border border-amber-500/10 space-y-2">
                     <h4 className="text-amber-500 text-xs font-black uppercase tracking-widest flex items-center gap-2 text-balance">
-                        <FiAlertCircle /> 3-Layer Protection Active
+                        <Icons.alertCircle size={14} /> 3-Layer Protection Active
                     </h4>
                     <p className="text-[var(--muted)] text-[10px] leading-relaxed font-bold opacity-60">
                         1. <b>IP Whitelisting (Optional):</b> Restrict access to your own servers for enhanced security.<br />
@@ -391,7 +391,7 @@ export default function ApiKeysPage() {
                 <div className="p-6 rounded-[2rem] bg-[var(--accent)]/5 border border-[var(--accent)]/10 space-y-4">
                     <div className="flex items-center justify-between">
                         <h4 className="text-[var(--accent)] text-xs font-black uppercase tracking-widest flex items-center gap-2">
-                            <FiKey /> Integration Assets
+                            <Icons.key size={14} /> Integration Assets
                         </h4>
                         <a href="/api-docs.html" target="_blank" className="text-[10px] font-black uppercase italic text-[var(--accent)] hover:underline">
                             v1.0 API Specs 📄

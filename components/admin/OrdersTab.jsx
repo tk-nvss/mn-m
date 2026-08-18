@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Search,
   RefreshCcw,
   Clock,
   User,
@@ -19,10 +18,7 @@ import {
   Hash,
   Loader2,
   Calendar,
-  Smartphone,
-  ChevronDown,
-  ShoppingBag,
-  Target
+  ChevronDown
 } from "lucide-react";
 import { StatusBadge, SearchInput, EmptyState, Pagination } from "@/components/common";
 import { formatCurrency, formatDate, formatTime, formatDateTime } from "@/utils";
@@ -197,12 +193,9 @@ export default function OrdersTab() {
               <table className="w-full text-left text-sm">
                 <thead className="bg-[var(--foreground)]/[0.03] border-b border-[var(--border)]">
                   <tr className="text-[10px] uppercase font-bold tracking-widest text-[var(--muted)]">
-                    <th className="px-6 py-4">Game</th>
-                    <th className="px-6 py-4">Time</th>
-                    <th className="px-6 py-4">Item Details</th>
-                    <th className="px-6 py-4">Method</th>
-                    <th className="px-6 py-4">Price</th>
-                    <th className="px-6 py-4">Status</th>
+                    {["Game", "Time", "Item Details", "Method", "Price", "Status"].map((h) => (
+                      <th key={h} className="px-6 py-4">{h}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border)]">

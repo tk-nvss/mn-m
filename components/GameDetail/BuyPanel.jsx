@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { FiArrowRight, FiShield, FiZap } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
+import { LoadingSpinner } from "@/components/common";
+import { formatCurrency } from "@/utils";
 
 export default function BuyPanel({
   activeItem,
@@ -152,7 +154,7 @@ export default function BuyPanel({
                   `}
                 >
                   {redirecting ? (
-                    <div className="w-4 h-4 border-2 border-[var(--background)] border-t-transparent rounded-full animate-spin" />
+                    <LoadingSpinner size="xs" color="current" />
                   ) : (
                     <>
                       <span>Order Now</span>

@@ -3,7 +3,6 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Search,
   RefreshCcw,
   User,
   Shield,
@@ -18,12 +17,9 @@ import {
   ChevronDown,
   Loader2,
   Users,
-  IdCard,
   Crown,
-  Type,
   Activity,
   Globe,
-  Tag,
   Plus
 } from "lucide-react";
 import { SearchInput, StatusBadge, CopyButton, EmptyState, Pagination } from "@/components/common";

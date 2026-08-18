@@ -233,11 +233,9 @@ export default function RedeemCodesTab() {
                     <table className="w-full text-left text-[11px]">
                         <thead className="bg-[var(--foreground)]/[0.02] border-b border-[var(--border)] text-[var(--muted)] font-black uppercase tracking-wider">
                             <tr>
-                                <th className="px-6 py-4">Redeem Code</th>
-                                <th className="px-6 py-4">Configuration</th>
-                                <th className="px-6 py-4">Value</th>
-                                <th className="px-6 py-4">Activity</th>
-                                <th className="px-6 py-4">Owner</th>
+                                {["Redeem Code", "Configuration", "Value", "Activity", "Owner"].map((h) => (
+                                    <th key={h} className="px-6 py-4">{h}</th>
+                                ))}
                                 <th className="px-6 py-4 text-right">Actions</th>
                             </tr>
                         </thead>

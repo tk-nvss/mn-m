@@ -4,18 +4,10 @@ import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import api from "@/lib/axios";
-import {
-  FiSearch,
-  FiClock,
-  FiChevronLeft,
-  FiChevronRight,
-  FiArrowRight,
-  FiList,
-  FiPlay,
-  FiShare2,
-  FiMoreHorizontal,
-  FiFilter
-} from "react-icons/fi";
+import { FiFilter, FiShare2, FiMoreHorizontal } from "react-icons/fi";
+import { SearchInput, EmptyState, Pagination, LoadingSpinner } from "@/components/common";
+import { Icons } from "@/components/icons";
+import { formatDate } from "@/utils";
 
 /* ================= SETTINGS ================= */
 const POSTS_PER_PAGE = 20;
@@ -114,15 +106,12 @@ export default function BlogListing({ initialGame = "all" }) {
             
             {/* 🔍 SEARCH & FILTER */}
             <div className="flex items-center gap-2 w-full md:w-auto relative z-20">
-              <div className="relative flex-1 md:w-64">
-                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  <FiSearch className="text-[var(--muted)] opacity-50" size={14} />
-                </div>
-                <input
+              <div className="flex-1 md:w-64">
+                <SearchInput
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="SEARCH..."
-                  className="w-full h-9 pl-9 pr-4 rounded-2xl border border-[var(--border)] bg-[var(--background)] outline-none text-[10px] font-bold tracking-widest uppercase focus:border-[var(--accent)]/50 transition-colors font-sans"
+                  onChange={setSearch}
+                  placeholder="SEARCH ARTICLES..."
+                  size="sm"
                 />
               </div>
               
@@ -204,7 +193,7 @@ export default function BlogListing({ initialGame = "all" }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {loading ? (
             <div className="col-span-1 md:col-span-2 lg:col-span-3 flex justify-center py-20">
-              <div className="w-6 h-6 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+              <LoadingSpinner size="lg" color="accent" />
             </div>
           ) : (
             <AnimatePresence mode="wait">
@@ -213,55 +202,28 @@ export default function BlogListing({ initialGame = "all" }) {
                   <BlogCard key={blog._id || blog.slug} blog={blog} index={index} />
                 ))
               ) : (
-                <motion.div
-                  key="empty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20 text-[var(--muted)] text-[10px] font-black uppercase tracking-[0.3em] italic opacity-20"
-                >
-                  No Articles Discovered
-                </motion.div>
+                <div className="col-span-1 md:col-span-2 lg:col-span-3">
+                  <EmptyState
+                    icon={Icons.bookOpen}
+                    title="No Articles Discovered"
+                    description="Try searching for another topic or reset your filters."
+                  />
+                </div>
               )}
             </AnimatePresence>
           )}
         </div>
 
-        {/* 🔢 PAGINATION - NUMBERED */}
-        {totalPages > 1 && (
-          <nav aria-label="Pagination" className="flex justify-center items-center gap-2 mt-12 mb-20">
-            <button aria-label="button"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => p - 1)}
-              className="w-10 h-10 rounded-xl bg-[var(--card)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] disabled:opacity-20 transition-all hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
-            >
-              <FiChevronLeft size={16} />
-            </button>
-            
-            <div className="flex items-center gap-1 mx-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
-                <button aria-label="button"
-                  key={num}
-                  onClick={() => setCurrentPage(num)}
-                  className={`w-10 h-10 rounded-xl text-[10px] font-black transition-all border ${
-                    currentPage === num 
-                      ? "bg-[var(--accent)] border-[var(--accent)] text-black scale-110 shadow-lg shadow-[var(--accent)]/20" 
-                      : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
-                  }`}
-                >
-                  {num}
-                </button>
-              ))}
-            </div>
-
-            <button aria-label="button"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => p + 1)}
-              className="w-10 h-10 rounded-xl bg-[var(--card)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] disabled:opacity-20 transition-all hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
-            >
-              <FiChevronRight size={16} />
-            </button>
-          </nav>
-        )}
+        {/* 🔢 PAGINATION */}
+        <div className="mt-12 mb-20 flex justify-center">
+          <Pagination
+            page={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            variant="numbered"
+            hideOnSinglePage
+          />
+        </div>
 
         {/* 🏔️ SEO FOOTER */}
         <motion.footer 
@@ -326,7 +288,7 @@ function BlogCard({ blog, index }) {
                 <div className="flex flex-col justify-center">
                   <span className="text-[9px] sm:text-[10px] font-bold text-[var(--foreground)] leading-none">by BlueBuff</span>
                   <span className="text-[7px] sm:text-[8px] text-[var(--muted)] opacity-70 mt-0.5">
-                    {new Date(blog.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    {formatDate(blog.publishedAt)}
                   </span>
                 </div>
               </div>

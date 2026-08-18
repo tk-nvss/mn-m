@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { FiSearch, FiUser, FiGlobe, FiDatabase, FiAlertCircle, FiCheckCircle } from "react-icons/fi";
+import { Icons } from "@/components/icons";
+import { LoadingSpinner } from "@/components/common";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function CheckPage() {
@@ -58,7 +59,7 @@ export default function CheckPage() {
           {/* Top Header */}
           <div className="mb-8 text-center">
             <div className="w-16 h-16 bg-[var(--accent)]/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-[var(--accent)]/20 shadow-inner">
-              <FiDatabase className="text-3xl text-[var(--accent)]" />
+              <Icons.database className="text-3xl text-[var(--accent)]" />
             </div>
             <h1 className="text-3xl font-[1000] uppercase tracking-tighter italic text-[var(--foreground)] mb-2">
               Game <span className="text-[var(--accent)]">Checker</span>
@@ -71,7 +72,7 @@ export default function CheckPage() {
             <div className="space-y-1.5 px-1">
               <label className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] ml-1">Service Type</label>
               <div className="relative group">
-                <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors" />
+                <Icons.search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors" />
                 <input
                   placeholder="e.g. bgmi, pubg, mlbb..."
                   value={game}
@@ -85,7 +86,7 @@ export default function CheckPage() {
             <div className="space-y-1.5 px-1">
               <label className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] ml-1">Account reference</label>
               <div className="relative group">
-                <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors" />
+                <Icons.user className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors" />
                 <input
                   placeholder="User ID"
                   value={userId}
@@ -99,7 +100,7 @@ export default function CheckPage() {
             <div className="space-y-1.5 px-1">
               <label className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] ml-1">Origin Node (Optional)</label>
               <div className="relative group">
-                <FiGlobe className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors" />
+                <Icons.globe className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors" />
                 <input
                   placeholder="Server ID"
                   value={serverId}
@@ -124,7 +125,7 @@ export default function CheckPage() {
                       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                       className="flex items-center justify-center gap-3"
                     >
-                      <div className="w-4 h-4 border-2 border-[var(--background)] border-t-transparent rounded-full animate-spin" />
+                      <LoadingSpinner size="xs" color="current" />
                       Decrypting...
                     </motion.div>
                   ) : (
@@ -134,7 +135,7 @@ export default function CheckPage() {
                       className="flex items-center justify-center gap-3"
                     >
                       Validate Account
-                      <FiCheckCircle className="text-lg" />
+                      <Icons.checkCircle className="text-lg" />
                     </motion.div>
                   )}
                 </AnimatePresence>

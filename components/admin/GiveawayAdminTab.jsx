@@ -5,6 +5,8 @@ import {
   FiPlus, FiUsers, FiAward, FiTrash2, FiChevronDown, FiChevronUp,
   FiPlay, FiSquare, FiRefreshCw, FiDownload, FiGift, FiX, FiEdit2,
 } from "react-icons/fi";
+import { StatusBadge, EmptyState, LoadingSpinner } from "@/components/common";
+import { Icons } from "@/components/icons";
 
 const TASK_TYPES = [
   { value: "mlbb",      label: "MLBB Verify",  icon: "🎮" },
@@ -15,12 +17,6 @@ const TASK_TYPES = [
   { value: "checkbox",  label: "Checkbox",      icon: "☑️" },
   { value: "text",      label: "Text Input",    icon: "✏️" },
 ];
-
-const STATUS_COLORS = {
-  draft: "text-gray-400 bg-gray-400/10 border-gray-400/20",
-  live:  "text-green-400 bg-green-400/10 border-green-400/20",
-  ended: "text-red-400 bg-red-400/10 border-red-400/20",
-};
 
 function token() { return localStorage.getItem("token") || ""; }
 function authHeaders() { return { Authorization: `Bearer ${token()}`, "Content-Type": "application/json" }; }
@@ -226,13 +222,14 @@ export default function GiveawayAdminTab() {
       {/* Giveaways list */}
       {loading ? (
         <div className="flex items-center justify-center py-16">
-          <div className="w-7 h-7 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+          <LoadingSpinner size="lg" color="accent" />
         </div>
       ) : !giveaways.length ? (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] py-16 text-center">
-          <FiGift size={32} className="mx-auto text-[var(--muted)] opacity-30 mb-3" />
-          <p className="text-sm text-[var(--muted)]">No giveaways yet. Create one!</p>
-        </div>
+        <EmptyState
+          icon={Icons.gift}
+          title="No Giveaways Yet"
+          description="Create your first giveaway to engage players!"
+        />
       ) : (
         <div className="space-y-2">
           {giveaways.map(g => (
@@ -240,12 +237,12 @@ export default function GiveawayAdminTab() {
               <div className="p-3 sm:p-4 flex items-start sm:items-center gap-3 sm:gap-4 flex-col sm:flex-row">
                 <div className="flex items-center gap-3 w-full sm:w-auto flex-1 min-w-0">
                   <div className="w-8 h-8 rounded-lg bg-[var(--foreground)]/[0.03] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] shrink-0">
-                    <FiGift size={14} />
+                    <Icons.gift size={14} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap mb-0.5">
                       <p className="text-xs font-bold text-[var(--foreground)] truncate">{g.title}</p>
-                      <span className={`text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded border ${STATUS_COLORS[g.status] || "bg-transparent text-[var(--muted)] border-[var(--border)]"}`}>{g.status}</span>
+                      <StatusBadge status={g.status} size="sm" />
                     </div>
                     <p className="text-[9px] text-[var(--muted)] font-mono truncate">{g.prize} · {g.entryCount || 0} entries · {g.prizeCount} winner{g.prizeCount > 1 ? "s" : ""}</p>
                   </div>

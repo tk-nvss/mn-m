@@ -7,6 +7,8 @@ import {
   FiDownload, FiActivity, FiRefreshCw,
   FiXCircle, FiUser, FiExternalLink,
 } from "react-icons/fi";
+import { LoadingSpinner } from "@/components/common";
+import { formatNumber, formatPercent, formatDateTime } from "@/utils";
 
 export default function PwaStatsTab() {
   const [data, setData]     = useState(null);
@@ -33,7 +35,7 @@ export default function PwaStatsTab() {
 
   if (loading) return (
     <div className="flex items-center justify-center py-24">
-      <div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+      <LoadingSpinner size="xl" color="accent" />
     </div>
   );
 
@@ -189,9 +191,7 @@ export default function PwaStatsTab() {
                   </p>
                 </div>
                 <span className="text-[10px] text-[var(--muted)]">
-                  {new Date(item.createdAt).toLocaleDateString("en-IN", {
-                    day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
-                  })}
+                  {formatDateTime(item.createdAt)}
                 </span>
               </div>
             ))}

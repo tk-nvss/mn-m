@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Icons } from "@/components/icons";
 import { CopyButton } from "@/components/common";
-import { ReactNode, useMemo, useEffect, useState } from "react";
+import { ReactNode, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { BLOGS_DATA } from "@/lib/blogData";
 import Script from "next/script";
@@ -349,7 +349,7 @@ export default function BlogPostLayout({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-            {relatedArticles.map((blog) => (
+            {relatedArticles.map((blog: any) => (
               <Link
                 key={blog.id}
                 href={`/blog/${blog.game}/${blog.slug}`}
@@ -379,13 +379,13 @@ export default function BlogPostLayout({
 
                   <div className="mt-auto pt-2 border-t border-[var(--border)]/20 flex items-center justify-between">
                     <div className="flex items-center gap-1 text-[var(--muted)] opacity-50">
-                      <FiClock size={8} />
+                      <Icons.clock size={8} />
                       <span className="text-[7px] font-bold uppercase tracking-tight">
                         {blog.readingTime}
                       </span>
                     </div>
                     <div className="w-5 h-5 rounded-md bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]">
-                      <FiArrowRight size={10} />
+                      <Icons.arrowRight size={10} />
                     </div>
                   </div>
                 </div>

@@ -17,7 +17,6 @@ import {
   Loader2,
   Package
 } from "lucide-react";
-import { FiRefreshCw, FiPlus, FiTrash2 } from "react-icons/fi";
 import { SearchInput } from "@/components/common";
 
 const API_BASE = "https://game-off-ten.vercel.app/api/v1";

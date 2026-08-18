@@ -164,12 +164,9 @@ export default function TransactionsTab() {
               <table className="w-full text-left text-sm">
                 <thead className="bg-[var(--foreground)]/[0.03] border-b border-[var(--border)]">
                   <tr className="text-[10px] uppercase font-bold tracking-widest text-[var(--muted)]">
-                    <th className="px-6 py-4">Time</th>
-                    <th className="px-6 py-4">Order ID</th>
-                    <th className="px-6 py-4">User</th>
-                    <th className="px-6 py-4">Game</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4">Method</th>
+                    {["Time", "Order ID", "User", "Game", "Status", "Method"].map((h) => (
+                      <th key={h} className="px-6 py-4">{h}</th>
+                    ))}
                     <th className="px-6 py-4 text-right">Amount</th>
                   </tr>
                 </thead>
