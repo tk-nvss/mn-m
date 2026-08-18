@@ -16,6 +16,9 @@ import {
   FiCheck,
 } from "react-icons/fi";
 
+import { StatusBadge, CopyButton } from "@/components/common";
+import { formatCurrency, formatDateTime } from "@/utils";
+
 /* ================= TYPES ================= */
 
 export type OrderType = {
@@ -45,17 +48,9 @@ const getGameName = (slug: string) => {
 /* ================= MAIN ITEM COMPONENT ================= */
 
 export default function OrderItem({ order, index = 0 }: { order: OrderType, index?: number }) {
-  const [copied, setCopied] = useState(false);
   const [verifyLoading, setVerifyLoading] = useState(false);
   const [localStatus, setLocalStatus] = useState(order.status);
   const [localTopupStatus, setLocalTopupStatus] = useState(order.topupStatus);
-
-  const handleCopy = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigator.clipboard.writeText(order.orderId);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   const handleVerify = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -102,41 +97,15 @@ export default function OrderItem({ order, index = 0 }: { order: OrderType, inde
       : (localTopupStatus || localStatus || "")
   ).toLowerCase();
 
-  const getStatusConfig = (s: string) => {
-    if (s.includes("success") || s.includes("completed") || s.includes("deployed")) {
-      return { color: "#10b981", icon: FiCheckCircle, label: "SUCCESS" };
-    }
-    if (s.includes("failed") || s.includes("cancelled") || s.includes("error")) {
-      return { color: "#ef4444", icon: FiAlertCircle, label: "FAILED" };
-    }
-    if (s.includes("refund")) {
-      return { color: "#3b82f6", icon: FiCheckCircle, label: "REFUNDED" };
-    }
-    if (s.includes("processing")) {
-      return { color: "#3b82f6", icon: FiLoader, label: "PROCESSING" };
-    }
-    return { color: "#f59e0b", icon: FiLoader, label: "PENDING" };
-  };
-
-  const config = getStatusConfig(rawStatus);
-
   return (
     <div className={`relative overflow-hidden rounded border transition-colors ${index % 2 === 0 ? 'bg-[var(--background)] border-[var(--border)]' : 'bg-[var(--foreground)]/[0.04] border-[var(--foreground)]/[0.1]'}`}>
 
       {/* TOP STATUS BAR */}
-      <div
-        className="px-3.5 py-1.5 flex items-center justify-between border-b border-[var(--border)]/50"
-        style={{ backgroundColor: `${config.color}05` }}
-      >
+      <div className="px-3.5 py-1.5 flex items-center justify-between border-b border-[var(--border)]/50 bg-[var(--foreground)]/[0.02]">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5" style={{ color: config.color }}>
-            <config.icon size={11} className={config.label === 'PENDING' || config.label === 'PROCESSING' ? 'animate-spin' : ''} />
-            <span className="text-[8.5px] font-black uppercase tracking-widest">
-              {config.label}
-            </span>
-          </div>
+          <StatusBadge status={rawStatus} size="xs" />
 
-          {config.label === 'PENDING' && order.paymentMethod?.toLowerCase() === 'upi' && (
+          {rawStatus === 'pending' && order.paymentMethod?.toLowerCase() === 'upi' && (
             <button aria-label="button"
               onClick={handleVerify}
               disabled={verifyLoading}
@@ -147,16 +116,11 @@ export default function OrderItem({ order, index = 0 }: { order: OrderType, inde
           )}
         </div>
         
-        <div className="flex items-center gap-1 opacity-40">
+        <div className="flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
           <span className="text-[7.5px] font-bold text-[var(--foreground)] font-mono break-all leading-none max-w-[140px]">
             {order.orderId.toUpperCase()}
           </span>
-          <button aria-label="button"
-            onClick={handleCopy}
-            className="p-1 hover:text-[var(--accent)] transition-colors flex-shrink-0"
-          >
-            {copied ? <FiCheck size={10} /> : <FiCopy size={10} />}
-          </button>
+          <CopyButton text={order.orderId} size="xs" variant="ghost" className="p-0.5" />
         </div>
       </div>
 
@@ -179,17 +143,17 @@ export default function OrderItem({ order, index = 0 }: { order: OrderType, inde
           </div>
 
           <div className="flex flex-col items-end leading-none gap-2 mt-1">
-            <div className="text-base md:text-lg font-black text-[var(--foreground)]">₹{order.price}</div>
+            <div className="text-base md:text-lg font-black text-[var(--foreground)]">{formatCurrency(order.price)}</div>
             <div className="flex flex-col items-end gap-1 text-[8px] sm:text-[9px] font-bold text-[var(--muted)] uppercase text-right">
               <span className="text-[var(--accent)]">{order.paymentMethod}</span>
-              <span>{new Date(order.createdAt).toLocaleString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+              <span>{formatDateTime(order.createdAt)}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Additional info for pending UPI status */}
-      {config.label === 'PENDING' && order.paymentMethod?.toLowerCase() === 'upi' && (
+      {rawStatus === 'pending' && order.paymentMethod?.toLowerCase() === 'upi' && (
         <div className="px-3.5 pb-3.5 mt-[-4px]">
           <div className="p-2 rounded bg-amber-500/10 border border-amber-500/20">
             <p className="text-[7.5px] font-bold text-amber-600 uppercase tracking-widest leading-relaxed">

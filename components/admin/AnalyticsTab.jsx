@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { FiRefreshCw, FiGift } from "react-icons/fi";
 import { ShoppingBag, IndianRupee, Hash, ArrowUp, ArrowDown, Wallet, Zap, Users, UserPlus, Activity, Download, MousePointerClick, MessageSquare, Send, Coins, Ticket, Sparkles, TrendingUp, Database, CheckCircle, HelpCircle, Mail } from "lucide-react";
 import { motion } from "framer-motion";
+import { formatCurrency, formatNumber } from "@/utils";
 
 function CompactMetricCard({
   title,
@@ -269,12 +270,12 @@ export default function AnalyticsTab() {
           titleIcon={ShoppingBag}
           theme="emerald"
           primaryStats={[
-            { label: "Order Earnings", value: `₹${(orderStats.revenue?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0).toLocaleString()}`, icon: ShoppingBag, color: "amber" },
-            { label: "Txn Earnings", value: `₹${(txStats.volume?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0).toLocaleString()}`, icon: IndianRupee, color: "blue" }
+            { label: "Order Earnings", value: formatCurrency(orderStats.revenue?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0), icon: ShoppingBag, color: "amber" },
+            { label: "Txn Earnings", value: formatCurrency(txStats.volume?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0), icon: IndianRupee, color: "blue" }
           ]}
           footerStats={[
-            { label: `Orders: ${orderStats.counts?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0}`, color: "amber", pulseDot: days === 1 && orderStats.counts?.day > 0 },
-            { label: `Txns: ${txStats.counts?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0}`, color: "blue", pulseDot: days === 1 && txStats.counts?.day > 0 }
+            { label: `Orders: ${formatNumber(orderStats.counts?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0)}`, color: "amber", pulseDot: days === 1 && orderStats.counts?.day > 0 },
+            { label: `Txns: ${formatNumber(txStats.counts?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0)}`, color: "blue", pulseDot: days === 1 && txStats.counts?.day > 0 }
           ]}
           timeframeLabel={days === 1 ? "Today" : days === 7 ? "Week" : "Month"}
         />
@@ -285,12 +286,12 @@ export default function AnalyticsTab() {
           titleIcon={Wallet}
           theme="blue"
           primaryStats={[
-            { label: "Money Added", value: `₹${(walletStats.deposits?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0).toLocaleString()}`, icon: ArrowUp, color: "emerald", pulse: days === 1 && walletStats.deposits?.day > 0 },
-            { label: "Money Spent", value: `₹${(walletStats.usage?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0).toLocaleString()}`, icon: ArrowDown, color: "purple", pulse: days === 1 && walletStats.usage?.day > 0 }
+            { label: "Money Added", value: formatCurrency(walletStats.deposits?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0), icon: ArrowUp, color: "emerald", pulse: days === 1 && walletStats.deposits?.day > 0 },
+            { label: "Money Spent", value: formatCurrency(walletStats.usage?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0), icon: ArrowDown, color: "purple", pulse: days === 1 && walletStats.usage?.day > 0 }
           ]}
           footerStats={[
-            { label: `Customer Pool: ₹${(walletStats.totalBalance || 0).toLocaleString()}`, color: "blue" },
-            { label: `Active Wallets: ${walletStats.activeWallets}`, color: "amber" }
+            { label: `Customer Pool: ${formatCurrency(walletStats.totalBalance || 0)}`, color: "blue" },
+            { label: `Active Wallets: ${formatNumber(walletStats.activeWallets || 0)}`, color: "amber" }
           ]}
           timeframeLabel={days === 1 ? "Today" : days === 7 ? "Week" : "Month"}
         />

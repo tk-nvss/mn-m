@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import {
-    FiUsers, FiCopy, FiCheckCircle, FiLoader,
+    FiUsers, FiCheckCircle, FiLoader,
     FiGift, FiShare2, FiDownload, FiRefreshCw, FiArrowRight, FiZap
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/lib/axios";
+import { CopyButton } from "@/components/common";
 
 interface ReferralTabProps {
     userReferral?: {
@@ -21,15 +22,6 @@ export default function ReferralTab({ userReferral }: ReferralTabProps) {
     const [referralLoading, setReferralLoading] = useState(false);
     const [referralMessage, setReferralMessage] = useState("");
     const [referralSuccess, setReferralSuccess] = useState(false);
-    const [copied, setCopied] = useState(false);
-
-    const handleCopyCode = () => {
-        if (userReferral?.userId) {
-            navigator.clipboard.writeText(userReferral.userId);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        }
-    };
 
     const handleRedeemReferral = async () => {
         if (!referralCodeInput.trim()) return;
@@ -123,16 +115,13 @@ export default function ReferralTab({ userReferral }: ReferralTabProps) {
 
                 {/* Actions */}
                 <div className="grid grid-cols-2 gap-2">
-                    <button
-                        onClick={handleCopyCode}
-                        className={`h-10 rounded-xl border flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-widest transition-all ${
-                            copied
-                                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500"
-                                : "border-[var(--border)] bg-[var(--background)] text-[var(--muted)] hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)]"
-                        }`}
-                    >
-                        {copied ? <><FiCheckCircle size={12} /> Copied!</> : <><FiCopy size={12} /> Copy</>}
-                    </button>
+                    <CopyButton
+                        text={userReferral?.userId || ""}
+                        label="Copy"
+                        copiedLabel="Copied!"
+                        variant="subtle"
+                        className="h-10 text-[9px] font-black uppercase tracking-widest"
+                    />
                     <button
                         aria-label="button"
                         onClick={() => {

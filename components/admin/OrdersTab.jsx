@@ -24,6 +24,8 @@ import {
   ShoppingBag,
   Target
 } from "lucide-react";
+import { StatusBadge, SearchInput, EmptyState, Pagination } from "@/components/common";
+import { formatCurrency, formatDate, formatTime, formatDateTime } from "@/utils";
 
 export default function OrdersTab() {
   const [orders, setOrders] = useState([]);
@@ -114,29 +116,6 @@ export default function OrdersTab() {
     }
   };
 
-  const statusMeta = {
-    pending: {
-      label: "Pending",
-      class: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-      icon: <Clock size={12} />
-    },
-    success: {
-      label: "Success",
-      class: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-      icon: <CheckCircle2 size={12} />
-    },
-    failed: {
-      label: "Failed",
-      class: "bg-rose-500/10 text-rose-500 border-rose-500/20",
-      icon: <XCircle size={12} />
-    },
-    refund: {
-      label: "Refund",
-      class: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-      icon: <RefreshCcw size={12} />
-    },
-  };
-
   return (
     <div className="space-y-6 pb-10">
       {/* ================= HEADER ================= */}
@@ -163,18 +142,16 @@ export default function OrdersTab() {
 
 
       <div className="flex flex-row gap-2 mb-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]/50" size={13} />
-          <input
-            value={search}
-            onChange={(e) => {
-              setPage(1);
-              setSearch(e.target.value);
-            }}
-            placeholder="Search by Order ID, Email, Method..."
-            className="w-full h-9 pl-9 pr-4 rounded-2xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] text-xs focus:border-[var(--accent)]/50 outline-none transition-all placeholder:text-[var(--muted)]/40"
-          />
-        </div>
+        <SearchInput
+          value={search}
+          onChange={(val) => {
+            setPage(1);
+            setSearch(val);
+          }}
+          placeholder="Search by Order ID, Email, Method..."
+          loading={loading}
+          className="flex-1"
+        />
         <div className="flex gap-2">
           <button aria-label="button"
             onClick={() => setShowFilters(true)}
@@ -230,7 +207,6 @@ export default function OrdersTab() {
                 </thead>
                 <tbody className="divide-y divide-[var(--border)]">
                   {orders.map((o, idx) => {
-                    const meta = statusMeta[o.status] || statusMeta.pending;
                     return (
                       <motion.tr
                         key={o._id}
@@ -253,8 +229,8 @@ export default function OrdersTab() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex flex-col">
-                            <span className="text-[var(--foreground)] font-medium">{new Date(o.createdAt).toLocaleDateString()}</span>
-                            <span className="text-[10px] text-[var(--muted)]">{new Date(o.createdAt).toLocaleTimeString()}</span>
+                            <span className="text-[var(--foreground)] font-medium">{formatDate(o.createdAt)}</span>
+                            <span className="text-[10px] text-[var(--muted)]">{formatTime(o.createdAt)}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4 max-w-xs">
@@ -268,7 +244,7 @@ export default function OrdersTab() {
                         </td>
                         <td className="px-6 py-4">
                           <span className="text-base font-black text-emerald-500 tabular-nums">
-                            ₹{o.price}
+                            {formatCurrency(o.price)}
                           </span>
                         </td>
                         <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
@@ -294,7 +270,6 @@ export default function OrdersTab() {
             {/* MOBILE LIST */}
             <div className="lg:hidden space-y-2">
               {orders.map((o, idx) => {
-                const meta = statusMeta[o.status] || statusMeta.pending;
                 return (
                   <motion.div
                     key={o._id}
@@ -315,7 +290,7 @@ export default function OrdersTab() {
                         </div>
                       </div>
                       <div className="flex flex-col items-end">
-                        <span className="text-sm font-black text-emerald-500 tabular-nums">₹{o.price}</span>
+                        <span className="text-sm font-black text-emerald-500 tabular-nums">{formatCurrency(o.price)}</span>
                         <span className="text-[7px] font-bold text-[var(--muted)] uppercase opacity-60 tracking-tighter">{o.paymentMethod}</span>
                       </div>
                     </div>
@@ -328,8 +303,8 @@ export default function OrdersTab() {
 
                       <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
                         <div className="flex flex-col items-end mr-1">
-                          <span className="font-bold text-[var(--muted)]/60 leading-tight">{new Date(o.createdAt).toLocaleDateString()}</span>
-                          <span className="text-[8px] font-medium text-[var(--muted)]/40 leading-tight">{new Date(o.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          <span className="font-bold text-[var(--muted)]/60 leading-tight">{formatDate(o.createdAt)}</span>
+                          <span className="text-[8px] font-medium text-[var(--muted)]/40 leading-tight">{formatTime(o.createdAt)}</span>
                         </div>
                         <StatusDropdown
                           value={o.status}
@@ -351,36 +326,22 @@ export default function OrdersTab() {
             </div>
 
             {!orders.length && (
-              <div className="py-20 text-center border border-dashed border-[var(--border)] rounded-[2rem]">
-                <ShoppingBag className="mx-auto text-[var(--muted)]/20 mb-4" size={48} />
-                <p className="text-[10px] font-bold text-[var(--muted)]/40 uppercase tracking-[0.2em]">No Orders Found</p>
-              </div>
+              <EmptyState
+                icon={ShoppingBag}
+                title="No Orders Found"
+                description="Try clearing your search or adjusting the filters."
+              />
             )}
 
             {/* ================= PAGINATION ================= */}
-            {pagination.totalPages > 1 && (
-              <div className="flex items-center justify-between pt-6 border-t border-[var(--border)]">
-                <p className="text-[10px] font-bold text-[var(--muted)]/40 uppercase">
-                  Batch <b className="text-[var(--foreground)]">{pagination.page}</b> / {pagination.totalPages}
-                </p>
-                <div className="flex gap-2">
-                  <button aria-label="button"
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="px-5 py-2.5 rounded-xl border border-[var(--border)] text-[10px] font-bold uppercase text-[var(--muted)]/60 hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05] disabled:opacity-20 transition-all font-mono"
-                  >
-                    PREVIOUS
-                  </button>
-                  <button aria-label="button"
-                    onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
-                    disabled={page === pagination.totalPages}
-                    className="px-5 py-2.5 rounded-xl border border-[var(--border)] text-[10px] font-bold uppercase text-[var(--muted)]/60 hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05] disabled:opacity-20 transition-all font-mono"
-                  >
-                    NEXT
-                  </button>
-                </div>
-              </div>
-            )}
+            <Pagination
+              page={page}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.total}
+              itemLabel="Orders"
+              onPageChange={setPage}
+              variant="numbered"
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -419,7 +380,7 @@ export default function OrdersTab() {
                 <div className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-br from-[var(--card)] to-[var(--background)] border border-[var(--border)] shadow-sm">
                   <div>
                     <p className="text-[9px] font-bold text-[var(--muted)] uppercase tracking-widest mb-0.5">Settlement</p>
-                    <span className="text-2xl font-black text-emerald-500 tabular-nums leading-none">₹{selectedOrder.price}</span>
+                    <span className="text-2xl font-black text-emerald-500 tabular-nums leading-none">{formatCurrency(selectedOrder.price)}</span>
                   </div>
                   <StatusDropdown
                     value={selectedOrder.status}
@@ -453,14 +414,20 @@ export default function OrdersTab() {
 
                 <DrawerSection icon={<CreditCard size={14} />} title="Payment Info">
                   <DrawerDetail label="Payment Method" value={selectedOrder.paymentMethod} />
-                  <DrawerDetail label="Payment Status" value={selectedOrder.paymentStatus} emphasize />
-                  <DrawerDetail label="Product Status" value={selectedOrder.topupStatus} />
+                  <div className="flex items-center justify-between gap-1 group w-full py-0.5">
+                    <span className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-widest">Payment Status</span>
+                    <StatusBadge status={selectedOrder.paymentStatus} size="xs" />
+                  </div>
+                  <div className="flex items-center justify-between gap-1 group w-full py-0.5">
+                    <span className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-widest">Product Status</span>
+                    <StatusBadge status={selectedOrder.topupStatus} size="xs" />
+                  </div>
                 </DrawerSection>
 
                 <DrawerSection icon={<User size={14} />} title="Buyer Info">
                   <DrawerDetail label="Email" value={selectedOrder.email || "GUEST"} />
                   <DrawerDetail label="Phone" value={selectedOrder.phone || "N/A"} />
-                  <DrawerDetail label="Time" value={new Date(selectedOrder.createdAt).toLocaleString()} />
+                  <DrawerDetail label="Time" value={formatDateTime(selectedOrder.createdAt)} />
                 </DrawerSection>
 
                 <div className="pb-6" />

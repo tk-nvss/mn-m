@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { FiAward, FiLoader, FiChevronLeft, FiChevronRight, FiLock, FiInfo, FiX, FiCheckCircle, FiCopy, FiClock, FiChevronRight as FiArrow } from "react-icons/fi";
 import { TableRowSkeleton } from "@/components/Skeleton/Skeleton";
 import { motion, AnimatePresence } from "framer-motion";
+import { StatusBadge, CopyButton, EmptyState, Pagination } from "@/components/common";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -12,7 +13,6 @@ export default function JoinedTournaments() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedEntry, setSelectedEntry] = useState(null);
-  const [copiedKey, setCopiedKey] = useState(null);
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -34,16 +34,10 @@ export default function JoinedTournaments() {
   const totalPages = Math.ceil(entries.length / ITEMS_PER_PAGE);
   const currentItems = entries.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-  const copyToClipboard = (text, key) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 1500);
-  };
-
-  const getStatusStyle = (entry) => {
-    if (entry.isWinner) return { bg: "bg-amber-500/10 border-amber-500/25 text-amber-500", label: "🏆 Winner" };
-    if (entry.isEliminated) return { bg: "bg-rose-500/10 border-rose-500/25 text-rose-400", label: "Eliminated" };
-    return { bg: "bg-emerald-500/10 border-emerald-500/25 text-emerald-500", label: `Round ${entry.currentRound}` };
+  const getStatusInfo = (entry) => {
+    if (entry.isWinner) return { status: "completed", label: "🏆 Winner" };
+    if (entry.isEliminated) return { status: "failed", label: "Eliminated" };
+    return { status: "active", label: `Round ${entry.currentRound}` };
   };
 
   if (loading) return (
@@ -62,13 +56,11 @@ export default function JoinedTournaments() {
   );
 
   if (!entries || entries.length === 0) return (
-    <div className="py-16 text-center space-y-3 rounded-2xl border border-dashed border-[var(--border)]">
-      <div className="w-14 h-14 rounded-2xl border border-[var(--border)] flex items-center justify-center text-[var(--muted)]/30 mx-auto">
-        <FiAward size={24} />
-      </div>
-      <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)]/40">No Active Registrations</p>
-      <p className="text-[9px] text-[var(--muted)]/30 uppercase tracking-wide">You haven't joined any tournaments yet.</p>
-    </div>
+    <EmptyState
+      icon={FiAward}
+      title="No Active Registrations"
+      description="You haven't joined any tournaments yet."
+    />
   );
 
   return (
@@ -109,7 +101,7 @@ export default function JoinedTournaments() {
 
         <AnimatePresence mode="wait">
           {currentItems.map((entry, idx) => {
-            const { bg, label } = getStatusStyle(entry);
+            const statusInfo = getStatusInfo(entry);
             return (
               <motion.div
                 key={entry._id}
@@ -152,9 +144,11 @@ export default function JoinedTournaments() {
 
                 {/* Status */}
                 <div className="w-16 flex justify-end">
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-lg text-[7px] font-black uppercase tracking-tight border ${bg}`}>
-                    {label}
-                  </span>
+                  <StatusBadge
+                    status={statusInfo.status}
+                    label={statusInfo.label}
+                    size="xs"
+                  />
                 </div>
               </motion.div>
             );
@@ -163,29 +157,15 @@ export default function JoinedTournaments() {
       </div>
 
       {/* ── PAGINATION ── */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between px-1">
-          <p className="text-[8px] font-bold text-[var(--muted)]/40 uppercase tracking-widest">
-            Page {currentPage} of {totalPages}
-          </p>
-          <div className="flex items-center gap-1.5">
-            <button aria-label="button"
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="w-7 h-7 rounded-lg border border-[var(--border)] bg-[var(--card)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-25 transition-colors"
-            >
-              <FiChevronLeft size={13} />
-            </button>
-            <button aria-label="button"
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="w-7 h-7 rounded-lg border border-[var(--border)] bg-[var(--card)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-25 transition-colors"
-            >
-              <FiChevronRight size={13} />
-            </button>
-          </div>
-        </div>
-      )}
+      <Pagination
+        page={currentPage}
+        totalPages={totalPages}
+        totalItems={entries.length}
+        itemLabel="Tournaments"
+        onPageChange={setCurrentPage}
+        hideOnSinglePage
+        size="sm"
+      />
 
       {/* ── DETAIL MODAL ── */}
       <AnimatePresence>
@@ -224,13 +204,15 @@ export default function JoinedTournaments() {
               <div className="p-4 space-y-3">
                 {/* Status + Format row */}
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)]">
+                  <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] flex flex-col justify-between">
                     <p className="text-[6px] font-black uppercase tracking-widest text-[var(--muted)]/40 mb-1">Progress</p>
-                    <p className={`text-[8px] font-black uppercase ${
-                      selectedEntry.isWinner ? "text-amber-500" :
-                      selectedEntry.isEliminated ? "text-rose-400" : "text-emerald-500"}`}>
-                      {selectedEntry.isWinner ? "🏆 Winner" : selectedEntry.isEliminated ? "Eliminated" : `Round ${selectedEntry.currentRound}`}
-                    </p>
+                    <div>
+                      <StatusBadge
+                        status={selectedEntry.isWinner ? "completed" : selectedEntry.isEliminated ? "failed" : "active"}
+                        label={selectedEntry.isWinner ? "🏆 Winner" : selectedEntry.isEliminated ? "Eliminated" : `Round ${selectedEntry.currentRound}`}
+                        size="xs"
+                      />
+                    </div>
                   </div>
                   <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)]">
                     <p className="text-[6px] font-black uppercase tracking-widest text-[var(--muted)]/40 mb-1">Format</p>
@@ -274,12 +256,7 @@ export default function JoinedTournaments() {
                           <div className="flex items-center gap-2">
                             <span className="text-[9px] font-mono font-bold text-[var(--foreground)]">{value}</span>
                             {value !== "None" && (
-                              <button aria-label="button" onClick={() => copyToClipboard(value, key)}>
-                                {copiedKey === key
-                                  ? <FiCheckCircle size={10} className="text-emerald-500" />
-                                  : <FiCopy size={10} className="text-[var(--muted)]/40 hover:text-[var(--accent)] transition-colors" />
-                                }
-                              </button>
+                              <CopyButton text={String(value)} size="xs" variant="ghost" className="p-0.5" />
                             )}
                           </div>
                         </div>

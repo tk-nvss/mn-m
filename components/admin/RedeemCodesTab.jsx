@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FiGift, FiPlus, FiCopy, FiCheck, FiClock, FiUser, FiTrash2, FiZap, FiHash, FiType } from "react-icons/fi";
+import { FiGift, FiPlus, FiClock, FiUser, FiTrash2, FiZap, FiHash, FiType } from "react-icons/fi";
+import { StatusBadge, CopyButton } from "@/components/common";
+import { formatCurrency, formatDate, formatDateTime } from "@/utils";
 
 export default function RedeemCodesTab() {
     const [amount, setAmount] = useState("");
@@ -12,7 +14,6 @@ export default function RedeemCodesTab() {
     const [maxUses, setMaxUses] = useState("");
     const [isGenerating, setIsGenerating] = useState(false);
     const [recentCodes, setRecentCodes] = useState([]);
-    const [copiedCode, setCopiedCode] = useState(null);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [pagination, setPagination] = useState({ total: 0, pages: 1, limit: 10 });
@@ -99,12 +100,6 @@ export default function RedeemCodesTab() {
         } catch (err) {
             alert("Could not expire code.");
         }
-    };
-
-    const copyToClipboard = (code) => {
-        navigator.clipboard.writeText(code);
-        setCopiedCode(code);
-        setTimeout(() => setCopiedCode(null), 2000);
     };
 
     return (
@@ -256,9 +251,7 @@ export default function RedeemCodesTab() {
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2">
                                             <span className="font-mono font-black text-[var(--accent)] tracking-tighter uppercase">{code.code}</span>
-                                            <button aria-label="button" onClick={() => copyToClipboard(code.code)} className="opacity-0 group-hover:opacity-40 hover:!opacity-100 transition-all text-[var(--muted)]">
-                                                {copiedCode === code.code ? <FiCheck size={12} /> : <FiCopy size={12} />}
-                                            </button>
+                                            <CopyButton text={code.code} size="xs" variant="ghost" className="opacity-40 group-hover:opacity-100" />
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -270,7 +263,7 @@ export default function RedeemCodesTab() {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="font-black text-[var(--foreground)] tabular-nums">₹{code.value}</span>
+                                        <span className="font-black text-[var(--foreground)] tabular-nums">{formatCurrency(code.value)}</span>
                                     </td>
                                     <td className="px-6 py-4">
                                         {code.isSeries ? (
@@ -286,12 +279,7 @@ export default function RedeemCodesTab() {
                                                 </span>
                                             </div>
                                         ) : (
-                                            <div className="flex items-center gap-1.5">
-                                                <div className={`w-1.5 h-1.5 rounded-full ${code.status === "active" ? "bg-emerald-500 animate-pulse" : "bg-rose-500"}`} />
-                                                <span className={`text-[9px] font-black uppercase tracking-tighter ${code.status === "active" ? "text-emerald-500" : "text-rose-500"}`}>
-                                                    {code.status}
-                                                </span>
-                                            </div>
+                                            <StatusBadge status={code.status} size="xs" />
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
@@ -338,14 +326,12 @@ export default function RedeemCodesTab() {
                                     <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/40">Redeem Code</span>
                                     <div className="flex items-center gap-2">
                                         <span className="text-sm font-black text-[var(--accent)] uppercase tracking-tighter">{code.code}</span>
-                                        <button aria-label="button" onClick={() => copyToClipboard(code.code)} className="text-[var(--muted)]">
-                                            {copiedCode === code.code ? <FiCheck size={14} /> : <FiCopy size={14} />}
-                                        </button>
+                                        <CopyButton text={code.code} size="sm" variant="ghost" />
                                     </div>
                                 </div>
                                 <div className="text-right">
                                     <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/40">Value</span>
-                                    <p className="text-base font-black text-[var(--foreground)] italic tracking-tighter">₹{code.value}</p>
+                                    <p className="text-base font-black text-[var(--foreground)] italic tracking-tighter">{formatCurrency(code.value)}</p>
                                 </div>
                             </div>
 
@@ -360,9 +346,7 @@ export default function RedeemCodesTab() {
                                             {code.claimedBy?.length || 0} / {code.maxUses} Uses
                                         </span>
                                     ) : (
-                                        <span className={`text-[9px] font-black uppercase ${code.status === 'active' ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                            {code.status}
-                                        </span>
+                                        <StatusBadge status={code.status} size="xs" />
                                     )}
                                     {(code.status === 'active' || code.isSeries) && (
                                         <button aria-label="button" onClick={() => handleExpire(code._id)} className="text-rose-500/40 hover:text-rose-500 transition-colors">

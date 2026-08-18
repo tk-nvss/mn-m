@@ -26,6 +26,8 @@ import {
   Tag,
   Plus
 } from "lucide-react";
+import { SearchInput, StatusBadge, CopyButton, EmptyState, Pagination } from "@/components/common";
+import { formatDate, formatDateTime, formatCurrency, formatNumber } from "@/utils";
 
 export default function UsersTab() {
   const [users, setUsers] = useState([]);
@@ -249,18 +251,16 @@ export default function UsersTab() {
 
       {/* ================= SEARCH & FILTERS ================= */}
       <div className="flex gap-2 items-center">
-        <div className="relative flex-1 min-w-0">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-50" size={14} />
-          <input
-            value={search}
-            onChange={(e) => {
-              setPage(1);
-              setSearch(e.target.value);
-            }}
-            placeholder="SEARCH USERS..."
-            className="w-full h-9 pl-9 pr-4 rounded-2xl border border-[var(--border)] bg-[var(--background)] outline-none text-[10px] font-bold tracking-widest uppercase focus:border-[var(--accent)]/50 transition-colors font-sans text-[var(--foreground)] placeholder:text-[var(--muted)]/40 text-ellipsis"
-          />
-        </div>
+        <SearchInput
+          value={search}
+          onChange={(val) => {
+            setPage(1);
+            setSearch(val);
+          }}
+          placeholder="SEARCH USERS..."
+          loading={loading}
+          className="flex-1 min-w-0"
+        />
         <div className="flex gap-2 shrink-0">
           <button aria-label="button"
             onClick={() => setShowFilters(true)}
@@ -468,36 +468,22 @@ export default function UsersTab() {
             </div>
 
             {!users.length && (
-              <div className="py-24 text-center border border-dashed border-[var(--border)] rounded-[2rem]">
-                <Users className="mx-auto text-[var(--muted)]/20 mb-4" size={48} />
-                <p className="text-sm font-medium text-[var(--muted)]">No users found matching your search.</p>
-              </div>
+              <EmptyState
+                icon={Users}
+                title="No Users Found"
+                description="No users matched your search criteria."
+              />
             )}
 
             {/* ================= PAGINATION ================= */}
-            {pagination.totalPages > 1 && (
-              <div className="flex items-center justify-between pt-8 border-t border-[var(--border)]">
-                <p className="text-xs font-semibold text-[var(--muted)]">
-                  Page {pagination.page} of {pagination.totalPages}
-                </p>
-                <div className="flex gap-2">
-                  <button aria-label="button"
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="px-4 py-2 rounded-xl border border-[var(--border)] text-xs font-semibold text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.04] disabled:opacity-20 transition-all outline-none"
-                  >
-                    Previous
-                  </button>
-                  <button aria-label="button"
-                    onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
-                    disabled={page === pagination.totalPages}
-                    className="px-4 py-2 rounded-xl border border-[var(--border)] text-xs font-semibold text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.04] disabled:opacity-20 transition-all outline-none"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            )}
+            <Pagination
+              page={page}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.total}
+              itemLabel="Users"
+              onPageChange={setPage}
+              variant="numbered"
+            />
           </motion.div>
         )}
       </AnimatePresence>

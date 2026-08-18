@@ -15,6 +15,7 @@ import {
     WifiOff,
     Clock
 } from "lucide-react";
+import { StatusBadge } from "@/components/common";
 
 export default function ApiKeysTab() {
     const [keys, setKeys] = useState([]);
@@ -126,9 +127,7 @@ export default function ApiKeysTab() {
                                                 <div className="flex flex-col gap-1.5">
                                                     <div className="flex items-center gap-2">
                                                         <span className="text-xs font-bold text-[var(--foreground)]">{k.name}</span>
-                                                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border ${k.status === 'active' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border-rose-500/20'}`}>
-                                                            {k.status}
-                                                        </span>
+                                                        <StatusBadge status={k.status} size="xs" variant="rounded" />
                                                     </div>
                                                     <div className="flex items-center gap-1.5 font-mono text-[10px] text-[var(--muted)] bg-[var(--foreground)]/[0.03] w-fit px-2 py-1 rounded-md border border-[var(--border)]">
                                                         <Shield size={10} />
@@ -157,15 +156,9 @@ export default function ApiKeysTab() {
                                             {/* 24h Activity Status */}
                                             <td className="px-6 py-5">
                                                 {k.hasRecentOrder ? (
-                                                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
-                                                        <Wifi size={12} className="animate-pulse" />
-                                                        <span className="text-[10px] font-black uppercase tracking-widest">Active</span>
-                                                    </div>
+                                                    <StatusBadge status="active" label="Active" size="sm" pulse />
                                                 ) : (
-                                                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--foreground)]/10 border border-[var(--border)] text-[var(--muted)]/60">
-                                                        <WifiOff size={12} />
-                                                        <span className="text-[10px] font-black uppercase tracking-widest">Inactive</span>
-                                                    </div>
+                                                    <StatusBadge status="inactive" label="Inactive" size="sm" />
                                                 )}
                                             </td>
 
@@ -210,12 +203,9 @@ export default function ApiKeysTab() {
                                             </div>
                                         </div>
                                         {k.hasRecentOrder ? (
-                                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 font-black">
-                                                <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                                                <span className="text-[8px] uppercase tracking-widest">Active</span>
-                                            </div>
+                                            <StatusBadge status="active" label="Active" size="xs" pulse />
                                         ) : (
-                                            <div className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/40 px-2">Offline</div>
+                                            <StatusBadge status="inactive" label="Offline" size="xs" />
                                         )}
                                     </div>
 

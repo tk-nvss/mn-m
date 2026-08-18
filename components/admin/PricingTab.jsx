@@ -17,7 +17,8 @@ import {
   Loader2,
   Package
 } from "lucide-react";
-import { FiSearch, FiRefreshCw, FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiRefreshCw, FiPlus, FiTrash2 } from "react-icons/fi";
+import { SearchInput } from "@/components/common";
 
 const API_BASE = "https://game-off-ten.vercel.app/api/v1";
 
@@ -296,16 +297,13 @@ export default function PricingTab({
                 <h3 className="text-xs font-black uppercase tracking-widest text-[var(--muted)]">Games</h3>
                 <Gamepad2 size={14} className="text-[var(--accent)]" />
               </div>
-              <div className="relative">
-                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]/40 text-xs" />
-                <input
-                  type="text"
-                  placeholder="Search games..."
-                  value={gameSearch}
-                  onChange={(e) => setGameSearch(e.target.value)}
-                  className="w-full bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-xl pl-9 pr-3 py-2 text-xs font-bold outline-none focus:border-[var(--accent)]/40 transition-all"
-                />
-              </div>
+              {/* Search Games */}
+              <SearchInput
+                placeholder="Search games..."
+                value={gameSearch}
+                onChange={setGameSearch}
+                size="sm"
+              />
             </div>
 
             <div className="flex-1 overflow-y-auto max-h-[500px] lg:max-h-none space-y-1 p-1 rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 custom-scrollbar">

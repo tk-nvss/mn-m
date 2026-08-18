@@ -19,6 +19,7 @@ import { useSearchParams } from "next/navigation";
 import api from "@/lib/axios";
 import { Suspense, useRef } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
+import { LoadingSpinner } from "@/components/common";
 
 
 
@@ -314,7 +315,7 @@ function AuthContent() {
                       className="w-full relative overflow-hidden group/btn bg-[var(--accent)] text-white font-black uppercase tracking-widest py-3 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_10px_20px_-5px_rgba(var(--accent-rgb),0.3)]"
                     >
                     {loading ? (
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <LoadingSpinner size="md" color="white" />
                     ) : (
                       <>
                         <span className="relative z-10 flex items-center gap-2">

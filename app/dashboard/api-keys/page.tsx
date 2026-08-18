@@ -2,11 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-    FiPlus, FiTrash2, FiCopy, FiCheck, FiKey, FiLock,
-    FiAlertCircle, FiRefreshCw, FiShield, FiGlobe,
-    FiEdit2, FiSave, FiX, FiBarChart, FiMapPin
-} from "react-icons/fi";
+import { FiKey, FiPlus, FiTrash2, FiCopy, FiCheck, FiCode, FiExternalLink, FiShield, FiAlertTriangle, FiBookOpen, FiTerminal, FiDatabase, FiRefreshCw, FiZap, FiLock, FiInfo, FiLayers } from "react-icons/fi";
+import { CopyButton, LoadingSpinner } from "@/components/common";
 import Link from "next/link";
 import { useUser } from "../layout";
 import { ApiKeySkeleton } from "../../../components/Skeleton/Skeleton";
@@ -186,7 +183,7 @@ export default function ApiKeysPage() {
                                     disabled={isCreating || !newKeyName.trim()}
                                     className="px-4 py-2 rounded-xl bg-[var(--accent)] text-black font-black italic uppercase text-xs flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50"
                                 >
-                                    {isCreating ? <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" /> : <FiPlus />}
+                                    {isCreating ? <LoadingSpinner size="sm" color="current" /> : <FiPlus />}
                                     Create Key
                                 </button>
                             </form>

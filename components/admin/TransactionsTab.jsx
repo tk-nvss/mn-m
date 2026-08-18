@@ -22,6 +22,8 @@ import {
   Smartphone,
   ShoppingBag
 } from "lucide-react";
+import { EmptyState, StatusBadge, SearchInput, Pagination } from "@/components/common";
+import { formatCurrency, formatDate, formatTime, formatDateTime } from "@/utils";
 
 export default function TransactionsTab() {
   const [transactions, setTransactions] = useState([]);
@@ -278,36 +280,22 @@ export default function TransactionsTab() {
             </div>
 
             {!transactions.length && (
-              <div className="py-20 text-center border border-dashed border-[var(--border)] rounded-[2rem]">
-                <Hash className="mx-auto text-[var(--muted)]/20 mb-4" size={48} />
-                <p className="text-[10px] font-bold text-[var(--muted)]/40 uppercase tracking-[0.2em]">No Transactions Found</p>
-              </div>
+              <EmptyState
+                icon={Hash}
+                title="No Transactions Found"
+                description="No transaction records match your query."
+              />
             )}
 
             {/* ================= PAGINATION ================= */}
-            {pagination.totalPages > 1 && (
-              <div className="flex items-center justify-between pt-6 border-t border-[var(--border)]">
-                <p className="text-[10px] font-bold text-[var(--muted)]/40 uppercase">
-                  Listing <b className="text-[var(--foreground)]">{pagination.page}</b> / {pagination.totalPages}
-                </p>
-                <div className="flex gap-2">
-                  <button aria-label="button"
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="px-5 py-2.5 rounded-xl border border-[var(--border)] text-[10px] font-bold uppercase text-[var(--muted)]/60 hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05] disabled:opacity-20 transition-all font-mono"
-                  >
-                    PREV
-                  </button>
-                  <button aria-label="button"
-                    onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
-                    disabled={page === pagination.totalPages}
-                    className="px-5 py-2.5 rounded-xl border border-[var(--border)] text-[10px] font-bold uppercase text-[var(--muted)]/60 hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05] disabled:opacity-20 transition-all font-mono"
-                  >
-                    NEXT
-                  </button>
-                </div>
-              </div>
-            )}
+            <Pagination
+              page={page}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.total}
+              itemLabel="Transactions"
+              onPageChange={setPage}
+              variant="numbered"
+            />
           </motion.div>
         )}
       </AnimatePresence>

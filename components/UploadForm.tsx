@@ -6,6 +6,7 @@ import {
   FaVideo,
   FaCheckCircle,
 } from "react-icons/fa";
+import { LoadingSpinner } from "@/components/common";
 
 export default function UploadForm() {
   const [file, setFile] = useState<File | null>(null);
@@ -107,7 +108,7 @@ export default function UploadForm() {
         >
           {loading ? (
             <span className="flex items-center gap-2">
-              <span className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin" />
+              <LoadingSpinner size="sm" color="white" />
               Uploading...
             </span>
           ) : (
