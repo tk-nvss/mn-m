@@ -94,6 +94,7 @@ import {
   Layers,
   Palette,
   MessageSquare,
+  MessageCircle,
   Send,
   Database,
   Smartphone,
@@ -230,6 +231,7 @@ export const Icons = {
   layers: Layers,
   palette: Palette,
   message: MessageSquare,
+  messageCircle: MessageCircle,
   send: Send,
   database: Database,
   smartphone: Smartphone,
@@ -303,6 +305,7 @@ export {
   FaTelegram as TelegramIcon,
   FaWhatsapp as WhatsAppIcon,
   FaInstagram as InstagramIcon,
+  MessageCircle,
 };
 
 export default Icons;

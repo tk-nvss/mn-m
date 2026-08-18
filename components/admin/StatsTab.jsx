@@ -24,6 +24,8 @@ import {
 } from "react-icons/fi";
 import { Loader2, Zap, ArrowUpRight, ArrowDownRight, User, Wallet, ChevronDown, ChevronUp, RefreshCcw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Pagination, SearchInput, StatusBadge } from "@/components/common";
+import { formatCurrency, formatDate, formatDateTime } from "@/utils";
 
 export default function StatsTab() {
     const [loading, setLoading] = useState(true);
@@ -370,13 +372,12 @@ export default function StatsTab() {
 
                                 <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-3">
                                     {/* SEARCH */}
-                                    <div className="sm:col-span-6 relative">
-                                        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/70" size={14} />
-                                        <input
+                                    <div className="sm:col-span-6">
+                                        <SearchInput
                                             value={historySearch}
-                                            onChange={(e) => { setHistorySearch(e.target.value); setHistoryPage(1); }}
+                                            onChange={(val) => { setHistorySearch(val); setHistoryPage(1); }}
                                             placeholder="Search transactions..."
-                                            className="w-full h-10 md:h-11 pl-10 pr-4 rounded-full bg-[var(--card)] border border-[var(--border)] text-xs sm:text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)] transition-all placeholder:text-[var(--muted)]/40 hover:bg-[var(--foreground)]/[0.01]"
+                                            size="sm"
                                         />
                                     </div>
                                     <div className="sm:col-span-6 grid grid-cols-2 gap-2 sm:gap-3">
@@ -646,26 +647,14 @@ export default function StatsTab() {
                             </div>
 
                             {/* Pagination History */}
-                            <div className="flex items-center justify-between px-2 sm:px-0 pt-2 border-t border-[var(--border)]">
-                                <span className="text-xs text-[var(--muted)]">
-                                    Page {historyPage} of {historyTotalPages}
-                                </span>
-                                <div className="flex gap-2">
-                                    <button aria-label="button"
-                                        disabled={historyPage === 1}
-                                        onClick={() => setHistoryPage(p => Math.max(1, p - 1))}
-                                        className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                                    >
-                                        <FiChevronLeft size={14} />
-                                    </button>
-                                    <button aria-label="button"
-                                        disabled={historyPage === historyTotalPages}
-                                        onClick={() => setHistoryPage(p => Math.min(historyTotalPages, p + 1))}
-                                        className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                                    >
-                                        <FiChevronRight size={14} />
-                                    </button>
-                                </div>
+                            <div className="pt-2 border-t border-[var(--border)] flex justify-end">
+                                <Pagination
+                                    page={historyPage}
+                                    totalPages={historyTotalPages}
+                                    onPageChange={setHistoryPage}
+                                    size="sm"
+                                    hideOnSinglePage
+                                />
                             </div>
                         </div>
                     )}
@@ -832,33 +821,16 @@ export default function StatsTab() {
                             </div>
 
                             {/* Pagination Wallets */}
-                            <div className="flex items-center justify-between px-2 sm:px-0 pt-6 border-t border-[var(--border)]">
-                                <span className="text-xs font-semibold text-[var(--muted)]">
-                                    Displaying <span className="text-[var(--foreground)]">{data.wallets.length}</span> results
-                                </span>
-                                <div className="flex items-center gap-4">
-                                    <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-widest hidden sm:block">
-                                        Page {data.pagination?.page || 1} / {data.pagination?.totalPages || 1}
-                                    </span>
-                                    <div className="flex gap-2">
-                                        <button aria-label="button"
-                                            disabled={!data.pagination || data.pagination.page === 1}
-                                            onClick={() => setWalletPage(p => Math.max(1, p - 1))}
-                                            className="h-9 px-4 rounded-xl border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.03] disabled:opacity-20 disabled:cursor-not-allowed transition-all flex items-center gap-2 text-xs font-bold"
-                                        >
-                                            <FiChevronLeft size={16} />
-                                            Prev
-                                        </button>
-                                        <button aria-label="button"
-                                            disabled={!data.pagination || data.pagination.page === data.pagination.totalPages}
-                                            onClick={() => setWalletPage(p => Math.min(data.pagination?.totalPages || 1, p + 1))}
-                                            className="h-9 px-4 rounded-xl border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.03] disabled:opacity-20 disabled:cursor-not-allowed transition-all flex items-center gap-2 text-xs font-bold"
-                                        >
-                                            Next
-                                            <FiChevronRight size={16} />
-                                        </button>
-                                    </div>
-                                </div>
+                            <div className="pt-6 border-t border-[var(--border)] flex justify-end">
+                                <Pagination
+                                    page={data.pagination?.page || 1}
+                                    totalPages={data.pagination?.totalPages || 1}
+                                    totalItems={data.pagination?.total || data.wallets.length}
+                                    itemLabel="Wallets"
+                                    onPageChange={setWalletPage}
+                                    size="sm"
+                                    hideOnSinglePage
+                                />
                             </div>
                         </div>
                     )}

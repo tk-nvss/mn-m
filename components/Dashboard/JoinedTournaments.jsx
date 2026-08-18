@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FiAward, FiLoader, FiChevronLeft, FiChevronRight, FiLock, FiInfo, FiX, FiCheckCircle, FiCopy, FiClock, FiChevronRight as FiArrow } from "react-icons/fi";
+import { FiAward, FiLock, FiInfo, FiX, FiCheckCircle, FiClock, FiChevronRight as FiArrow } from "react-icons/fi";
 import { TableRowSkeleton } from "@/components/Skeleton/Skeleton";
 import { motion, AnimatePresence } from "framer-motion";
 import { StatusBadge, CopyButton, EmptyState, Pagination } from "@/components/common";
+import { Icons } from "@/components/icons";
+import { formatDate, formatTime, formatCurrency } from "@/utils";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -135,10 +137,10 @@ export default function JoinedTournaments() {
                 {/* Time */}
                 <div className="flex flex-col items-center w-14">
                   <span className="text-[8px] font-black text-[var(--foreground)] uppercase">
-                    {entry.tournamentId?.startsAt ? new Date(entry.tournamentId.startsAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "TBA"}
+                    {entry.tournamentId?.startsAt ? formatTime(entry.tournamentId.startsAt) : "TBA"}
                   </span>
                   <span className="text-[6px] text-[var(--muted)]/40 uppercase tracking-tight">
-                    {entry.tournamentId?.startsAt ? new Date(entry.tournamentId.startsAt).toLocaleDateString([], { month: 'short', day: 'numeric' }) : "Date TBA"}
+                    {entry.tournamentId?.startsAt ? formatDate(entry.tournamentId.startsAt) : "Date TBA"}
                   </span>
                 </div>
 
@@ -225,10 +227,10 @@ export default function JoinedTournaments() {
                   <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)]">
                     <p className="text-[6px] font-black uppercase tracking-widest text-[var(--muted)]/40 mb-1">Game Time</p>
                     <p className="text-[8px] font-black text-[var(--foreground)]">
-                      {selectedEntry.tournamentId?.startsAt ? new Date(selectedEntry.tournamentId.startsAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "TBA"}
+                      {selectedEntry.tournamentId?.startsAt ? formatTime(selectedEntry.tournamentId.startsAt) : "TBA"}
                     </p>
                     <p className="text-[7px] text-[var(--muted)]/40 mt-0.5">
-                      {selectedEntry.tournamentId?.startsAt ? new Date(selectedEntry.tournamentId.startsAt).toLocaleDateString([], { month: 'short', day: 'numeric' }) : "Date TBA"}
+                      {selectedEntry.tournamentId?.startsAt ? formatDate(selectedEntry.tournamentId.startsAt) : "Date TBA"}
                     </p>
                   </div>
                   <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)]">

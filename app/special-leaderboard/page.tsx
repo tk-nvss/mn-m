@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import AuthGuard from "@/components/AuthGuard";
+import { LoadingSpinner, EmptyState } from "@/components/common";
+import { Icons } from "@/components/icons";
+import { formatCurrency, formatNumber } from "@/utils";
 
 export default function SpecialLeaderboard() {
   const [data, setData] = useState<any[]>([]);
@@ -186,8 +189,8 @@ export default function SpecialLeaderboard() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <div className="w-10 h-10 border-2 border-[var(--border)] border-t-rose-500 rounded-full animate-spin mb-4" />
-                <span className="text-[10px] font-black tracking-widest text-[var(--muted)] uppercase italic">Counting Roses...</span>
+                <LoadingSpinner size="xl" color="accent" />
+                <span className="text-[10px] font-black tracking-widest text-[var(--muted)] uppercase italic mt-4">Counting Roses...</span>
               </motion.div>
             ) : (
               <div className="space-y-24">
@@ -238,8 +241,7 @@ export default function SpecialLeaderboard() {
                         </h2>
 
                         <div className="text-5xl md:text-8xl font-[900] text-[var(--foreground)] mb-12 tracking-tighter flex items-center gap-1 italic">
-                          <span className="text-rose-500 drop-shadow-[0_0_20px_rgba(244,63,94,0.4)]">₹</span>
-                          {data[0]?.totalSpent?.toLocaleString()}
+                          <span>{formatCurrency(data[0]?.totalSpent || 0)}</span>
                         </div>
 
                         <div className="bg-[var(--background)] border border-[var(--border)] px-10 py-3 rounded-full shadow-lg hover:scale-105 transition-all">
@@ -284,8 +286,7 @@ export default function SpecialLeaderboard() {
 
                       <div className="text-right">
                         <div className="text-[var(--foreground)] font-[900] text-2xl md:text-3xl italic tracking-tighter group-hover:scale-110 transition-transform origin-right">
-                          <span className="text-rose-500 mr-1 italic">₹</span>
-                          {item.totalSpent?.toLocaleString()}
+                          <span>{formatCurrency(item.totalSpent)}</span>
                         </div>
                       </div>
                     </motion.div>

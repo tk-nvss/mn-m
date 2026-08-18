@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiGift, FiLoader, FiCheckCircle, FiXCircle, FiArrowRight, FiShield, FiStar } from "react-icons/fi";
+import { LoadingSpinner } from "@/components/common";
+import { Icons } from "@/components/icons";
 
 interface RedeemTabProps {
     setWalletBalance: (balance: number) => void;
@@ -62,7 +63,7 @@ export default function RedeemTab({ setWalletBalance }: RedeemTabProps) {
                 {/* Title block */}
                 <div>
                     <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[var(--border)] bg-[var(--background)] mb-3">
-                        <FiGift size={9} className="text-[var(--muted)]" />
+                        <Icons.gift size={10} className="text-[var(--muted)]" />
                         <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]">Redeem</span>
                     </div>
                     <h1 className="text-3xl font-black uppercase tracking-tight text-[var(--foreground)] leading-none">
@@ -102,11 +103,11 @@ export default function RedeemTab({ setWalletBalance }: RedeemTabProps) {
                         className="w-full h-12 rounded-xl bg-[var(--foreground)] text-[var(--background)] font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 disabled:opacity-25 hover:opacity-90 transition-opacity"
                     >
                         {loading ? (
-                            <FiLoader className="animate-spin" size={15} />
+                            <LoadingSpinner size="xs" color="current" />
                         ) : (
                             <>
                                 <span>Add to Wallet</span>
-                                <FiArrowRight size={13} />
+                                <Icons.arrowRight size={13} />
                             </>
                         )}
                     </motion.button>
@@ -125,7 +126,7 @@ export default function RedeemTab({ setWalletBalance }: RedeemTabProps) {
                                     : 'bg-rose-500/8 border-rose-500/25 text-rose-500'
                             }`}
                         >
-                            {status.type === 'success' ? <FiCheckCircle size={14} /> : <FiXCircle size={14} />}
+                            {status.type === 'success' ? <Icons.checkCircle size={14} /> : <Icons.alertCircle size={14} />}
                             <span>{status.message}</span>
                         </motion.div>
                     )}
@@ -170,7 +171,7 @@ export default function RedeemTab({ setWalletBalance }: RedeemTabProps) {
                 transition={{ delay: 0.2 }}
                 className="flex items-center justify-center gap-2 py-2"
             >
-                <FiShield size={10} className="text-[var(--muted)]/30" />
+                <Icons.shield size={10} className="text-[var(--muted)]/30" />
                 <p className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/30">
                     Safe &amp; Secure · No expiry on active codes
                 </p>

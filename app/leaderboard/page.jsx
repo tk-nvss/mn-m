@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthGuard from "@/components/AuthGuard";
 import { FiUsers, FiDollarSign } from "react-icons/fi";
+import { LoadingSpinner, EmptyState } from "@/components/common";
+import { Icons } from "@/components/icons";
+import { formatCurrency, formatNumber } from "@/utils";
 
 export default function LeaderboardPage() {
   const [data, setData] = useState([]);
@@ -113,23 +116,21 @@ export default function LeaderboardPage() {
           <AnimatePresence mode="wait">
             {loading ? (
               <motion.div
+                key="loading"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="flex flex-col items-center justify-center py-24"
               >
-                <div className="w-8 h-8 border-2 border-[var(--border)] border-t-[var(--accent)] rounded-full animate-spin mb-4" />
-                <span className="text-[9px] font-black tracking-widest text-[var(--muted)] uppercase opacity-40 italic">Loading...</span>
+                <LoadingSpinner size="lg" color="accent" />
+                <span className="text-[9px] font-black tracking-widest text-[var(--muted)] uppercase opacity-40 italic mt-3">Loading...</span>
               </motion.div>
             ) : data.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-center py-24 text-[var(--muted)] font-black uppercase tracking-[0.3em] text-[11px] italic opacity-20 transition-opacity"
-              >
-                No one here yet
-              </motion.div>
+              <EmptyState
+                icon={Icons.award}
+                title="No Leaders Yet"
+                description="Be the first to claim the top spot!"
+              />
             ) : (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -178,13 +179,10 @@ export default function LeaderboardPage() {
                     <div className="text-right ml-4">
                       <div className={`font-black italic tracking-tighter transition-all origin-right flex items-center justify-end ${index === 0 ? "text-3xl text-[var(--foreground)]" : "text-xl text-[var(--foreground)] group-hover:scale-110"}`}>
                         {type === "purchase" ? (
-                          <>
-                            <span className="text-[var(--accent)] mr-1">₹</span>
-                            {item.totalSpent?.toLocaleString()}
-                          </>
+                          <span>{formatCurrency(item.totalSpent)}</span>
                         ) : (
                           <>
-                            <span className="text-[var(--accent)] mr-2">{item.referralCount}</span>
+                            <span className="text-[var(--accent)] mr-2">{formatNumber(item.referralCount)}</span>
                             <span className="text-[9px] font-bold text-[var(--muted)] uppercase tracking-widest opacity-60 self-center mt-1">Ref</span>
                           </>
                         )}

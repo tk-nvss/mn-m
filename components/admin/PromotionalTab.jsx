@@ -20,6 +20,7 @@ import {
   RefreshCcw,
   Info
 } from "lucide-react";
+import { SearchInput, Pagination, LoadingSpinner } from "@/components/common";
 
 export default function PromotionalTab() {
   const [users, setUsers] = useState([]);
@@ -489,44 +490,31 @@ export default function PromotionalTab() {
             </button>
           </div>
 
-          <div className="relative group px-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-50" size={14} />
-            <input
-              type="text"
+          <div className="px-1">
+            <SearchInput
               placeholder="Search by name or email..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-9 pl-9 pr-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs outline-none transition-colors placeholder:text-[var(--muted)]/40 text-[var(--foreground)] focus:border-[var(--accent)]/50"
+              onChange={setSearch}
+              size="sm"
             />
           </div>
 
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] flex items-center gap-2">
-              Showing {users.length} of {totalRecords} Records
-            </h3>
-            <div className="flex items-center gap-2">
-              <button aria-label="button" 
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="p-2 rounded-xl bg-[var(--foreground)]/[0.05] hover:bg-[var(--foreground)]/[0.1] disabled:opacity-20 transition-all"
-              >
-                 <RefreshCcw size={14} className="-rotate-90" />
-              </button>
-              <span className="text-[10px] font-black text-[var(--foreground)]">Page {page} / {totalPages}</span>
-              <button aria-label="button" 
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="p-2 rounded-xl bg-[var(--foreground)]/[0.05] hover:bg-[var(--foreground)]/[0.1] disabled:opacity-20 transition-all"
-              >
-                 <RefreshCcw size={14} className="rotate-90" />
-              </button>
-            </div>
+          <div className="px-1 flex justify-end">
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              totalItems={totalRecords}
+              itemLabel="Records"
+              onPageChange={setPage}
+              size="sm"
+              hideOnSinglePage
+            />
           </div>
 
           <div className="h-[450px] overflow-y-auto border border-[var(--border)] rounded bg-[var(--background)] custom-scrollbar">
             {loading ? (
               <div className="h-full flex flex-col items-center justify-center space-y-3">
-                <Loader2 className="animate-spin text-[var(--accent)]" size={24} />
+                <LoadingSpinner size="lg" color="accent" />
                 <p className="text-[10px] uppercase tracking-widest font-bold text-[var(--muted)]">Loading contact list...</p>
               </div>
             ) : filteredUsers.length > 0 ? (

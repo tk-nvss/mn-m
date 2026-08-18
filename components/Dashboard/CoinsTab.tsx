@@ -698,11 +698,12 @@ export default function CoinsTab() {
                 </div>
 
                 {history.length === 0 ? (
-                  <div className="text-center py-12 text-[var(--muted)]/40">
-                    <FiList className="text-3xl mx-auto mb-2" />
-                    <p className="text-[10px] font-black uppercase tracking-wide">No transactions yet</p>
-                    <p className="text-[9px] mt-1">Complete tasks or check in to earn coins!</p>
-                  </div>
+                  <EmptyState
+                    icon={Icons.list}
+                    title="No Transactions Yet"
+                    description="Complete tasks or check in daily to earn BBC Coins!"
+                    size="sm"
+                  />
                 ) : (
                   <div className="space-y-2">
                     {history.map((item, idx) => (

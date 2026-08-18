@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { FaTrash, FaPlus, FaShieldAlt } from "react-icons/fa";
+import { LoadingSpinner, EmptyState } from "@/components/common";
+import { Icons } from "@/components/icons";
+import { formatDateTime } from "@/utils";
 
 export default function BlocklistTab() {
   const { token, user } = useAuthStore();
@@ -176,7 +179,7 @@ export default function BlocklistTab() {
               disabled={submitting}
               className="w-full flex items-center justify-center gap-2 bg-[var(--accent)] text-white font-black uppercase tracking-widest text-[10px] py-4 rounded-xl transition-all shadow-lg shadow-[var(--accent)]/20 active:scale-[0.98] disabled:opacity-50 mt-4"
             >
-              <FaPlus className="text-sm" />
+              {submitting ? <LoadingSpinner size="xs" color="white" /> : <Icons.plus className="text-sm" />}
               {submitting ? "Adding..." : "Add to Blocklist"}
             </button>
           </form>
@@ -205,21 +208,25 @@ export default function BlocklistTab() {
           </div>
 
           {loading ? (
-            <div className="text-center py-20 text-[var(--muted)] text-[10px] font-bold uppercase tracking-widest animate-pulse">Loading blocklist...</div>
-          ) : filteredItems.length === 0 ? (
-            <div className="text-center py-20 border border-dashed border-[var(--border)] bg-[var(--background)]/50 rounded-2xl flex flex-col items-center justify-center">
-              <FaShieldAlt className="text-4xl text-[var(--muted)]/30 mb-4" />
-              <p className="text-[var(--muted)] text-xs font-bold tracking-wide uppercase">No blocked entries found.</p>
+            <div className="flex items-center justify-center py-20">
+              <LoadingSpinner size="lg" color="accent" />
             </div>
+          ) : filteredItems.length === 0 ? (
+            <EmptyState
+              icon={Icons.shield}
+              title="No Blocked Entries Found"
+              description="The system blocklist is currently clear."
+            />
           ) : (
             <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--background)]/30 hide-scrollbar">
               <table className="w-full text-left border-collapse min-w-max">
                 <thead>
                   <tr className="border-b border-[var(--border)] bg-[var(--foreground)]/[0.02]">
-                    <th className="py-4 px-6 font-black text-[9px] uppercase tracking-widest text-[var(--muted)]/60">Type</th>
-                    <th className="py-4 px-6 font-black text-[9px] uppercase tracking-widest text-[var(--muted)]/60">Value</th>
-                    <th className="py-4 px-6 font-black text-[9px] uppercase tracking-widest text-[var(--muted)]/60">Reason</th>
-                    <th className="py-4 px-6 font-black text-[9px] uppercase tracking-widest text-[var(--muted)]/60">Date</th>
+                    {["Type", "Value", "Reason", "Date"].map((h) => (
+                      <th key={h} className="py-4 px-6 font-black text-[9px] uppercase tracking-widest text-[var(--muted)]/60">
+                        {h}
+                      </th>
+                    ))}
                     <th className="py-4 px-6 font-black text-[9px] uppercase tracking-widest text-[var(--muted)]/60 text-right">Action</th>
                   </tr>
                 </thead>
@@ -238,7 +245,7 @@ export default function BlocklistTab() {
                       <td className="py-4 px-6 font-mono font-bold text-[11px] text-[var(--foreground)]">{item.value}</td>
                       <td className="py-4 px-6 text-[10px] text-[var(--muted)]/80 font-medium truncate max-w-[150px]">{item.reason || "-"}</td>
                       <td className="py-4 px-6 text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">
-                        {new Date(item.createdAt).toLocaleString("en-IN", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+                        {formatDateTime(item.createdAt)}
                       </td>
                       <td className="py-4 px-6 text-right">
                         <button

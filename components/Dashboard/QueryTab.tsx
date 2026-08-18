@@ -8,10 +8,13 @@ import {
   FaYoutube,
   FaWhatsapp,
 } from "react-icons/fa";
-import { FiChevronDown, FiChevronLeft, FiChevronRight, FiZap, FiTarget, FiMail, FiRefreshCw, FiClock, FiCheckCircle, FiAlertCircle, FiList } from "react-icons/fi";
+import { FiChevronDown, FiZap, FiTarget, FiMail, FiRefreshCw, FiClock, FiCheckCircle, FiAlertCircle, FiList } from "react-icons/fi";
 import { QuerySkeleton } from "../Skeleton/Skeleton";
 import api from "@/lib/axios";
 import { useAuthStore } from "@/store/useAuthStore";
+import { StatusBadge, Pagination, LoadingSpinner, EmptyState } from "@/components/common";
+import { Icons } from "@/components/icons";
+import { formatDateTime } from "@/utils";
 
 const SUPPORT_CONFIG = {
   header: {
@@ -39,14 +42,6 @@ type Query = {
   orderId?: string;
   adminReply?: string;
   createdAt: string;
-};
-
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  pending:     { label: "Pending",     color: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20", icon: <FiClock size={10} /> },
-  open:        { label: "Open",        color: "text-blue-400 bg-blue-400/10 border-blue-400/20",       icon: <FiAlertCircle size={10} /> },
-  in_progress: { label: "In Progress", color: "text-purple-400 bg-purple-400/10 border-purple-400/20", icon: <FiClock size={10} /> },
-  resolved:    { label: "Resolved",    color: "text-green-400 bg-green-400/10 border-green-400/20",    icon: <FiCheckCircle size={10} /> },
-  closed:      { label: "Closed",      color: "text-[var(--muted)] bg-white/5 border-white/10",        icon: <FiCheckCircle size={10} /> },
 };
 
 export default function QueryTab() {
@@ -235,7 +230,7 @@ export default function QueryTab() {
               onClick={handleSubmit}
               className="w-full p-3.5 rounded-2xl bg-[var(--accent)] text-black font-black uppercase tracking-widest italic text-[10px] shadow-lg hover:shadow-[0_8px_16px_-4px_rgba(var(--accent-rgb),0.3)] hover:scale-[1.01] active:scale-95 disabled:opacity-30 transition-all flex items-center justify-center gap-2"
             >
-              {isSubmitting ? <FiZap className="animate-spin" size={14} /> : "Send"}
+              {isSubmitting ? <LoadingSpinner size="xs" color="current" /> : "Send"}
             </button>
           </div>
         </div>
@@ -287,18 +282,14 @@ export default function QueryTab() {
                     ))}
                   </div>
                 ) : myQueries.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-10 gap-2 text-[var(--muted)]">
-                    <FiMail size={24} />
-                    <span className="text-[9px] font-black uppercase tracking-widest">No queries submitted yet</span>
-                  </div>
+                  <EmptyState
+                    icon={Icons.mail}
+                    title="No Queries Submitted"
+                    description="Have an issue with your order? Submit a ticket above."
+                    size="sm"
+                  />
                 ) : (
                   myQueries.map((q) => {
-                    const statusKey = (q.status || "pending").toLowerCase();
-                    const statusCfg = STATUS_CONFIG[statusKey] || STATUS_CONFIG.pending;
-                    const date = new Date(q.createdAt).toLocaleString("en-IN", {
-                      day: "2-digit", month: "short", year: "numeric",
-                      hour: "2-digit", minute: "2-digit",
-                    });
                     return (
                       <motion.div
                         key={q._id}
@@ -314,10 +305,7 @@ export default function QueryTab() {
                               <span className="text-[8px] font-mono text-[var(--muted)] truncate">Order: {q.orderId}</span>
                             )}
                           </div>
-                          <span className={`shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full border text-[8px] font-black uppercase tracking-widest ${statusCfg.color}`}>
-                            {statusCfg.icon}
-                            {statusCfg.label}
-                          </span>
+                          <StatusBadge status={q.status} size="sm" />
                         </div>
 
                         {/* Admin Reply */}
@@ -330,7 +318,7 @@ export default function QueryTab() {
                           </div>
                         )}
                         <p className="text-[8px] text-[var(--muted)] font-medium flex items-center gap-1">
-                          <FiClock size={8} /> {date}
+                          <FiClock size={8} /> {formatDateTime(q.createdAt)}
                         </p>
                       </motion.div>
                     );
@@ -338,29 +326,17 @@ export default function QueryTab() {
                 )}
 
                 {/* Pagination */}
-                {queryPagination.totalPages > 1 && (
-                  <div className="flex items-center justify-between pt-3 mt-1 border-t border-[var(--border)]">
-                    <p className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted)]">
-                      {queryPagination.total} total &middot; page {queryPage}/{queryPagination.totalPages}
-                    </p>
-                    <div className="flex items-center gap-1.5">
-                      <button aria-label="button"
-                        onClick={() => setQueryPage((p) => Math.max(1, p - 1))}
-                        disabled={queryPage === 1 || loadingQueries}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[var(--background)]/50 border border-white/5 text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 disabled:opacity-25 disabled:cursor-not-allowed transition-all text-[9px] font-black uppercase"
-                      >
-                        <FiChevronLeft size={12} /> Prev
-                      </button>
-                      <button aria-label="button"
-                        onClick={() => setQueryPage((p) => Math.min(queryPagination.totalPages, p + 1))}
-                        disabled={queryPage === queryPagination.totalPages || loadingQueries}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[var(--background)]/50 border border-white/5 text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 disabled:opacity-25 disabled:cursor-not-allowed transition-all text-[9px] font-black uppercase"
-                      >
-                        Next <FiChevronRight size={12} />
-                      </button>
-                    </div>
-                  </div>
-                )}
+                <div className="pt-2">
+                  <Pagination
+                    page={queryPage}
+                    totalPages={queryPagination.totalPages}
+                    totalItems={queryPagination.total}
+                    itemLabel="Queries"
+                    onPageChange={setQueryPage}
+                    size="sm"
+                    hideOnSinglePage
+                  />
+                </div>
               </div>
             </motion.div>
           )}

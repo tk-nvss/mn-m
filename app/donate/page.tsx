@@ -4,6 +4,9 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaHeart, FaGift, FaHandsHelping, FaCreditCard, FaTimes } from "react-icons/fa";
 import { QRCodeSVG } from "qrcode.react";
+import { CopyButton } from "@/components/common";
+import { Icons } from "@/components/icons";
+import { formatCurrency } from "@/utils";
 
 export default function DonatePage() {
   const [customAmount, setCustomAmount] = useState<string>("");
@@ -130,7 +133,7 @@ export default function DonatePage() {
                       : "bg-[var(--background)] text-[var(--foreground)] border-[var(--border)] hover:border-rose-500/50 hover:bg-rose-500/10"
                   }`}
                 >
-                  ₹{amount}
+                  {formatCurrency(amount)}
                 </button>
               ))}
             </div>
@@ -159,7 +162,7 @@ export default function DonatePage() {
               onClick={handleDonate}
               className="w-full py-4 md:py-5 rounded-xl md:rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-[900] italic uppercase tracking-widest text-base md:text-lg transition-all duration-300 flex items-center justify-center gap-2 md:gap-3 shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_30px_rgba(244,63,94,0.5)] transform hover:-translate-y-1"
             >
-              <FaCreditCard />
+              <Icons.creditCard className="text-base" />
               Donate Now
             </button>
 
@@ -192,25 +195,30 @@ export default function DonatePage() {
                 onClick={() => setShowQR(false)}
                 className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[var(--background)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] hover:text-rose-500 hover:border-rose-500/50 transition-colors"
               >
-                <FaTimes />
+                <Icons.close size={14} />
               </button>
               
               <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-500 mb-4">
-                <FaHeart size={32} />
+                <Icons.heart size={28} />
               </div>
               
               <h2 className="text-2xl font-[900] italic uppercase tracking-tight text-center mb-2">Scan to Donate</h2>
               <p className="text-[var(--muted)] text-center text-sm mb-6">
-                You are donating <strong className="text-[var(--foreground)]">₹{finalDonationAmount}</strong>
+                You are donating <strong className="text-[var(--foreground)]">{formatCurrency(finalDonationAmount)}</strong>
               </p>
               
-              <div className="p-4 bg-white rounded-2xl mb-6 shadow-[0_0_30px_rgba(244,63,94,0.15)]">
+              <div className="p-4 bg-white rounded-2xl mb-4 shadow-[0_0_30px_rgba(244,63,94,0.15)]">
                 <QRCodeSVG 
                   value={`upi://pay?pa=6372305866@okbizaxis&pn=Donation&am=${finalDonationAmount}`}
                   size={200}
                   level={"H"}
                   includeMargin={false}
                 />
+              </div>
+
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] font-mono text-[var(--muted)]">6372305866@okbizaxis</span>
+                <CopyButton text="6372305866@okbizaxis" size="xs" variant="ghost" className="p-0.5" />
               </div>
 
               <p className="text-center text-[10px] text-[var(--muted)] opacity-60 uppercase font-black tracking-widest">

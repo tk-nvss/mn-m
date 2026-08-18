@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { FiClock, FiCheckCircle, FiXCircle, FiRefreshCw, FiExternalLink, FiSearch } from "react-icons/fi";
+import { StatusBadge, CopyButton, Pagination, LoadingSpinner, EmptyState } from "@/components/common";
+import { Icons } from "@/components/icons";
+import { formatDateTime, formatCoins } from "@/utils";
 
 export default function UsdtTab() {
   const [deposits, setDeposits] = useState([]);
@@ -119,22 +122,24 @@ export default function UsdtTab() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <FiRefreshCw className="animate-spin text-green-500" size={32} />
+          <LoadingSpinner size="lg" color="accent" />
         </div>
       ) : deposits.length === 0 ? (
-        <div className="text-center py-20 border-2 border-dashed border-[var(--border)] rounded-3xl">
-          <p className="text-[var(--muted)] text-sm uppercase tracking-widest font-bold">No {status} deposits found</p>
-        </div>
+        <EmptyState
+          icon={Icons.dollarSign}
+          title="No Deposits Found"
+          description={`No ${status} deposits match your filter.`}
+        />
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-[var(--border)] text-[9px] uppercase tracking-[0.2em] text-[var(--muted)] font-black">
-                <th className="px-4 py-3">User / ID</th>
-                <th className="px-4 py-3">Amount</th>
-                <th className="px-4 py-3 font-mono">TX Hash</th>
-                <th className="px-4 py-3">Network</th>
-                <th className="px-4 py-3">Created</th>
+                {["User / ID", "Amount", "TX Hash", "Network", "Created"].map((h) => (
+                  <th key={h} className="px-4 py-3">
+                    {h}
+                  </th>
+                ))}
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -147,14 +152,15 @@ export default function UsdtTab() {
                   </td>
                   <td className="px-4 py-4">
                     <p className="text-sm font-black text-green-400">{d.usdtAmount} USDT</p>
-                    <p className="text-[9px] text-[var(--muted)] uppercase font-bold">≈ {d.coinsToCredit} Coins</p>
+                    <p className="text-[9px] text-[var(--muted)] uppercase font-bold">≈ {formatCoins(d.coinsToCredit)}</p>
                   </td>
-                  <td className="px-4 py-4 max-w-[150px]">
+                  <td className="px-4 py-4 max-w-[180px]">
                     {d.txHash ? (
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1.5">
                         <span className="text-[10px] font-mono text-[var(--muted)] truncate">{d.txHash}</span>
+                        <CopyButton text={d.txHash} size="xs" variant="ghost" className="p-0.5" />
                         <a href={`https://bscscan.com/tx/${d.txHash}`} target="_blank" rel="noopener noreferrer" className="text-green-500 hover:text-green-400">
-                           <FiExternalLink size={10} />
+                          <FiExternalLink size={10} />
                         </a>
                       </div>
                     ) : (
@@ -166,12 +172,11 @@ export default function UsdtTab() {
                   </td>
                   <td className="px-4 py-4">
                     <p className="text-[10px] text-[var(--muted)] font-medium">
-                      {new Date(d.createdAt).toLocaleDateString()}<br/>
-                      {new Date(d.createdAt).toLocaleTimeString()}
+                      {formatDateTime(d.createdAt)}
                     </p>
                   </td>
                   <td className="px-4 py-4 text-right">
-                    {d.status === "submitted" && (
+                    {d.status === "submitted" ? (
                       <div className="flex justify-end gap-2">
                         <button aria-label="button" 
                           onClick={() => handleAction(d.depositId, "confirm")}
@@ -190,15 +195,8 @@ export default function UsdtTab() {
                           <FiXCircle size={14} />
                         </button>
                       </div>
-                    )}
-                    {d.status === "confirmed" && (
-                      <span className="text-[10px] font-black text-green-500 uppercase tracking-widest italic">Confirmed</span>
-                    )}
-                    {d.status === "failed" && (
-                      <span className="text-[10px] font-black text-red-500 uppercase tracking-widest italic">Rejected</span>
-                    )}
-                    {d.status === "expired" && (
-                      <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest italic">Expired</span>
+                    ) : (
+                      <StatusBadge status={d.status} size="sm" />
                     )}
                   </td>
                 </tr>
@@ -209,25 +207,15 @@ export default function UsdtTab() {
       )}
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-4 pt-4 border-t border-[var(--border)]/10">
-          <button aria-label="button" 
-            disabled={page === 1}
-            onClick={() => setPage(p => p - 1)}
-            className="px-4 py-2 rounded-xl bg-[var(--card)] border border-[var(--border)] text-xs font-bold disabled:opacity-30"
-          >
-            Previous
-          </button>
-          <span className="flex items-center text-xs font-black text-[var(--muted)]">PAGE {page} OF {totalPages}</span>
-          <button aria-label="button" 
-            disabled={page === totalPages}
-            onClick={() => setPage(p => p + 1)}
-            className="px-4 py-2 rounded-xl bg-[var(--card)] border border-[var(--border)] text-xs font-bold disabled:opacity-30"
-          >
-            Next
-          </button>
-        </div>
-      )}
+      <div className="pt-4 border-t border-[var(--border)]/10 flex justify-end">
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          size="sm"
+          hideOnSinglePage
+        />
+      </div>
     </div>
   );
 }

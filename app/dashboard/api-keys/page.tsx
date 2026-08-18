@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Icons } from "@/components/icons";
-import { CopyButton, EmptyState, LoadingSpinner } from "@/components/common";
-import { formatCurrency, formatDate } from "@/utils";
+import { CopyButton, EmptyState, LoadingSpinner, StatusBadge } from "@/components/common";
+import { formatCurrency, formatDate, formatNumber } from "@/utils";
 import Link from "next/link";
 import { useUser } from "../layout";
 import { ApiKeySkeleton } from "../../../components/Skeleton/Skeleton";
@@ -307,9 +307,11 @@ export default function ApiKeysPage() {
                                                     <p className="text-[8px] font-bold uppercase text-white/30 mb-1 flex items-center gap-1"><Icons.globe size={12} /> Last IP</p>
                                                     <p className="text-xs font-mono text-white/80">{key.lastUsedIp || "Never used"}</p>
                                                 </div>
-                                                <div className="p-3 rounded-2xl bg-white/5 border border-white/5">
-                                                    <p className="text-[8px] font-bold uppercase text-white/30 mb-1 flex items-center gap-1"><Icons.mapPin size={12} /> Status</p>
-                                                    <p className="text-xs font-black italic uppercase text-green-500">Live & Secure</p>
+                                                <div className="p-3 rounded-2xl bg-white/5 border border-white/5 flex flex-col justify-between">
+                                                    <p className="text-[8px] font-bold uppercase text-white/30 mb-1 flex items-center gap-1"><Icons.shield size={12} /> Status</p>
+                                                    <div>
+                                                        <StatusBadge status={key.status || "active"} size="xs" />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
