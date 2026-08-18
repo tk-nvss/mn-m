@@ -76,6 +76,7 @@ import {
   TrendingDown,
   Sparkles,
   Crown,
+  Star,
   Tag,
   Percent,
 
@@ -198,6 +199,7 @@ export const Icons = {
   trendingDown: TrendingDown,
   sparkles: Sparkles,
   crown: Crown,
+  star: Star,
   tag: Tag,
   percent: Percent,
 
@@ -295,6 +297,7 @@ export {
   TrendingUp,
   Sparkles,
   Crown,
+  Star,
   Tag,
   Percent,
   Gamepad,

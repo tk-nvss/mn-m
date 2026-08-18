@@ -12,6 +12,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { TournamentSkeleton, SkeletonGrid } from "@/components/Skeleton/Skeleton";
 import { useAuthStore } from "@/store/useAuthStore";
+import { StatusBadge, LoadingSpinner, EmptyState } from "@/components/common";
+import { Icons } from "@/components/icons";
+import { formatCoins, formatDateTime } from "@/utils";
 
 interface Tournament {
   _id: string;
@@ -27,14 +30,6 @@ interface Tournament {
   startsAt?: string;
   endsAt?: string;
 }
-
-const STATUS_STYLE: Record<string, string> = {
-  open:     "bg-emerald-500/10 text-emerald-500 border-emerald-500/25",
-  ongoing:  "bg-blue-500/10 text-blue-400 border-blue-500/25",
-  upcoming: "bg-amber-500/10 text-amber-500 border-amber-500/25",
-  closed:   "bg-rose-500/10 text-rose-400 border-rose-500/25",
-  ended:    "bg-[var(--border)]/20 text-[var(--muted)] border-[var(--border)]",
-};
 
 export default function MLBBTournamentPage() {
   return (
@@ -149,13 +144,11 @@ function MLBBTournamentContent() {
 
         {/* ── EMPTY ── */}
         {!loading && active.length === 0 && (
-          <div className="py-16 text-center space-y-3 rounded-2xl border border-dashed border-[var(--border)]">
-            <div className="w-12 h-12 rounded-2xl border border-[var(--border)] mx-auto flex items-center justify-center text-[var(--muted)]/30">
-              <FiSearch size={20} />
-            </div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)]/40">No Games Found</p>
-            <p className="text-[9px] text-[var(--muted)]/30 uppercase tracking-wide">No active tournaments right now. Check back later!</p>
-          </div>
+          <EmptyState
+            icon={Icons.trophy}
+            title="No Tournaments Active"
+            description="No active MLBB tournaments right now. Check back later for upcoming community cups and scrims!"
+          />
         )}
 
         {/* ── TOURNAMENT CARDS ── */}
@@ -181,16 +174,14 @@ function MLBBTournamentContent() {
                   <p className="text-[8px] text-[var(--muted)]/40 uppercase tracking-widest mt-0.5">{fmt.format}</p>
                   {fmt.startsAt && (
                     <div className="flex items-center gap-1.5 mt-1.5">
-                      <FiClock size={9} className="text-[var(--accent)]" />
+                      <Icons.clock size={9} className="text-[var(--accent)]" />
                       <span className="text-[8px] font-bold uppercase tracking-widest text-[var(--accent)]">
-                        Starts: {new Date(fmt.startsAt).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                        Starts: {formatDateTime(fmt.startsAt)}
                       </span>
                     </div>
                   )}
                 </div>
-                <span className={`text-[7px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg border shrink-0 ${STATUS_STYLE[ds]}`}>
-                  {ds}
-                </span>
+                <StatusBadge status={ds} size="xs" />
               </div>
 
               {/* Prize + Slots */}
@@ -221,8 +212,8 @@ function MLBBTournamentContent() {
                     ? "bg-emerald-500/8 border-emerald-500/20 text-emerald-500"
                     : "bg-[var(--accent)]/8 border-[var(--accent)]/20 text-[var(--accent)]"
                 }`}>
-                  {isFree ? <FiStar size={9} /> : <FiZap size={9} />}
-                  {isFree ? "Free Entry" : `${fmt.entryCoins} BBC Coins`}
+                  {isFree ? <Icons.star size={9} /> : <Icons.zap size={9} />}
+                  {isFree ? "Free Entry" : formatCoins(fmt.entryCoins)}
                 </span>
               </div>
 
@@ -237,10 +228,10 @@ function MLBBTournamentContent() {
                                      "border-[var(--accent)]/25 bg-[var(--accent)]/8 text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)]"
                 }`}
               >
-                {ds === "ended"    ? <><FiLock size={12} /> Tournament Ended</> :
-                 ds === "upcoming" ? <><FiClock size={12} /> Pre-Register <FiChevronRight size={10} /></> :
-                 ds === "ongoing"  ? <><FiZap size={12} /> Tournament Live <FiChevronRight size={10} /></> :
-                                    <><FiZap size={12} /> Join Tournament Now <FiChevronRight size={10} /></>}
+                {ds === "ended"    ? <><Icons.lock size={12} /> Tournament Ended</> :
+                 ds === "upcoming" ? <><Icons.clock size={12} /> Pre-Register <Icons.chevronRight size={10} /></> :
+                 ds === "ongoing"  ? <><Icons.zap size={12} /> Tournament Live <Icons.chevronRight size={10} /></> :
+                                    <><Icons.zap size={12} /> Join Tournament Now <Icons.chevronRight size={10} /></>}
               </button>
             </motion.div>
           );
@@ -275,7 +266,7 @@ function MLBBTournamentContent() {
                   <p className="text-[10px] font-black uppercase text-[var(--foreground)]">{t.title}</p>
                   <p className="text-[8px] text-[var(--muted)]/50 uppercase tracking-wide">{t.format}</p>
                 </div>
-                <span className="text-[7px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border border-[var(--border)] text-[var(--muted)]/40">Ended</span>
+                <StatusBadge status="ended" size="xs" />
               </div>
             ))}
           </div>
@@ -308,7 +299,7 @@ function MLBBTournamentContent() {
                 </div>
                 <button aria-label="button" onClick={() => setRegistering(null)}
                   className="w-7 h-7 rounded-xl border border-[var(--border)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-colors shrink-0">
-                  <FiX size={13} />
+                  <Icons.close size={13} />
                 </button>
               </div>
 
@@ -378,7 +369,7 @@ function MLBBTournamentContent() {
                   disabled={formLoading || msg.type === "success"}
                   className="w-full h-11 rounded-xl bg-[var(--foreground)] text-[var(--background)] text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 disabled:opacity-30 hover:opacity-90 transition-opacity">
                   {formLoading
-                    ? <FiLoader className="animate-spin" size={14} />
+                    ? <LoadingSpinner size="xs" color="current" />
                     : msg.type === "success"
                     ? <><FiCheck size={14} /> Registered!</>
                     : "Confirm Registration"}

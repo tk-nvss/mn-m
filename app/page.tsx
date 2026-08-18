@@ -97,7 +97,7 @@ const structuredData = [
       name: "How do I buy MLBB diamonds in India?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Visit mlbbtopup.in, select your diamond pack, enter your MLBB Player ID and Zone ID, choose UPI/PhonePe/Google Pay/Paytm, and confirm. Diamonds are delivered within 5 minutes â€” no Moonton login required.",
+        text: "Visit mlbbtopup.in, select your diamond pack, enter your MLBB Player ID and Zone ID, choose UPI/PhonePe/Google Pay/Paytm, and confirm. Diamonds are delivered within 5 minutes — no Moonton login required.",
       },
     },
     {
@@ -113,7 +113,7 @@ const structuredData = [
       name: "What is the cheapest way to buy MLBB diamonds in India?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "mlbbtopup.in offers the lowest diamond prices in India â€” often 10â€“20% cheaper than Codashop or the in-game store. The Weekly Diamond Pass starting at â‚¹89 is the best value for regular players.",
+        text: "mlbbtopup.in offers the lowest diamond prices in India — often 10–20% cheaper than Codashop or the in-game store. The Weekly Diamond Pass starting at ₹89 is the best value for regular players.",
       },
     },
     {
@@ -121,7 +121,7 @@ const structuredData = [
       name: "How fast is MLBB diamond delivery?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Diamond delivery is instant â€” typically within 1 to 5 minutes of successful payment. Our automated delivery system runs 24Ã—7.",
+        text: "Diamond delivery is instant — typically within 1 to 5 minutes of successful payment. Our automated delivery system runs 24×7.",
       },
     },
     {
@@ -137,7 +137,7 @@ const structuredData = [
       name: "Is the MLBB Weekly Diamond Pass worth it?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes. The Weekly Diamond Pass gives 100 diamonds immediately plus 20 diamonds/day for 7 days â€” 240 diamonds total. At â‚¹89 on mlbbtopup.in, that's under â‚¹0.37 per diamond â€” the highest-value MLBB purchase for regular players.",
+        text: "Yes. The Weekly Diamond Pass gives 100 diamonds immediately plus 20 diamonds/day for 7 days — 240 diamonds total. At ₹89 on mlbbtopup.in, that's under ₹0.37 per diamond — the highest-value MLBB purchase for regular players.",
       },
     },
   ],

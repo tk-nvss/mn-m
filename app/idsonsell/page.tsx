@@ -3,8 +3,9 @@
 import { useState } from "react";
 import ids from "@/data/idsOnSell";
 import IdCard from "@/components/IdsOnSell/IdCard";
-import { FiFilter, FiX } from "react-icons/fi";
 import IdsFilterModal from "@/components/IdsOnSell/IdsFilterModal";
+import { SearchInput, EmptyState } from "@/components/common";
+import { Icons } from "@/components/icons";
 
 export default function IdsOnSellPage() {
   const [search, setSearch] = useState("");
@@ -33,36 +34,23 @@ export default function IdsOnSellPage() {
       {/* ================= HEADER ================= */}
       <div className="flex items-center gap-3">
         {/* SEARCH */}
-        <div className="relative flex-1 min-w-0">
-          <input
+        <div className="flex-1 min-w-0">
+          <SearchInput
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={setSearch}
             placeholder="Search MLBB IDs..."
-            className="w-full rounded-xl border bg-[var(--card)]
-              px-4 py-2 text-sm outline-none
-              focus:border-[var(--accent)]
-              placeholder:text-[var(--muted)]"
+            size="md"
           />
-
-          {search && (
-            <button aria-label="button"
-              onClick={() => setSearch("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2
-                text-[var(--muted)] hover:text-red-500"
-            >
-              <FiX />
-            </button>
-          )}
         </div>
 
         {/* FILTER BUTTON */}
         <button aria-label="button"
           onClick={() => setShowFilter(true)}
           className="shrink-0 flex items-center gap-2
-            px-4 py-2 rounded-xl border bg-[var(--card)]
-            hover:border-[var(--accent)]"
+            px-4 py-2.5 rounded-xl border bg-[var(--card)]
+            hover:border-[var(--accent)] text-xs font-black uppercase tracking-wider transition-colors"
         >
-          <FiFilter />
+          <Icons.filter size={15} />
           <span className="hidden sm:inline">Filter</span>
         </button>
       </div>
@@ -74,9 +62,13 @@ export default function IdsOnSellPage() {
             <IdCard key={item.id} item={item} />
           ))
         ) : (
-          <p className="text-sm text-[var(--muted)]">
-            No IDs found
-          </p>
+          <div className="col-span-full py-8">
+            <EmptyState
+              icon={Icons.search}
+              title="No MLBB IDs Found"
+              description="Try adjusting your search terms or clearing active filters."
+            />
+          </div>
         )}
       </div>
 

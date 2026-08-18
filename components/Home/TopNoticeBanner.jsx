@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FaWhatsapp } from "react-icons/fa";
-import { FiX, FiArrowRight, FiZap, FiActivity } from "react-icons/fi";
+import { Icons } from "@/components/icons";
 
 const STORAGE_KEY = "hide_whatsapp_banner";
 const ROTATE_INTERVAL = 4500;
@@ -14,12 +13,10 @@ const BANNERS = [
     title: "PREMIUM WHATSAPP DEALS",
     subtitle: "Unlock 1–5% exclusive discount",
     badge: "VIP SAVE",
-    icon: <FiZap />,
+    icon: <Icons.zap />,
     color: "#eab308",
     link: `https://wa.me/${process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP}?text=hii%20i%20want%20to%20prchase%20dias`,
   },
-
-
 ];
 
 export default function TopNoticeBanner() {
@@ -68,9 +65,9 @@ export default function TopNoticeBanner() {
               style={{ backgroundColor: banner.color, color: "#fff" }}
             >
               {banner.id === "support" || banner.id === "discount" ? (
-                <FaWhatsapp size={14} className="sm:w-4 sm:h-4 drop-shadow-sm" />
+                <Icons.whatsapp size={14} className="sm:w-4 sm:h-4 drop-shadow-sm" />
               ) : (
-                <FiActivity size={14} className="sm:w-4 sm:h-4 drop-shadow-sm" />
+                <Icons.activity size={14} className="sm:w-4 sm:h-4 drop-shadow-sm" />
               )}
             </div>
           </div>
@@ -81,7 +78,7 @@ export default function TopNoticeBanner() {
               <h3 className="text-[12px] sm:text-[14px] font-black italic tracking-wide text-[var(--foreground)] leading-tight uppercase drop-shadow-md truncate">
                 {banner.title}
               </h3>
-              <FiArrowRight
+              <Icons.arrowRight
                 className="size-3 shrink-0 group-hover:translate-x-1 transition-transform"
                 style={{ color: banner.color }}
               />
@@ -128,7 +125,7 @@ export default function TopNoticeBanner() {
             className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-red-500 hover:bg-red-500/10 transition-all duration-300"
             aria-label="Close"
           >
-            <FiX size={14} />
+            <Icons.close size={14} />
           </button>
         </div>
       </div>

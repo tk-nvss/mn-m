@@ -10,6 +10,9 @@ import { GiTrophy } from "react-icons/gi";
 import Image from "next/image";
 import Link from "next/link";
 import { TournamentSkeleton } from "@/components/Skeleton/Skeleton";
+import { StatusBadge, LoadingSpinner, EmptyState } from "@/components/common";
+import { Icons } from "@/components/icons";
+import { formatCoins } from "@/utils";
 
 interface Tournament {
   _id: string;
@@ -29,14 +32,6 @@ const GAME_META: Record<string, { name: string; logo: string; href: string }> = 
   mlbb:     { name: "Mobile Legends", logo: "/logoBB.png", href: "/tournament/mlbb" },
   freefire: { name: "Free Fire",      logo: "/logoBB.png", href: "/tournament/freefire" },
   codm:     { name: "COD Mobile",     logo: "/logoBB.png", href: "/tournament/codm" },
-};
-
-const STATUS_STYLE: Record<string, string> = {
-  open:     "bg-emerald-500/10 text-emerald-500 border-emerald-500/25",
-  ongoing:  "bg-blue-500/10 text-blue-400 border-blue-500/25",
-  upcoming: "bg-amber-500/10 text-amber-500 border-amber-500/25",
-  closed:   "bg-rose-500/10 text-rose-400 border-rose-500/25",
-  ended:    "bg-[var(--border)]/20 text-[var(--muted)] border-[var(--border)]",
 };
 
 // ── Section Header ──────────────────────────────────────────────────────
@@ -74,9 +69,7 @@ const TournamentCard = ({ t }: { t: Tournament }) => {
               <p className="text-[7px] text-[var(--muted)]/50 uppercase tracking-widest">{t.game.toUpperCase()} · {t.format}</p>
             </div>
           </div>
-          <span className={`text-[7px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg border shrink-0 ${STATUS_STYLE[t.status]}`}>
-            {t.status}
-          </span>
+          <StatusBadge status={t.status} size="xs" />
         </div>
 
         {/* Middle: prize + slots */}
@@ -99,7 +92,7 @@ const TournamentCard = ({ t }: { t: Tournament }) => {
               : "bg-[var(--accent)]/8 border-[var(--accent)]/20 text-[var(--accent)]"
           }`}>
             {isFree ? <FiStar size={9} /> : <FiZap size={9} />}
-            {isFree ? "Free Entry" : `${t.entryCoins} BBC`}
+            {isFree ? "Free Entry" : formatCoins(t.entryCoins)}
           </span>
           <div className="w-7 h-7 rounded-xl border border-[var(--border)] flex items-center justify-center text-[var(--muted)] group-hover:bg-[var(--accent)] group-hover:text-white group-hover:border-[var(--accent)] transition-all">
             <FiChevronRight size={13} />
@@ -266,7 +259,7 @@ export default function TournamentHub() {
                               <p className="text-[7px] text-[var(--muted)]/40 uppercase tracking-widest">{t.game}</p>
                             </div>
                           </div>
-                          <span className="text-[7px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border border-[var(--border)] text-[var(--muted)]/40">Ended</span>
+                          <StatusBadge status="ended" size="xs" />
                         </div>
                         <div className="flex items-center justify-between px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--background)]">
                           <div className="flex items-center gap-2">

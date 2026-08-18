@@ -5,6 +5,12 @@ import { LucideIcon } from "lucide-react";
 import { IconType } from "react-icons";
 import { motion } from "framer-motion";
 
+export interface EmptyActionConfig {
+  label: string;
+  onClick: () => void;
+  variant?: "accent" | "foreground" | "outline";
+}
+
 export interface EmptyStateProps {
   /** Icon component (Lucide icon or React-icons) */
   icon?: LucideIcon | IconType | React.ComponentType<{ size?: number; className?: string }>;
@@ -12,8 +18,8 @@ export interface EmptyStateProps {
   title: string;
   /** Optional secondary explanatory text */
   description?: string;
-  /** Optional action button or element (e.g. "Clear Filters", "Add Item") */
-  action?: React.ReactNode;
+  /** Optional action button, custom element, or action config object */
+  action?: React.ReactNode | EmptyActionConfig;
   /** Size variant controlling padding and scale */
   size?: "sm" | "md" | "lg";
   /** Border & background style */
@@ -89,7 +95,26 @@ export default function EmptyState({
         </p>
       )}
 
-      {action && <div className="mt-4 flex items-center justify-center">{action}</div>}
+      {action && (
+        <div className="mt-4 flex items-center justify-center">
+          {React.isValidElement(action) ? (
+            action
+          ) : typeof action === "object" && action !== null && "label" in action ? (
+            <button
+              onClick={(action as EmptyActionConfig).onClick}
+              className={`px-6 py-2.5 rounded-xl font-black uppercase tracking-widest text-[10px] sm:text-xs italic hover:opacity-90 active:scale-95 transition-all shadow-md ${
+                (action as EmptyActionConfig).variant === "foreground"
+                  ? "bg-[var(--foreground)] text-[var(--background)]"
+                  : (action as EmptyActionConfig).variant === "outline"
+                  ? "border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--accent)]"
+                  : "bg-[var(--accent)] text-black shadow-[var(--accent)]/10"
+              }`}
+            >
+              {(action as EmptyActionConfig).label}
+            </button>
+          ) : null}
+        </div>
+      )}
 
       {children && <div className="mt-4">{children}</div>}
     </motion.div>

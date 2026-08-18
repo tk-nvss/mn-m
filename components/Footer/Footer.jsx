@@ -60,11 +60,13 @@ export default function Footer() {
 
           {/* BRAND BLOCK - REFINED SPACE */}
           <div className="md:col-span-4 space-y-4">
-            <Link href="/" className="group block">
-              <h2 className="text-3xl md:text-4xl font-black italic tracking-tighter lowercase leading-none bg-gradient-to-r from-[var(--accent)] via-[var(--foreground)] to-[var(--accent)] bg-clip-text text-transparent group-hover:brightness-110 transition-all">
-                mlbbtopup.in
-              </h2>
-              <div className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[8.5px] font-black uppercase tracking-widest">
+            <div>
+              <Link href="/" className="group inline-block">
+                <h2 className="text-3xl md:text-4xl font-black italic tracking-tighter lowercase leading-none bg-gradient-to-r from-[var(--accent)] via-[var(--foreground)] to-[var(--accent)] bg-clip-text text-transparent group-hover:brightness-110 transition-all">
+                  mlbbtopup.in
+                </h2>
+              </Link>
+              <div className="mt-1.5 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[8.5px] font-black uppercase tracking-widest w-fit">
                 <span>A Product From</span>
                 <a href="https://bluebuff.in" target="_blank" rel="noopener noreferrer" className="underline hover:text-[var(--accent-hover)] font-black">
                   bluebuff.in
@@ -73,7 +75,7 @@ export default function Footer() {
               <p className="mt-3 text-[10px] font-black uppercase tracking-[0.2em] opacity-70 italic leading-relaxed max-w-[300px]">
                 India's #1 trusted platform for Mobile Legends top-ups. Instant diamond delivery, secure payments, and 24/7 support.
               </p>
-            </Link>
+            </div>
 
             {/* Trustpillot Card - Compact High-End */}
             <motion.a

@@ -9,6 +9,8 @@ import GameList from "@/components/Games/GameList";
 import FilterModal from "@/components/Games/FilterModal";
 import ServiceGridSection from "@/components/Games/ServiceGridSection";
 import { ProductCardSkeleton, ProductListSkeleton } from "@/components/Skeleton/Skeleton";
+import { EmptyState } from "@/components/common";
+import { Icons } from "@/components/icons";
 import api from "@/lib/axios";
 
 export default function GamesPage() {
@@ -270,18 +272,16 @@ function GamesContent() {
               ))}
             </div>
           ) : isEmpty ? (
-            <div key="empty" className="py-20 text-center">
-              <div className="w-24 h-24 bg-[var(--card)] border border-[var(--border)] rounded-full flex items-center justify-center mx-auto mb-6">
-                <FiX size={40} className="text-[var(--muted)]/30" />
-              </div>
-              <h3 className="text-2xl font-black italic uppercase tracking-tighter mb-2">No Games Found</h3>
-              <p className="text-[var(--muted)] text-sm mb-8">Try adjusting your search or filters to find what you're looking for.</p>
-              <button aria-label="button"
-                onClick={clearFilters}
-                className="px-8 py-4 rounded-2xl bg-[var(--accent)] text-black font-black uppercase tracking-widest text-xs italic"
-              >
-                Reset All Filters
-              </button>
+            <div key="empty" className="py-12">
+              <EmptyState
+                icon={Icons.search}
+                title="No Games Found"
+                description="Try adjusting your search or filters to find what you're looking for."
+                action={{
+                  label: "Reset All Filters",
+                  onClick: clearFilters,
+                }}
+              />
             </div>
           ) : (
             <div>
