@@ -6,6 +6,8 @@ import { QRCodeCanvas } from "qrcode.react";
 import { FiX, FiSend, FiArrowRight } from "react-icons/fi";
 import Image from "next/image";
 
+const TELEGRAM_URL = "https://t.me/bluebuffesports";
+
 export default function TelegramQRPopup() {
   const [open, setOpen] = useState(false);
 
@@ -83,7 +85,7 @@ export default function TelegramQRPopup() {
                   
                   <div className="relative bg-white p-2.5 rounded-[1rem] shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-gray-50">
                     <QRCodeCanvas
-                      value="https://t.me/bluebuffesports"
+                      value={TELEGRAM_URL}
                       size={90}
                       level="H"
                       includeMargin={false}
@@ -108,7 +110,7 @@ export default function TelegramQRPopup() {
 
                 {/* Premium Action Button (Compact) */}
                 <a
-                  href="https://t.me/bluebuffesports"
+                  href={TELEGRAM_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full h-9 flex items-center justify-center gap-2 rounded-xl bg-[#0088cc] !text-white font-bold text-xs tracking-wide shadow-[0_8px_20px_-6px_rgba(0,136,204,0.4)] hover:shadow-[0_12px_25px_-6px_rgba(0,136,204,0.5)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"

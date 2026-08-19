@@ -14,7 +14,13 @@ import {
 } from "react-icons/fi";
 
 const BRAND = process.env.NEXT_PUBLIC_BRAND_NAME || "mlbbtopup.in";
+const SITE_DOMAIN = "mlbbtopup.in";
+const PARENT_DOMAIN = "bluebuff.in";
+const PARENT_URL = "https://bluebuff.in";
 const TRUSTPILOT_URL = "https://www.trustpilot.com/evaluate/mlbbtopup.in";
+const INSTAGRAM_URL = "https://instagram.com/mlbbtopup.in";
+const TWITTER_URL = "https://x.com/tk_dev_";
+const LINKEDIN_URL = "https://www.linkedin.com/company/bluebuffesports";
 
 const FOOTER_LINKS = [
   {
@@ -41,9 +47,9 @@ const FOOTER_LINKS = [
 ];
 
 const SOCIALS = [
-  { label: "Instagram", href: "https://instagram.com/mlbbtopup.in", icon: FiInstagram },
-  { label: "Twitter", href: "https://x.com/tk_dev_", icon: FiTwitter },
-  { label: "LinkedIn", href: "https://www.linkedin.com/company/bluebuffesports", icon: FiLinkedin },
+  { label: "Instagram", href: INSTAGRAM_URL, icon: FiInstagram },
+  { label: "Twitter", href: TWITTER_URL, icon: FiTwitter },
+  { label: "LinkedIn", href: LINKEDIN_URL, icon: FiLinkedin },
 ];
 
 export default function Footer() {
@@ -63,13 +69,13 @@ export default function Footer() {
             <div>
               <Link href="/" className="group inline-block">
                 <h2 className="text-3xl md:text-4xl font-black italic tracking-tighter lowercase leading-none bg-gradient-to-r from-[var(--accent)] via-[var(--foreground)] to-[var(--accent)] bg-clip-text text-transparent group-hover:brightness-110 transition-all">
-                  mlbbtopup.in
+                  {SITE_DOMAIN}
                 </h2>
               </Link>
               <div className="mt-1.5 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[8.5px] font-black uppercase tracking-widest w-fit">
                 <span>A Product From</span>
-                <a href="https://bluebuff.in" target="_blank" rel="noopener noreferrer" className="underline hover:text-[var(--accent-hover)] font-black">
-                  bluebuff.in
+                <a href={PARENT_URL} target="_blank" rel="noopener noreferrer" className="underline hover:text-[var(--accent-hover)] font-black">
+                  {PARENT_DOMAIN}
                 </a>
               </div>
               <p className="mt-3 text-[10px] font-black uppercase tracking-[0.2em] opacity-70 italic leading-relaxed max-w-[300px]">
@@ -184,7 +190,7 @@ export default function Footer() {
 
           <div className="text-center md:text-right opacity-75">
             <span className="text-[8px] font-black uppercase tracking-[0.2em] italic">
-              © {new Date().getFullYear()} BLUEBUFF.IN • ALL RIGHTS RESERVED
+              © {new Date().getFullYear()} {PARENT_DOMAIN.toUpperCase()} • ALL RIGHTS RESERVED
             </span>
           </div>
         </div>
@@ -192,7 +198,7 @@ export default function Footer() {
         {/* 3RD PARTY SERVICE LEGAL DISCLAIMER */}
         <div className="mt-3 pt-3 border-t border-[var(--border)]/30 text-center opacity-60">
           <p className="text-[8px] font-medium text-[var(--muted)] leading-relaxed max-w-4xl mx-auto">
-            mlbbtopup.in is an independent 3rd-party service operated by BlueBuff.in. Mobile Legends: Bang Bang and Moonton are registered trademarks of Shanghai Moonton Technology Co., Ltd. All game names, logos, and trademarks belong to their respective owners. We are not officially affiliated with or endorsed by Moonton Games.
+            {SITE_DOMAIN} is an independent 3rd-party service operated by {PARENT_DOMAIN}. Mobile Legends: Bang Bang and Moonton are registered trademarks of Shanghai Moonton Technology Co., Ltd. All game names, logos, and trademarks belong to their respective owners. We are not officially affiliated with or endorsed by Moonton Games.
           </p>
         </div>
       </div>

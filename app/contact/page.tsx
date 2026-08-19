@@ -3,6 +3,15 @@
 import { motion } from "framer-motion";
 import { Icons } from "@/components/icons";
 
+const INSTAGRAM_URL = "https://www.instagram.com/mlbbtopup.in";
+const TWITTER_URL = "https://x.com/tk_dev_";
+const MAPS_EMBED_URL = "https://www.google.com/maps?q=Bhubaneswar,Odisha&output=embed";
+
+const SOCIAL_LINKS = [
+  { icon: Icons.instagram, link: INSTAGRAM_URL, label: "INSTAGRAM" },
+  { icon: Icons.twitter, link: TWITTER_URL, label: "TWITTER" },
+];
+
 export default function ContactPage() {
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] selection:bg-[var(--accent)]/30 pb-32 transition-colors duration-300 px-6">
@@ -59,10 +68,7 @@ export default function ContactPage() {
             >
               <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted)] opacity-60 mb-6">Find Us On</h2>
               <div className="flex flex-wrap gap-3">
-                {[
-                  { icon: Icons.instagram, link: "https://www.instagram.com/mlbbtopup.in", label: "INSTAGRAM" },
-                  { icon: Icons.twitter, link: "https://x.com/tk_dev_", label: "TWITTER" },
-                ].map((social, i) => (
+                {SOCIAL_LINKS.map((social, i) => (
                   <a
                     key={i}
                     href={social.link}
@@ -87,7 +93,7 @@ export default function ContactPage() {
           >
             <iframe
               title="Bhubaneswar Location"
-              src="https://www.google.com/maps?q=Bhubaneswar,Odisha&output=embed"
+              src={MAPS_EMBED_URL}
               width="100%"
               height="100%"
               style={{ border: 0, filter: 'grayscale(1) contrast(1.2) opacity(0.5)' }}

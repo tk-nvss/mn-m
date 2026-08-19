@@ -6,29 +6,34 @@ import { FiX } from "react-icons/fi";
 import { FaWhatsapp, FaInstagram, FaTelegramPlane, FaDiscord } from "react-icons/fa";
 import Image from "next/image";
 
+const WHATSAPP_CHANNEL_1_URL = "https://whatsapp.com/channel/0029Vb87jgR17En1n5PKy129";
+const WHATSAPP_CHANNEL_2_URL = "https://whatsapp.com/channel/0029Vb7zuwD0VycLqwDcE53y";
+const INSTAGRAM_URL = "https://instagram.com/mlbbtopup.in";
+const TELEGRAM_URL = "https://t.me/bluebuffesports";
+
 const socials = [
   {
     name: "WhatsApp 1",
     icon: FaWhatsapp,
-    url: "https://whatsapp.com/channel/0029Vb87jgR17En1n5PKy129",
+    url: WHATSAPP_CHANNEL_1_URL,
     color: "bg-[#25D366] hover:bg-[#128C7E]",
   },
   {
     name: "WhatsApp 2",
     icon: FaWhatsapp,
-    url: "https://whatsapp.com/channel/0029Vb7zuwD0VycLqwDcE53y",
+    url: WHATSAPP_CHANNEL_2_URL,
     color: "bg-[#25D366] hover:bg-[#128C7E]",
   },
   {
     name: "Instagram",
     icon: FaInstagram,
-    url: "https://instagram.com/mlbbtopup.in",
+    url: INSTAGRAM_URL,
     color: "bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] hover:opacity-90",
   },
   {
     name: "Telegram",
     icon: FaTelegramPlane,
-    url: "https://t.me/bluebuffesports",
+    url: TELEGRAM_URL,
     color: "bg-[#0088cc] hover:bg-[#0077b5]",
   }
 ];
