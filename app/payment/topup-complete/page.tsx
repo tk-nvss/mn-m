@@ -4,17 +4,9 @@ import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import api from "@/lib/axios";
-import {
-  FaCheckCircle,
-  FaCheck,
-  FaSpinner,
-  FaExclamationTriangle,
-  FaHome,
-  FaWhatsapp,
-  FaRegClipboard,
-  FaArrowRight,
-  FaHistory,
-} from "react-icons/fa";
+import { Icons } from "@/components/icons";
+import { CopyButton, LoadingSpinner } from "@/components/common";
+import { formatCurrency } from "@/utils";
 
 // --- Types ---
 interface OrderData {
@@ -190,9 +182,9 @@ export default function TopupComplete() {
                     <motion.div
                       animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="w-14 h-14 rounded-full bg-[var(--accent)]/10 flex items-center justify-center"
+                      className="w-14 h-14 rounded-full bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]"
                     >
-                      <FaSpinner className="text-2xl animate-spin text-[var(--accent)]" />
+                      <LoadingSpinner size="md" color="accent" />
                     </motion.div>
                   </div>
                 </div>
@@ -239,8 +231,8 @@ export default function TopupComplete() {
                     transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.2 }}
                     className="w-16 h-16 rounded-[1.25rem] bg-[#10b981] flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.3)] mb-4"
                   >
-                    <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                      <FaCheck className="text-[#10b981] text-lg ml-0.5" />
+                    <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#10b981]">
+                      <Icons.check size={18} />
                     </div>
                   </motion.div>
                   <h1 className="text-2xl font-black italic uppercase tracking-tighter text-emerald-500 mb-1">
@@ -263,7 +255,10 @@ export default function TopupComplete() {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-0.5">
                       <p className="text-[9px] text-[var(--muted)] uppercase font-bold tracking-widest">Order ID</p>
-                      <p className="text-xs font-mono truncate">{orderId || "---"}</p>
+                      <div className="flex items-center gap-1">
+                        <p className="text-xs font-mono truncate">{orderId || "---"}</p>
+                        {orderId && <CopyButton text={orderId} size="xs" variant="ghost" className="p-0.5" />}
+                      </div>
                     </div>
                     <div className="space-y-0.5">
                       <p className="text-[9px] text-[var(--muted)] uppercase font-bold tracking-widest">Item</p>
@@ -275,7 +270,7 @@ export default function TopupComplete() {
                     </div>
                     <div className="space-y-0.5">
                       <p className="text-[9px] text-[var(--muted)] uppercase font-bold tracking-widest">You Paid</p>
-                      <p className="text-xs font-black text-[var(--accent)]">₹{orderData?.price || "---"}</p>
+                      <p className="text-xs font-black text-[var(--accent)]">{orderData?.price ? formatCurrency(orderData.price) : "---"}</p>
                     </div>
                   </div>
                 </div>
@@ -283,19 +278,19 @@ export default function TopupComplete() {
                 {/* Actions */}
                 <div className="w-full space-y-2">
                   <button aria-label="button"
-                    onClick={() => (window.location.href = "/dashboard")}
+                    onClick={() => (window.location.href = "/dashboard/orders")}
                     className="w-fit px-10 mx-auto group rounded-xl bg-[var(--accent)] py-2.5 font-black italic uppercase tracking-wide !text-white hover:bg-[var(--accent-hover)] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[var(--accent)]/20"
                   >
-                    <FaHistory className="text-sm" />
+                    <Icons.history className="text-sm" />
                     See My Orders
-                    <FaArrowRight className="text-xs group-hover:translate-x-1 transition-transform" />
+                    <Icons.arrowRight className="text-xs group-hover:translate-x-1 transition-transform" />
                   </button>
 
                   <button aria-label="button"
                     onClick={() => (window.location.href = "/")}
                     className="w-fit px-10 mx-auto rounded-xl border border-[var(--border)] py-2.5 font-bold text-[var(--foreground)] text-sm hover:bg-[var(--muted)]/5 transition flex items-center justify-center gap-2"
                   >
-                    <FaHome className="text-sm" />
+                    <Icons.home className="text-sm" />
                     Home
                   </button>
                 </div>
@@ -319,7 +314,7 @@ export default function TopupComplete() {
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     className="w-16 h-16 rounded-2xl bg-yellow-500/10 flex items-center justify-center mb-3"
                   >
-                    <FaExclamationTriangle className="text-3xl text-yellow-500" />
+                    <Icons.alertCircle className="text-3xl text-yellow-500" />
                   </motion.div>
                   <h1 className="text-xl font-black italic uppercase tracking-tighter text-yellow-500 mb-1">
                     {message === "Order not found" ? "ORDER NOT FOUND" : "STILL CHECKING..."}
@@ -343,9 +338,12 @@ export default function TopupComplete() {
                       <p className="text-[var(--foreground)] leading-relaxed">
                         Your top-up will be done within <strong className="text-yellow-500">10–15 mins</strong>. If not, we will refund the money to your wallet.
                       </p>
-                      <p className="text-[var(--muted)] font-mono text-[9px]">
-                        REF: {orderId || "N/A"}
-                      </p>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-[var(--muted)] font-mono text-[9px]">
+                          REF: {orderId || "N/A"}
+                        </p>
+                        {orderId && <CopyButton text={orderId} size="xs" variant="ghost" className="p-0.5" />}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -358,7 +356,7 @@ export default function TopupComplete() {
                     rel="noopener noreferrer"
                     className="w-fit px-10 mx-auto rounded-xl bg-[#128C7E] py-2.5 font-black italic uppercase tracking-wide !text-white flex items-center justify-center gap-2 shadow-lg shadow-green-900/20"
                   >
-                    <FaWhatsapp className="text-lg" />
+                    <Icons.whatsapp className="text-lg" />
                     Chat on WhatsApp
                   </a>
 
@@ -366,16 +364,13 @@ export default function TopupComplete() {
                     onClick={() => (window.location.href = "/")}
                     className="w-fit px-10 mx-auto rounded-xl border border-[var(--border)] py-2.5 font-bold text-[var(--foreground)] text-sm hover:bg-[var(--muted)]/5 transition flex items-center justify-center gap-2"
                   >
-                    <FaHome className="text-sm" />
+                    <Icons.home className="text-sm" />
                     Home
                   </button>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
-
-
-
         </div>
       </motion.div>
     </div>

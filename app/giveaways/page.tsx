@@ -1,16 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { 
-  FiGift, 
-  FiChevronRight, 
-  FiShare2, 
-  FiAward, 
-  FiCheckCircle, 
-  FiZap, 
-  FiArchive, 
-  FiKey 
-} from "react-icons/fi";
 import { motion } from "framer-motion";
 import { Icons } from "@/components/icons";
 import { EmptyState } from "@/components/common";
@@ -23,24 +13,24 @@ function getGiveawayIcon(title: string = "", prize: string = "") {
 
   if (t.includes("reedm") || t.includes("redeem") || t.includes("code") || t.includes("voucher")) {
     return {
-      icon: FiKey,
+      icon: Icons.key,
       colorClass: "bg-purple-500/10 text-purple-400 border-purple-500/20",
     };
   }
   if (t.includes("pass") || t.includes("weekly") || t.includes("wdp")) {
     return {
-      icon: FiZap,
+      icon: Icons.zap,
       colorClass: "bg-amber-500/10 text-amber-400 border-amber-500/20",
     };
   }
   if (t.includes("membership") || t.includes("month")) {
     return {
-      icon: FiAward,
+      icon: Icons.award,
       colorClass: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
     };
   }
   return {
-    icon: FiGift,
+    icon: Icons.gift,
     colorClass: "bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/20",
   };
 }
@@ -96,7 +86,7 @@ export default function GiveawaysPage() {
         <div className="flex items-center justify-between gap-3 border-b border-[var(--border)]/50 pb-3">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] border border-[var(--accent)]/20 shrink-0">
-              <FiGift size={16} />
+              <Icons.gift size={16} />
             </div>
             <div>
               <h1 className="text-base sm:text-lg font-black uppercase tracking-tight text-[var(--foreground)] leading-none italic">
@@ -121,7 +111,7 @@ export default function GiveawaysPage() {
         <section className="space-y-3.5">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500 border border-red-500/20">
-              <FiZap size={14} />
+              <Icons.zap size={14} />
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-[var(--foreground)] leading-none">
@@ -222,7 +212,7 @@ export default function GiveawaysPage() {
                         onClick={(e) => handleShare(e, g)}
                         aria-label="Share Giveaway"
                       >
-                        <FiShare2 size={11} />
+                        <Icons.share size={11} />
                         <span>{copiedId === g._id ? "Copied!" : "Share"}</span>
                       </button>
 
@@ -239,7 +229,7 @@ export default function GiveawaysPage() {
                         }}
                       >
                         <span>{isFull ? "Full" : "Enter"}</span>
-                        {!isFull && <FiChevronRight size={12} />}
+                        {!isFull && <Icons.chevronRight size={12} />}
                       </button>
                     </div>
                   </motion.div>
@@ -254,7 +244,7 @@ export default function GiveawaysPage() {
           <section className="space-y-3 pt-2">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
-                <FiAward size={14} />
+                <Icons.award size={14} />
               </div>
               <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-[var(--foreground)] leading-none">
                 Your Claimed Rewards
@@ -268,11 +258,11 @@ export default function GiveawaysPage() {
                   className="flex items-center gap-3 p-3 rounded-xl bg-amber-500/5 border border-amber-500/20 shadow-sm"
                 >
                   <div className="shrink-0 w-9 h-9 rounded-lg flex items-center justify-center bg-amber-500/10 text-amber-500 border border-amber-500/20">
-                    <FiAward size={18} />
+                    <Icons.award size={18} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1 mb-0.5">
-                      <FiCheckCircle size={10} className="text-amber-500" />
+                      <Icons.checkCircle size={10} className="text-amber-500" />
                       <span className="text-[8px] font-black uppercase tracking-widest text-amber-500">
                         REWARD CLAIMED
                       </span>
@@ -295,7 +285,7 @@ export default function GiveawaysPage() {
           <section className="space-y-3 pt-2">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-[var(--foreground)]/5 flex items-center justify-center text-[var(--muted)] border border-[var(--border)]">
-                <FiArchive size={14} />
+                <Icons.package size={14} />
               </div>
               <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-[var(--foreground)] leading-none">
                 Completed Drops
@@ -309,7 +299,7 @@ export default function GiveawaysPage() {
                   className="flex items-center gap-3 p-3 rounded-xl bg-[var(--card)]/30 border border-[var(--border)] opacity-75"
                 >
                   <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center bg-[var(--foreground)]/5 text-[var(--muted)] border border-[var(--border)]">
-                    <FiCheckCircle size={14} />
+                    <Icons.checkCircle size={14} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)] bg-[var(--background)] px-1.5 py-0.5 rounded border border-[var(--border)] inline-block mb-0.5">

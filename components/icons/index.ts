@@ -101,6 +101,8 @@ import {
   Smartphone,
   Tv,
   FileText,
+  Home,
+  History,
 } from "lucide-react";
 
 import {
@@ -149,6 +151,9 @@ export const Icons = {
   alertTriangle: AlertTriangle,
   info: Info,
   help: HelpCircle,
+  helpCircle: HelpCircle,
+  home: Home,
+  history: History,
   trash: Trash,
   edit: Edit,
   plus: Plus,

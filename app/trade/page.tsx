@@ -1,12 +1,12 @@
 "use client";
 
-import { FiShoppingCart, FiDollarSign, FiClock, FiKey, FiChevronRight } from "react-icons/fi";
+import { Icons } from "@/components/icons";
 
 const SECTIONS = [
   {
     title: "I am a Buyer",
     desc: "Browse and buy premium game IDs with ease. Verified accounts with full security.",
-    icon: <FiShoppingCart className="w-8 h-8" />,
+    icon: <Icons.shoppingBag className="w-8 h-8" />,
     color: "from-blue-500/20 to-blue-600/5",
     accent: "text-blue-400",
     helpText: "Hi, I am interested in buying a game ID. Please show me available IDs.",
@@ -14,7 +14,7 @@ const SECTIONS = [
   {
     title: "I am a Seller",
     desc: "Sell your game ID at the best market price. Instant payment and secure handover.",
-    icon: <FiDollarSign className="w-8 h-8" />,
+    icon: <Icons.rupee className="w-8 h-8" />,
     color: "from-green-500/20 to-green-600/5",
     accent: "text-green-400",
     helpText: "Hi, I want to sell my game ID. Please guide me through the process.",
@@ -22,7 +22,7 @@ const SECTIONS = [
   {
     title: "Take Rent",
     desc: "Rent premium IDs starting @ ₹15. Low rates and instant access to top skins.",
-    icon: <FiClock className="w-8 h-8" />,
+    icon: <Icons.clock className="w-8 h-8" />,
     color: "from-purple-500/20 to-purple-600/5",
     accent: "text-purple-400",
     helpText: "Hi, I am looking to rent a game ID. What are the rates and available IDs?",
@@ -30,7 +30,7 @@ const SECTIONS = [
   {
     title: "Give Rent",
     desc: "Earn passive income by putting your game ID on rent. We handle the security.",
-    icon: <FiKey className="w-8 h-8" />,
+    icon: <Icons.key className="w-8 h-8" />,
     color: "from-orange-500/20 to-orange-600/5",
     accent: "text-orange-400",
     helpText: "Hi, I want to put my game ID on rent. Please let me know how it works.",
@@ -87,7 +87,7 @@ export default function TradeLandingPage() {
               </p>
               
               <div className="mt-auto flex items-center gap-1 md:gap-2 text-[7px] md:text-[9px] font-black uppercase tracking-[0.2em] text-[var(--accent)] group-hover:gap-4 transition-all italic">
-                Get Started <FiChevronRight className="text-[8px] md:text-xs" />
+                Get Started <Icons.chevronRight className="text-[8px] md:text-xs" />
               </div>
 
               {/* Decorative elements */}

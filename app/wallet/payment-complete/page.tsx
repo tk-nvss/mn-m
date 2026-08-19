@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import confetti from "canvas-confetti";
-import { Check, CheckCircle2, XCircle, Loader2, Clock, ShieldCheck, ArrowRight, HelpCircle } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/store/useAuthStore";
+import { Icons } from "@/components/icons";
+import { LoadingSpinner } from "@/components/common";
 
 export default function PaymentComplete() {
   const [status, setStatus] = useState("checking"); // checking | success | failed | delayed
@@ -118,9 +119,9 @@ export default function PaymentComplete() {
                       <motion.div
                         animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
                         transition={{ duration: 2, repeat: Infinity }}
-                        className="w-14 h-14 rounded-full bg-[var(--accent)]/10 flex items-center justify-center"
+                        className="w-14 h-14 rounded-full bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]"
                       >
-                        <Loader2 className="w-6 h-6 animate-spin text-[var(--accent)]" />
+                        <LoadingSpinner size="md" color="accent" />
                       </motion.div>
                     </div>
                   </div>
@@ -128,21 +129,21 @@ export default function PaymentComplete() {
 
                 {status === "success" && (
                   <div className="w-16 h-16 rounded-[1.25rem] bg-[#10b981] flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.3)] mb-4 mx-auto">
-                    <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                      <Check className="w-5 h-5 text-[#10b981]" strokeWidth={4} />
+                    <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#10b981]">
+                      <Icons.check size={18} />
                     </div>
                   </div>
                 )}
 
                 {status === "failed" && (
                   <div className="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center border border-red-500/20">
-                    <XCircle className="w-8 h-8 text-red-500" />
+                    <Icons.close size={28} className="text-red-500" />
                   </div>
                 )}
 
                 {status === "delayed" && (
                   <div className="w-16 h-16 rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
-                    <Clock className="w-8 h-8 text-amber-500" />
+                    <Icons.clock size={28} className="text-amber-500" />
                   </div>
                 )}
               </div>
@@ -172,15 +173,15 @@ export default function PaymentComplete() {
                   <Link href="/" className="w-fit">
                     <button aria-label="button" className="px-16 py-2.5 rounded-xl bg-[var(--accent)] !text-white font-black italic uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-[var(--accent)]/20 hover:bg-[var(--accent-hover)] transition-all">
                       <span>Home</span>
-                      <ArrowRight size={14} />
+                      <Icons.arrowRight size={14} />
                     </button>
                   </Link>
                 )}
 
                 {(status === "delayed" || status === "failed") && (
-                  <Link href="/support" className="w-fit">
+                  <Link href="/dashboard/support" className="w-fit">
                     <button aria-label="button" className="w-fit px-10 py-2.5 rounded-xl border border-[var(--border)] text-[var(--foreground)] font-bold text-sm uppercase tracking-wider hover:bg-[var(--muted)]/5 transition-all flex items-center justify-center gap-2">
-                      <HelpCircle size={14} />
+                      <Icons.helpCircle size={14} />
                       <span>Support</span>
                     </button>
                   </Link>
@@ -192,7 +193,7 @@ export default function PaymentComplete() {
           {/* Footer Security Badge */}
           <div className="mt-10 flex items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--muted)]">
             <div className="flex items-center gap-1.5">
-              <ShieldCheck size={12} className="text-emerald-500" />
+              <Icons.shieldCheck size={14} className="text-emerald-500" />
               <span>Safe & Secure</span>
             </div>
           </div>
