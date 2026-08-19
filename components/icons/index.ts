@@ -103,6 +103,9 @@ import {
   FileText,
   Home,
   History,
+  Server,
+  Code,
+  Cpu,
 } from "lucide-react";
 
 import {
@@ -241,6 +244,9 @@ export const Icons = {
   messageCircle: MessageCircle,
   send: Send,
   database: Database,
+  server: Server,
+  code: Code,
+  cpu: Cpu,
   smartphone: Smartphone,
   tv: Tv,
   fileText: FileText,
