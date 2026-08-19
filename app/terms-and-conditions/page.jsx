@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FiFileText, FiAlertCircle, FiShield, FiGlobe, FiInfo } from "react-icons/fi";
+import { Icons } from "@/components/icons";
 
 const BRAND = process.env.NEXT_PUBLIC_BRAND_NAME || "Blue Buff";
 
@@ -15,7 +15,7 @@ export default function TermsAndConditions() {
     {
       id: "02",
       title: "Platform Use",
-      content: "Use Blue Buff only for legal purposes. Enter correct details (Game ID, Server/Zone). Wrong details can cause a failed order that cannot be reversed."
+      content: `Use ${BRAND} only for legal purposes. Enter correct details (Game ID, Server/Zone). Wrong details can cause a failed order that cannot be reversed.`
     },
     {
       id: "03",
@@ -40,7 +40,7 @@ export default function TermsAndConditions() {
     {
       id: "07",
       title: "Intellectual Property",
-      content: "Blue Buff branding belongs to us. Game trademarks (Mobile Legends, etc.) belong to their publishers. We are an independent service provider."
+      content: `${BRAND} branding belongs to us. Game trademarks (Mobile Legends, etc.) belong to their publishers. We are an independent service provider.`
     },
     {
       id: "08",
@@ -70,7 +70,7 @@ export default function TermsAndConditions() {
             Service Rules
           </p>
           <div className="flex items-center gap-4 mt-8 text-[9px] font-black uppercase tracking-widest opacity-30 italic justify-center md:justify-start">
-            <FiFileText size={14} className="text-[var(--accent)]" />
+            <Icons.fileText size={14} className="text-[var(--accent)]" />
             <span>REVISED: JANUARY 2026</span>
           </div>
         </motion.div>
@@ -104,14 +104,14 @@ export default function TermsAndConditions() {
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-8 rounded-2xl bg-rose-500/5 border border-rose-500/10 flex items-start gap-4">
-              <FiAlertCircle className="text-rose-400 mt-1 flex-shrink-0" />
+              <Icons.alertCircle className="text-rose-400 mt-1 flex-shrink-0" />
               <div>
                 <h3 className="text-[10px] font-black uppercase text-rose-500 tracking-widest mb-2">Suspension Policy</h3>
                 <p className="text-[9px] font-bold text-[var(--muted)] opacity-50 uppercase leading-relaxed">If you break these terms, your account can be closed immediately without warning.</p>
               </div>
             </div>
             <div className="p-8 rounded-2xl bg-[var(--accent)]/5 border border-[var(--accent)]/10 flex items-start gap-4">
-              <FiGlobe className="text-[var(--accent)] mt-1 flex-shrink-0" />
+              <Icons.globe className="text-[var(--accent)] mt-1 flex-shrink-0" />
               <div>
                 <h3 className="text-[10px] font-black uppercase text-[var(--accent)] tracking-widest mb-2">Governing Law</h3>
                 <p className="text-[9px] font-bold text-[var(--muted)] opacity-50 uppercase leading-relaxed">These terms are governed by the local laws where we operate.</p>
@@ -120,7 +120,7 @@ export default function TermsAndConditions() {
           </div>
 
           <div className="mt-12 text-center opacity-30 flex items-center justify-center gap-3">
-            <FiInfo size={14} />
+            <Icons.info size={14} />
             <span className="text-[9px] font-black uppercase tracking-[0.3em] italic">Contact support if you need help.</span>
           </div>
         </motion.div>

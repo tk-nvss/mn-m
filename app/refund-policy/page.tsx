@@ -2,35 +2,27 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import {
-  FiRefreshCw,
-  FiAlertTriangle,
-  FiCheckCircle,
-  FiShield,
-  FiCpu,
-  FiFileText,
-  FiHelpCircle
-} from "react-icons/fi";
+import { Icons } from "@/components/icons";
 
 export default function RefundPolicy() {
   const policies = [
     {
-      icon: <FiCpu />,
+      icon: <Icons.zap />,
       title: "Digital Delivery",
       description: "Top-ups are digital and usually delivered right away. Once credits are added to your account, the order is final and normally cannot be refunded."
     },
     {
-      icon: <FiAlertTriangle />,
+      icon: <Icons.alertTriangle />,
       title: "When Refunds Apply",
       description: "Refunds are only for technical issues where money was charged but no in-game credit was received after 24 hours."
     },
     {
-      icon: <FiShield />,
+      icon: <Icons.shield />,
       title: "Your Responsibility",
       description: "If you enter the wrong Player ID, Zone, or Region, the order is not eligible for a refund. Please check details before you pay."
     },
     {
-      icon: <FiRefreshCw />,
+      icon: <Icons.refresh />,
       title: "Refund Time",
       description: "Approved refunds are processed in 5-7 business days and sent back to your original payment method."
     }
@@ -53,7 +45,7 @@ export default function RefundPolicy() {
           className="text-center mb-16 space-y-4"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 mb-4">
-            <FiFileText size={12} />
+            <Icons.fileText size={12} />
             <span className="text-[10px] font-bold uppercase tracking-widest">Official Policy</span>
           </div>
 
@@ -77,7 +69,7 @@ export default function RefundPolicy() {
               className="group p-8 rounded-3xl bg-[var(--card)] border border-[var(--border)] hover:border-[var(--accent)]/40 hover:bg-[var(--foreground)]/[0.02] transition-all duration-300 shadow-sm hover:shadow-lg relative overflow-hidden"
             >
               <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity text-[var(--foreground)] pointer-events-none">
-                <FiFileText size={120} />
+                <Icons.fileText size={120} />
               </div>
 
               <div className="relative z-10">
@@ -108,7 +100,7 @@ export default function RefundPolicy() {
 
           <div className="relative z-10 max-w-2xl mx-auto space-y-6">
             <div className="mx-auto w-16 h-16 rounded-full bg-[var(--foreground)]/5 flex items-center justify-center text-[var(--muted)] mb-2">
-              <FiHelpCircle size={32} />
+              <Icons.helpCircle size={32} />
             </div>
 
             <div>
@@ -122,7 +114,7 @@ export default function RefundPolicy() {
               href="/contact"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-[var(--foreground)] text-[var(--background)] font-bold uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-95 transition-all shadow-lg"
             >
-              <FiRefreshCw className="animate-spin-slow" />
+              <Icons.refresh className="animate-spin-slow" />
               Contact Support
             </Link>
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FiUsers, FiGlobe, FiZap, FiCode, FiArrowRight, FiMessageCircle } from "react-icons/fi";
+import { Icons } from "@/components/icons";
 
 export default function ServicesPage() {
   const whatsappLink = `https://wa.me/${process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP}`;
@@ -10,7 +10,7 @@ export default function ServicesPage() {
     {
       title: "Game Topup APIs",
       desc: "Integrate our seamless top-up APIs to unlock wholesale rates, ensuring lightning-fast delivery and maximum profitability for your business.",
-      icon: FiCode,
+      icon: Icons.package,
       badge: "API ACCESS",
       active: true,
       href: "https://bluebuff.in",
@@ -18,7 +18,7 @@ export default function ServicesPage() {
     {
       title: "Free Manual Web / Link in Bio",
       desc: "Launch your brand instantly with a fully customizable Link-in-Bio website, complete with integrated payment gateways and your own unique identity.",
-      icon: FiGlobe,
+      icon: Icons.globe,
       badge: "FAST SETUP",
       active: true,
       href: "https://web.bluebuff.in",
@@ -26,7 +26,7 @@ export default function ServicesPage() {
     {
       title: "Free Online Gameplay",
       desc: "Dive into a vast library of instant-play games directly from your browser. No downloads, zero latency, just pure entertainment.",
-      icon: FiZap,
+      icon: Icons.zap,
       badge: "PLAY NOW",
       active: true,
       href: "https://games.bluebuff.in",
@@ -34,7 +34,7 @@ export default function ServicesPage() {
     {
       title: "Custom Web Dev",
       desc: "Elevate your online presence with bespoke web development solutions tailored to your brand's unique aesthetics and complex technical requirements.",
-      icon: FiGlobe,
+      icon: Icons.globe,
       badge: "EXCLUSIVE",
       active: true,
       href: "https://bluebuff.in",
@@ -42,7 +42,7 @@ export default function ServicesPage() {
     {
       title: "WhatsApp Bot / Telegram Bot",
       desc: "Streamline operations, automate order processing, and scale customer support effortlessly with custom WhatsApp and Telegram automation bots.",
-      icon: FiMessageCircle,
+      icon: Icons.whatsapp,
       badge: "AUTOMATION",
       active: true,
       href: "https://bluebuff.in",
@@ -60,7 +60,7 @@ export default function ServicesPage() {
           className="mb-10"
         >
           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[var(--accent)]/5 border border-[var(--accent)]/10 mb-2">
-            <FiZap className="text-[var(--accent)]" size={10} />
+            <Icons.zap className="text-[var(--accent)]" size={10} />
             <span className="text-[8px] font-black uppercase tracking-widest text-[var(--accent)]">For Businesses</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-black italic tracking-tighter uppercase leading-none">
@@ -109,7 +109,7 @@ export default function ServicesPage() {
 
                 {/* Arrow */}
                 <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:border-[var(--accent)]/30 transition-all flex-shrink-0">
-                  <FiArrowRight size={14} />
+                  <Icons.arrowRight size={14} />
                 </div>
               </motion.div>
             );
@@ -130,7 +130,7 @@ export default function ServicesPage() {
             onClick={() => window.open(whatsappLink, "_blank")}
             className="px-6 py-2.5 rounded-xl bg-[var(--accent)] text-black font-black uppercase tracking-widest text-[9px] italic shadow-lg hover:scale-[1.03] active:scale-95 transition-all flex items-center gap-2 mx-auto"
           >
-            <FiMessageCircle size={12} />
+            <Icons.whatsapp size={12} />
             WhatsApp Us
           </button>
         </motion.div>

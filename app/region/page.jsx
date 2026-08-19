@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, User, MapPin, CheckCircle, XCircle } from "lucide-react";
 import { saveVerifiedPlayer } from "@/utils/storage/verifiedPlayerStorage";
 import RecentVerifiedPlayers from "./RecentVerifiedPlayers";
-import { FiTarget, FiBox, FiUser, FiCheckCircle, FiSearch } from "react-icons/fi";
+import { Icons } from "@/components/icons";
+import { LoadingSpinner } from "@/components/common";
 import api from "@/lib/axios";
 import { formatRegion } from "@/utils/regionFormatter";
 
@@ -46,7 +46,7 @@ export default function RegionPage() {
         >
           <div className="flex items-center justify-center gap-3 mb-2">
             <div className="w-10 h-10 bg-[var(--accent)]/5 rounded-2xl flex items-center justify-center border border-[var(--accent)]/10">
-              <FiSearch className="text-xl text-[var(--accent)]" />
+              <Icons.search className="text-xl text-[var(--accent)]" />
             </div>
             <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter italic text-[var(--foreground)] leading-none">
               Region <span className="text-[var(--accent)]">Check</span>
@@ -89,11 +89,11 @@ export default function RegionPage() {
               className="w-full py-3.5 rounded-xl bg-[var(--accent)] text-black font-black uppercase tracking-widest italic text-[11px] hover:scale-[1.01] active:scale-95 disabled:opacity-20 transition-all flex items-center justify-center gap-2"
             >
               {loading ? (
-                <Loader2 className="animate-spin" size={14} />
+                <LoadingSpinner size="xs" color="current" />
               ) : (
                 <>
                   <span>Check Region</span>
-                  <FiCheckCircle size={14} />
+                  <Icons.checkCircle size={14} />
                 </>
               )}
             </button>
@@ -111,7 +111,7 @@ export default function RegionPage() {
                 {result.success === 200 && result.data?.valid !== false ? (
                   <div className="flex items-center gap-3 text-left">
                     <div className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20 shrink-0">
-                      <FiUser size={18} />
+                      <Icons.user size={18} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/50 mb-0.5">Name</p>
@@ -125,7 +125,7 @@ export default function RegionPage() {
                   </div>
                 ) : (
                   <div className="flex items-center justify-center gap-2 py-1 text-rose-500">
-                    <XCircle size={14} />
+                    <Icons.close size={14} />
                     <span className="text-[9px] font-black uppercase tracking-widest italic">Not Found</span>
                   </div>
                 )}

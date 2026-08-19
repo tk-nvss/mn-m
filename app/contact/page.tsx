@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FaInstagram, FaTwitter, FaEnvelope } from "react-icons/fa";
-import { FiArrowRight, FiInfo } from "react-icons/fi";
+import { Icons } from "@/components/icons";
 
 export default function ContactPage() {
   return (
@@ -36,12 +35,12 @@ export default function ContactPage() {
             >
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-xl bg-[var(--background)] border border-[var(--border)] flex items-center justify-center text-[var(--accent)]/60 group-hover:text-[var(--accent)] group-hover:bg-[var(--accent)]/10 transition-colors">
-                  <FaEnvelope size={16} />
+                  <Icons.mail size={16} />
                 </div>
                 <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted)] opacity-60">Direct Email</h2>
               </div>
               <div className="flex items-center gap-3">
-                <FaEnvelope className="text-xl text-[#0ea5e9]" />
+                <Icons.mail className="text-xl text-[#0ea5e9]" />
                 <a
                   href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_EMAIL}`}
                   className="inline-flex items-center gap-2 text-xl md:text-2xl font-[900] italic uppercase tracking-tighter text-[var(--foreground)] hover:text-[#38bdf8] transition-colors break-all"
@@ -61,8 +60,8 @@ export default function ContactPage() {
               <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted)] opacity-60 mb-6">Find Us On</h2>
               <div className="flex flex-wrap gap-3">
                 {[
-                  { icon: FaInstagram, link: "https://www.instagram.com/mlbbtopup.in", label: "INSTAGRAM" },
-                  { icon: FaTwitter, link: "https://x.com/tk_dev_", label: "TWITTER" },
+                  { icon: Icons.instagram, link: "https://www.instagram.com/mlbbtopup.in", label: "INSTAGRAM" },
+                  { icon: Icons.twitter, link: "https://x.com/tk_dev_", label: "TWITTER" },
                 ].map((social, i) => (
                   <a
                     key={i}
@@ -104,7 +103,7 @@ export default function ContactPage() {
           animate={{ opacity: 1 }}
           className="mt-12 flex items-center justify-center gap-3 text-[var(--muted)] opacity-30"
         >
-          <FiInfo size={14} />
+          <Icons.info size={14} />
           <span className="text-[9px] font-black uppercase tracking-[0.3em] italic">We usually reply within 24 hours</span>
         </motion.div>
 

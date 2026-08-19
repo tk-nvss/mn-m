@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import QRCode from "qrcode";
-import { FiCreditCard, FiSmartphone, FiUser, FiInfo, FiCheck, FiShield, FiArrowRight } from "react-icons/fi";
+import { Icons } from "@/components/icons";
 import { motion } from "framer-motion";
 import { useAuthStore } from "@/store/useAuthStore";
 import api from "@/lib/axios";
@@ -120,7 +120,7 @@ export default function ReviewAndPaymentStep({
             <div className="bg-[var(--background)] border border-[var(--border)] rounded-2xl p-5 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-20 h-20 bg-[var(--accent)]/5 rounded-full blur-2xl -z-10 group-hover:bg-[var(--accent)]/10 transition-all" />
               <h3 className="text-xs font-[900] uppercase tracking-widest text-[var(--muted)] mb-4 flex items-center gap-2">
-                <FiUser className="text-lg" /> Your Info
+                <Icons.user className="text-lg" /> Your Info
               </h3>
               <div className="space-y-3">
                 <div>
@@ -137,7 +137,7 @@ export default function ReviewAndPaymentStep({
             <div className="bg-[var(--background)] border border-[var(--border)] rounded-2xl p-5 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full blur-2xl -z-10 group-hover:bg-blue-500/10 transition-all" />
               <h3 className="text-xs font-[900] uppercase tracking-widest text-[var(--muted)] mb-4 flex items-center gap-2">
-                <FiShield className="text-lg" /> Game Account
+                <Icons.shield className="text-lg" /> Game Account
               </h3>
               <div className="space-y-3">
                 <div>
@@ -163,7 +163,7 @@ export default function ReviewAndPaymentStep({
           {/* PAYMENT METHODS */}
           <div className="space-y-4">
             <h3 className="text-sm font-[900] uppercase tracking-widest text-[var(--foreground)] flex items-center gap-2">
-              <FiCreditCard /> How do you want to pay?
+              <Icons.creditCard /> How do you want to pay?
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -183,7 +183,7 @@ export default function ReviewAndPaymentStep({
               >
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-bold text-sm">My Wallet</span>
-                  {paymentMethod === "wallet" && <FiCheck className="text-[var(--accent)]" />}
+                  {paymentMethod === "wallet" && <Icons.check className="text-[var(--accent)]" />}
                 </div>
                 <div className="flex items-end gap-2">
                   <span className="text-lg font-[900]">₹{walletBalance}</span>
@@ -205,7 +205,7 @@ export default function ReviewAndPaymentStep({
               >
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-bold text-sm">Pay with UPI</span>
-                  {paymentMethod === "upi" && <FiCheck className="text-[var(--accent)]" />}
+                  {paymentMethod === "upi" && <Icons.check className="text-[var(--accent)]" />}
                 </div>
                 <div className="flex items-end gap-2">
                   <span className="text-xs text-[var(--muted)] font-medium">Fast &amp; Easy</span>
@@ -258,7 +258,7 @@ export default function ReviewAndPaymentStep({
           className="bg-[var(--background)] border border-[var(--border)] rounded-2xl p-8 text-center"
         >
           <div className="w-16 h-16 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <FiSmartphone className="text-3xl text-[var(--accent)]" />
+            <Icons.smartphone className="text-3xl text-[var(--accent)]" />
           </div>
           <h3 className="text-xl font-[900] uppercase tracking-wide mb-2">Scan to Pay</h3>
           <p className="text-[var(--muted)] text-sm mb-6">Open any UPI app and scan this code to pay.</p>

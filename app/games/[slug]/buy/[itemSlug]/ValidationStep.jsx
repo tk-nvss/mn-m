@@ -1,4 +1,4 @@
-import { FiUser, FiGlobe, FiInfo, FiCheckCircle, FiChevronDown } from "react-icons/fi";
+import { Icons } from "@/components/icons";
 import RecentVerifiedPlayers from "../../../../region/RecentVerifiedPlayers";
 
 export default function ValidationStep({
@@ -24,7 +24,7 @@ export default function ValidationStep({
         <div
           className="bg-red-500/10 border border-red-500/20 text-red-500 px-3 py-2.5 rounded-xl text-[13px] font-bold flex items-center gap-2"
         >
-          <FiInfo className="shrink-0" />
+          <Icons.info className="shrink-0" />
           {error}
         </div>
       )}
@@ -46,7 +46,7 @@ export default function ValidationStep({
           <label className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] ml-1 opacity-60">{fieldOneLabel}</label>
           <div className="relative group">
             <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)]">
-              <FiUser className="text-lg" />
+              <Icons.user className="text-lg" />
             </div>
             <input
               value={playerId}
@@ -68,13 +68,13 @@ export default function ValidationStep({
             <label className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] ml-1 opacity-60">{fieldTwoLabel}</label>
             <div className="relative group">
               <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] z-10 pointer-events-none">
-                <FiGlobe className="text-lg" />
+                <Icons.globe className="text-lg" />
               </div>
               
               {game?.inputFieldTwoOptions?.length > 0 ? (
                 <>
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] pointer-events-none z-10">
-                    <FiChevronDown className="text-lg group-hover:translate-y-0.5 transition-transform" />
+                    <Icons.chevronDown className="text-lg group-hover:translate-y-0.5 transition-transform" />
                   </div>
                   <select
                     value={zoneId}
@@ -132,7 +132,7 @@ export default function ValidationStep({
           ) : (
             <>
               {buttonText}
-              <FiCheckCircle className="text-lg" />
+              <Icons.checkCircle className="text-lg" />
             </>
           )}
         </button>

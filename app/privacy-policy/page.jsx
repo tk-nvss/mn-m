@@ -2,37 +2,29 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import {
-  FiShield,
-  FiLock,
-  FiEye,
-  FiDatabase,
-  FiGlobe,
-  FiServer,
-  FiFileText
-} from "react-icons/fi";
+import { Icons } from "@/components/icons";
 
 const BRAND = process.env.NEXT_PUBLIC_BRAND_NAME || "Blue Buff";
 
 export default function PrivacyPolicy() {
   const policies = [
     {
-      icon: <FiDatabase />,
+      icon: <Icons.database />,
       title: "Data Collection",
       description: "We collect essential account details (Email, Phone, Game ID) and technical data (IP, Browser) exclusively for order delivery and fraud prevention."
     },
     {
-      icon: <FiLock />,
+      icon: <Icons.lock />,
       title: "Usage Protocol",
       description: "Your data is used solely to process orders and improve platform security. We never sell, trade, or share your personal information with third-party marketers."
     },
     {
-      icon: <FiServer />,
+      icon: <Icons.server />,
       title: "Security Measures",
       description: "We utilize 256-bit SSL encryption and secure gateways. Logs are retained only as long as legally required for transaction verification and auditing."
     },
     {
-      icon: <FiGlobe />,
+      icon: <Icons.globe />,
       title: "Third-Party Integration",
       description: "Our platform integrates with verified payment and analytics providers who operate under their own strict privacy standards and compliance certifications."
     }
@@ -55,7 +47,7 @@ export default function PrivacyPolicy() {
           className="text-center mb-16 space-y-4"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 mb-4">
-            <FiShield size={12} />
+            <Icons.shield size={12} />
             <span className="text-[10px] font-bold uppercase tracking-widest">Data Protection</span>
           </div>
 
@@ -79,7 +71,7 @@ export default function PrivacyPolicy() {
               className="group p-8 rounded-3xl bg-[var(--card)] border border-[var(--border)] hover:border-[var(--accent)]/40 hover:bg-[var(--foreground)]/[0.02] transition-all duration-300 shadow-sm hover:shadow-lg relative overflow-hidden"
             >
               <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity text-[var(--foreground)] pointer-events-none">
-                <FiFileText size={120} />
+                <Icons.fileText size={120} />
               </div>
 
               <div className="relative z-10">
@@ -110,7 +102,7 @@ export default function PrivacyPolicy() {
 
           <div className="relative z-10 max-w-2xl mx-auto space-y-6">
             <div className="mx-auto w-16 h-16 rounded-full bg-[var(--foreground)]/5 flex items-center justify-center text-[var(--muted)] mb-2">
-              <FiEye size={32} />
+              <Icons.eye size={32} />
             </div>
 
             <div>
@@ -124,7 +116,7 @@ export default function PrivacyPolicy() {
               href="/contact"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-[var(--foreground)] text-[var(--background)] font-bold uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-95 transition-all shadow-lg"
             >
-              <FiShield className="animate-pulse" />
+              <Icons.shield className="animate-pulse" />
               Contact Data Officer
             </Link>
           </div>

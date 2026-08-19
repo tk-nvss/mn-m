@@ -2,11 +2,8 @@
 
 import { useEffect, useState, Suspense, useMemo } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
-import {
-  FiCheck, FiShoppingBag, FiCreditCard, FiUserCheck, FiLoader,
-  FiArrowLeft, FiUser, FiGlobe, FiInfo, FiChevronRight, FiSmartphone,
-  FiShield, FiArrowRight, FiCheckCircle, FiSearch
-} from "react-icons/fi";
+import { Icons } from "@/components/icons";
+import { LoadingSpinner } from "@/components/common";
 
 import AuthGuard from "@/components/AuthGuard";
 import RecentVerifiedPlayers from "../../../../region/RecentVerifiedPlayers";
@@ -245,7 +242,7 @@ function BuyFlowContent() {
       <div className="min-h-screen flex items-center justify-center bg-[var(--background)] px-4">
         <div className="max-w-md w-full bg-[var(--card)] border border-[var(--border)] rounded-3xl p-8 text-center shadow-2xl">
           <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-green-500/20">
-            <FiCheck className="text-4xl text-white" />
+            <Icons.check className="text-4xl text-white" />
           </div>
           <h2 className="text-3xl font-[900] text-[var(--foreground)] mb-2 uppercase tracking-tight">Order Placed!</h2>
           <p className="text-[var(--muted)] mb-8 font-medium">Your request is being processed. We'll top up your account soon.</p>
@@ -265,7 +262,7 @@ function BuyFlowContent() {
             onClick={() => router.back()}
             className="flex items-center gap-1.5 text-[var(--accent)] font-black uppercase tracking-widest text-[9px] mb-2 hover:opacity-70 transition-opacity"
           >
-            <FiArrowLeft className="text-sm" /> Back
+            <Icons.arrowLeft className="text-sm" /> Back
           </button>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-start">
@@ -310,7 +307,7 @@ function BuyFlowContent() {
 
                 {/* BACKGROUND DECOR */}
                 <div className="absolute bottom-1 right-2 opacity-[0.03]">
-                  <FiShoppingBag className="text-4xl text-[var(--foreground)]" />
+                  <Icons.shoppingBag className="text-4xl text-[var(--foreground)]" />
                 </div>
               </div>
 
@@ -318,7 +315,7 @@ function BuyFlowContent() {
               {otherItems.length > 0 && (
                 <div className="space-y-2 px-0.5">
                   <div className="flex items-center gap-1.5">
-                    <FiShoppingBag className="text-[var(--accent)] text-sm" />
+                    <Icons.shoppingBag className="text-[var(--accent)] text-sm" />
                     <h2 className="text-[9px] font-black uppercase tracking-widest text-[var(--foreground)]">More packs you may like</h2>
                   </div>
 
@@ -338,7 +335,7 @@ function BuyFlowContent() {
                         >
                           {isActive && (
                             <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-[var(--accent)] text-white rounded-full flex items-center justify-center shadow-sm">
-                              <FiCheck size={8} strokeWidth={3} />
+                              <Icons.check size={8} strokeWidth={3} />
                             </div>
                           )}
                           <p className={`text-[8.5px] font-black uppercase tracking-wider mb-0.5 truncate ${isActive ? "text-[var(--accent)]" : "text-[var(--muted)] group-hover:text-[var(--foreground)]"}`}>
@@ -368,7 +365,7 @@ function BuyFlowContent() {
                   <div className={`grid gap-3 ${gameWithOptions?.inputFieldTwo ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
                     <div className="relative group">
                       <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors">
-                        <FiUser className="text-base" />
+                        <Icons.user className="text-base" />
                       </div>
                       <input
                         type="text"
@@ -382,7 +379,7 @@ function BuyFlowContent() {
                     {gameWithOptions?.inputFieldTwo && (
                       <div className="relative group">
                         <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors z-10 pointer-events-none">
-                          <FiGlobe className="text-base" />
+                          <Icons.globe className="text-base" />
                         </div>
                         {gameWithOptions?.inputFieldTwoOptions?.length > 0 ? (
                           <select
@@ -415,13 +412,13 @@ function BuyFlowContent() {
                       disabled={loading || !playerId}
                       className="w-full py-3 bg-[var(--accent)] text-white font-black uppercase tracking-widest text-[11px] rounded-xl hover:shadow-[0_4px_15px_rgba(var(--accent-rgb),0.3)] disabled:opacity-50 disabled:grayscale transition-all flex items-center justify-center gap-2"
                     >
-                      {loading ? <FiLoader className="animate-spin text-sm" /> : <><FiSearch className="text-sm" /> Check Name</>}
+                      {loading ? <LoadingSpinner size="xs" color="current" /> : <><Icons.search className="text-sm" /> Check Name</>}
                     </button>
 
                     {/* ERROR MESSAGE */}
                     {error && (
                       <div className="flex items-center gap-2 text-red-500 text-[11px] font-bold px-2">
-                        <FiInfo /> {error}
+                        <Icons.info /> {error}
                       </div>
                     )}
 
@@ -430,7 +427,7 @@ function BuyFlowContent() {
                       <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-3 flex items-center justify-between animate-in fade-in slide-in-from-top-2">
                         <div className="flex items-center gap-2.5">
                           <div className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center">
-                            <FiCheck className="text-base" />
+                            <Icons.check className="text-base" />
                           </div>
                           <div>
                             <p className="text-[9px] font-black text-green-500 uppercase tracking-widest leading-none mb-0.5">Account Verified</p>
@@ -445,7 +442,7 @@ function BuyFlowContent() {
                   <div className="pt-3 border-t border-[var(--border)]">
                     <div className="flex items-center justify-between mb-3 px-0.5">
                       <div className="flex items-center gap-1.5">
-                        <FiUserCheck className="text-[var(--accent)] text-base" />
+                        <Icons.userCheck className="text-[var(--accent)] text-base" />
                         <h3 className="text-[9.5px] font-black text-[var(--muted)] uppercase tracking-widest">Recent Players</h3>
                       </div>
                       <button aria-label="button"
@@ -492,7 +489,7 @@ function BuyFlowContent() {
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors
                         ${paymentMethod === "upi" ? "bg-[var(--accent)] text-white" : "bg-[var(--background)] text-[var(--muted)]"}
                       `}>
-                        <FiSmartphone className="text-base" />
+                        <Icons.smartphone className="text-base" />
                       </div>
                       <div>
                         <h4 className="font-black text-[var(--foreground)] uppercase tracking-tight text-xs sm:text-sm">UPI Gateway</h4>
@@ -502,7 +499,7 @@ function BuyFlowContent() {
                     <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all
                       ${paymentMethod === "upi" ? "bg-[var(--accent)] border-[var(--accent)] text-white" : "border-[var(--border)]"}
                     `}>
-                      {paymentMethod === "upi" && <FiCheck className="text-[9px] stroke-[3]" />}
+                      {paymentMethod === "upi" && <Icons.check className="text-[9px] stroke-[3]" />}
                     </div>
                   </div>
 
@@ -517,7 +514,7 @@ function BuyFlowContent() {
                         <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors
                           ${paymentMethod === "wallet" ? "bg-[var(--accent)] text-white" : "bg-[var(--background)] text-[var(--muted)]"}
                         `}>
-                          <FiCreditCard className="text-lg" />
+                          <Icons.creditCard className="text-lg" />
                         </div>
                         <div>
                           <h4 className="font-black text-[var(--foreground)] uppercase tracking-tight text-xs sm:text-sm">My Wallet</h4>
@@ -527,7 +524,7 @@ function BuyFlowContent() {
                       <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all
                         ${paymentMethod === "wallet" ? "bg-[var(--accent)] border-[var(--accent)] text-white" : "border-[var(--border)]"}
                       `}>
-                        {paymentMethod === "wallet" && <FiCheck className="text-[9px] stroke-[3]" />}
+                        {paymentMethod === "wallet" && <Icons.check className="text-[9px] stroke-[3]" />}
                       </div>
                     </div>
                   )}
@@ -569,13 +566,13 @@ function BuyFlowContent() {
                     >
                       {isProcessing ? (
                         <>
-                          <FiLoader className="animate-spin text-base" />
+                          <LoadingSpinner size="xs" color="current" />
                           Processing
                         </>
                       ) : (
                         <>
                           Confirm & Pay
-                          <FiArrowRight className="text-base" />
+                          <Icons.arrowRight className="text-base" />
                         </>
                       )}
                     </button>

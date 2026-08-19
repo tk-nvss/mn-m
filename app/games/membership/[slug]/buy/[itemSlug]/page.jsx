@@ -3,7 +3,8 @@
 import { useEffect, useState, Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiCheck, FiShoppingBag, FiCreditCard, FiUserCheck, FiLoader } from "react-icons/fi";
+import { Icons } from "@/components/icons";
+import { LoadingSpinner } from "@/components/common";
 
 import AuthGuard from "@/components/AuthGuard";
 import ValidationStep from "./ValidationStep";
@@ -100,9 +101,9 @@ function BuyFlowContent() {
 
                 {/* Steps */}
                 {[
-                  { id: 1, label: "Verify", icon: FiUserCheck },
-                  { id: 2, label: "Confirm", icon: FiShoppingBag },
-                  { id: 3, label: "Pay", icon: FiCreditCard },
+                  { id: 1, label: "Verify", icon: Icons.userCheck },
+                  { id: 2, label: "Confirm", icon: Icons.shoppingBag },
+                  { id: 3, label: "Pay", icon: Icons.creditCard },
                 ].map((s) => {
                   const isActive = step === s.id;
                   const isCompleted = step > s.id;
@@ -134,7 +135,7 @@ function BuyFlowContent() {
                           `}
                         >
                           {isCompleted ? (
-                            <FiCheck className="text-base stroke-[3]" />
+                            <Icons.check className="text-base stroke-[3]" />
                           ) : (
                             <s.icon className={`text-base ${isActive ? "opacity-100" : "opacity-30"}`} />
                           )}
@@ -210,7 +211,7 @@ function BuyFlowContent() {
                     className="bg-green-500/10 border border-green-500/20 p-8 rounded-3xl text-center backdrop-blur-sm"
                   >
                     <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-green-500/20">
-                      <FiCheck className="text-4xl text-white" />
+                      <Icons.check className="text-4xl text-white" />
                     </div>
                     <h2 className="text-3xl font-[900] text-green-400 mb-2 uppercase tracking-tight">Payment successful!</h2>
                     <p className="text-[var(--muted)] max-w-sm mx-auto mb-8 font-medium">
@@ -290,7 +291,7 @@ export default function BuyFlowPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-        <FiLoader className="animate-spin text-3xl text-[var(--accent)]" />
+        <LoadingSpinner size="lg" color="accent" />
       </div>
     }>
       <BuyFlowContent />

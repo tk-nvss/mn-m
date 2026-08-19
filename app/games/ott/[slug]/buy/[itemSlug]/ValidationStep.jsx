@@ -1,4 +1,4 @@
-import { FiUser, FiCheckCircle } from "react-icons/fi";
+import { Icons } from "@/components/icons";
 import RecentVerifiedPlayers from "../../../../../region/RecentVerifiedPlayers";
 import { motion } from "framer-motion";
 
@@ -26,7 +26,7 @@ export default function ValidationStep({
         <label className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] ml-1 opacity-60">Account ID</label>
         <div className="relative group">
           <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors duration-300">
-            <FiUser className="text-lg" />
+            <Icons.user className="text-lg" />
           </div>
           <input
             value={playerId}
@@ -58,7 +58,7 @@ export default function ValidationStep({
           ) : (
             <>
               Check Player
-              <FiCheckCircle className="text-lg" />
+              <Icons.checkCircle className="text-lg" />
             </>
           )}
 
