@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FiClock, FiCheckCircle, FiXCircle, FiRefreshCw, FiExternalLink, FiSearch } from "react-icons/fi";
 import { StatusBadge, CopyButton, Pagination, LoadingSpinner, EmptyState } from "@/components/common";
 import { Icons } from "@/components/icons";
 import { formatDateTime, formatCoins } from "@/utils";
@@ -160,7 +159,7 @@ export default function UsdtTab() {
                         <span className="text-[10px] font-mono text-[var(--muted)] truncate">{d.txHash}</span>
                         <CopyButton text={d.txHash} size="xs" variant="ghost" className="p-0.5" />
                         <a href={`https://bscscan.com/tx/${d.txHash}`} target="_blank" rel="noopener noreferrer" className="text-green-500 hover:text-green-400">
-                          <FiExternalLink size={10} />
+                          <Icons.externalLink size={10} />
                         </a>
                       </div>
                     ) : (
@@ -184,7 +183,7 @@ export default function UsdtTab() {
                           className="p-2 rounded-lg bg-green-500/20 text-green-500 hover:bg-green-500 hover:text-black transition-all"
                           title="Confirm & Credit"
                         >
-                          <FiCheckCircle size={14} />
+                          {actionLoading === d.depositId ? <LoadingSpinner size="xs" color="current" /> : <Icons.checkCircle size={14} />}
                         </button>
                         <button aria-label="button" 
                           onClick={() => handleAction(d.depositId, "reject")}
@@ -192,7 +191,7 @@ export default function UsdtTab() {
                           className="p-2 rounded-lg bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-black transition-all"
                           title="Reject"
                         >
-                          <FiXCircle size={14} />
+                          {actionLoading === d.depositId ? <LoadingSpinner size="xs" color="current" /> : <Icons.close size={14} />}
                         </button>
                       </div>
                     ) : (

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FiLayout, FiCheckCircle, FiAlertCircle, FiLoader } from "react-icons/fi";
+import { Icons } from "@/components/icons";
+import { LoadingSpinner } from "@/components/common";
 
 const UiSettingsTab = () => {
     const [settings, setSettings] = useState({ 
@@ -41,7 +42,7 @@ const UiSettingsTab = () => {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
-                <FiLoader className="w-10 h-10 animate-spin text-[var(--accent)]" />
+                <LoadingSpinner size="lg" color="accent" />
                 <p className="text-[var(--muted)]">Loading UI settings...</p>
             </div>
         );
@@ -53,7 +54,7 @@ const UiSettingsTab = () => {
       <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
         <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
-                <FiLayout className="text-[var(--accent)] text-lg" />
+                <Icons.layout className="text-[var(--accent)] text-lg" />
             </div>
             <div>
                 <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Top Banners</h2>
@@ -131,7 +132,7 @@ const UiSettingsTab = () => {
       <div className="flex items-center justify-between flex-wrap gap-4 mt-12 mb-6">
         <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
-                <FiLayout className="text-[var(--accent)] text-lg" />
+                <Icons.layout className="text-[var(--accent)] text-lg" />
             </div>
             <div>
                 <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Community Popups</h2>
@@ -210,7 +211,7 @@ const UiSettingsTab = () => {
       <div className="flex items-center justify-between flex-wrap gap-4 mt-12 mb-6">
         <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
-                <FiLayout className="text-[var(--accent)] text-lg" />
+                <Icons.layout className="text-[var(--accent)] text-lg" />
             </div>
             <div>
                 <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Homepage Sections</h2>
@@ -289,7 +290,7 @@ const UiSettingsTab = () => {
       <div className="flex items-center justify-between flex-wrap gap-4 mt-12 mb-6">
         <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
-                <FiLayout className="text-[var(--accent)] text-lg" />
+                <Icons.layout className="text-[var(--accent)] text-lg" />
             </div>
             <div>
                 <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Global UI Elements</h2>
@@ -366,7 +367,7 @@ const UiSettingsTab = () => {
 
             {message.text && (
                 <div className={`p-4 md:p-6 mt-6 flex items-center gap-3 text-xs font-bold tracking-wide uppercase rounded-[1.5rem] border ${message.type === "success" ? "text-emerald-500 bg-emerald-500/10 border-emerald-500/20" : "text-rose-500 bg-rose-500/10 border-rose-500/20"}`}>
-                    {message.type === "success" ? <FiCheckCircle className="text-sm" /> : <FiAlertCircle className="text-sm" />}
+                    {message.type === "success" ? <Icons.checkCircle size={16} /> : <Icons.alertCircle size={16} />}
                     {message.text}
                 </div>
             )}

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FiSettings, FiCheckCircle, FiAlertCircle, FiLoader } from "react-icons/fi";
+import { Icons } from "@/components/icons";
+import { LoadingSpinner } from "@/components/common";
 
 const SettingsTab = () => {
     const [settings, setSettings] = useState({ maintenanceMode: false });
@@ -96,7 +97,7 @@ const SettingsTab = () => {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
-                <FiLoader className="w-10 h-10 animate-spin text-[var(--accent)]" />
+                <LoadingSpinner size="lg" color="accent" />
                 <p className="text-[var(--muted)]">Loading settings...</p>
             </div>
         );
@@ -108,7 +109,7 @@ const SettingsTab = () => {
       <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
         <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
-                <FiSettings className="text-[var(--accent)] text-lg" />
+                <Icons.settings className="text-[var(--accent)] text-lg" />
             </div>
             <div>
                 <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Main Settings</h2>
@@ -174,7 +175,7 @@ const SettingsTab = () => {
                 </div>
                 {message.text && (
                     <div className={`p-4 md:p-6 flex items-center gap-3 text-xs font-bold tracking-wide uppercase ${message.type === "success" ? "text-emerald-500 bg-emerald-500/10" : "text-rose-500 bg-rose-500/10"}`}>
-                        {message.type === "success" ? <FiCheckCircle className="text-sm" /> : <FiAlertCircle className="text-sm" />}
+                        {message.type === "success" ? <Icons.checkCircle size={16} /> : <Icons.alertCircle size={16} />}
                         {message.text}
                     </div>
                 )}

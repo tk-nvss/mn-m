@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
-import { FaTrash, FaPlus, FaShieldAlt } from "react-icons/fa";
 import { LoadingSpinner, EmptyState } from "@/components/common";
 import { Icons } from "@/components/icons";
 import { formatDateTime } from "@/utils";
@@ -112,7 +111,7 @@ export default function BlocklistTab() {
       <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
         <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
-                <FaShieldAlt className="text-[var(--accent)] text-lg" />
+                <Icons.shield className="text-[var(--accent)] text-lg" />
             </div>
             <div>
                 <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Blocklist Management</h2>
@@ -127,7 +126,7 @@ export default function BlocklistTab() {
         {/* Add Form */}
         <div className="bg-[var(--card)]/40 border border-[var(--border)] rounded-[1.5rem] p-6 md:p-8 h-fit shadow-xl shadow-black/5">
           <h3 className="text-xs font-black uppercase tracking-wide text-[var(--foreground)] mb-6 flex items-center gap-2">
-             <FaPlus className="text-[var(--accent)] text-sm" />
+             <Icons.plus className="text-[var(--accent)] text-sm" />
              Add to Blocklist
           </h3>
           
@@ -253,7 +252,7 @@ export default function BlocklistTab() {
                           className="w-8 h-8 inline-flex items-center justify-center text-[var(--muted)] hover:text-rose-500 hover:bg-rose-500/10 rounded-full transition-all"
                           title="Remove from blocklist"
                         >
-                          <FaTrash size={12} />
+                          <Icons.trash size={12} />
                         </button>
                       </td>
                     </tr>

@@ -1,15 +1,41 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FiRefreshCw, FiGift } from "react-icons/fi";
-import { ShoppingBag, IndianRupee, Hash, ArrowUp, ArrowDown, Wallet, Zap, Users, UserPlus, Activity, Download, MousePointerClick, MessageSquare, Send, Coins, Ticket, Sparkles, TrendingUp, Database, CheckCircle, HelpCircle, Mail } from "lucide-react";
-import { motion } from "framer-motion";
+import { ShoppingBag, IndianRupee, ArrowUp, ArrowDown, Wallet, Zap, Users, UserPlus, Download, MessageSquare, Send, Coins, Ticket, TrendingUp, HelpCircle, Mail } from "lucide-react";
 import { formatCurrency, formatNumber } from "@/utils";
+
+const PERIODS = [
+  { days: 1, key: "day", label: "Today" },
+  { days: 7, key: "week", label: "Week" },
+  { days: 30, key: "month", label: "Month" },
+];
+
+function PeriodToggle({ days, onChange }) {
+  return (
+    <div className="flex p-0.5 bg-[var(--border)]/50 border border-[var(--border)] rounded-md gap-0.5">
+      {PERIODS.map((period) => (
+        <button aria-label="button"
+          key={period.days}
+          onClick={() => onChange(period.days)}
+          className={`px-3 py-1 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all ${
+            days === period.days
+              ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm"
+              : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
+          }`}
+        >{period.days}D</button>
+      ))}
+    </div>
+  );
+}
+
+function getPeriodValue(stats, periodKey) {
+  return stats?.[periodKey] || 0;
+}
 
 function CompactMetricCard({
   title,
   titleIcon: TitleIcon,
-  theme,
   primaryStats,
   footerStats,
   timeframeLabel
@@ -70,6 +96,8 @@ function CompactMetricCard({
 export default function AnalyticsTab() {
   const [days, setDays] = useState(1);
   const [loading, setLoading] = useState(false);
+  const selectedPeriod = PERIODS.find((period) => period.days === days) || PERIODS[0];
+  const { key: periodKey, label: timeframeLabel } = selectedPeriod;
   
   const [orderStats, setOrderStats] = useState({
     revenue: { day: 0, week: 0, month: 0 },
@@ -124,7 +152,7 @@ export default function AnalyticsTab() {
     totalEmails: 0
   });
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
@@ -205,11 +233,11 @@ export default function AnalyticsTab() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [days]);
 
   useEffect(() => {
     fetchStats();
-  }, [days]);
+  }, [fetchStats]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -229,20 +257,7 @@ export default function AnalyticsTab() {
           <p className="text-[10px] text-[var(--muted)] mt-0.5 font-mono truncate">Comprehensive insights and performance metrics</p>
         </div>
         <div className="flex items-center gap-2">
-          {/* Day toggle */}
-          <div className="flex p-0.5 bg-[var(--border)]/50 border border-[var(--border)] rounded-md gap-0.5">
-            {[1, 7, 30].map((d) => (
-              <button aria-label="button"
-                key={d}
-                onClick={() => setDays(d)}
-                className={`px-3 py-1 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all ${
-                  days === d
-                    ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
-                }`}
-              >{d}D</button>
-            ))}
-          </div>
+          <PeriodToggle days={days} onChange={setDays} />
         </div>
       </div>
 
@@ -252,55 +267,51 @@ export default function AnalyticsTab() {
         <CompactMetricCard
           title="User Activity"
           titleIcon={Users}
-          theme="purple"
           primaryStats={[
             { label: "Total Users", value: userStats.total, icon: Users, color: "purple" },
-            { label: "Active Users", value: userStats.activeStats?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0, icon: Zap, color: "blue" }
+            { label: "Active Users", value: getPeriodValue(userStats.activeStats, periodKey), icon: Zap, color: "blue" }
           ]}
           footerStats={[
             { label: "All Time", color: "purple" },
-            { label: `${userStats.newStats?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0} New`, color: "emerald", icon: UserPlus }
+            { label: `${getPeriodValue(userStats.newStats, periodKey)} New`, color: "emerald", icon: UserPlus }
           ]}
-          timeframeLabel={days === 1 ? "Today" : days === 7 ? "Week" : "Month"}
+          timeframeLabel={timeframeLabel}
         />
 
         {/* ORDERS & TRANSACTIONS */}
         <CompactMetricCard
           title="Orders & Transactions"
           titleIcon={ShoppingBag}
-          theme="emerald"
           primaryStats={[
-            { label: "Order Earnings", value: formatCurrency(orderStats.revenue?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0), icon: ShoppingBag, color: "amber" },
-            { label: "Txn Earnings", value: formatCurrency(txStats.volume?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0), icon: IndianRupee, color: "blue" }
+            { label: "Order Earnings", value: formatCurrency(getPeriodValue(orderStats.revenue, periodKey)), icon: ShoppingBag, color: "amber" },
+            { label: "Txn Earnings", value: formatCurrency(getPeriodValue(txStats.volume, periodKey)), icon: IndianRupee, color: "blue" }
           ]}
           footerStats={[
-            { label: `Orders: ${formatNumber(orderStats.counts?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0)}`, color: "amber", pulseDot: days === 1 && orderStats.counts?.day > 0 },
-            { label: `Txns: ${formatNumber(txStats.counts?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0)}`, color: "blue", pulseDot: days === 1 && txStats.counts?.day > 0 }
+            { label: `Orders: ${formatNumber(getPeriodValue(orderStats.counts, periodKey))}`, color: "amber", pulseDot: days === 1 && orderStats.counts?.day > 0 },
+            { label: `Txns: ${formatNumber(getPeriodValue(txStats.counts, periodKey))}`, color: "blue", pulseDot: days === 1 && txStats.counts?.day > 0 }
           ]}
-          timeframeLabel={days === 1 ? "Today" : days === 7 ? "Week" : "Month"}
+          timeframeLabel={timeframeLabel}
         />
 
         {/* WALLETS */}
         <CompactMetricCard
           title="Wallet Snapshot"
           titleIcon={Wallet}
-          theme="blue"
           primaryStats={[
-            { label: "Money Added", value: formatCurrency(walletStats.deposits?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0), icon: ArrowUp, color: "emerald", pulse: days === 1 && walletStats.deposits?.day > 0 },
-            { label: "Money Spent", value: formatCurrency(walletStats.usage?.[days === 1 ? "day" : days === 7 ? "week" : "month"] || 0), icon: ArrowDown, color: "purple", pulse: days === 1 && walletStats.usage?.day > 0 }
+            { label: "Money Added", value: formatCurrency(getPeriodValue(walletStats.deposits, periodKey)), icon: ArrowUp, color: "emerald", pulse: days === 1 && walletStats.deposits?.day > 0 },
+            { label: "Money Spent", value: formatCurrency(getPeriodValue(walletStats.usage, periodKey)), icon: ArrowDown, color: "purple", pulse: days === 1 && walletStats.usage?.day > 0 }
           ]}
           footerStats={[
             { label: `Customer Pool: ${formatCurrency(walletStats.totalBalance || 0)}`, color: "blue" },
             { label: `Active Wallets: ${formatNumber(walletStats.activeWallets || 0)}`, color: "amber" }
           ]}
-          timeframeLabel={days === 1 ? "Today" : days === 7 ? "Week" : "Month"}
+          timeframeLabel={timeframeLabel}
         />
 
         {/* REDEEM CODES */}
         <CompactMetricCard
           title="Redeem Codes"
           titleIcon={FiGift}
-          theme="indigo"
           primaryStats={[
             { label: "Total Codes", value: redeemStats.total, icon: Ticket, color: "indigo" },
             { label: "Available Codes", value: redeemStats.total - redeemStats.totalUsed, icon: FiGift, color: "amber" }
@@ -315,7 +326,6 @@ export default function AnalyticsTab() {
         <CompactMetricCard
           title="BBC Coins"
           titleIcon={Coins}
-          theme="amber"
           primaryStats={[
             { label: "Total Available", value: coinStats.totalAvailable, icon: Coins, color: "blue" },
             { label: "Today Earned", value: coinStats.todayEarned, icon: ArrowUp, color: "emerald", pulse: coinStats.todayEarned > 0 }
@@ -332,13 +342,12 @@ export default function AnalyticsTab() {
         <CompactMetricCard
           title="PWA Installs"
           titleIcon={Download}
-          theme="blue"
           primaryStats={[
             { label: "Total Installs", value: pwaStats.totalInstalls || 0, icon: Download, color: "emerald" },
             { label: "Conversion Rate", value: `${(pwaStats.totalInstalls || 0) + (pwaStats.dismissCount || 0) > 0 ? Math.round(((pwaStats.totalInstalls || 0) / ((pwaStats.totalInstalls || 0) + (pwaStats.dismissCount || 0))) * 100) : 0}%`, icon: TrendingUp, color: "purple" }
           ]}
           footerStats={[
-            { label: `${days === 1 ? "Today" : days === 7 ? "Week" : "Month"}: ${pwaStats.periodInstalls || 0}`, color: "indigo" },
+            { label: `${timeframeLabel}: ${pwaStats.periodInstalls || 0}`, color: "indigo" },
             { label: `Active Devices: ${pwaStats.activeDevices || 0}`, color: "blue" },
             { label: `Dismissed: ${pwaStats.dismissCount || 0}`, color: "amber" }
           ]}
@@ -349,7 +358,6 @@ export default function AnalyticsTab() {
         <CompactMetricCard
           title="Support Queries"
           titleIcon={HelpCircle}
-          theme="rose"
           primaryStats={[
             { label: "Pending Queries", value: supportStats.open || 0, icon: HelpCircle, color: "amber", pulse: supportStats.open > 0 },
             { label: "Today's Queries", value: supportStats.today || 0, icon: MessageSquare, color: "purple", pulse: supportStats.today > 0 }
@@ -364,7 +372,6 @@ export default function AnalyticsTab() {
         <CompactMetricCard
           title="Promo Mail"
           titleIcon={Mail}
-          theme="indigo"
           primaryStats={[
             { label: "Mails Today", value: promoStats.todayEmails || 0, icon: Send, color: "emerald" },
             { label: "Total Reach", value: promoStats.totalEmails || 0, icon: Mail, color: "amber" }
