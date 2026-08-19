@@ -11,7 +11,6 @@ import api from "@/lib/axios";
 export default function OrdersTab() {
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [search, setSearch] = useState("");
-  const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
@@ -45,17 +44,6 @@ export default function OrdersTab() {
   useEffect(() => {
     setPage(1);
   }, [search, statusFilter]);
-
-  /* ================= PAGE RANGE ================= */
-  const getPageNumbers = () => {
-    const pages: number[] = [];
-    const start = Math.max(1, page - 1);
-    const end = Math.min(totalPages, page + 1);
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-    return pages;
-  };
 
   return (
     <div className="space-y-6">

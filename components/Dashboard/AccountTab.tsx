@@ -12,6 +12,7 @@ import {
   FiAlertCircle,
   FiZap,
 } from "react-icons/fi";
+import { LoadingSpinner } from "@/components/common";
 import api from "@/lib/axios";
 
 interface UserDetails {
@@ -149,7 +150,7 @@ export default function AccountTab({ userDetails }: AccountTabProps) {
                 onClick={handlePasswordUpdate}
                 className="w-full p-5 rounded-[2rem] bg-[var(--accent)] text-black font-black uppercase tracking-[0.2em] italic text-xs shadow-[0_20px_40px_-10px_rgba(var(--accent-rgb),0.3)] hover:scale-[1.01] active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-3"
               >
-                {loadingPass ? <FiZap className="animate-spin" size={16} /> : "Save Password"}
+                {loadingPass ? <LoadingSpinner size="xs" color="current" /> : "Save Password"}
               </button>
             </div>
 

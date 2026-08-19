@@ -379,7 +379,7 @@ export default function WalletTab({
                   disabled={loading}
                   className="w-full mt-2 p-4 rounded-2xl bg-[var(--accent)] text-black font-black uppercase tracking-[0.2em] italic text-xs shadow-[0_20px_40px_-10px_rgba(var(--accent-rgb),0.3)] hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:grayscale transition-all flex items-center justify-center gap-2"
                 >
-                  {loading ? <FiLoader className="animate-spin" size={18} /> : (
+                  {loading ? <LoadingSpinner size="xs" color="current" /> : (
                     <>
                       <FiZap size={16} /> ADD FUNDS
                     </>
@@ -451,7 +451,7 @@ export default function WalletTab({
                   disabled={usdtLoading}
                   className="w-full p-4 rounded-2xl bg-green-500 text-black font-black uppercase tracking-[0.2em] italic text-xs hover:scale-[1.02] active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-3"
                 >
-                  {usdtLoading ? <FiLoader className="animate-spin" size={18} /> : "Show Me the Address →"}
+                  {usdtLoading ? <LoadingSpinner size="xs" color="current" /> : "Show Me the Address →"}
                 </button>
               </motion.div>
             )}
@@ -610,7 +610,7 @@ export default function WalletTab({
                     disabled={usdtLoading || !txHash.trim()}
                     className="w-full p-4 rounded-2xl bg-green-500 text-black font-black uppercase tracking-[0.2em] italic text-xs hover:scale-[1.02] active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-3"
                   >
-                    {usdtLoading ? <FiLoader className="animate-spin" size={18} /> : "I've Sent — Confirm"}
+                    {usdtLoading ? <LoadingSpinner size="xs" color="current" /> : "I've Sent — Confirm"}
                   </button>
                 </div>
               )}

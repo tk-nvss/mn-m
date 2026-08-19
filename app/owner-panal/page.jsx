@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { Icons } from "@/components/icons";
+import { LoadingSpinner } from "@/components/common";
 import {
   FiSearch,
   FiChevronLeft,
@@ -103,7 +105,9 @@ export default function AdminPanalPage() {
   const [loading, setLoading] = useState(true);
 
   const [pinPrompt, setPinPrompt] = useState(true);
-  const [pinInput, setPinInput] = useState("");
+  const [pinDigits, setPinDigits] = useState(["", "", "", "", "", ""]);
+  const [showPin, setShowPin] = useState(false);
+  const pinInputRefs = useRef([]);
 
   const SECRET_KEY = "bb_admin_secure_key_99";
   
@@ -122,6 +126,51 @@ export default function AdminPanalPage() {
       result += String.fromCharCode(text.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length));
     }
     return result;
+  };
+
+  const handleDigitChange = (index, value) => {
+    const cleanVal = value.replace(/[^0-9]/g, "");
+    if (!cleanVal) {
+      const newDigits = [...pinDigits];
+      newDigits[index] = "";
+      setPinDigits(newDigits);
+      return;
+    }
+
+    const lastChar = cleanVal.slice(-1);
+    const newDigits = [...pinDigits];
+    newDigits[index] = lastChar;
+    setPinDigits(newDigits);
+
+    // Auto-focus next box
+    if (index < 5 && lastChar) {
+      pinInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleDigitKeyDown = (index, e) => {
+    if (e.key === "Backspace" && !pinDigits[index] && index > 0) {
+      pinInputRefs.current[index - 1]?.focus();
+    } else if (e.key === "ArrowLeft" && index > 0) {
+      pinInputRefs.current[index - 1]?.focus();
+    } else if (e.key === "ArrowRight" && index < 5) {
+      pinInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handlePinPaste = (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").replace(/[^0-9]/g, "").slice(0, 6);
+    if (!pastedData) return;
+
+    const newDigits = [...pinDigits];
+    for (let i = 0; i < 6; i++) {
+      newDigits[i] = pastedData[i] || "";
+    }
+    setPinDigits(newDigits);
+
+    const nextIndex = Math.min(pastedData.length, 5);
+    pinInputRefs.current[nextIndex]?.focus();
   };
 
   useEffect(() => {
@@ -164,12 +213,13 @@ export default function AdminPanalPage() {
   }, []);
 
   const handlePinSubmit = (e) => {
-    e.preventDefault();
-    if (pinInput) {
+    if (e) e.preventDefault();
+    const currentPin = pinDigits.join("");
+    if (currentPin.length === 6) {
       const expiresAt = new Date().getTime() + (12 * 60 * 60 * 1000); // 12 hours from now
-      const authData = encryptData(JSON.stringify({ pin: pinInput, expiresAt }));
+      const authData = encryptData(JSON.stringify({ pin: currentPin, expiresAt }));
       localStorage.setItem("adminAuth", authData);
-      sessionStorage.setItem("adminPin", pinInput);
+      sessionStorage.setItem("adminPin", currentPin);
       setPinPrompt(false);
       window.location.reload();
     }
@@ -329,20 +379,86 @@ export default function AdminPanalPage() {
   }, [activeTab, pricingType, page, search]);
 
   if (pinPrompt) {
+    const isComplete = pinDigits.every((d) => d !== "");
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <form onSubmit={handlePinSubmit} className="bg-neutral-900 p-8 rounded-2xl flex flex-col items-center gap-4 border border-white/10">
-          <FiKey size={32} className="text-[var(--accent)]" />
-          <h2 className="text-xl font-bold text-white">Admin Security PIN</h2>
-          <input 
-            type="password" 
-            value={pinInput} 
-            onChange={(e) => setPinInput(e.target.value)}
-            className="bg-black border border-white/20 rounded-lg px-4 py-2 text-center text-white font-mono tracking-[0.5em] outline-none focus:border-[var(--accent)]"
-            placeholder="******"
-            autoFocus
-          />
-          <button aria-label="button" type="submit" className="bg-[var(--accent)] text-black px-6 py-2 rounded-lg font-bold w-full">Unlock</button>
+      <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-md text-white p-4">
+        <form
+          onSubmit={handlePinSubmit}
+          className="w-full max-w-sm bg-neutral-900 border border-neutral-800 p-6 sm:p-8 rounded-2xl shadow-xl flex flex-col items-center gap-5"
+        >
+          {/* Key Icon */}
+          <div className="w-12 h-12 rounded-xl bg-neutral-800/80 border border-neutral-700/50 flex items-center justify-center text-[var(--accent)]">
+            <Icons.key size={22} />
+          </div>
+
+          {/* Simple Text */}
+          <div className="text-center space-y-1">
+            <h2 className="text-lg sm:text-xl font-bold text-white">
+              Admin Security PIN
+            </h2>
+            <p className="text-xs text-neutral-400">
+              Enter your 6-digit PIN to continue
+            </p>
+          </div>
+
+          {/* 6 Digit Inputs */}
+          <div className="space-y-3 w-full">
+            <div className="flex items-center justify-center gap-2" onPaste={handlePinPaste}>
+              {pinDigits.map((digit, idx) => (
+                <input
+                  key={idx}
+                  ref={(el) => (pinInputRefs.current[idx] = el)}
+                  type={showPin ? "text" : "password"}
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleDigitChange(idx, e.target.value)}
+                  onKeyDown={(e) => handleDigitKeyDown(idx, e)}
+                  autoFocus={idx === 0}
+                  className={`w-10 h-12 sm:w-11 sm:h-12 text-center text-lg font-bold rounded-xl bg-neutral-950 border transition-colors outline-none ${
+                    digit
+                      ? "border-[var(--accent)] text-[var(--accent)]"
+                      : "border-neutral-800 text-white focus:border-[var(--accent)]"
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Toggle & Clear */}
+            <div className="flex items-center justify-between text-xs text-neutral-400 px-1">
+              <button
+                type="button"
+                onClick={() => setShowPin(!showPin)}
+                className="flex items-center gap-1.5 hover:text-white transition-colors"
+              >
+                {showPin ? <Icons.eyeOff size={14} /> : <Icons.eye size={14} />}
+                <span>{showPin ? "Hide PIN" : "Show PIN"}</span>
+              </button>
+
+              {pinDigits.some((d) => d !== "") && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPinDigits(["", "", "", "", "", ""]);
+                    pinInputRefs.current[0]?.focus();
+                  }}
+                  className="hover:text-red-400 transition-colors"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Unlock Button */}
+          <button
+            aria-label="button"
+            type="submit"
+            disabled={!isComplete}
+            className="w-full py-3 rounded-xl bg-[var(--accent)] text-black font-bold text-sm hover:opacity-90 active:scale-[0.99] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+          >
+            Unlock
+          </button>
         </form>
       </div>
     );
@@ -351,7 +467,7 @@ export default function AdminPanalPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        <LoadingSpinner size="xl" color="accent" />
       </div>
     );
   }

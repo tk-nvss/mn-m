@@ -1,22 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  FiChevronDown,
-  FiCalendar,
-  FiUser,
-  FiGrid,
-  FiCreditCard,
-  FiHash,
-  FiCheckCircle,
-  FiAlertCircle,
-  FiLoader,
-  FiCopy,
-  FiCheck,
-} from "react-icons/fi";
-
-import { StatusBadge, CopyButton } from "@/components/common";
+import { FiUser } from "react-icons/fi";
+import { StatusBadge, CopyButton, LoadingSpinner } from "@/components/common";
 import { formatCurrency, formatDateTime } from "@/utils";
 
 /* ================= TYPES ================= */
@@ -111,7 +97,7 @@ export default function OrderItem({ order, index = 0 }: { order: OrderType, inde
               disabled={verifyLoading}
               className="px-2 py-0.5 rounded border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--accent)] text-[7px] font-bold uppercase tracking-widest hover:bg-[var(--accent)] hover:text-white transition-colors flex items-center gap-1"
             >
-              {verifyLoading ? <FiLoader className="animate-spin" size={6} /> : "Check Status"}
+              {verifyLoading ? <LoadingSpinner size="xs" color="current" /> : "Check Status"}
             </button>
           )}
         </div>

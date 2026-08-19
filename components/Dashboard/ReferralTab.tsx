@@ -7,7 +7,7 @@ import {
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/lib/axios";
-import { CopyButton } from "@/components/common";
+import { CopyButton, LoadingSpinner } from "@/components/common";
 
 interface ReferralTabProps {
     userReferral?: {
@@ -187,7 +187,7 @@ export default function ReferralTab({ userReferral }: ReferralTabProps) {
                             className="w-full h-11 rounded-xl bg-[var(--accent)] text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 disabled:opacity-25 hover:opacity-90 transition-opacity"
                         >
                             {referralLoading
-                                ? <FiLoader className="animate-spin" size={13} />
+                                ? <LoadingSpinner size="xs" color="current" />
                                 : <><span>Use Code</span><FiArrowRight size={12} /></>
                             }
                         </button>

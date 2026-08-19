@@ -92,106 +92,164 @@ export default function PWAInstallBanner() {
         @keyframes pwa-back-in  { from{opacity:0} to{opacity:1} }
 
         #pwa-card {
-          position:fixed; bottom:24px; right:24px; z-index:99999;
-          animation: pwa-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both, pwa-float 6s ease-in-out infinite;
-          border-radius: 100px;
-          padding: 8px 8px 8px 12px;
-          background: rgba(15, 15, 15, 0.85);
+          position: fixed;
+          bottom: 24px;
+          right: 24px;
+          z-index: 99999;
+          animation: pwa-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+          border-radius: 9999px;
+          padding: 5px 6px 5px 8px;
+          background: var(--card);
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          box-shadow: 0 12px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+          border: 1px solid var(--border);
+          box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3), 0 0 1px 1px var(--border);
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 8px;
         }
-        @media(max-width:767px){ #pwa-card{bottom:16px;right:16px;left:16px;justify-content:space-between;} }
+        @media(max-width:767px){ 
+          #pwa-card {
+            bottom: 62px;
+            right: 12px;
+            left: auto;
+            max-width: fit-content;
+          } 
+        }
 
         .pwa-install-btn {
-          display:flex; align-items:center; gap:6px;
-          padding:9px 18px; border-radius:100px; border:none; cursor:pointer;
-          font-size:12px; font-weight:700; letter-spacing:0.02em; white-space:nowrap;
-          background: linear-gradient(135deg, var(--accent), color-mix(in srgb,var(--accent) 80%, #fff));
-          color:#fff;
-          box-shadow: 0 4px 15px color-mix(in srgb,var(--accent) 40%,transparent);
-          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-          animation: pwa-pulse 2s infinite;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          padding: 5px 11px;
+          border-radius: 9999px;
+          border: none;
+          cursor: pointer;
+          font-size: 10.5px;
+          font-weight: 800;
+          letter-spacing: 0.02em;
+          white-space: nowrap;
+          background: var(--accent);
+          color: #000;
+          box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 30%, transparent);
+          transition: all 0.2s ease;
         }
         .pwa-install-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px color-mix(in srgb,var(--accent) 60%,transparent);
-          filter: brightness(1.1);
+          transform: translateY(-1px);
+          filter: brightness(1.08);
+          box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 50%, transparent);
+        }
+        .pwa-install-btn:active {
+          transform: scale(0.97);
         }
         
         .pwa-close-btn {
-          width:30px; height:30px; border-radius:50%; cursor:pointer; flex-shrink:0;
-          border:none; background:rgba(255,255,255,0.08);
-          color:rgba(255,255,255,0.6); display:flex; align-items:center; justify-content:center;
-          font-size:12px; transition:all 0.2s;
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          cursor: pointer;
+          flex-shrink: 0;
+          border: none;
+          background: transparent;
+          color: var(--muted);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 11px;
+          transition: all 0.2s;
         }
         .pwa-close-btn:hover {
-          color:#fff; background:rgba(255,255,255,0.2); transform: scale(1.05);
+          color: var(--foreground);
+          background: var(--foreground-rgb, rgba(255,255,255,0.08));
         }
 
         /* Modal */
         .pwa-backdrop {
-          position:fixed; inset:0; z-index:999998;
-          background:rgba(0,0,0,0.55); backdrop-filter:blur(5px);
-          animation:pwa-back-in 0.25s ease both;
+          position: fixed;
+          inset: 0;
+          z-index: 999998;
+          background: rgba(0, 0, 0, 0.6);
+          backdrop-filter: blur(4px);
+          animation: pwa-back-in 0.2s ease both;
         }
         .pwa-sheet-wrap {
-          position:fixed; bottom:0; left:0; right:0; z-index:999999;
-          animation:pwa-sheet-in 0.35s cubic-bezier(0.22,1,0.36,1) both;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          z-index: 999999;
+          animation: pwa-sheet-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
         .pwa-sheet {
-          background:var(--card);
-          border:1px solid var(--border); border-bottom:none;
-          border-radius:22px 22px 0 0;
-          box-shadow:0 -12px 40px rgba(0,0,0,0.25);
-          padding-bottom:32px;
+          background: var(--card);
+          border: 1px solid var(--border);
+          border-bottom: none;
+          border-radius: 20px 20px 0 0;
+          box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.3);
+          padding-bottom: 28px;
         }
         .pwa-step-num {
-          flex-shrink:0; width:26px; height:26px; border-radius:50%;
-          background:color-mix(in srgb,var(--accent) 10%,transparent);
-          border:1px solid color-mix(in srgb,var(--accent) 22%,transparent);
-          color:var(--accent);
-          display:flex; align-items:center; justify-content:center;
-          font-size:10px; font-weight:800;
+          flex-shrink: 0;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: color-mix(in srgb, var(--accent) 12%, transparent);
+          border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+          color: var(--accent);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 10px;
+          font-weight: 800;
         }
-        .pwa-step-strong { color:var(--accent); }
+        .pwa-step-strong { color: var(--accent); }
         .pwa-cancel-btn {
-          flex:1; padding:12px; border-radius:12px; cursor:pointer; font-size:13px; font-weight:700;
-          border:1px solid var(--border); background:var(--background); color:var(--muted);
-          transition:color 0.15s;
+          flex: 1;
+          padding: 10px;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 12px;
+          font-weight: 700;
+          border: 1px solid var(--border);
+          background: var(--background);
+          color: var(--muted);
+          transition: color 0.15s;
         }
-        .pwa-cancel-btn:hover{color:var(--foreground);}
+        .pwa-cancel-btn:hover { color: var(--foreground); }
         .pwa-ok-btn {
-          flex:2; padding:12px; border-radius:12px; cursor:pointer; font-size:13px; font-weight:800;
-          border:none; background:var(--accent); color:#fff;
-          box-shadow:0 4px 16px color-mix(in srgb,var(--accent) 35%,transparent);
-          transition:opacity 0.15s;
+          flex: 2;
+          padding: 10px;
+          border-radius: 12px;
+          cursor: pointer;
+          font-size: 12px;
+          font-weight: 800;
+          border: none;
+          background: var(--accent);
+          color: #000;
+          box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 30%, transparent);
+          transition: opacity 0.15s;
         }
-        .pwa-ok-btn:hover{opacity:0.87;}
+        .pwa-ok-btn:hover { opacity: 0.9; }
       `}</style>
 
       {/* ── Floating card ── */}
       <div id="pwa-card" role="dialog" aria-label="Install app">
-        <div style={{ display:"flex", alignItems:"center", gap:"10px", flex: 1 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           {/* App icon */}
-          <div style={{ flexShrink:0, width:36, height:36, borderRadius:50, overflow:"hidden", border:"2px solid rgba(255,255,255,0.1)", background:"var(--background)" }}>
-            <Image src="/logoBB.png" alt="MLBB Topup" width={36} height={36} style={{ objectFit:"cover", width:"100%", height:"100%" }} />
+          <div style={{ flexShrink: 0, width: 28, height: 28, borderRadius: "50%", overflow: "hidden", border: "1px solid var(--border)", background: "var(--background)" }}>
+            <Image src="/logoBB.png" alt="MLBB Topup" width={28} height={28} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
           </div>
           {/* Text */}
-          <div style={{ minWidth:0, display:"flex", flexDirection:"column" }}>
-            <p style={{ margin:0, fontWeight:700, fontSize:"13px", color:"#fff", lineHeight:1.2, letterSpacing:"-0.01em" }}>MLBB Topup</p>
-            <p style={{ margin:"1px 0 0", fontSize:"10px", color:"rgba(255,255,255,0.6)", fontWeight:500 }}>Install App</p>
+          <div style={{ minWidth: 0, display: "flex", flexDirection: "column", paddingRight: "4px" }}>
+            <p style={{ margin: 0, fontWeight: 800, fontSize: "11px", color: "var(--foreground)", lineHeight: 1.2, letterSpacing: "-0.01em" }}>MLBB Topup</p>
+            <p style={{ margin: "1px 0 0", fontSize: "9px", color: "var(--muted)", fontWeight: 600 }}>Install App</p>
           </div>
         </div>
         
-        <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
           {/* Install */}
           <button aria-label="button" className="pwa-install-btn" id="pwa-install-btn" onClick={handleInstall}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
             Install
