@@ -149,7 +149,7 @@ export default function GameDetailPage() {
   };
 
   return (
-    <section className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 py-6">
+    <section className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 pt-6 pb-28">
       {/* ================= HEADER ================= */}
       <GameHeader game={game} />
 

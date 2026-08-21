@@ -2,6 +2,16 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  AlertCircle,
+  RefreshCcw,
+  CheckCircle2,
+  X,
+  MessageSquare,
+  Loader2,
+  Send,
+  ChevronDown,
+} from "lucide-react";
 import { Icons } from "@/components/icons";
 import { StatusBadge, SearchInput, EmptyState, Pagination, LoadingSpinner } from "@/components/common";
 import { formatDate, formatTime, formatDateTime, formatRelativeTime } from "@/utils";

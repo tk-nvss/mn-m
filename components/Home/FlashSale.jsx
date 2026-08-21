@@ -12,7 +12,7 @@ const flashSaleData = [
         name: "Weekly Pass",
         game: "MLBB",
         image: "/game-assets/weeklypass.jpg",
-        price: "₹151",
+        price: "₹150",
         originalPrice: "₹175",
         slug: "mobile-legends270?type=weekly-pass",
         badge: "Hot"
@@ -22,7 +22,7 @@ const flashSaleData = [
         name: "Blessing Welkin",
         game: "Genshin",
         image: "/game-assets/genshin.jpg",
-        price: "₹410",
+        price: "₹405",
         originalPrice: "₹450",
         slug: "genshin-impact742",
         badge: "Sale"
@@ -139,17 +139,17 @@ export default function FlashSale() {
                                 >
                                     <Link
                                         href={`/games/${item.slug}`}
-                                        className="group relative block w-[125px] sm:w-[150px] md:w-[200px] bg-[var(--card)]/40 backdrop-blur-lg border border-[var(--border)] rounded-[1rem] p-1.5 shadow-lg"
+                                        className="group relative block w-[120px] sm:w-[145px] md:w-[185px] bg-[var(--card)]/40 backdrop-blur-lg border border-[var(--border)] rounded-[1rem] p-1.5 shadow-md hover:border-amber-500/30 transition-colors"
                                     >
-                                        {/* Badge */}
-                                        <div className="absolute top-3 left-3 z-20">
-                                            <span className="text-[7px] md:text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-amber-500 text-black shadow-lg">
-                                                {item.badge}
+                                        {/* Game Badge */}
+                                        <div className="absolute top-2.5 left-2.5 z-20">
+                                            <span className="text-[7px] md:text-[8.5px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-amber-500 text-black shadow-lg">
+                                                {item.game}
                                             </span>
                                         </div>
 
                                         {/* Image Container */}
-                                        <div className="relative aspect-square rounded-[0.8rem] overflow-hidden mb-1.5 ring-1 ring-[var(--border)] bg-[var(--foreground)]/[0.05]">
+                                        <div className="relative aspect-[16/13] rounded-[0.8rem] overflow-hidden mb-1 ring-1 ring-[var(--border)] bg-[var(--foreground)]/[0.05]">
                                             <Image
                                                 src={item.image}
                                                 alt={item.name}
@@ -160,17 +160,16 @@ export default function FlashSale() {
                                         </div>
 
                                         {/* Compact Info */}
-                                        <div className="space-y-0.5">
-                                            <p className="text-[7px] md:text-[9px] font-bold text-amber-500/80 uppercase tracking-widest truncate">{item.game}</p>
-                                            <h3 className="text-[11px] md:text-[14px] font-black uppercase tracking-tight text-[var(--foreground)] truncate group-hover:text-amber-500">
+                                        <div className="space-y-0.5 px-0.5 pt-0.5">
+                                            <h3 className="text-[10.5px] md:text-[13px] font-black uppercase tracking-tight text-[var(--foreground)] truncate group-hover:text-amber-500 leading-tight">
                                                 {item.name}
                                             </h3>
 
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-[14px] md:text-[16px] font-black italic text-[var(--foreground)]">
+                                            <div className="flex items-baseline justify-between pt-0.5">
+                                                <span className="text-[13px] md:text-[15px] font-black italic text-[var(--foreground)] leading-none">
                                                     {item.price}
                                                 </span>
-                                                <span className="text-[9px] md:text-[11px] font-bold text-[var(--muted)] line-through opacity-50 decoration-red-500/50">
+                                                <span className="text-[8.5px] md:text-[10px] font-bold text-[var(--muted)] line-through opacity-50 decoration-red-500/50">
                                                     {item.originalPrice}
                                                 </span>
                                             </div>

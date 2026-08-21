@@ -26,12 +26,6 @@ export async function POST(req: Request) {
 
     await connectDB();
     
-    // Check if phone number is already used by another user
-    const existingUser = await User.findOne({ phone, userId: { $ne: decoded.userId } });
-    if (existingUser) {
-      return NextResponse.json({ success: false, message: "Phone number already in use" }, { status: 400 });
-    }
-
     const user = await User.findOneAndUpdate(
       { userId: decoded.userId },
       { phone },

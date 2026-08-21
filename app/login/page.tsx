@@ -13,7 +13,8 @@ import {
   FiAlertCircle,
   FiLock,
   FiMail,
-  FiShieldOff
+  FiShieldOff,
+  FiPhone
 } from "react-icons/fi";
 import { useSearchParams } from "next/navigation";
 import api from "@/lib/axios";
@@ -21,7 +22,27 @@ import { Suspense, useRef } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { LoadingSpinner } from "@/components/common";
 
-
+const COUNTRY_CODES = [
+  { label: "India (+91)", code: "+91", flag: "🇮🇳" },
+  { label: "Indonesia (+62)", code: "+62", flag: "🇮🇩" },
+  { label: "Philippines (+63)", code: "+63", flag: "🇵🇭" },
+  { label: "Malaysia (+60)", code: "+60", flag: "🇲🇾" },
+  { label: "Bangladesh (+880)", code: "+880", flag: "🇧🇩" },
+  { label: "Nepal (+977)", code: "+977", flag: "🇳🇵" },
+  { label: "Pakistan (+92)", code: "+92", flag: "🇵🇰" },
+  { label: "USA / Canada (+1)", code: "+1", flag: "🇺🇸" },
+  { label: "United Kingdom (+44)", code: "+44", flag: "🇬🇧" },
+  { label: "UAE (+971)", code: "+971", flag: "🇦🇪" },
+  { label: "Saudi Arabia (+966)", code: "+966", flag: "🇸🇦" },
+  { label: "Singapore (+65)", code: "+65", flag: "🇸🇬" },
+  { label: "Myanmar (+95)", code: "+95", flag: "🇲🇲" },
+  { label: "Vietnam (+84)", code: "+84", flag: "🇻🇳" },
+  { label: "Thailand (+66)", code: "+66", flag: "🇹🇭" },
+  { label: "Brazil (+55)", code: "+55", flag: "🇧🇷" },
+  { label: "Germany (+49)", code: "+49", flag: "🇩🇪" },
+  { label: "France (+33)", code: "+33", flag: "🇫🇷" },
+  { label: "Russia (+7)", code: "+7", flag: "🇷🇺" },
+];
 
 function AuthContent() {
   const [loading, setLoading] = useState(false);
@@ -31,6 +52,10 @@ function AuthContent() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [showOtpField, setShowOtpField] = useState(false);
+  const [showPhonePrompt, setShowPhonePrompt] = useState(false);
+  const [countryCode, setCountryCode] = useState("+91");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [pendingAuth, setPendingAuth] = useState<{ token: string; user: any } | null>(null);
   const otpInputs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleOtpChange = (index: number, value: string) => {
@@ -66,6 +91,19 @@ function AuthContent() {
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get("redirect") || "/";
 
+  const handleAuthSuccess = (data: any) => {
+    if (!data?.user?.phone) {
+      // Prompt for 10-digit phone number if missing
+      setPendingAuth(data);
+      setShowPhonePrompt(true);
+      setError("");
+      setSuccess("");
+      setLoading(false);
+    } else {
+      saveSession(data);
+    }
+  };
+
   const handleGoogleLogin = async (credential: string) => {
     if (loading) return;
     setLoading(true);
@@ -78,7 +116,7 @@ function AuthContent() {
         setLoading(false);
         return;
       }
-      saveSession(data);
+      handleAuthSuccess(data);
     } catch {
       setError("Something went wrong. Try again.");
       setLoading(false);
@@ -107,6 +145,7 @@ function AuthContent() {
     }
     setLoading(false);
   };
+
   const handleOtpVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -114,14 +153,89 @@ function AuthContent() {
     try {
       const { data } = await api.post("/api/auth/otp/verify", { email, otp: otp.join("") });
       if (data.success) {
-        saveSession(data);
+        handleAuthSuccess(data);
       } else {
         setError(data.message);
+        setLoading(false);
       }
     } catch {
       setError("Authentication failed");
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  const handleCountryCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.replace(/[^\d+]/g, "");
+    if (!val.startsWith("+")) {
+      val = "+" + val.replace(/\+/g, "");
+    } else {
+      val = "+" + val.slice(1).replace(/\+/g, "");
+    }
+    const newCode = val.slice(0, 5);
+    setCountryCode(newCode);
+    if (newCode === "+91" && phoneNumber.length > 10) {
+      setPhoneNumber(phoneNumber.slice(0, 10));
+    }
+    if (error) setError("");
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const maxLen = countryCode === "+91" ? 10 : 15;
+    const val = e.target.value.replace(/\D/g, "").slice(0, maxLen);
+    setPhoneNumber(val);
+    if (error) setError("");
+  };
+
+  const handlePhoneSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pendingAuth) return;
+
+    const cleanCode = countryCode.trim();
+    if (!/^\+[0-9]{1,4}$/.test(cleanCode)) {
+      setError("Please enter a valid country code (e.g. +91, +1, +44)");
+      return;
+    }
+
+    const cleanDigits = phoneNumber.replace(/\D/g, "");
+    if (cleanCode === "+91" && cleanDigits.length !== 10) {
+      setError("India (+91) phone number must be exactly 10 digits");
+      return;
+    }
+
+    if (cleanDigits.length < 6 || cleanDigits.length > 15) {
+      setError("Please enter a valid phone number (6-15 digits)");
+      return;
+    }
+
+    const fullPhone = `${cleanCode}${cleanDigits}`;
+
+    setLoading(true);
+    setError("");
+    try {
+      const { data } = await api.post(
+        "/api/auth/update-phone",
+        { phone: fullPhone },
+        { headers: { Authorization: `Bearer ${pendingAuth.token}` } }
+      );
+
+      if (data.success) {
+        const updatedData = {
+          ...pendingAuth,
+          user: {
+            ...pendingAuth.user,
+            phone: fullPhone,
+          },
+        };
+        saveSession(updatedData);
+      } else {
+        setError(data.message || "Failed to update phone number");
+        setLoading(false);
+      }
+    } catch (err: any) {
+      const msg = err.response?.data?.message || "Failed to update phone number";
+      setError(msg);
+      setLoading(false);
+    }
   };
 
   const saveSession = (data: any) => {
@@ -148,7 +262,7 @@ function AuthContent() {
   };
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center pt-24 sm:pt-32 px-4 overflow-hidden bg-[var(--background)]">
+    <section className="relative min-h-screen flex flex-col items-center justify-center py-8 sm:py-16 px-4 overflow-hidden bg-[var(--background)]">
       {/* AMBIENT BACKGROUND */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(var(--accent-rgb),0.15),transparent_70%)] opacity-40" />
@@ -159,39 +273,48 @@ function AuthContent() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="relative z-10 w-full max-w-[400px]"
+        className="relative z-10 w-full max-w-[390px]"
       >
         <div className="w-full relative">
           <motion.div
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="px-6 pb-4 sm:px-8 sm:pb-4"
+            className="px-4 pb-4 sm:px-6 sm:pb-4"
           >
             {/* HEADER */}
-            <div className="flex flex-col items-center text-center mb-2">
+            <div className="flex flex-col items-center text-center mb-3 sm:mb-4">
               <motion.div
                 variants={itemVariants}
-                className="relative mb-4"
+                className="relative mb-3 sm:mb-4"
               >
                 <div className="absolute inset-0 bg-[var(--accent)] blur-2xl opacity-10" />
                 <div className="relative flex justify-center">
                   <Image
                     src="/logo.png"
                     alt="Logo"
-                    width={86}
-                    height={86}
-                    className="relative z-10"
+                    width={100}
+                    height={100}
+                    priority
+                    className="relative z-10 w-auto h-14 sm:h-16 object-contain"
                   />
                 </div>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="space-y-2">
-                <h1 className="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-[var(--foreground)] to-[var(--foreground)]/60 drop-shadow-sm">
-                  {showOtpField ? "Enter Your Code" : "Login"}
+              <motion.div variants={itemVariants} className="space-y-1.5 sm:space-y-2">
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-[var(--foreground)] to-[var(--foreground)]/60 drop-shadow-sm">
+                  {showPhonePrompt
+                    ? "Enter Phone Number"
+                    : showOtpField
+                    ? "Enter Your Code"
+                    : "Login / Register"}
                 </h1>
-                <p className="text-xs font-medium text-[var(--muted)]/80 tracking-wide uppercase">
-                  {showOtpField ? "Enter the code we sent to your email" : "Sign in to your account"}
+                <p className="text-[11px] sm:text-xs font-medium text-[var(--muted)]/80 tracking-wide uppercase">
+                  {showPhonePrompt
+                    ? "Enter your mobile number to continue"
+                    : showOtpField
+                    ? "Enter the code we sent to your email"
+                    : "Sign in to your account / Register"}
                 </p>
               </motion.div>
             </div>
@@ -202,7 +325,7 @@ function AuthContent() {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mb-6 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center gap-2 text-center"
+                  className="mb-4 sm:mb-6 p-2.5 sm:p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center gap-2 text-center"
                 >
                   <FiCheckCircle className="text-emerald-500 flex-shrink-0" size={14} />
                   <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">{success}</span>
@@ -213,10 +336,10 @@ function AuthContent() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="mb-6 p-4 rounded-xl bg-emerald-500 text-white flex items-center justify-center gap-2 text-center shadow-[0_0_30px_rgba(16,185,129,0.3)]"
+                  className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl bg-emerald-500 text-white flex items-center justify-center gap-2 text-center shadow-[0_0_30px_rgba(16,185,129,0.3)]"
                 >
-                  <FiCheckCircle size={20} />
-                  <span className="text-sm font-black uppercase tracking-widest">You're In! Redirecting...</span>
+                  <FiCheckCircle size={18} />
+                  <span className="text-xs sm:text-sm font-black uppercase tracking-widest">You're In! Redirecting...</span>
                 </motion.div>
               )}
 
@@ -225,7 +348,7 @@ function AuthContent() {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mb-6 p-3 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center gap-2 text-center"
+                  className="mb-4 sm:mb-6 p-2.5 sm:p-3 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center gap-2 text-center"
                 >
                   <FiAlertCircle className="text-red-500 flex-shrink-0" size={14} />
                   <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">{error}</span>
@@ -235,7 +358,90 @@ function AuthContent() {
 
             {/* ACTION AREA */}
             {success !== "done" && (
-              <motion.div variants={containerVariants} className="space-y-4">
+              <motion.div variants={containerVariants} className="space-y-3 sm:space-y-4">
+                {showPhonePrompt ? (
+                  /* PHONE NUMBER PROMPT FORM */
+                  <motion.form
+                    variants={itemVariants}
+                    onSubmit={handlePhoneSubmit}
+                    className="space-y-3 sm:space-y-4"
+                  >
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <div className="flex gap-2">
+                        {/* Country Code Picker & Editable Input */}
+                        <div className="relative w-24 sm:w-28 flex-shrink-0 group">
+                          <input
+                            type="text"
+                            value={countryCode}
+                            onChange={handleCountryCodeChange}
+                            placeholder="+91"
+                            maxLength={5}
+                            className="w-full bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-2xl px-2 sm:px-3 py-3 text-center text-xs sm:text-sm font-black focus:outline-none focus:ring-4 focus:ring-[var(--accent)]/10 focus:border-[var(--accent)] transition-all placeholder:text-[var(--muted)]/50 tracking-wider cursor-pointer"
+                          />
+                          <select
+                            value={COUNTRY_CODES.some((c) => c.code === countryCode) ? countryCode : "custom"}
+                            onChange={(e) => {
+                              if (e.target.value !== "custom") {
+                                setCountryCode(e.target.value);
+                              }
+                            }}
+                            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                            title="Select Country"
+                          >
+                            {COUNTRY_CODES.map((c) => (
+                              <option key={c.code} value={c.code} className="bg-[var(--card)] text-[var(--foreground)]">
+                                {c.flag} {c.label}
+                              </option>
+                            ))}
+                            <option value="custom" className="bg-[var(--card)] text-[var(--foreground)]">
+                              ✏️ Custom Code
+                            </option>
+                          </select>
+                        </div>
+
+                        {/* Phone Number Input */}
+                        <div className="relative flex-1 min-w-0 group">
+                          <div className="absolute inset-y-0 left-3 flex items-center text-[var(--muted)] pointer-events-none group-focus-within:text-[var(--accent)] transition-colors">
+                            <FiPhone size={15} />
+                          </div>
+                          <input
+                            type="tel"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            maxLength={countryCode === "+91" ? 10 : 15}
+                            placeholder={countryCode === "+91" ? "10-digit number" : "Mobile number"}
+                            value={phoneNumber}
+                            onChange={handlePhoneChange}
+                            required
+                            autoFocus
+                            className="w-full bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-2xl pl-8 sm:pl-9 pr-3 sm:pr-4 py-3 text-xs sm:text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--accent)]/10 focus:border-[var(--accent)] transition-all placeholder:text-[var(--muted)]/50 tracking-wider"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center px-1 text-[10px] sm:text-[11px] text-[var(--muted)]/70 font-medium">
+                        <span>Click code to change country</span>
+                        <span>{countryCode === "+91" ? `${phoneNumber.length}/10 digits` : `${phoneNumber.length} digits`}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      aria-label="button"
+                      type="submit"
+                      disabled={loading || (countryCode === "+91" ? phoneNumber.length !== 10 : phoneNumber.length < 6)}
+                      className="w-full relative overflow-hidden group/btn bg-[var(--accent)] text-white font-black uppercase tracking-widest py-3 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_10px_20px_-5px_rgba(var(--accent-rgb),0.3)] text-xs sm:text-sm"
+                    >
+                      {loading ? (
+                        <LoadingSpinner size="md" color="white" />
+                      ) : (
+                        <span className="relative z-10 flex items-center gap-2">
+                          Continue <FiCheckCircle className="text-base sm:text-lg" />
+                        </span>
+                      )}
+                    </button>
+                  </motion.form>
+                ) : (
+                  <>
 
                 {/* GMAIL OTP SECTION */}
                 <motion.form
@@ -357,12 +563,15 @@ function AuthContent() {
                 {/* TERMS & CONDITIONS */}
                 <motion.div variants={itemVariants} className="pt-6 text-center">
                   <p className="text-[10px] text-[var(--muted)]/60 font-medium">
-                    By logging in, you agree to our <br className="sm:hidden" />
+                    By logging in or registering, you agree to our <br className="sm:hidden" />
                     <Link href="/terms" className="text-[var(--foreground)] hover:text-[var(--accent)] transition-colors font-bold">Terms & Conditions</Link>
                     {" "}and{" "}
                     <Link href="/privacy" className="text-[var(--foreground)] hover:text-[var(--accent)] transition-colors font-bold">Privacy Policy</Link>
                   </p>
-                </motion.div>              </motion.div>
+                </motion.div>
+                </>
+                )}
+              </motion.div>
             )}
           </motion.div>
         </div>

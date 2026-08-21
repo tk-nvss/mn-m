@@ -9,7 +9,7 @@ const brGames = [
     id: "bgmi",
     title: "Battlegrounds Mobile India",
     shortName: "BGMI",
-    tag: "Trending",
+    tag: "Indian",
     desc: "Top up UC instantly with UPI",
     color: "from-orange-500 to-red-600",
     image: "/game-assets/bgmi_india.png",

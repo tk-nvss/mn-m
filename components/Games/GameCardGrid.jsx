@@ -26,10 +26,10 @@ export default function GameCardGrid({ game, isOutOfStock, index = 0 }) {
           }`}
       >
         {/* IMAGE CONTAINER */}
-        <div className="relative w-full aspect-square p-2 sm:p-3 flex items-center justify-center shrink-0 bg-black/10 overflow-hidden">
+        <div className="relative w-full aspect-square p-1.5 sm:p-2 flex items-center justify-center shrink-0 bg-black/10 overflow-hidden">
           
           {/* Left background image */}
-          <div className="absolute w-[75%] h-[85%] z-0 transform -rotate-[10deg] -translate-x-4 sm:-translate-x-6 scale-95 opacity-40 blur-[2px] shadow-xl transition-all duration-300 group-hover:-rotate-[12deg] group-hover:-translate-x-6 sm:group-hover:-translate-x-8 group-hover:opacity-60">
+          <div className="absolute w-[80%] h-[88%] z-0 transform -rotate-[10deg] -translate-x-3.5 sm:-translate-x-5 scale-95 opacity-40 blur-[2px] shadow-xl transition-all duration-300 group-hover:-rotate-[12deg] group-hover:-translate-x-5 sm:group-hover:-translate-x-7 group-hover:opacity-60">
             <Image
               src={game.gameImageId?.image || logo}
               alt=""
@@ -43,7 +43,7 @@ export default function GameCardGrid({ game, isOutOfStock, index = 0 }) {
           </div>
 
           {/* Right background image */}
-          <div className="absolute w-[75%] h-[85%] z-0 transform rotate-[10deg] translate-x-4 sm:translate-x-6 scale-95 opacity-40 blur-[2px] shadow-xl transition-all duration-300 group-hover:rotate-[12deg] group-hover:translate-x-6 sm:group-hover:translate-x-8 group-hover:opacity-60">
+          <div className="absolute w-[80%] h-[88%] z-0 transform rotate-[10deg] translate-x-3.5 sm:translate-x-5 scale-95 opacity-40 blur-[2px] shadow-xl transition-all duration-300 group-hover:rotate-[12deg] group-hover:translate-x-5 sm:group-hover:translate-x-7 group-hover:opacity-60">
             <Image
               src={game.gameImageId?.image || logo}
               alt=""
@@ -57,7 +57,7 @@ export default function GameCardGrid({ game, isOutOfStock, index = 0 }) {
           </div>
 
           {/* Main card */}
-          <div className="relative w-[85%] h-[95%] z-10 shadow-2xl transition-transform duration-300 group-hover:scale-[1.02] border border-white/10 bg-[var(--background)]">
+          <div className="relative w-[92%] h-[98%] z-10 shadow-2xl transition-transform duration-300 group-hover:scale-[1.02] border border-white/10 bg-[var(--background)]">
             <Image
               src={game.gameImageId?.image || logo}
               alt={game.gameName}

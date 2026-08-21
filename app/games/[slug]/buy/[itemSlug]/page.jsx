@@ -260,54 +260,56 @@ function BuyFlowContent() {
           {/* BACK BUTTON */}
           <button aria-label="button"
             onClick={() => router.back()}
-            className="flex items-center gap-1.5 text-[var(--accent)] font-black uppercase tracking-widest text-[9px] mb-2 hover:opacity-70 transition-opacity"
+            className="flex items-center gap-1 text-[var(--accent)] font-black uppercase tracking-widest text-[8.5px] mb-1.5 hover:opacity-70 transition-opacity"
           >
-            <Icons.arrowLeft className="text-sm" /> Back
+            <Icons.arrowLeft className="text-xs" /> Back
           </button>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 items-start">
 
             {/* LEFT COLUMN: ITEM HERO & MORE PACKS */}
-            <div className="lg:col-span-5 space-y-3.5 lg:sticky lg:top-4">
+            <div className="lg:col-span-5 space-y-2.5 lg:sticky lg:top-4">
 
               {/* HERO CARD */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-3.5 sm:p-4 shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--accent)]/5 rounded-full blur-[40px] -z-0" />
+              <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-2.5 sm:p-3 shadow-sm relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-[var(--accent)]/5 rounded-full blur-[30px] -z-0" />
 
                 <div className="relative z-10">
-                  <div className="flex items-center gap-3.5 sm:gap-4 text-left">
-                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0">
-                      <div className="absolute inset-0 bg-[var(--accent)]/10 rounded-xl blur-xl group-hover:bg-[var(--accent)]/20 transition-all duration-300" />
-                      <img
-                        src={item?.itemImageId?.image || fallbackImage || ""}
-                        alt={item?.itemName || fallbackName}
-                        className="relative z-10 w-full h-full object-contain drop-shadow-md group-hover:scale-105 transition-transform duration-300"
-                      />
+                  <div className="flex items-center justify-between gap-3 text-left">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                      <div className="relative w-11 h-11 sm:w-12 sm:h-12 shrink-0">
+                        <div className="absolute inset-0 bg-[var(--accent)]/10 rounded-lg blur-md group-hover:bg-[var(--accent)]/20 transition-all duration-300" />
+                        <img
+                          src={item?.itemImageId?.image || fallbackImage || ""}
+                          alt={item?.itemName || fallbackName}
+                          className="relative z-10 w-full h-full object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-[var(--accent)]/10 rounded-full mb-0.5">
+                          <div className="w-1 h-1 rounded-full bg-[var(--accent)] animate-pulse" />
+                          <span className="text-[7px] font-black text-[var(--accent)] uppercase tracking-widest leading-none">Instant Delivery</span>
+                        </div>
+
+                        <h1 className="text-xs sm:text-sm font-black text-[var(--foreground)] leading-tight uppercase truncate">
+                          {item?.itemName || fallbackName}
+                        </h1>
+                      </div>
                     </div>
 
-                    <div className="flex-1 min-w-0 space-y-1">
-                      <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-[var(--accent)]/10 rounded-full">
-                        <div className="w-1 h-1 rounded-full bg-[var(--accent)] animate-pulse" />
-                        <span className="text-[7.5px] font-black text-[var(--accent)] uppercase tracking-widest">Instant Delivery</span>
-                      </div>
-
-                      <h1 className="text-sm sm:text-base font-black text-[var(--foreground)] leading-tight uppercase truncate">
-                        {item?.itemName || fallbackName}
-                      </h1>
-
-                      <div className="flex items-baseline gap-2 pt-0.5">
-                        <span className="text-base sm:text-lg font-black text-[var(--accent)]">₹{item?.sellingPrice || 0}</span>
-                        {item?.dummyPrice > item?.sellingPrice && (
-                          <span className="text-[9px] font-bold text-[var(--muted)] line-through">₹{item.dummyPrice}</span>
-                        )}
-                      </div>
+                    {/* Price on Right */}
+                    <div className="shrink-0 text-right pl-2">
+                      <span className="text-base sm:text-lg font-[1000] text-[var(--accent)] tracking-tight">
+                        ₹{item?.sellingPrice || 0}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 {/* BACKGROUND DECOR */}
                 <div className="absolute bottom-1 right-2 opacity-[0.03]">
-                  <Icons.shoppingBag className="text-4xl text-[var(--foreground)]" />
+                  <Icons.shoppingBag className="text-3xl text-[var(--foreground)]" />
                 </div>
               </div>
 

@@ -41,6 +41,7 @@ export async function POST(request: Request) {
             user: {
                 name: user.name,
                 email: user.email,
+                phone: user.phone || null,
                 userId: user.userId,
                 userType: user.userType,
                 avatar: user.avatar,

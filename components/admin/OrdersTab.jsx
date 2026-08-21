@@ -18,7 +18,9 @@ import {
   Hash,
   Loader2,
   Calendar,
-  ChevronDown
+  ChevronDown,
+  ShoppingBag,
+  Smartphone
 } from "lucide-react";
 import { StatusBadge, SearchInput, EmptyState, Pagination } from "@/components/common";
 import { formatCurrency, formatDate, formatTime, formatDateTime } from "@/utils";

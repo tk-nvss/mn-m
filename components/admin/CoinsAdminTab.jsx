@@ -2,6 +2,27 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  FiYoutube,
+  FiSmartphone,
+  FiMessageCircle,
+  FiGlobe,
+  FiStar,
+  FiList,
+  FiSearch,
+  FiRefreshCw,
+  FiPlus,
+  FiChevronLeft,
+  FiChevronRight,
+  FiX,
+  FiClock,
+  FiToggleRight,
+  FiToggleLeft,
+  FiEdit3,
+  FiTrash2,
+  FiAlertCircle,
+  FiCheck,
+} from "react-icons/fi";
 import { Icons } from "@/components/icons";
 import { StatusBadge, SearchInput, EmptyState, Pagination, LoadingSpinner } from "@/components/common";
 import { formatCurrency, formatCoins, formatNumber, formatDate, formatDateTime } from "@/utils";

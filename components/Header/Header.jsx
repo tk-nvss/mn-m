@@ -227,7 +227,7 @@ export default function Header() {
                 />
                 
                 {/* INDICATOR */}
-                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-[var(--background)] bg-[#0088cc] z-20 shadow-[0_0_8px_rgba(0,136,204,0.6)]" />
+                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-[var(--background)] bg-[#0088cc] z-20" />
               </motion.button>
             </div>
 

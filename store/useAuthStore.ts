@@ -41,6 +41,8 @@ export const useAuthStore = create<AuthState>()(
         if (typeof window !== 'undefined') {
           localStorage.setItem('token', token);
           localStorage.setItem('userType', user.userType || "user");
+          if (user.phone) localStorage.setItem('phone', user.phone);
+          if (user.email) localStorage.setItem('email', user.email);
         }
         set({ 
           token, 
@@ -62,15 +64,23 @@ export const useAuthStore = create<AuthState>()(
         if (typeof window !== 'undefined') {
           localStorage.removeItem('token');
           localStorage.removeItem('userType');
+          localStorage.removeItem('phone');
+          localStorage.removeItem('email');
         }
         set({ token: null, user: null, walletBalance: 0 });
       },
       
       setWalletBalance: (balance) => set({ walletBalance: balance }),
       
-      updateUser: (updatedData) => set((state) => ({
-        user: state.user ? { ...state.user, ...updatedData } : null
-      }))
+      updateUser: (updatedData) => {
+        if (typeof window !== 'undefined') {
+          if (updatedData.phone) localStorage.setItem('phone', updatedData.phone);
+          if (updatedData.email) localStorage.setItem('email', updatedData.email);
+        }
+        set((state) => ({
+          user: state.user ? { ...state.user, ...updatedData } : null
+        }));
+      }
     }),
     {
       name: "auth-storage", // key in localStorage

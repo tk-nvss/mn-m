@@ -20,7 +20,7 @@ const BottomNav = () => {
     }, []);
 
     // Hide BottomNav on certain pages if needed
-    const hideOnRoutes = ["/admin", "/owner", "/blog", "/login", "/register"];
+    const hideOnRoutes = ["/admin", "/owner", "/blog", "/login", "/register", "/games/"];
     if (hideOnRoutes.some(route => pathname?.startsWith(route))) return null;
 
     // Center item is Trade, leaving 7 items total for symmetry

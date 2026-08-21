@@ -197,7 +197,7 @@ function GameDetailContent() {
 
   /* ================= RENDER ================= */
   return (
-    <section className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 pb-10 pt-2">
+    <section className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 pb-28 pt-2">
       <GameSwitcher />
       {/* ================= HEADER ================= */}
       <div>

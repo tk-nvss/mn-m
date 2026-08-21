@@ -34,25 +34,25 @@ export default function BuyPanel({
   return (
     <div
       ref={buyPanelRef}
-      className="relative w-full max-w-4xl mx-auto px-4 mt-8 mb-6 md:static md:p-0"
+      className="fixed bottom-0 left-0 right-0 z-50 p-2 sm:p-3 pointer-events-none pb-[max(0.5rem,env(safe-area-inset-bottom))]"
     >
-      <div className="relative rounded-2xl overflow-hidden">
-        {/* Animated gradient border */}
-        <div className="absolute inset-0 rounded-2xl p-[1px] bg-gradient-to-br from-[var(--accent)]/40 via-white/5 to-purple-500/20 pointer-events-none z-0" />
+      <div className="relative w-full max-w-4xl mx-auto pointer-events-auto">
+        <div className="relative rounded-2xl overflow-hidden shadow-[0_-6px_24px_rgba(0,0,0,0.4)]">
+          {/* Animated gradient border */}
+          <div className="absolute inset-0 rounded-2xl p-[1px] bg-gradient-to-br from-[var(--accent)]/40 via-white/5 to-purple-500/20 pointer-events-none z-0" />
 
-        {/* Main Card */}
-        <div className="relative bg-[var(--card)] rounded-2xl overflow-hidden z-10">
+          {/* Main Card */}
+          <div className="relative bg-[var(--card)]/95 backdrop-blur-2xl rounded-2xl overflow-hidden z-10 border border-[var(--border)]/80">
 
-          {/* Top accent line */}
-          <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[var(--accent)]/60 to-transparent" />
+            {/* Top accent line */}
+            <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[var(--accent)]/60 to-transparent" />
 
-          <div className="p-4 md:p-5">
+            <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-3">
 
-            {/* Selected item row */}
-            <div className="flex items-center gap-3 mb-4">
-              {/* Image */}
-              <div className="relative shrink-0">
-                <div className="relative w-[52px] h-[52px] rounded-xl overflow-hidden border border-white/10 shadow-lg">
+              {/* Left: Product Thumbnail & Info */}
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                {/* Image */}
+                <div className="relative shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden border border-white/10 shadow-md">
                   <Image
                     src={itemImage}
                     alt={activeItem.itemName}
@@ -60,84 +60,69 @@ export default function BuyPanel({
                     unoptimized
                     className="object-cover"
                   />
-                </div>
-                {discount > 0 && (
-                  <div className="absolute -top-1.5 -left-1.5 bg-gradient-to-br from-rose-500 to-red-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full shadow-lg z-20 border border-white/10">
-                    -{discount}%
-                  </div>
-                )}
-              </div>
-
-              {/* Name & badge */}
-              <div className="flex flex-col min-w-0">
-                <span className="text-[8px] font-black uppercase tracking-[0.15em] text-[var(--accent)] mb-0.5 flex items-center gap-1">
-                  <FiZap size={7} /> Selected
-                </span>
-                <h3 className="text-sm md:text-base font-black text-[var(--foreground)] tracking-tight uppercase italic truncate leading-tight">
-                  {activeItem.itemName}
-                </h3>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="h-px bg-gradient-to-r from-transparent via-[var(--border)] to-transparent mb-4" />
-
-            {/* Price + Action row */}
-            <div className="flex items-end justify-between gap-3">
-
-              {/* Price block */}
-              <div className="flex flex-col gap-2">
-                {/* Main price */}
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[26px] md:text-[30px] font-[1000] text-[var(--foreground)] tracking-tighter leading-none">
-                    ₹{activeItem.sellingPrice}
-                  </span>
-                  {activeItem.dummyPrice && (
-                    <span className="text-[11px] font-bold text-[var(--muted)] line-through">
-                      ₹{activeItem.dummyPrice}
-                    </span>
+                  {discount > 0 && (
+                    <div className="absolute top-0 left-0 bg-gradient-to-br from-rose-500 to-red-600 text-white text-[7px] font-black px-1 py-0.2 rounded-br-md shadow z-20">
+                      -{discount}%
+                    </div>
                   )}
                 </div>
 
-                {/* Member & Reseller pills */}
-                {(activeItem.memberPrice || activeItem.adminPrice) && (
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {activeItem.memberPrice && (
-                      <Link
-                        href="/games/membership/silver-membership"
-                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 hover:bg-[var(--accent)]/20 transition-all duration-200 group/pill"
-                      >
-                        <span className="text-[8px] font-black uppercase tracking-wider text-[var(--accent)]">Member</span>
-                        <span className="text-[10px] font-[1000] text-[var(--foreground)] group-hover/pill:text-[var(--accent)] transition-colors">₹{activeItem.memberPrice}</span>
-                      </Link>
-                    )}
-                    {activeItem.adminPrice && (
-                      <a
-                        href={supportUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-all duration-200 group/pill"
-                      >
-                        <span className="text-[8px] font-black uppercase tracking-wider text-purple-400">Reseller</span>
-                        <span className="text-[10px] font-[1000] text-[var(--foreground)] group-hover/pill:text-purple-400 transition-colors">₹{activeItem.adminPrice}</span>
-                      </a>
-                    )}
+                {/* Name & Prices */}
+                <div className="flex flex-col min-w-0 justify-center">
+                  <h3 className="text-xs sm:text-sm font-black text-[var(--foreground)] tracking-tight uppercase italic truncate leading-none">
+                    {activeItem.itemName}
+                  </h3>
+
+                  {/* Main Price */}
+                  <div className="flex items-baseline gap-1.5 leading-none mt-1">
+                    <span className="text-base sm:text-lg font-[1000] text-[var(--foreground)] tracking-tight">
+                      ₹{activeItem.sellingPrice}
+                    </span>
                   </div>
-                )}
 
+                  {/* Member & Reseller Price (below) */}
+                  {(activeItem.memberPrice || activeItem.adminPrice) && (
+                    <div className="flex items-center gap-2 flex-wrap mt-1">
+                      {activeItem.memberPrice && (
+                        <Link
+                          href="/games/membership/silver-membership"
+                          className="inline-flex items-center gap-1 text-[8.5px] font-bold text-[var(--accent)] hover:opacity-80 transition-opacity"
+                        >
+                          <span className="text-[7px] font-black uppercase tracking-wider px-1 py-0.5 rounded bg-[var(--accent)]/10 border border-[var(--accent)]/20 leading-none">
+                            MEM
+                          </span>
+                          <span className="font-black leading-none">₹{activeItem.memberPrice}</span>
+                        </Link>
+                      )}
 
+                      {activeItem.adminPrice && (
+                        <a
+                          href={supportUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-[8.5px] font-bold text-purple-400 hover:opacity-80 transition-opacity"
+                        >
+                          <span className="text-[7px] font-black uppercase tracking-wider px-1 py-0.5 rounded bg-purple-500/10 border border-purple-500/20 leading-none">
+                            RESELLER
+                          </span>
+                          <span className="font-black leading-none">₹{activeItem.adminPrice}</span>
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* CTA Button */}
+              {/* Right: CTA Button */}
               {isUnavailable ? (
                 <a
                   href={supportUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="shrink-0 relative h-12 px-5 rounded-xl overflow-hidden flex items-center justify-center gap-2 bg-[#25D366] text-black hover:brightness-110 transition-all duration-300 font-[1000] uppercase tracking-tight text-[10px] shadow-lg shadow-[#25D366]/20 active:scale-95"
+                  className="shrink-0 relative h-10 sm:h-11 px-3.5 sm:px-4 rounded-xl overflow-hidden flex items-center justify-center gap-1.5 bg-[#25D366] text-black hover:brightness-110 transition-all duration-300 font-[1000] uppercase tracking-tight text-[10px] sm:text-xs shadow-md shadow-[#25D366]/20 active:scale-95"
                 >
-                  <FaWhatsapp size={15} />
-                  <span>Contact Support</span>
+                  <FaWhatsapp size={14} />
+                  <span>Support</span>
                 </a>
               ) : (
                 <button
@@ -145,11 +130,11 @@ export default function BuyPanel({
                   onClick={() => goBuy(activeItem)}
                   disabled={redirecting}
                   className={`
-                    shrink-0 relative h-12 px-6 rounded-xl overflow-hidden flex items-center justify-center gap-2
+                    shrink-0 relative h-10 sm:h-11 px-4 sm:px-6 rounded-xl overflow-hidden flex items-center justify-center gap-1.5
                     transition-all duration-300 active:scale-95 font-[1000] uppercase tracking-tight text-xs
                     ${redirecting
                       ? 'bg-[var(--muted)]/20 text-[var(--muted)] cursor-not-allowed'
-                      : 'bg-gradient-to-br from-[var(--foreground)] to-[var(--foreground)]/90 text-[var(--background)] shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 hover:scale-[1.02]'
+                      : 'bg-gradient-to-br from-[var(--foreground)] to-[var(--foreground)]/90 text-[var(--background)] shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 hover:scale-[1.02]'
                     }
                   `}
                 >
@@ -158,29 +143,14 @@ export default function BuyPanel({
                   ) : (
                     <>
                       <span>Order Now</span>
-                      <FiArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                      <FiArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
                     </>
                   )}
                 </button>
               )}
+
             </div>
           </div>
-
-          {/* Unavailable notice */}
-          {isUnavailable && (
-            <div className="px-4 pb-4 pt-0">
-              <a
-                href={supportUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[10px] font-black uppercase tracking-[0.15em] text-amber-400 hover:bg-amber-500/15 transition-colors"
-              >
-                <FaWhatsapp size={10} />
-                Contact customer support to buy
-              </a>
-            </div>
-          )}
-
         </div>
       </div>
     </div>

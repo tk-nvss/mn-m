@@ -25,8 +25,8 @@ const UserSchema = new mongoose.Schema(
 
     phone: {
       type: String,
-      unique: true,
-      sparse: true, // allows email-only users
+      default: null,
+      trim: true,
     },
 
     /* ================= AUTH ================= */
