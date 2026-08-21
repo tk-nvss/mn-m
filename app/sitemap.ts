@@ -1,5 +1,7 @@
 import { MetadataRoute } from "next";
 import { BLOGS_DATA } from "@/lib/blogData";
+import { connectDB } from "@/lib/mongodb";
+import Blog from "@/models/Blog";
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -8,53 +10,82 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   // 1. Core Platform Routes
-  const staticRoutes = [
-    { url: `${baseUrl}/`, lastModified: now, changeFrequency: "daily" as const, priority: 1.0 },
-    { url: `${baseUrl}/games`, lastModified: now, changeFrequency: "daily" as const, priority: 0.9 },
-    { url: `${baseUrl}/region`, lastModified: now, changeFrequency: "daily" as const, priority: 0.9 },
-    { url: `${baseUrl}/services`, lastModified: now, changeFrequency: "daily" as const, priority: 0.9 },
-    { url: `${baseUrl}/about`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 },
-    { url: `${baseUrl}/contact`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 },
-    { url: `${baseUrl}/leaderboard`, lastModified: now, changeFrequency: "daily" as const, priority: 0.8 },
-    { url: `${baseUrl}/blog`, lastModified: now, changeFrequency: "daily" as const, priority: 0.8 },
-    { url: `${baseUrl}/blog/mlbb`, lastModified: now, changeFrequency: "daily" as const, priority: 0.8 },
-    { url: `${baseUrl}/trade`, lastModified: now, changeFrequency: "daily" as const, priority: 0.8 },
+  const staticRoutes: MetadataRoute.Sitemap = [
+    { url: `${baseUrl}/`, lastModified: now, changeFrequency: "daily", priority: 1.0 },
+    { url: `${baseUrl}/games`, lastModified: now, changeFrequency: "daily", priority: 0.95 },
+    { url: `${baseUrl}/giveaways`, lastModified: now, changeFrequency: "daily", priority: 0.85 },
+    { url: `${baseUrl}/idsonsell`, lastModified: now, changeFrequency: "daily", priority: 0.85 },
+    { url: `${baseUrl}/tournament`, lastModified: now, changeFrequency: "daily", priority: 0.85 },
+    { url: `${baseUrl}/tournament/mlbb`, lastModified: now, changeFrequency: "daily", priority: 0.85 },
+    { url: `${baseUrl}/services`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${baseUrl}/trade`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
+    { url: `${baseUrl}/leaderboard`, lastModified: now, changeFrequency: "daily", priority: 0.75 },
+    { url: `${baseUrl}/region`, lastModified: now, changeFrequency: "weekly", priority: 0.75 },
+    { url: `${baseUrl}/blog`, lastModified: now, changeFrequency: "daily", priority: 0.85 },
+    { url: `${baseUrl}/blog/mlbb`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
+    { url: `${baseUrl}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${baseUrl}/contact`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${baseUrl}/partner`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${baseUrl}/check`, lastModified: now, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${baseUrl}/donate`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
+    { url: `${baseUrl}/privacy-policy`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
+    { url: `${baseUrl}/terms-and-conditions`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
+    { url: `${baseUrl}/refund-policy`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
   ];
 
-  // 2. Dynamic Blog Routes from BLOGS_DATA
-  const blogRoutes = BLOGS_DATA.map((blog) => ({
-    url: `${baseUrl}/blog/${blog.game}/${blog.slug}`,
-    lastModified: new Date(blog.publishedAt),
-    changeFrequency: "weekly" as const,
-    priority: blog.featured ? 0.7 : 0.6,
-  }));
+  // 2. Static & DB Blog Routes
+  const blogUrlSet = new Set<string>();
+  const blogRoutes: MetadataRoute.Sitemap = [];
 
-  // 3. Other Utility Routes
-  const utilityRoutes = [
-    { url: `${baseUrl}/privacy-policy`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.3 },
-    { url: `${baseUrl}/terms-and-conditions`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.3 },
-    { url: `${baseUrl}/refund-policy`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.3 },
-  ];
+  BLOGS_DATA.forEach((blog) => {
+    const url = `${baseUrl}/blog/${blog.game}/${blog.slug}`;
+    blogUrlSet.add(url);
+    blogRoutes.push({
+      url,
+      lastModified: new Date(blog.publishedAt),
+      changeFrequency: "weekly",
+      priority: blog.featured ? 0.75 : 0.65,
+    });
+  });
 
-  /* ================= OTT & MEMBERSHIP DATA ================= */
-  const OTTS = [{ slug: "youtube-premium" }, { slug: "netflix" }, { slug: "spotify" }];
-  const MEMBERSHIPS = [{ slug: "silver-membership" }, { slug: "reseller-membership" }];
+  try {
+    await connectDB();
+    const dbBlogs = await Blog.find({}).select("game slug publishedAt updatedAt").lean();
+    dbBlogs.forEach((blog: any) => {
+      const url = `${baseUrl}/blog/${blog.game}/${blog.slug}`;
+      if (!blogUrlSet.has(url)) {
+        blogUrlSet.add(url);
+        blogRoutes.push({
+          url,
+          lastModified: blog.updatedAt ? new Date(blog.updatedAt) : (blog.publishedAt ? new Date(blog.publishedAt) : now),
+          changeFrequency: "weekly",
+          priority: 0.7,
+        });
+      }
+    });
+  } catch (err) {
+    console.error("DB Blog Sitemap Error:", err);
+  }
 
-  const ottRoutes = OTTS.map((item) => ({
-    url: `${baseUrl}/games/ott/${item.slug}`,
+  // 3. OTT & Membership Routes
+  const OTTS = ["youtube-premium", "netflix", "spotify"];
+  const MEMBERSHIPS = ["silver-membership", "reseller-membership"];
+
+  const ottRoutes: MetadataRoute.Sitemap = OTTS.map((slug) => ({
+    url: `${baseUrl}/games/ott/${slug}`,
     lastModified: now,
-    changeFrequency: "weekly" as const,
-    priority: 0.6,
+    changeFrequency: "weekly",
+    priority: 0.7,
   }));
 
-  const membershipRoutes = MEMBERSHIPS.map((item) => ({
-    url: `${baseUrl}/games/membership/${item.slug}`,
+  const membershipRoutes: MetadataRoute.Sitemap = MEMBERSHIPS.map((slug) => ({
+    url: `${baseUrl}/games/membership/${slug}`,
     lastModified: now,
-    changeFrequency: "weekly" as const,
-    priority: 0.6,
+    changeFrequency: "weekly",
+    priority: 0.7,
   }));
 
-  /* ================= DYNAMIC GAME ROUTES ================= */
+  // 4. Dynamic Game Routes
   let gameRoutes: MetadataRoute.Sitemap = [];
   const manualGames = [
     { slug: "coc-manual", priority: 0.9 },
@@ -62,16 +93,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { slug: "bgmi-manual", priority: 0.9 },
   ];
 
-  const manualRoutes = manualGames.map((g) => ({
+  const manualRoutes: MetadataRoute.Sitemap = manualGames.map((g) => ({
     url: `${baseUrl}/games/${g.slug}`,
     lastModified: now,
-    changeFrequency: "daily" as const,
+    changeFrequency: "daily",
     priority: g.priority,
   }));
 
   try {
     const response = await fetch("https://game-off-ten.vercel.app/api/v1/game", {
       headers: { "x-api-key": process.env.API_SECRET_KEY || "" },
+      next: { revalidate: 3600 },
     });
 
     if (response.ok) {
@@ -82,21 +114,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .map((g: any) => ({
           url: `${baseUrl}/games/${g.gameSlug}`,
           lastModified: now,
-          changeFrequency: "daily" as const,
+          changeFrequency: "daily",
           priority: 0.9,
         }));
     }
   } catch (error) {
-    console.error("Sitemap generation error:", error);
+    console.error("Sitemap API generation error:", error);
   }
 
   return [
     ...staticRoutes,
-    ...blogRoutes,
-    ...gameRoutes,
     ...manualRoutes,
+    ...gameRoutes,
     ...ottRoutes,
     ...membershipRoutes,
-    ...utilityRoutes
+    ...blogRoutes,
   ];
 }

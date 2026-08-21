@@ -1,11 +1,11 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import AdsterraSocialBar from "@/components/Ads/AdsterraSocialBar";
 import AdsterraPopunder from "@/components/Ads/AdsterraPopunder";
 import FooterBanner from "@/components/Ads/FooterBanner";
 
 export const metadata: Metadata = {
   title: {
-    default: "MLBB Insights & Guides â€“ Tips for Safe & Cheap Top Up | Blue Buff",
+    default: "MLBB Insights & Guides - Tips for Safe & Cheap Top Up | Blue Buff",
     template: "%s | MLBB Topup Blog",
   },
   description:
@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     "mobile legends rank up tips",
     "mlbb weekly pass india",
   ],
+  alternates: {
+    canonical: "https://mlbbtopup.in/blog",
+  },
   robots: {
     index: true,
     follow: true,
@@ -35,7 +38,7 @@ export const metadata: Metadata = {
     siteName: "mlbbtopup.in",
     locale: "en_IN",
     url: "https://mlbbtopup.in/blog",
-    title: "MLBB Insights & Guides â€“ MLBB Topup Blog",
+    title: "MLBB Insights & Guides - MLBB Topup Blog",
     description:
       "Expert Mobile Legends guides, diamond price breakdowns, and India-specific top-up safety tips. Trusted by Indian MLBB players.",
     images: [
@@ -43,14 +46,14 @@ export const metadata: Metadata = {
         url: "https://mlbbtopup.in/og-blog.png",
         width: 1200,
         height: 630,
-        alt: "MLBB Topup â€“ MLBB Blog & Insights",
+        alt: "MLBB Topup - MLBB Blog & Insights",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@mlbbtopupin",
-    title: "MLBB Insights & Guides â€“ MLBB Topup Blog",
+    title: "MLBB Insights & Guides - MLBB Topup Blog",
     description:
       "Expert Mobile Legends guides, diamond price breakdowns, and India top-up safety tips.",
     images: ["https://mlbbtopup.in/og-blog.png"],

@@ -21,19 +21,37 @@ const BottomNav = nextDynamic(() => import("@/components/Layout/BottomNav"));
 
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://mlbbtopup.in"),
   title: {
-    default: "MLBB Top Up India â€“ Buy Cheapest Diamonds Instantly | mlbbtopup.in",
-    template: "%s | MLBB Top Up India â€“ Buy Cheapest Diamonds Instantly",
+    default: "MLBB Top Up India - Buy Cheapest Diamonds Instantly | mlbbtopup.in",
+    template: "%s | MLBB Top Up India - mlbbtopup.in",
   },
   description:
-    "Safe & instant MLBB diamond top up in India. Cheapest rates for Weekly Pass, Starlight & skins. Secure UPI/Paytm payments with 5-minute delivery. Trusted by thousands.",
-
-
-  metadataBase: new URL("https://mlbbtopup.in"),
+    "Safe & instant MLBB diamond top up in India. Cheapest rates for Weekly Pass, Starlight & skins. Secure UPI/Paytm payments with 5-minute delivery. Trusted by thousands of Indian gamers.",
+  keywords: [
+    "MLBB diamond top up india",
+    "buy MLBB diamonds cheap india",
+    "mobile legends top up upi",
+    "mlbb weekly pass buy india",
+    "mlbb diamonds low price",
+    "mlbb starlight card buy",
+    "cheap mlbb diamonds codashop alternative",
+    "instant game topup india",
+    "mlbb recharge paytm",
+    "bluebuff mlbb"
+  ],
+  authors: [{ name: "MLBB Top Up India", url: "https://mlbbtopup.in" }],
+  creator: "MLBB Top Up India",
+  publisher: "Blue Buff",
+  applicationName: "MLBB Topup",
+  category: "Gaming & Entertainment",
+  alternates: {
+    canonical: "https://mlbbtopup.in",
+  },
   openGraph: {
-    title: "MLBB Top Up India â€“ Buy Cheapest Diamonds Instantly | mlbbtopup.in",
+    title: "MLBB Top Up India - Buy Cheapest Diamonds Instantly | mlbbtopup.in",
     description:
-      "Safe & instant MLBB diamond top up in India. Cheapest rates for Weekly Pass, Starlight & skins. Secure UPI/Paytm payments with 5-minute delivery. Trusted by thousands.",
+      "Safe & instant MLBB diamond top up in India. Cheapest rates for Weekly Pass, Starlight & skins. Secure UPI/Paytm payments with 5-minute delivery.",
     url: "https://mlbbtopup.in",
     siteName: "mlbbtopup.in",
     images: [
@@ -50,20 +68,27 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "MLBB Top Up India - Cheap & Fast Diamonds",
-    description: "Safe & instant MLBB diamond top up in India. Cheapest rates for Weekly Pass, Starlight & skins. Secure UPI/Paytm payments with 5-minute delivery. Trusted by thousands.",
+    description:
+      "Safe & instant MLBB diamond top up in India. Cheapest rates for Weekly Pass, Starlight & skins. Secure UPI/Paytm payments with 5-minute delivery.",
     images: ["/logoBB.png"],
     creator: "@mlbbtopupin",
+    site: "@mlbbtopupin",
   },
   manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/logoBB.png",
+  },
   robots: {
     index: true,
     follow: true,
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
 };
