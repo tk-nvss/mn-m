@@ -2,6 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  Key,
+  RefreshCcw,
+  Loader2,
+  User,
+  Mail,
+  Shield,
+  Clock,
+} from "lucide-react";
 import { Icons } from "@/components/icons";
 import { StatusBadge, EmptyState, LoadingSpinner } from "@/components/common";
 import { formatCurrency, formatDate } from "@/utils";

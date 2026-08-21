@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 import { Icons } from "@/components/icons";
 import { LoadingSpinner } from "@/components/common";
 import { motion, AnimatePresence } from "framer-motion";

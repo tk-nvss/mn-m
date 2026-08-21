@@ -110,7 +110,7 @@ export default function ReviewAndPaymentStep({
             <div className="bg-[var(--background)] border border-[var(--border)] rounded-2xl p-5 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-20 h-20 bg-[var(--accent)]/5 rounded-full blur-2xl -z-10 group-hover:bg-[var(--accent)]/10 transition-all" />
               <h3 className="text-xs font-[900] uppercase tracking-widest text-[var(--muted)] mb-4 flex items-center gap-2">
-                <FiUser className="text-lg" /> Your Info
+                <Icons.user className="text-lg" /> Your Info
               </h3>
               <div className="space-y-3">
                 <div>

@@ -20,7 +20,9 @@ import {
   Crown,
   Activity,
   Globe,
-  Plus
+  Plus,
+  Tag,
+  IdCard,
 } from "lucide-react";
 import { SearchInput, StatusBadge, CopyButton, EmptyState, Pagination } from "@/components/common";
 import { formatDate, formatDateTime, formatCurrency, formatNumber } from "@/utils";
