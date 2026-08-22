@@ -72,8 +72,12 @@ export default function NotificationPrompt() {
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    // Dismiss for 3 days
     try {
+      fetch("/api/pwa/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ event: "push_dismissed", userId: user?.userId || null }),
+      }).catch(() => {});
       localStorage.setItem("push_prompt_dismissed_until", (Date.now() + 3 * 86400000).toString());
     } catch { /* silent */ }
   };

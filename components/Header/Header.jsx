@@ -7,8 +7,14 @@ import { motion } from "framer-motion";
 import ThemeToggle from "../ThemeToggle/ThemeToggle";
 import CustomWebBanner from "../Home/CustomWebBanner";
 import api from "@/lib/axios";
-import { FiHeart, FiChevronRight, FiChevronDown, FiLogOut, FiCheckCircle, FiShield, FiZap, FiMenu, FiX, FiLayers, FiCompass, FiGrid, FiShoppingBag, FiMessageSquare, FiUser, FiUsers, FiKey, FiGift, FiAward, FiDownload } from "react-icons/fi";
+import { FiHeart, FiChevronRight, FiChevronDown, FiLogOut, FiCheckCircle, FiShield, FiZap, FiMenu, FiX, FiLayers, FiCompass, FiGrid, FiShoppingBag, FiMessageSquare, FiUser, FiUsers, FiKey, FiGift, FiAward, FiDownload, FiBell } from "react-icons/fi";
 import { CopyButton } from "@/components/common";
+import { 
+  isPushNotificationSupported, 
+  isDeviceAlreadySubscribed, 
+  getNotificationPermission, 
+  subscribeToPush 
+} from "@/lib/pushNotification";
 
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -96,13 +102,53 @@ export default function Header() {
   }, [_hasHydrated, token, updateUser, setWalletBalance, logout]);
 
   /* ================= PWA INSTALL LOGIC ================= */
+  const [isPwaInstalled, setIsPwaInstalled] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
+  const [pwaToastMsg, setPwaToastMsg] = useState("");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const standalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator && window.navigator.standalone === true);
+    const installed = standalone || localStorage.getItem("pwa_installed") === "true";
+
+    setIsStandalone(Boolean(standalone));
+    setIsPwaInstalled(Boolean(installed));
+
+    const handleAppInstalled = () => {
+      setIsPwaInstalled(true);
+      localStorage.setItem("pwa_installed", "true");
+    };
+
+    window.addEventListener("appinstalled", handleAppInstalled);
+    return () => window.removeEventListener("appinstalled", handleAppInstalled);
+  }, []);
+
+  const showPwaToast = (msg) => {
+    setPwaToastMsg(msg);
+    setTimeout(() => setPwaToastMsg(""), 3500);
+  };
+
   const handleInstallPWA = async () => {
+    if (isStandalone) {
+      showPwaToast("📱 You are using the installed app!");
+      return;
+    }
+    if (isPwaInstalled) {
+      showPwaToast("✅ App is already installed on your device!");
+      return;
+    }
+
     const prompt = window.__pwaPrompt;
     if (prompt) {
       await prompt.prompt();
       const { outcome } = await prompt.userChoice;
       if (outcome === "accepted") {
+        setIsPwaInstalled(true);
+        localStorage.setItem("pwa_installed", "true");
         fetch("/api/pwa/track", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event: "installed" }) }).catch(() => {});
+        showPwaToast("🎉 App installed successfully!");
       }
       window.__pwaPrompt = null;
     } else {
@@ -230,6 +276,9 @@ export default function Header() {
                 <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-[var(--background)] bg-[#0088cc] z-20" />
               </motion.button>
             </div>
+
+            {/* NOTIFICATION TOGGLE */}
+            <NotificationToggle user={user} />
 
             <div className="flex items-center gap-1.5 sm:gap-2" ref={dropdownRef}>
               <ThemeToggle />
@@ -455,5 +504,95 @@ export default function Header() {
       )}
 
     </header>
+  );
+}
+
+function NotificationToggle({ user }) {
+  const [subscribed, setSubscribed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setSubscribed(isDeviceAlreadySubscribed());
+    }
+  }, []);
+
+  const handleToggle = async () => {
+    if (loading) return;
+
+    if (!isPushNotificationSupported()) {
+      showNotificationToast("Push notifications not supported on this browser");
+      return;
+    }
+
+    const permission = getNotificationPermission();
+
+    if (subscribed || permission === "granted") {
+      showNotificationToast("🔔 Notifications are enabled!");
+      return;
+    }
+
+    if (permission === "denied") {
+      showNotificationToast("⚠️ Notifications blocked in browser. Please allow in site settings.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await subscribeToPush(user?.userId);
+      if (res.success) {
+        setSubscribed(true);
+        showNotificationToast("🎉 Notifications turned ON!");
+      } else {
+        showNotificationToast(res.error || "Could not enable notifications");
+      }
+    } catch {
+      showNotificationToast("Something went wrong enabling notifications");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const showNotificationToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(""), 3500);
+  };
+
+  return (
+    <div className="relative">
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={handleToggle}
+        disabled={loading}
+        className="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[var(--foreground)]/5 border border-[var(--border)]/30 text-[var(--foreground)]/60 hover:text-[var(--accent)] transition-colors group backdrop-blur-md"
+        aria-label="Turn on notifications"
+        title={subscribed ? "Notifications Enabled" : "Turn ON Notifications"}
+      >
+        <FiBell size={14} className={`group-hover:rotate-12 transition-transform z-10 ${loading ? "animate-spin" : ""}`} />
+        
+        {/* SPINNING RING */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          className="absolute inset-0 rounded-full border border-dashed border-[var(--foreground)]/20 pointer-events-none"
+        />
+        
+        {/* INDICATOR DOT */}
+        <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-[var(--background)] z-20 transition-colors ${
+          subscribed ? "bg-emerald-500" : "bg-amber-500 animate-pulse"
+        }`} />
+      </motion.button>
+
+      {/* MINI TOAST */}
+      {toastMsg && (
+        <div className="fixed top-14 sm:top-16 right-3 sm:right-6 z-[9999] max-w-xs animate-in fade-in slide-in-from-top-2 duration-300 pointer-events-none">
+          <div className="px-3 py-2 rounded-xl bg-[var(--card)] border border-[var(--border)] shadow-2xl text-[11px] font-bold text-[var(--foreground)] backdrop-blur-xl flex items-center gap-2">
+            <span>{toastMsg}</span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

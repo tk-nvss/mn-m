@@ -5,7 +5,7 @@ const PwaInstallSchema = new mongoose.Schema(
     // Event type
     event: {
       type: String,
-      enum: ["installed", "active", "dismissed"],
+      enum: ["installed", "active", "dismissed", "push_denied", "push_dismissed"],
       required: true,
     },
 

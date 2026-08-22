@@ -27,6 +27,9 @@ export default function PwaStatsTab() {
 
   // Push broadcast state
   const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
+  const [isSubscribersOpen, setIsSubscribersOpen] = useState(true);
+  const [isInstalledUsersOpen, setIsInstalledUsersOpen] = useState(false);
+  const [isRecentInstallsOpen, setIsRecentInstallsOpen] = useState(false);
   const [pushTitle, setPushTitle]   = useState("");
   const [pushBody, setPushBody]     = useState("");
   const [pushUrl, setPushUrl]       = useState("/");
@@ -147,7 +150,7 @@ export default function PwaStatsTab() {
         </div>
       </div>
 
-      {/* ── Stat cards (Unified Total & Period) ── */}
+      {/* ── Stat cards (Unified Total, Period & Conversions) ── */}
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
         <StatCard
           label="App Installs"
@@ -158,10 +161,11 @@ export default function PwaStatsTab() {
           color="#ef4444"
         />
         <StatCard
-          label="Active Devices"
-          value={data.totalActive}
-          icon={<FiActivity size={14} />}
-          color="#22c55e"
+          label="Install Conversion"
+          value={`${conversionRate}%`}
+          subText={`${data.dismissCount || 0} dismissed`}
+          icon={<FiUser size={14} />}
+          color="#60a5fa"
         />
         <StatCard
           label="Push Subscribers"
@@ -172,11 +176,11 @@ export default function PwaStatsTab() {
           color="#a855f7"
         />
         <StatCard
-          label="Install Conversion"
-          value={`${conversionRate}%`}
-          subText={`${data.dismissCount} dismissed`}
-          icon={<FiUser size={14} />}
-          color="#60a5fa"
+          label="Push Conversion"
+          value={`${data.pushConversionRate ?? 100}%`}
+          subText={`${data.pushDeniedCount || 0} rejected`}
+          icon={<FiActivity size={14} />}
+          color="#22c55e"
         />
       </div>
 
@@ -356,147 +360,216 @@ export default function PwaStatsTab() {
         dailyPush={data.dailyPush || []}
       />
 
-      {/* ── Device Breakdown ── */}
-      <BreakdownCard title="Installs by Device Type" rows={data.byDevice} renderIcon={(id) => deviceIcon(id)} />
-
-      {/* ── Push Subscribers List ── */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] overflow-hidden">
-        <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <FiBell size={13} className="text-purple-400" />
-            <h3 className="text-[11px] font-black uppercase tracking-widest text-[var(--muted)]">
-              Active Push Subscribers ({data.pushSubscribers?.length ?? 0})
-            </h3>
+      {/* ── Push Subscribers List (Collapsible) ── */}
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/30 overflow-hidden transition-all">
+        <button
+          type="button"
+          onClick={() => setIsSubscribersOpen(!isSubscribersOpen)}
+          className="w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left hover:bg-[var(--card)]/50 transition-colors"
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-1.5 rounded-lg bg-purple-500/15 text-purple-400 shrink-0">
+              <FiBell size={13} />
+            </div>
+            <div className="min-w-0">
+              <h3 className="text-xs font-black uppercase tracking-wider text-[var(--foreground)] truncate">
+                Active Push Subscribers ({data.pushSubscribers?.length ?? 0})
+              </h3>
+              <p className="text-[10px] text-[var(--muted)] truncate">Recent subscribed browser tokens</p>
+            </div>
           </div>
-          <span className="text-[10px] text-[var(--muted)]">Recent subscriptions</span>
-        </div>
-        {!data.pushSubscribers?.length ? (
-          <p className="text-center text-[12px] text-[var(--muted)] py-8">No push subscribers yet</p>
-        ) : (
-          <div className="divide-y divide-[var(--border)]">
-            {data.pushSubscribers.map((item, i) => (
-              <div key={i} className="flex items-center justify-between px-4 py-3 gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-full bg-purple-500/15 border border-purple-500/30 flex items-center justify-center shrink-0 text-purple-400">
-                    <FiBell size={13} />
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="hidden sm:inline-block text-[10px] font-bold px-2 py-1 rounded bg-[var(--border)]/60 text-[var(--foreground)]">
+              {isSubscribersOpen ? "Hide" : "Show"}
+            </span>
+            <div className="p-1 rounded text-[var(--muted)]">
+              {isSubscribersOpen ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
+            </div>
+          </div>
+        </button>
+
+        {isSubscribersOpen && (
+          <div className="border-t border-[var(--border)] animate-in fade-in slide-in-from-top-2 duration-200">
+            {!data.pushSubscribers?.length ? (
+              <p className="text-center text-[12px] text-[var(--muted)] py-8">No push subscribers yet</p>
+            ) : (
+              <div className="divide-y divide-[var(--border)]">
+                {data.pushSubscribers.map((item, i) => (
+                  <div key={i} className="flex items-center justify-between px-4 py-3 gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-full bg-purple-500/15 border border-purple-500/30 flex items-center justify-center shrink-0 text-purple-400">
+                        <FiBell size={13} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[12px] font-bold text-[var(--foreground)] truncate">
+                          {item.user?.name || item.user?.email || (item.userId ? `User: ${item.userId}` : "Anonymous Device")}
+                        </p>
+                        <p className="text-[10px] text-[var(--muted)] truncate">
+                          {deviceIcon(item.deviceType)} {item.os || "OS"} · {item.browser || "Browser"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <div className="text-right">
+                        <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                          Active
+                        </span>
+                        <p className="text-[9px] text-[var(--muted)] mt-1">
+                          {new Date(item.createdAt).toLocaleDateString("en-IN", {
+                            day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                      {item.userId && (
+                        <Link
+                          href={`/owner-panal?tab=users&search=${item.userId}`}
+                          className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 transition-colors"
+                          title="View user"
+                        >
+                          <FiExternalLink size={12} />
+                        </Link>
+                      )}
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[12px] font-bold text-[var(--foreground)] truncate">
-                      {item.user?.name || item.user?.email || (item.userId ? `User: ${item.userId}` : "Anonymous Device")}
-                    </p>
-                    <p className="text-[10px] text-[var(--muted)] truncate">
-                      {deviceIcon(item.deviceType)} {item.os || "OS"} · {item.browser || "Browser"}
-                    </p>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* ── Registered users who installed (Collapsible) ── */}
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/30 overflow-hidden transition-all">
+        <button
+          type="button"
+          onClick={() => setIsInstalledUsersOpen(!isInstalledUsersOpen)}
+          className="w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left hover:bg-[var(--card)]/50 transition-colors"
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-1.5 rounded-lg bg-blue-500/15 text-blue-400 shrink-0">
+              <FiUser size={13} />
+            </div>
+            <div className="min-w-0">
+              <h3 className="text-xs font-black uppercase tracking-wider text-[var(--foreground)] truncate">
+                Registered Users Who Installed PWA ({data.installedUsers?.length ?? 0})
+              </h3>
+              <p className="text-[10px] text-[var(--muted)] truncate">Accounts tracked with installed app</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="hidden sm:inline-block text-[10px] font-bold px-2 py-1 rounded bg-[var(--border)]/60 text-[var(--foreground)]">
+              {isInstalledUsersOpen ? "Hide" : "Show"}
+            </span>
+            <div className="p-1 rounded text-[var(--muted)]">
+              {isInstalledUsersOpen ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
+            </div>
+          </div>
+        </button>
+
+        {isInstalledUsersOpen && (
+          <div className="border-t border-[var(--border)] animate-in fade-in slide-in-from-top-2 duration-200">
+            {!data.installedUsers?.length ? (
+              <p className="text-center text-[12px] text-[var(--muted)] py-8">No registered users tracked yet</p>
+            ) : (
+              <div className="divide-y divide-[var(--border)]">
+                {data.installedUsers.map((item, i) => (
+                  <div key={i} className="flex items-center justify-between px-4 py-3 gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      {/* Avatar */}
+                      <div className="w-8 h-8 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shrink-0 text-[var(--accent)]">
+                        {item.user?.avatar
+                          ? <img src={item.user.avatar} className="w-8 h-8 rounded-full object-cover" alt="" />
+                          : <FiUser size={14} />
+                        }
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[12px] font-bold text-[var(--foreground)] truncate">
+                          {item.user?.name || item.user?.email || item.userId}
+                        </p>
+                        <p className="text-[10px] text-[var(--muted)] truncate">
+                          {item.user?.email || item.user?.phone || "—"} ·{" "}
+                          <span className="text-[var(--accent)]">{item.user?.userType || "user"}</span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <div className="text-right">
+                        <p className="text-[10px] text-[var(--muted)] flex items-center gap-1">
+                          {deviceIcon(item.deviceType)} {item.os} · {item.browser}
+                        </p>
+                        <p className="text-[10px] text-[var(--muted)]">
+                          {new Date(item.createdAt).toLocaleDateString("en-IN", {
+                            day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                      {item.userId && (
+                        <Link
+                          href={`/owner-panal?tab=users&search=${item.userId}`}
+                          className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 transition-colors"
+                          title="View user"
+                        >
+                          <FiExternalLink size={12} />
+                        </Link>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <div className="text-right">
-                    <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                      Active
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* ── Recent installs (Collapsible) ── */}
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/30 overflow-hidden transition-all">
+        <button
+          type="button"
+          onClick={() => setIsRecentInstallsOpen(!isRecentInstallsOpen)}
+          className="w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left hover:bg-[var(--card)]/50 transition-colors"
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 shrink-0">
+              <FiDownload size={13} />
+            </div>
+            <div className="min-w-0">
+              <h3 className="text-xs font-black uppercase tracking-wider text-[var(--foreground)] truncate">
+                Recent Installs ({data.recent?.length ?? 0})
+              </h3>
+              <p className="text-[10px] text-[var(--muted)] truncate">Latest device installations</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="hidden sm:inline-block text-[10px] font-bold px-2 py-1 rounded bg-[var(--border)]/60 text-[var(--foreground)]">
+              {isRecentInstallsOpen ? "Hide" : "Show"}
+            </span>
+            <div className="p-1 rounded text-[var(--muted)]">
+              {isRecentInstallsOpen ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
+            </div>
+          </div>
+        </button>
+
+        {isRecentInstallsOpen && (
+          <div className="border-t border-[var(--border)] animate-in fade-in slide-in-from-top-2 duration-200">
+            {!data.recent?.length ? (
+              <p className="text-center text-[12px] text-[var(--muted)] py-8">No installs yet</p>
+            ) : (
+              <div className="divide-y divide-[var(--border)]">
+                {data.recent.map((item, i) => (
+                  <div key={i} className="flex items-center justify-between px-4 py-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[var(--muted)]">{deviceIcon(item.deviceType)}</span>
+                      <p className="text-[12px] font-bold text-[var(--foreground)]">
+                        {item.os} · {item.browser}
+                      </p>
+                    </div>
+                    <span className="text-[10px] text-[var(--muted)]">
+                      {formatDateTime(item.createdAt)}
                     </span>
-                    <p className="text-[9px] text-[var(--muted)] mt-1">
-                      {new Date(item.createdAt).toLocaleDateString("en-IN", {
-                        day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
-                      })}
-                    </p>
                   </div>
-                  {item.userId && (
-                    <Link
-                      href={`/owner-panal?tab=users&search=${item.userId}`}
-                      className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 transition-colors"
-                      title="View user"
-                    >
-                      <FiExternalLink size={12} />
-                    </Link>
-                  )}
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* ── Registered users who installed ── */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] overflow-hidden">
-        <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
-          <h3 className="text-[11px] font-black uppercase tracking-widest text-[var(--muted)]">
-            Registered Users Who Installed PWA
-          </h3>
-          <span className="text-[10px] text-[var(--muted)]">{data.installedUsers?.length ?? 0} found</span>
-        </div>
-        {!data.installedUsers?.length ? (
-          <p className="text-center text-[12px] text-[var(--muted)] py-8">No registered users tracked yet</p>
-        ) : (
-          <div className="divide-y divide-[var(--border)]">
-            {data.installedUsers.map((item, i) => (
-              <div key={i} className="flex items-center justify-between px-4 py-3 gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  {/* Avatar */}
-                  <div className="w-8 h-8 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shrink-0 text-[var(--accent)]">
-                    {item.user?.avatar
-                      ? <img src={item.user.avatar} className="w-8 h-8 rounded-full object-cover" alt="" />
-                      : <FiUser size={14} />
-                    }
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[12px] font-bold text-[var(--foreground)] truncate">
-                      {item.user?.name || item.user?.email || item.userId}
-                    </p>
-                    <p className="text-[10px] text-[var(--muted)] truncate">
-                      {item.user?.email || item.user?.phone || "—"} ·{" "}
-                      <span className="text-[var(--accent)]">{item.user?.userType || "user"}</span>
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <div className="text-right">
-                    <p className="text-[10px] text-[var(--muted)] flex items-center gap-1">
-                      {deviceIcon(item.deviceType)} {item.os} · {item.browser}
-                    </p>
-                    <p className="text-[10px] text-[var(--muted)]">
-                      {new Date(item.createdAt).toLocaleDateString("en-IN", {
-                        day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-                  {item.userId && (
-                    <Link
-                      href={`/owner-panal?tab=users&search=${item.userId}`}
-                      className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 transition-colors"
-                      title="View user"
-                    >
-                      <FiExternalLink size={12} />
-                    </Link>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* ── Recent installs ── */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] overflow-hidden">
-        <div className="px-4 py-3 border-b border-[var(--border)]">
-          <h3 className="text-[11px] font-black uppercase tracking-widest text-[var(--muted)]">Recent Installs</h3>
-        </div>
-        {!data.recent?.length ? (
-          <p className="text-center text-[12px] text-[var(--muted)] py-8">No installs yet</p>
-        ) : (
-          <div className="divide-y divide-[var(--border)]">
-            {data.recent.map((item, i) => (
-              <div key={i} className="flex items-center justify-between px-4 py-2.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-[var(--muted)]">{deviceIcon(item.deviceType)}</span>
-                  <p className="text-[12px] font-bold text-[var(--foreground)]">
-                    {item.os} · {item.browser}
-                  </p>
-                </div>
-                <span className="text-[10px] text-[var(--muted)]">
-                  {formatDateTime(item.createdAt)}
-                </span>
-              </div>
-            ))}
+            )}
           </div>
         )}
       </div>
@@ -690,40 +763,6 @@ function CombinedGrowthChart({ title, dailyInstalls, dailyActive, dailyPush }) {
             );
           })}
         </div>
-      </div>
-    </div>
-  );
-}
-
-/* ── Breakdown card ── */
-function BreakdownCard({ title, rows, renderIcon }) {
-  const total = rows?.reduce((s, r) => s + r.count, 0) || 1;
-  return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] overflow-hidden">
-      <div className="px-4 py-3 border-b border-[var(--border)]">
-        <h3 className="text-[11px] font-black uppercase tracking-widest text-[var(--muted)]">{title}</h3>
-      </div>
-      <div className="divide-y divide-[var(--border)]">
-        {!rows?.length && (
-          <p className="text-center text-[11px] text-[var(--muted)] py-5">No data</p>
-        )}
-        {rows?.map((row, i) => {
-          const pct = Math.round((row.count / total) * 100);
-          return (
-            <div key={i} className="px-4 py-2.5 space-y-1">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[var(--muted)]">{renderIcon(row._id)}</span>
-                  <span className="text-[12px] font-bold text-[var(--foreground)] capitalize">{row._id || "Unknown"}</span>
-                </div>
-                <span className="text-[11px] font-black text-[var(--accent)]">{row.count}</span>
-              </div>
-              <div className="h-1 rounded-full bg-[var(--border)] overflow-hidden">
-                <div className="h-full rounded-full bg-[var(--accent)] transition-all duration-500" style={{ width: `${pct}%` }} />
-              </div>
-            </div>
-          );
-        })}
       </div>
     </div>
   );

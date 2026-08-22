@@ -88,6 +88,13 @@ export async function subscribeToPush(userId?: string): Promise<{ success: boole
     // 1. Request notification permission
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
+      try {
+        fetch("/api/pwa/track", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ event: "push_denied", userId: userId || null }),
+        }).catch(() => {});
+      } catch { /* silent */ }
       return { success: false, error: "Notification permission was not granted." };
     }
 

@@ -57,7 +57,7 @@ export async function POST(req) {
     const body = await req.json();
     const { event, userId } = body;
 
-    if (!["installed", "active", "dismissed"].includes(event)) {
+    if (!["installed", "active", "dismissed", "push_denied", "push_dismissed"].includes(event)) {
       return NextResponse.json({ error: "Invalid event" }, { status: 400 });
     }
 
@@ -187,6 +187,9 @@ export async function GET(req) {
       // Total Active Push Subscribers
       PushSubscription.countDocuments({ isActive: true }),
 
+      // Total Push Rejections / Denials
+      PwaInstall.countDocuments({ event: { $in: ["push_denied", "push_dismissed"] } }),
+
       // Recent Push Subscriptions
       PushSubscription.find({ isActive: true })
         .sort({ createdAt: -1 })
@@ -246,6 +249,12 @@ export async function GET(req) {
     const periodInstalls = dailyInstalls.reduce((sum, d) => sum + d.count, 0);
     const periodPush     = dailyPush.reduce((sum, d) => sum + d.count, 0);
 
+    const pushDenied = pushDeniedCount || 0;
+    const totalPushEvents = (totalPushSubscribers || 0) + pushDenied;
+    const pushConversionRate = totalPushEvents > 0 
+      ? Math.round(((totalPushSubscribers || 0) / totalPushEvents) * 100)
+      : (totalPushSubscribers > 0 ? 100 : 0);
+
     return NextResponse.json({
       totalInstalls,
       totalActive,
@@ -253,6 +262,8 @@ export async function GET(req) {
       periodInstalls,
       periodPush,
       totalPushSubscribers,
+      pushDeniedCount: pushDenied,
+      pushConversionRate,
       byDevice,
       byOS,
       byBrowser,

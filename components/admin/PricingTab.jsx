@@ -217,68 +217,65 @@ export default function PricingTab({
   return (
     <div className="space-y-6 pb-20 max-w-full overflow-x-hidden">
       {/* ================= TOP BAR ================= */}
-      <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
-        <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
-                <Settings2 className="text-[var(--accent)] text-lg" size={20} />
+      {/* ================= HEADER ================= */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+                <Settings2 size={16} />
             </div>
             <div>
-                <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Pricing Config</h2>
-                <p className="text-[9px] text-[var(--muted)]/50 font-bold uppercase tracking-[0.15em] leading-none mt-0.5">
-                    Manage profit margins and fixed item prices
+                <h2 className="text-sm font-black uppercase tracking-wider leading-tight text-[var(--foreground)]">Pricing Config</h2>
+                <p className="text-[9px] text-[var(--muted)] font-mono leading-none mt-0.5">
+                    Manage profit margins and item rates
                 </p>
             </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row items-center gap-3 w-full lg:w-auto mt-2 lg:mt-0">
-          <div className="flex w-full lg:w-auto items-center justify-between lg:justify-end gap-2">
-            {/* Mode Switcher */}
-            <div className="flex flex-1 lg:flex-none justify-center bg-[var(--foreground)]/[0.03] p-1 rounded-full border border-[var(--border)]/50 shadow-inner">
-              {[{ id: "percent", label: "Markup", icon: <Percent size={12} /> }, { id: "fixed", label: "Fixed", icon: <Coins size={12} /> }].map((m) => (
-                <button aria-label="button"
-                  key={m.id}
-                  onClick={() => setPricingMode(m.id)}
-                  className={`flex-1 lg:flex-none flex justify-center items-center gap-1 px-1.5 sm:px-4 py-1.5 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap active:scale-95 ${pricingMode === m.id
-                    ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
-                    }`}
-                >
-                  <span className="hidden sm:inline">{m.icon}</span>
-                  {m.label}
-                </button>
-              ))}
-            </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Mode Switcher */}
+          <div className="flex p-0.5 bg-[var(--border)]/50 border border-[var(--border)] rounded-md gap-0.5">
+            {[{ id: "percent", label: "Markup", icon: <Percent size={11} /> }, { id: "fixed", label: "Fixed", icon: <Coins size={11} /> }].map((m) => (
+              <button aria-label="button"
+                key={m.id}
+                onClick={() => setPricingMode(m.id)}
+                className={`flex items-center gap-1 px-3 py-1 rounded-sm text-[9.5px] font-bold uppercase tracking-wider transition-all whitespace-nowrap ${pricingMode === m.id
+                  ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm"
+                  : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                  }`}
+              >
+                {m.icon}
+                {m.label}
+              </button>
+            ))}
+          </div>
 
-            <div className="hidden lg:block h-6 w-px bg-[var(--border)] opacity-30" />
-
-            {/* Role Switcher */}
-            <div className="flex flex-1 lg:flex-none justify-center bg-[var(--foreground)]/[0.03] p-1 rounded-full border border-[var(--border)]/50 shadow-inner">
-              {["user", "member", "admin"].map((type) => (
-                <button aria-label="button"
-                  key={type}
-                  onClick={() => setPricingType(type)}
-                  className={`flex-1 lg:flex-none flex justify-center px-1.5 sm:px-4 py-1.5 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap active:scale-95 ${pricingType === type
-                    ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
-                    }`}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
+          {/* Role Switcher */}
+          <div className="flex p-0.5 bg-[var(--border)]/50 border border-[var(--border)] rounded-md gap-0.5">
+            {["user", "member", "admin"].map((type) => (
+              <button aria-label="button"
+                key={type}
+                onClick={() => setPricingType(type)}
+                className={`px-2.5 py-1 rounded-sm text-[9.5px] font-bold uppercase tracking-wider transition-all whitespace-nowrap ${pricingType === type
+                  ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm"
+                  : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                  }`}
+              >
+                {type}
+              </button>
+            ))}
           </div>
 
           <button aria-label="button"
             onClick={onSave}
             disabled={!canSave || savingPricing}
-            className={`w-full lg:w-auto px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center ${
+            className={`px-4 py-1.5 rounded-md text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 flex items-center justify-center ${
               canSave 
-                ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20" 
-                : "bg-[var(--foreground)]/[0.05] text-[var(--muted)]/40 cursor-not-allowed"
+                ? "bg-[var(--accent)] text-white shadow-sm hover:brightness-110" 
+                : "bg-[var(--foreground)]/[0.05] text-[var(--muted)]/40 cursor-not-allowed border border-[var(--border)]"
             }`}
           >
             {savingPricing ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <Loader2 size={12} className="animate-spin" />
                 <span>Saving...</span>
               </div>
@@ -287,16 +284,15 @@ export default function PricingTab({
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 min-h-[600px]">
+      <div className="flex flex-col lg:flex-row gap-4 min-h-[500px]">
         {/* ================= LEFT SIDEBAR (GAMES) ================= */}
         {pricingMode === "fixed" && (
-          <div className="w-full lg:w-72 flex flex-col gap-4">
-            <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--card)] space-y-3">
+          <div className="w-full lg:w-72 flex flex-col gap-3">
+            <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)]/40 space-y-2">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs font-black uppercase tracking-widest text-[var(--muted)]">Games</h3>
-                <Gamepad2 size={14} className="text-[var(--accent)]" />
+                <h3 className="text-xs font-black uppercase tracking-wider text-[var(--muted)]">Games</h3>
+                <Gamepad2 size={13} className="text-[var(--accent)]" />
               </div>
-              {/* Search Games */}
               <SearchInput
                 placeholder="Search games..."
                 value={gameSearch}
@@ -305,50 +301,50 @@ export default function PricingTab({
               />
             </div>
 
-            <div className="flex-1 overflow-y-auto max-h-[500px] lg:max-h-none space-y-1 p-1 rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto max-h-48 sm:max-h-56 lg:max-h-[550px] space-y-0.5 p-1 rounded-xl border border-[var(--border)] bg-[var(--card)]/30 custom-scrollbar">
               {filteredGames.map((g) => (
                 <button aria-label="button"
                   key={g.gameSlug}
                   onClick={() => setFixedGameFilter(g.gameSlug)}
-                  className={`w-full group relative flex items-center justify-between p-3 rounded-xl transition-all ${
+                  className={`w-full group relative flex items-center justify-between px-2 py-1.5 rounded-md transition-all ${
                     fixedGameFilter === g.gameSlug
-                      ? "bg-[var(--accent)]/10 border border-[var(--accent)]/20 shadow-lg shadow-[var(--accent)]/5"
-                      : "hover:bg-[var(--foreground)]/[0.03] border border-transparent"
+                      ? "bg-[var(--accent)]/10 border border-[var(--accent)]/20"
+                      : "hover:bg-[var(--foreground)]/[0.02] border border-transparent"
                   }`}
                 >
                   <div className="flex flex-col items-start min-w-0">
-                    <span className={`text-xs font-black uppercase tracking-tight truncate ${fixedGameFilter === g.gameSlug ? "text-[var(--accent)]" : "text-[var(--foreground)]"}`}>
+                    <span className={`text-[11px] font-bold uppercase tracking-tight truncate ${fixedGameFilter === g.gameSlug ? "text-[var(--accent)]" : "text-[var(--foreground)]"}`}>
                       {g.gameName}
                     </span>
-                    <span className="text-[10px] font-mono text-[var(--muted)]/40 truncate">{g.gameSlug}</span>
+                    <span className="text-[8.5px] font-mono text-[var(--muted)]/50 truncate leading-none">{g.gameSlug}</span>
                   </div>
 
                   {/* GAME STOCK TOGGLE */}
-                  <div className="flex flex-col items-center gap-1 ml-2">
+                  <div className="flex items-center gap-1 ml-2 shrink-0">
+                    <span className={`text-[7px] font-black uppercase ${gameConfigs.find(gc => gc.gameSlug === g.gameSlug)?.isOutOfStock ? "text-rose-500" : "text-emerald-400"}`}>
+                      {gameConfigs.find(gc => gc.gameSlug === g.gameSlug)?.isOutOfStock ? "OOS" : "Stock"}
+                    </span>
                     <button aria-label="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleGameStock(g.gameSlug);
                       }}
                       title="Stock Status"
-                      className={`w-8 h-4 rounded-full transition-all flex items-center px-0.5 ${
+                      className={`w-6 h-3 rounded-full transition-all flex items-center px-0.5 ${
                         gameConfigs.find(gc => gc.gameSlug === g.gameSlug)?.isOutOfStock 
-                          ? "bg-rose-500 shadow-sm shadow-rose-500/20" 
+                          ? "bg-rose-500" 
                           : "bg-emerald-500/20 border border-emerald-500/30"
                       }`}
                     >
-                      <div className={`w-3 h-3 rounded-full bg-white transition-all ${
-                        gameConfigs.find(gc => gc.gameSlug === g.gameSlug)?.isOutOfStock ? "translate-x-4" : "translate-x-0"
+                      <div className={`w-2 h-2 rounded-full bg-white transition-all ${
+                        gameConfigs.find(gc => gc.gameSlug === g.gameSlug)?.isOutOfStock ? "translate-x-3" : "translate-x-0"
                       }`} />
                     </button>
-                    <span className={`text-[6px] font-black uppercase ${gameConfigs.find(gc => gc.gameSlug === g.gameSlug)?.isOutOfStock ? "text-rose-500" : "text-emerald-500/40"}`}>
-                      {gameConfigs.find(gc => gc.gameSlug === g.gameSlug)?.isOutOfStock ? "OOS" : "Stock"}
-                    </span>
                   </div>
                 </button>
               ))}
               {filteredGames.length === 0 && (
-                <div className="py-10 text-center opacity-30">
+                <div className="py-8 text-center opacity-30">
                   <p className="text-[10px] font-bold uppercase tracking-widest">No games found</p>
                 </div>
               )}
@@ -362,103 +358,112 @@ export default function PricingTab({
             {pricingMode === "percent" ? (
               <motion.div
                 key="markup-pane"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                exit={{ opacity: 0, y: -6 }}
                 className="space-y-4"
               >
-                <div className="p-4 sm:p-6 rounded-[1.5rem] border border-[var(--border)] bg-[var(--card)]/40 shadow-xl shadow-black/5">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner shrink-0">
-                        <Percent className="text-[var(--accent)]" size={18} />
+                {/* Clean Flat Markup Table Container */}
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/30 overflow-hidden">
+                  <div className="px-3.5 sm:px-4 py-3 border-b border-[var(--border)] flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 shrink-0">
+                        <Percent size={14} />
                       </div>
-                      <div>
-                        <h3 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Profit Markup</h3>
-                        <p className="text-[9px] text-[var(--muted)]/50 font-bold uppercase tracking-[0.15em] leading-none mt-0.5">Set percentage profit based on price ranges</p>
+                      <div className="min-w-0">
+                        <h3 className="text-xs font-black uppercase tracking-wider text-[var(--foreground)] truncate">Profit Markup</h3>
+                        <p className="text-[9.5px] text-[var(--muted)] truncate">Percentage profit based on price ranges</p>
                       </div>
                     </div>
                     <button aria-label="button"
                       onClick={addSlab}
-                      className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[var(--accent)] text-white text-[9px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-[var(--accent)]/20 transition-all active:scale-95 whitespace-nowrap"
+                      className="px-3 py-1.5 rounded-md bg-[var(--accent)] text-white text-[9.5px] font-black uppercase tracking-wider hover:brightness-110 transition-all active:scale-95 whitespace-nowrap shrink-0"
                     >
                       + Add Range
                     </button>
                   </div>
 
-                <div className="space-y-3">
-                  <div className="hidden sm:grid grid-cols-12 gap-3 px-4 text-[9px] font-black uppercase tracking-widest text-[var(--muted)]/60">
-                    <div className="col-span-4">Minimum Price (₹)</div>
-                    <div className="col-span-4">Maximum Price (₹)</div>
-                    <div className="col-span-3">Profit (%)</div>
-                    <div className="col-span-1"></div>
-                  </div>
+                  <div className="divide-y divide-[var(--border)]">
+                    {/* Header Columns */}
+                    <div className="hidden sm:flex items-center gap-3 px-4 py-2 bg-[var(--card)]/50 text-[9px] font-extrabold uppercase tracking-wider text-[var(--muted)]">
+                      <div className="flex-1">Price Range (₹)</div>
+                      <div className="w-28 text-left">Profit Margin</div>
+                      <div className="w-8 text-center">Action</div>
+                    </div>
 
-                  {slabs.map((s, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: -5 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-3 items-center p-5 sm:p-2 rounded-2xl sm:rounded-xl border sm:border-transparent border-[var(--border)] bg-[var(--background)]/30 sm:bg-transparent hover:bg-[var(--foreground)]/[0.02] transition-colors"
-                    >
-                      <div className="grid grid-cols-2 sm:contents gap-3">
-                        <div className="sm:col-span-4 space-y-2 sm:space-y-0">
-                          <label className="sm:hidden text-[9px] font-black uppercase tracking-widest text-[var(--muted)] ml-1">Min Price (₹)</label>
-                          <input
-                            type="number"
-                            value={s.min}
-                            onChange={(e) => updateSlab(i, "min", e.target.value)}
-                            className="w-full h-11 px-4 rounded-xl bg-[var(--background)]/50 sm:bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--foreground)] font-mono font-bold text-sm outline-none focus:border-[var(--accent)]/50 transition-all"
-                            placeholder="0"
-                          />
-                        </div>
-                        <div className="sm:col-span-4 space-y-2 sm:space-y-0">
-                          <label className="sm:hidden text-[9px] font-black uppercase tracking-widest text-[var(--muted)] ml-1">Max Price (₹)</label>
-                          <input
-                            type="number"
-                            value={s.max}
-                            onChange={(e) => updateSlab(i, "max", e.target.value)}
-                            className="w-full h-11 px-4 rounded-xl bg-[var(--background)]/50 sm:bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--foreground)] font-mono font-bold text-sm outline-none focus:border-[var(--accent)]/50 transition-all"
-                            placeholder="1000"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex items-end sm:contents gap-3">
-                        <div className="flex-1 sm:col-span-3 space-y-2 sm:space-y-0">
-                          <label className="sm:hidden text-[9px] font-black uppercase tracking-widest text-[var(--muted)] ml-1">Profit (%)</label>
-                          <div className="relative">
-                            <input
-                              type="number"
-                              value={s.percent}
-                              onChange={(e) => updateSlab(i, "percent", e.target.value)}
-                              className="w-full h-11 px-4 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] font-black text-sm outline-none focus:border-[var(--accent)]/40 transition-all placeholder:text-[var(--accent)]/40"
-                              placeholder="5"
-                            />
-                            <Percent size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--accent)]/60" />
+                    {slabs.map((s, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="p-3 sm:px-4 sm:py-2.5 hover:bg-[var(--foreground)]/[0.01] transition-colors"
+                      >
+                        <div className="flex items-center gap-2 sm:gap-3 w-full">
+                          {/* Min Price */}
+                          <div className="flex-1 min-w-0">
+                            <div className="relative">
+                              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-[var(--muted)]">₹</span>
+                              <input
+                                type="number"
+                                value={s.min}
+                                onChange={(e) => updateSlab(i, "min", e.target.value)}
+                                className="w-full h-8 pl-6 pr-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] font-mono font-bold text-xs outline-none focus:border-[var(--accent)]/50 transition-all"
+                                placeholder="Min"
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className="sm:col-span-1 flex justify-center pb-1 sm:pb-0">
+
+                          <span className="text-[10px] font-bold uppercase text-[var(--muted)]/60 shrink-0">to</span>
+
+                          {/* Max Price */}
+                          <div className="flex-1 min-w-0">
+                            <div className="relative">
+                              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-[var(--muted)]">₹</span>
+                              <input
+                                type="number"
+                                value={s.max}
+                                onChange={(e) => updateSlab(i, "max", e.target.value)}
+                                className="w-full h-8 pl-6 pr-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] font-mono font-bold text-xs outline-none focus:border-[var(--accent)]/50 transition-all"
+                                placeholder="Max"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Profit % */}
+                          <div className="w-20 sm:w-28 shrink-0">
+                            <div className="relative">
+                              <input
+                                type="number"
+                                value={s.percent}
+                                onChange={(e) => updateSlab(i, "percent", e.target.value)}
+                                className="w-full h-8 pl-2.5 pr-6 rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 font-black text-xs outline-none focus:border-emerald-500/40 transition-all placeholder:text-emerald-500/40 text-right sm:text-left"
+                                placeholder="5"
+                              />
+                              <Percent size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-emerald-400/60" />
+                            </div>
+                          </div>
+
+                          {/* Delete */}
                           <button aria-label="button"
                             onClick={() => deleteSlab(i)}
-                            className="w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center rounded-full text-[var(--muted)]/50 hover:text-rose-500 hover:bg-rose-500/10 transition-all shrink-0"
+                            className="w-8 h-8 flex items-center justify-center rounded-lg text-[var(--muted)] hover:text-rose-500 hover:bg-rose-500/10 transition-all shrink-0"
+                            title="Delete range"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={13} />
                           </button>
                         </div>
-                      </div>
-                    </motion.div>
-                  ))}
+                      </motion.div>
+                    ))}
 
-                  {!slabs.length && (
-                    <div className="py-20 text-center border border-dashed border-[var(--border)] bg-[var(--background)]/30 rounded-2xl flex flex-col items-center justify-center">
-                      <Percent className="text-[var(--muted)]/20 mb-3" size={32} />
-                      <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)]/60">No markup ranges defined</p>
-                    </div>
-                  )}
+                    {!slabs.length && (
+                      <div className="py-12 text-center flex flex-col items-center justify-center">
+                        <Percent className="text-[var(--muted)]/20 mb-2" size={24} />
+                        <p className="text-[9.5px] font-black uppercase tracking-wider text-[var(--muted)]">No markup ranges defined</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
             ) : (
               <motion.div
                 key="fixed"
@@ -481,80 +486,85 @@ export default function PricingTab({
                       visibleOverrides.map((o, idx) => (
                         <motion.div
                           key={o.itemSlug}
-                          initial={{ opacity: 0, scale: 0.98 }}
-                          animate={{ opacity: 1, scale: 1 }}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
                           transition={{ delay: idx * 0.01 }}
-                          className={`p-4 rounded-2xl border transition-all ${
+                          className={`p-3 sm:p-3.5 rounded-xl border transition-all ${
                             o.isEnabled 
-                              ? "border-[var(--accent)]/20 bg-[#1e293b]/40 shadow-xl" 
-                              : "border-[var(--border)] bg-[#1e293b]/20 opacity-60"
+                              ? "border-[var(--accent)]/30 bg-[var(--card)]/60 shadow-sm" 
+                              : "border-[var(--border)] bg-[var(--card)]/30"
                           }`}
                         >
-                          <div className="flex items-center justify-between gap-3 mb-4">
+                          <div className="flex items-center justify-between gap-2 mb-2.5">
                             <div className="min-w-0">
-                              <p className="text-[11px] font-[900] italic uppercase tracking-tighter text-white truncate">{o.itemName || o.itemSlug}</p>
-                              <p className="text-[9px] font-mono text-[var(--muted)]/40 truncate">{o.itemSlug}</p>
+                              <p className="text-xs font-black uppercase tracking-tight text-[var(--foreground)] truncate">
+                                {o.itemName || o.itemSlug}
+                              </p>
+                              <p className="text-[9px] font-mono text-[var(--muted)]/60 truncate">{o.itemSlug}</p>
                             </div>
                             
-                            {/* STOCK TOGGLE */}
-                            <div className="flex flex-col items-end gap-1.5 pr-2 border-r border-white/5">
-                              <button aria-label="button"
-                                onClick={() => toggleItemStock(o.itemSlug)}
-                                className={`relative w-11 h-6 rounded-full transition-colors outline-none ${
-                                  o.isOutOfStock ? "bg-rose-500 shadow-lg shadow-rose-500/20" : "bg-emerald-500/20 border border-emerald-500/30"
-                                }`}
-                              >
-                                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all shadow-sm ${
-                                  o.isOutOfStock ? "left-6" : "left-1"
-                                }`} />
-                              </button>
-                              <span className={`text-[8px] font-black uppercase tracking-widest whitespace-nowrap ${o.isOutOfStock ? "text-rose-500" : "text-emerald-500/40"}`}>
-                                {o.isOutOfStock ? "Out of Stock" : "In Stock"}
-                              </span>
-                            </div>
+                            <div className="flex items-center gap-3 shrink-0">
+                              {/* STOCK TOGGLE */}
+                              <div className="flex flex-col items-end gap-0.5">
+                                <button aria-label="button"
+                                  onClick={() => toggleItemStock(o.itemSlug)}
+                                  className={`relative w-8 h-4 rounded-full transition-colors outline-none flex items-center px-0.5 ${
+                                    o.isOutOfStock ? "bg-rose-500" : "bg-emerald-500/20 border border-emerald-500/30"
+                                  }`}
+                                >
+                                  <div className={`w-3 h-3 bg-white rounded-full transition-all shadow-sm ${
+                                    o.isOutOfStock ? "translate-x-4" : "translate-x-0"
+                                  }`} />
+                                </button>
+                                <span className={`text-[7px] font-black uppercase tracking-wider ${o.isOutOfStock ? "text-rose-500" : "text-emerald-400"}`}>
+                                  {o.isOutOfStock ? "OOS" : "In Stock"}
+                                </span>
+                              </div>
 
-                            {/* TOGGLE SWITCH */}
-                            <div className="flex flex-col items-end gap-1.5 pl-2">
-                              <button aria-label="button"
-                                onClick={() => toggleOverrideStatus(o.itemSlug)}
-                                className={`relative w-11 h-6 rounded-full transition-colors outline-none ${
-                                  o.isEnabled ? "bg-[var(--accent)] shadow-lg shadow-[var(--accent)]/20" : "bg-[#334155]"
-                                }`}
-                              >
-                                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all shadow-sm ${
-                                  o.isEnabled ? "left-6" : "left-1"
-                                }`} />
-                              </button>
-                              <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/40 whitespace-nowrap">Use override</span>
+                              {/* OVERRIDE TOGGLE */}
+                              <div className="flex flex-col items-end gap-0.5 pl-2 border-l border-[var(--border)]">
+                                <button aria-label="button"
+                                  onClick={() => toggleOverrideStatus(o.itemSlug)}
+                                  className={`relative w-8 h-4 rounded-full transition-colors outline-none flex items-center px-0.5 ${
+                                    o.isEnabled ? "bg-[var(--accent)]" : "bg-[var(--border)]"
+                                  }`}
+                                >
+                                  <div className={`w-3 h-3 bg-white rounded-full transition-all shadow-sm ${
+                                    o.isEnabled ? "translate-x-4" : "translate-x-0"
+                                  }`} />
+                                </button>
+                                <span className="text-[7px] font-black uppercase tracking-wider text-[var(--muted)]">
+                                  {o.isEnabled ? "Override" : "Auto"}
+                                </span>
+                              </div>
                             </div>
                           </div>
 
-                          <div className="space-y-1.5">
-                            <label className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)] ml-1">Selling Price (INR)</label>
+                          <div className="space-y-1">
+                            <label className="text-[8px] font-black uppercase tracking-wider text-[var(--muted)]">Selling Price (INR)</label>
                             <div className="relative">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[var(--muted)]">₹</span>
                               <input
                                 type="number"
                                 value={o.fixedPrice}
                                 disabled={!o.isEnabled}
                                 onChange={(e) => updateOverridePrice(o.itemSlug, e.target.value)}
-                                className={`w-full h-11 px-4 rounded-xl border text-white font-black text-sm tabular-nums outline-none transition-all ${
+                                className={`w-full h-9 pl-7 pr-3 rounded-lg border font-mono font-black text-xs tabular-nums outline-none transition-all ${
                                   o.isEnabled 
-                                    ? "bg-[#0f172a] border-white/5 focus:border-[var(--accent)]/40 shadow-inner" 
-                                    : "bg-black/20 border-white/5 cursor-not-allowed"
+                                    ? "bg-[var(--background)] border-[var(--accent)]/40 text-[var(--foreground)] focus:border-[var(--accent)]" 
+                                    : "bg-[var(--background)]/60 border-[var(--border)] text-[var(--muted)] cursor-not-allowed"
                                 }`}
                                 placeholder="0"
                               />
                             </div>
                           </div>
                           
-                          <div className="mt-4 flex items-center justify-between">
-                            {o.isEnabled ? (
-                              <div className="flex items-center gap-1.5">
-                                <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-[8px] font-black text-emerald-500/80 uppercase tracking-tighter">Override Active</span>
-                              </div>
-                            ) : <div />}
-                          </div>
+                          {o.isEnabled && (
+                            <div className="mt-2 flex items-center gap-1.5">
+                              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                              <span className="text-[8px] font-black text-emerald-400 uppercase tracking-wider">Fixed Price Active</span>
+                            </div>
+                          )}
                         </motion.div>
                       ))
                     )}

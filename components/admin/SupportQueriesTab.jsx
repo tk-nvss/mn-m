@@ -183,30 +183,31 @@ export default function SupportQueriesTab() {
   const getStatus = (status) => status || "open";
 
   return (
-    <div className="space-y-6 pb-6 px-4 md:px-0 max-w-full overflow-x-hidden">
+    <div className="space-y-4 pb-6 max-w-full overflow-x-hidden">
       {/* ================= HEADER ================= */}
-      <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
-        <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
-                <MessageSquare className="text-[var(--accent)] text-[14px]" size={16} />
+      <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
+        <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+                <MessageSquare size={15} />
             </div>
             <div>
-                <h2 className="text-xs font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Support</h2>
-                <p className="text-[8px] text-[var(--muted)]/50 font-bold uppercase tracking-[0.15em] leading-none mt-0.5">
+                <h2 className="text-sm font-black uppercase tracking-wider leading-tight text-[var(--foreground)]">Support</h2>
+                <p className="text-[9px] text-[var(--muted)] font-mono leading-none mt-0.5">
                     Customer Queries
                 </p>
             </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-2 ml-auto">
-          <div className="flex bg-[var(--foreground)]/[0.03] px-3 py-1.5 rounded-full border border-[var(--border)]/50 shadow-inner">
-            <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]">
+        <div className="flex items-center gap-2 ml-auto">
+          <div className="flex bg-[var(--card)]/60 px-2.5 py-1 rounded-md border border-[var(--border)]">
+            <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">
               <span className="text-[var(--foreground)] mr-1">{pagination.total}</span> Total
             </span>
           </div>
           <button aria-label="button"
             onClick={() => { fetchQueriesStats(); fetchQueriesList(); }}
-            className="w-7 h-7 rounded-full bg-[var(--foreground)]/[0.03] border border-[var(--border)]/50 flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05] transition-all active:scale-95 shadow-inner"
+            className="p-1.5 rounded-md border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-all active:scale-95"
+            title="Refresh queries"
           >
             <RefreshCcw size={12} className={loading ? "animate-spin" : ""} />
           </button>
@@ -214,7 +215,7 @@ export default function SupportQueriesTab() {
       </div>
 
       {/* ================= STATS GRID ================= */}
-      <div className="grid grid-cols-2 gap-2 sm:gap-4">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3">
         <InsightCard
           label="Pending"
           value={stats.open}
@@ -229,7 +230,7 @@ export default function SupportQueriesTab() {
       </div>
 
       {/* ================= SEARCH & FILTER ================= */}
-      <div className="mb-4">
+      <div>
         <SearchInput
           value={search}
           onChange={(val) => {
@@ -250,14 +251,14 @@ export default function SupportQueriesTab() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="py-20 flex flex-col items-center justify-center space-y-3"
+              className="py-16 flex flex-col items-center justify-center space-y-2"
             >
               <LoadingSpinner size="lg" color="accent" />
-              <p className="text-xs font-bold text-[var(--muted)]/40 uppercase tracking-widest">Loading Queries...</p>
+              <p className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-widest">Loading Queries...</p>
             </motion.div>
           ) : (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               className="space-y-1.5"
             >
@@ -269,25 +270,25 @@ export default function SupportQueriesTab() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.02 }}
                     onClick={() => { setActiveQuery(q); setReplyText(q.adminReply || ""); setReplySuccess(""); }}
-                    className="group relative rounded-xl border border-[var(--border)] bg-[var(--card)]/40 hover:bg-[var(--foreground)]/[0.02] transition-colors cursor-pointer px-4 py-2.5 flex items-center gap-3"
+                    className="group relative rounded-xl border border-[var(--border)] bg-[var(--card)]/40 hover:bg-[var(--card)]/70 transition-colors cursor-pointer px-2.5 sm:px-3.5 py-2.5 flex items-center justify-between gap-2"
                   >
-                    <div className="flex items-center gap-2.5 w-full min-w-0">
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                       <StatusBadge status={q.status} size="xs" />
                       
-                      <span className="shrink-0 text-[9px] font-bold text-[var(--muted)]/50 w-16 truncate">
+                      <span className="shrink-0 text-[8.5px] sm:text-[9.5px] font-semibold text-[var(--muted)] w-14 sm:w-16 truncate">
                         {formatDate(q.createdAt, { style: "monthDay" })}
                       </span>
 
-                      <h4 className="shrink-0 text-[11px] font-black text-[var(--foreground)] truncate group-hover:text-[var(--accent)] transition-colors w-28 sm:w-40">
+                      <h4 className="shrink-0 text-[11px] sm:text-xs font-black text-[var(--foreground)] truncate group-hover:text-[var(--accent)] transition-colors w-24 sm:w-36">
                         {q.name || q.email || "Unknown"}
                       </h4>
 
-                      <p className="flex-1 text-[10px] font-medium text-[var(--muted)]/60 truncate">
+                      <p className="flex-1 text-[10px] sm:text-[11px] font-medium text-[var(--muted)]/70 truncate">
                         {q.message}
                       </p>
                     </div>
 
-                    <div className="w-6 h-6 rounded-md flex items-center justify-center text-[var(--muted)]/30 shrink-0 group-hover:bg-[var(--foreground)]/[0.05] group-hover:text-[var(--foreground)] transition-all">
+                    <div className="w-5 h-5 rounded flex items-center justify-center text-[var(--muted)]/40 shrink-0 group-hover:text-[var(--foreground)] transition-colors">
                       <Icons.chevronRight size={12} />
                     </div>
                   </motion.div>
@@ -505,24 +506,33 @@ function DetailBlock({ label, value, emphasize, icon }) {
 }
 
 function InsightCard({ label, value, color, pulse }) {
-  const colors = {
-    blue: "text-blue-500 bg-blue-500/10 border-blue-500/20",
-    amber: "text-amber-500 bg-amber-500/10 border-amber-500/20",
-    purple: "text-purple-500 bg-purple-500/10 border-purple-500/20",
-    emerald: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
+  const colorMap = {
+    blue:    { text: "text-blue-400",    hex: "#3b82f6" },
+    amber:   { text: "text-amber-400",   hex: "#f59e0b" },
+    purple:  { text: "text-purple-400",  hex: "#a855f7" },
+    emerald: { text: "text-emerald-400", hex: "#22c55e" },
   };
+  const theme = colorMap[color] || colorMap.amber;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className={`px-3 py-2 rounded-xl border ${colors[color]} flex flex-col items-center justify-center text-center relative bg-[var(--card)]/40`}
-    >
-      {pulse && (
-        <span className="absolute top-1.5 right-1.5 w-1 h-1 rounded-full bg-current animate-ping" />
-      )}
-      <span className="text-[7px] font-black uppercase tracking-widest opacity-80 mb-0.5">{label}</span>
-      <span className="text-sm font-black tabular-nums whitespace-nowrap leading-none">{value}</span>
-    </motion.div>
+    <div className="relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]/40 p-2.5 sm:p-3 transition-colors">
+      <div className="absolute inset-x-0 top-0 h-[2px]" style={{ background: theme.hex }} />
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-[8.5px] sm:text-[9.5px] font-extrabold uppercase tracking-wider text-[var(--muted)] truncate leading-tight">
+            {label}
+          </p>
+          <span className={`text-base sm:text-lg font-black tabular-nums whitespace-nowrap leading-none tracking-tight mt-1 inline-block ${theme.text}`}>
+            {value}
+          </span>
+        </div>
+        {pulse && (
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+          </span>
+        )}
+      </div>
+    </div>
   );
 }
