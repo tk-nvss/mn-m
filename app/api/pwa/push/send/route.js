@@ -54,6 +54,7 @@ export async function POST(req) {
       badge: badge || "/logoBB.png",
       image: image || undefined,
       url: url || "/",
+      tag: body.tag || undefined,
       id: Date.now().toString(),
     };
 

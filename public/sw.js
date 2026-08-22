@@ -32,13 +32,15 @@ self.addEventListener('push', (event) => {
     body: payload.body || 'You have a new update!',
     icon: payload.icon || '/logoBB.png',
     badge: payload.badge || '/logoBB.png',
-    image: payload.image || undefined,
+    image: payload.image || undefined, // Rich media preview image
+    tag: payload.tag || undefined,     // Notification group tag (e.g. order-12345)
+    renotify: Boolean(payload.tag),    // Alert user again when replacing notification
     data: {
       url: payload.url || '/',
       dateOfArrival: Date.now(),
       primaryKey: payload.id || '1',
     },
-    vibrate: [100, 50, 100],
+    vibrate: payload.vibrate || [100, 50, 100],
     requireInteraction: payload.requireInteraction || false,
     actions: payload.actions || [
       { action: 'open', title: 'Open App' },

@@ -184,6 +184,7 @@ export async function PATCH(req) {
             body: `Your order #${order.orderId} for ${order.itemName || "Diamonds"} has been delivered successfully.`,
             url: "/dashboard/orders",
             icon: "/logoBB.png",
+            tag: `order-${order.orderId}`,
           },
           { userId: order.userId }
         ).catch(() => {});

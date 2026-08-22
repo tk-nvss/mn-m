@@ -454,6 +454,7 @@ export async function POST(req: Request) {
             body: `Your order #${finalOrder.orderId} for ${finalOrder.itemName || "Diamonds"} has been delivered successfully.`,
             url: "/dashboard/orders",
             icon: "/logoBB.png",
+            tag: `order-${finalOrder.orderId}`,
           },
           { userId: finalOrder.userId }
         ).catch(() => {});
