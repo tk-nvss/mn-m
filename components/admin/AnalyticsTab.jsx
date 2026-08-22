@@ -33,61 +33,79 @@ function getPeriodValue(stats, periodKey) {
   return stats?.[periodKey] || 0;
 }
 
+const COLOR_MAP = {
+  emerald: { text: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20", hex: "#22c55e", dot: "bg-emerald-400" },
+  amber:   { text: "text-amber-400",   bg: "bg-amber-500/10",   border: "border-amber-500/20",   hex: "#f59e0b", dot: "bg-amber-400" },
+  blue:    { text: "text-blue-400",    bg: "bg-blue-500/10",    border: "border-blue-500/20",    hex: "#3b82f6", dot: "bg-blue-400" },
+  purple:  { text: "text-purple-400",  bg: "bg-purple-500/10",  border: "border-purple-500/20",  hex: "#a855f7", dot: "bg-purple-400" },
+  indigo:  { text: "text-indigo-400",  bg: "bg-indigo-500/10",  border: "border-indigo-500/20",  hex: "#6366f1", dot: "bg-indigo-400" },
+  rose:    { text: "text-rose-400",    bg: "bg-rose-500/10",    border: "border-rose-500/20",    hex: "#ef4444", dot: "bg-rose-400" },
+  cyan:    { text: "text-cyan-400",    bg: "bg-cyan-500/10",    border: "border-cyan-500/20",    hex: "#06b6d4", dot: "bg-cyan-400" },
+};
+
 function CompactMetricCard({
   title,
   titleIcon: TitleIcon,
   primaryStats,
   footerStats,
-  timeframeLabel
+  timeframeLabel,
+  cardColor
 }) {
+  const primaryTheme = COLOR_MAP[cardColor || primaryStats[0]?.color] || COLOR_MAP.indigo;
+
   return (
-    <div className="relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--background)] p-3 sm:p-4 hover:bg-[var(--foreground)]/[0.01] transition-colors">
+    <div className="relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]/40 p-3 sm:p-4 hover:bg-[var(--card)]/60 transition-colors">
+      <div className="absolute inset-x-0 top-0 h-[2px]" style={{ background: primaryTheme.hex }} />
+      
       <div className="flex items-center gap-2 mb-3">
-        <div className="p-1.5 rounded bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--muted)] shrink-0">
-          <TitleIcon size={12} strokeWidth={2.5} />
+        <div
+          className={`p-1.5 rounded-lg border ${primaryTheme.border} ${primaryTheme.bg} ${primaryTheme.text} shrink-0`}
+        >
+          <TitleIcon size={13} strokeWidth={2.5} />
         </div>
-        <h4 className="text-[10px] font-bold uppercase tracking-widest text-[var(--foreground)] truncate">{title}</h4>
+        <h4 className="text-[11px] font-black uppercase tracking-wider text-[var(--foreground)] truncate">{title}</h4>
       </div>
 
       <div className="grid grid-cols-2 gap-3 relative z-10">
-        {primaryStats.map((stat, i) => (
-          <div key={i} className="flex flex-col gap-1.5">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="p-1.5 rounded border border-[var(--border)] bg-[var(--background)] shrink-0 text-[var(--muted)]">
-                <stat.icon size={10} strokeWidth={2.5} />
-              </div>
-              <span className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted)] truncate">{stat.label}</span>
+        {primaryStats.map((stat, i) => {
+          const theme = COLOR_MAP[stat.color] || primaryTheme;
+          return (
+            <div key={i} className="flex flex-col gap-1">
+              <span className="text-[8.5px] font-extrabold uppercase tracking-wider text-[var(--muted)] truncate">
+                {stat.label}
+              </span>
+              <span className={`text-lg sm:text-xl font-black tabular-nums whitespace-nowrap leading-none tracking-tight truncate ${theme.text}`}>
+                {stat.value}
+              </span>
             </div>
-            <span className="text-lg font-black tabular-nums whitespace-nowrap text-[var(--foreground)] leading-none truncate">
-              {stat.value}
-            </span>
-          </div>
-        ))}
+          );
+        })}
       </div>
       
       <div className="mt-3 w-full flex flex-col gap-1.5 border-t border-[var(--border)]/50 pt-2 relative z-10">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 pr-10">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 pr-12">
           {footerStats.map((stat, i) => {
             if (stat.customEl) return <div key={i}>{stat.customEl}</div>;
+            const theme = COLOR_MAP[stat.color] || primaryTheme;
             return (
               <div key={i} className="flex items-center gap-1 text-[9px] font-bold">
                 {stat.pulseDot ? (
                    <span className="relative flex h-1.5 w-1.5 shrink-0">
-                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--foreground)] opacity-75"></span>
-                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[var(--foreground)]"></span>
+                     <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${theme.bg} opacity-75`}></span>
+                     <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${theme.dot}`}></span>
                    </span>
                 ) : (
-                  <span className="w-1 h-1 rounded-sm bg-[var(--muted)] shrink-0" />
+                  <span className={`w-1.5 h-1.5 rounded-full ${theme.dot} shrink-0 opacity-80`} />
                 )}
-                <span className="text-[var(--muted)] flex items-center gap-1 truncate max-w-[120px]">
-                  {stat.icon && <stat.icon size={8} className="shrink-0" />}
+                <span className="text-[var(--muted)] flex items-center gap-1 truncate max-w-[130px]">
+                  {stat.icon && <stat.icon size={9} className={`${theme.text} shrink-0`} />}
                   <span className="truncate">{stat.label}</span>
                 </span>
               </div>
             );
           })}
         </div>
-        <span className="text-[7px] font-black uppercase tracking-widest text-[var(--muted)]/30 absolute right-0 top-2">{timeframeLabel}</span>
+        <span className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)]/40 absolute right-0 top-2">{timeframeLabel}</span>
       </div>
     </div>
   );
@@ -267,9 +285,10 @@ export default function AnalyticsTab() {
         <CompactMetricCard
           title="User Activity"
           titleIcon={Users}
+          cardColor="purple"
           primaryStats={[
             { label: "Total Users", value: userStats.total, icon: Users, color: "purple" },
-            { label: "Active Users", value: getPeriodValue(userStats.activeStats, periodKey), icon: Zap, color: "blue" }
+            { label: "Active Users", value: getPeriodValue(userStats.activeStats, periodKey), icon: Zap, color: "emerald" }
           ]}
           footerStats={[
             { label: "All Time", color: "purple" },
@@ -282,6 +301,7 @@ export default function AnalyticsTab() {
         <CompactMetricCard
           title="Orders & Transactions"
           titleIcon={ShoppingBag}
+          cardColor="amber"
           primaryStats={[
             { label: "Order Earnings", value: formatCurrency(getPeriodValue(orderStats.revenue, periodKey)), icon: ShoppingBag, color: "amber" },
             { label: "Txn Earnings", value: formatCurrency(getPeriodValue(txStats.volume, periodKey)), icon: IndianRupee, color: "blue" }
@@ -297,9 +317,10 @@ export default function AnalyticsTab() {
         <CompactMetricCard
           title="Wallet Snapshot"
           titleIcon={Wallet}
+          cardColor="emerald"
           primaryStats={[
             { label: "Money Added", value: formatCurrency(getPeriodValue(walletStats.deposits, periodKey)), icon: ArrowUp, color: "emerald", pulse: days === 1 && walletStats.deposits?.day > 0 },
-            { label: "Money Spent", value: formatCurrency(getPeriodValue(walletStats.usage, periodKey)), icon: ArrowDown, color: "purple", pulse: days === 1 && walletStats.usage?.day > 0 }
+            { label: "Money Spent", value: formatCurrency(getPeriodValue(walletStats.usage, periodKey)), icon: ArrowDown, color: "rose", pulse: days === 1 && walletStats.usage?.day > 0 }
           ]}
           footerStats={[
             { label: `Customer Pool: ${formatCurrency(walletStats.totalBalance || 0)}`, color: "blue" },
@@ -312,6 +333,7 @@ export default function AnalyticsTab() {
         <CompactMetricCard
           title="Redeem Codes"
           titleIcon={FiGift}
+          cardColor="indigo"
           primaryStats={[
             { label: "Total Codes", value: redeemStats.total, icon: Ticket, color: "indigo" },
             { label: "Available Codes", value: redeemStats.total - redeemStats.totalUsed, icon: FiGift, color: "amber" }
@@ -326,8 +348,9 @@ export default function AnalyticsTab() {
         <CompactMetricCard
           title="BBC Coins"
           titleIcon={Coins}
+          cardColor="amber"
           primaryStats={[
-            { label: "Total Available", value: coinStats.totalAvailable, icon: Coins, color: "blue" },
+            { label: "Total Available", value: coinStats.totalAvailable, icon: Coins, color: "amber" },
             { label: "Today Earned", value: coinStats.todayEarned, icon: ArrowUp, color: "emerald", pulse: coinStats.todayEarned > 0 }
           ]}
           footerStats={[
@@ -342,8 +365,9 @@ export default function AnalyticsTab() {
         <CompactMetricCard
           title="PWA Installs"
           titleIcon={Download}
+          cardColor="rose"
           primaryStats={[
-            { label: "Total Installs", value: pwaStats.totalInstalls || 0, icon: Download, color: "emerald" },
+            { label: "Total Installs", value: pwaStats.totalInstalls || 0, icon: Download, color: "rose" },
             { label: "Conversion Rate", value: `${(pwaStats.totalInstalls || 0) + (pwaStats.dismissCount || 0) > 0 ? Math.round(((pwaStats.totalInstalls || 0) / ((pwaStats.totalInstalls || 0) + (pwaStats.dismissCount || 0))) * 100) : 0}%`, icon: TrendingUp, color: "purple" }
           ]}
           footerStats={[
@@ -358,6 +382,7 @@ export default function AnalyticsTab() {
         <CompactMetricCard
           title="Support Queries"
           titleIcon={HelpCircle}
+          cardColor="cyan"
           primaryStats={[
             { label: "Pending Queries", value: supportStats.open || 0, icon: HelpCircle, color: "amber", pulse: supportStats.open > 0 },
             { label: "Today's Queries", value: supportStats.today || 0, icon: MessageSquare, color: "purple", pulse: supportStats.today > 0 }
@@ -372,6 +397,7 @@ export default function AnalyticsTab() {
         <CompactMetricCard
           title="Promo Mail"
           titleIcon={Mail}
+          cardColor="blue"
           primaryStats={[
             { label: "Mails Today", value: promoStats.todayEmails || 0, icon: Send, color: "emerald" },
             { label: "Total Reach", value: promoStats.totalEmails || 0, icon: Mail, color: "amber" }

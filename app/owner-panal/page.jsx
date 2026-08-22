@@ -603,7 +603,7 @@ export default function AdminPanalPage() {
 
 
           {/* PANEL */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl sm:rounded-2xl p-2 sm:p-4 md:p-6">
             {activeTab === "wallet" && <StatsTab />}
             {activeTab === "usdt" && <UsdtTab />}
             {activeTab === "redeem" && <RedeemCodesTab />}

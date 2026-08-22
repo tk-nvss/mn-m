@@ -18,7 +18,10 @@ import {
   X,
   UserPlus,
   RefreshCcw,
-  Info
+  Info,
+  Filter,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import { SearchInput, Pagination, LoadingSpinner } from "@/components/common";
 
@@ -32,6 +35,8 @@ export default function PromotionalTab() {
   const [imageUrl, setImageUrl] = useState("");
   const [sending, setSending] = useState(false);
   const [search, setSearch] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [isRecentCampaignsOpen, setIsRecentCampaignsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState("all");
   const [stats, setStats] = useState({ todayEmails: 0, totalEmails: 0 });
   const [recentLogs, setRecentLogs] = useState([]);
@@ -363,18 +368,14 @@ export default function PromotionalTab() {
           
           <div className="flex items-center gap-2 shrink-0">
             <button 
-               onClick={syncAllTags}
-               disabled={tagUpdateLoading}
-               className="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500 text-indigo-500 hover:text-white transition-all group disabled:opacity-40 shadow-md shadow-indigo-500/5 active:scale-95"
-               title="Initialize tags for all users in database"
+               onClick={() => {
+                 fetchStats();
+                 fetchUsers();
+               }}
+               className="p-1.5 shrink-0 rounded border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-all active:scale-95"
+               title="Refresh stats"
             >
-              <div className={`p-1 rounded-md ${tagUpdateLoading ? '' : 'bg-indigo-500/10 group-hover:bg-white/20'}`}>
-                <RefreshCcw size={14} className={tagUpdateLoading ? "animate-spin" : "group-hover:rotate-180 transition-transform duration-700"} />
-              </div>
-              <div className="flex flex-col items-start leading-tight">
-                 <span className="text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Sync DB</span>
-                 <span className="text-[8px] font-bold opacity-60 whitespace-nowrap hidden sm:block">Add missing tags</span>
-              </div>
+              <RefreshCcw size={12} className={loading ? "animate-spin" : ""} />
             </button>
           </div>
         </div>
@@ -419,77 +420,118 @@ export default function PromotionalTab() {
           animate={{ opacity: 1, x: 0 }}
           className="space-y-4"
         >
-          <div className="flex items-center justify-between px-1">
-            <h3 className="text-xs font-black uppercase tracking-widest text-[var(--muted)] flex items-center gap-2">
-              <Users size={14} className="text-[var(--accent)]" /> Recipients ({selectedEmails.length})
+          {/* Header with Filter Toggle and Select All */}
+          <div className="flex items-center justify-between px-1 gap-2">
+            <h3 className="text-xs font-black uppercase tracking-widest text-[var(--muted)] flex items-center gap-2 truncate">
+              <Users size={14} className="text-[var(--accent)] shrink-0" /> Recipients ({selectedEmails.length})
             </h3>
-            <button aria-label="button"
-              onClick={toggleSelectAll}
-              className="text-[10px] font-black uppercase tracking-wider text-[var(--accent)] hover:brightness-110 active:scale-95 transition-all"
-            >
-              {filteredUsers.every(u => selectedEmails.includes(u.email)) && filteredUsers.length > 0 ? "Deselect All" : "Select All"}
-            </button>
-          </div>
-
-          <div className="flex flex-wrap gap-1.5 px-1 items-center">
-            {["all", "user", "member", "admin", "owner", "external"].map((role) => (
-              <button aria-label="button"
-                key={role}
-                onClick={() => { setSelectedRole(role); setPage(1); }}
-                className={`px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest transition-colors ${
-                  selectedRole === role
-                    ? "bg-[var(--foreground)] text-[var(--background)]"
-                    : "border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
+            <div className="flex items-center gap-1.5 shrink-0">
+              {/* Expandable Filter Toggle */}
+              <button
+                type="button"
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider border transition-all ${
+                  showFilters || selectedRole !== "all" || selectedTag
+                    ? "bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/30"
+                    : "border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.03]"
                 }`}
               >
-                {role}
+                <Filter size={11} />
+                <span>Filters</span>
+                {(selectedRole !== "all" || selectedTag) && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+                )}
+                {showFilters ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
               </button>
-            ))}
+
+              <button
+                aria-label="button"
+                onClick={toggleSelectAll}
+                className="text-[10px] font-black uppercase tracking-wider text-[var(--accent)] hover:brightness-110 active:scale-95 transition-all px-1.5 py-1"
+              >
+                {filteredUsers.every(u => selectedEmails.includes(u.email)) && filteredUsers.length > 0 ? "Deselect All" : "Select All"}
+              </button>
+            </div>
           </div>
 
-          {/* Compact Tag Filter */}
-          <div className="px-1">
-            <div className="relative group">
-              <Tag className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-50" size={12} />
-              <select
-                value={selectedTag || ""}
-                onChange={(e) => { setSelectedTag(e.target.value || null); setPage(1); }}
-                className="w-full h-9 pl-9 pr-9 rounded border border-[var(--border)] bg-[var(--background)] text-[10px] font-bold uppercase tracking-widest outline-none appearance-none cursor-pointer text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-colors"
-              >
-                <option value="" className="bg-[var(--background)] text-[var(--foreground)]">Filter by Category / Tag</option>
-                {uniqueTags.map(tag => (
-                  <option key={tag} value={tag} className="bg-[var(--background)] text-[var(--foreground)]">
-                    #{tag.toLowerCase()}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
-                <Plus size={10} className="rotate-45" />
+          {/* Expandable Filter Drawer */}
+          {showFilters && (
+            <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)]/50 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+              {/* Role Selection */}
+              <div>
+                <span className="block text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)] mb-1.5">
+                  Filter by Role
+                </span>
+                <div className="flex flex-wrap gap-1 items-center">
+                  {["all", "user", "member", "admin", "owner", "external"].map((role) => (
+                    <button
+                      aria-label="button"
+                      key={role}
+                      onClick={() => { setSelectedRole(role); setPage(1); }}
+                      className={`px-2.5 py-1 rounded text-[9.5px] font-bold uppercase tracking-wider transition-colors ${
+                        selectedRole === role
+                          ? "bg-[var(--foreground)] text-[var(--background)]"
+                          : "border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
+                      }`}
+                    >
+                      {role}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tag / Category Filter */}
+              <div>
+                <span className="block text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)] mb-1.5">
+                  Category / Tag
+                </span>
+                <div className="relative group">
+                  <Tag className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-50" size={12} />
+                  <select
+                    value={selectedTag || ""}
+                    onChange={(e) => { setSelectedTag(e.target.value || null); setPage(1); }}
+                    className="w-full h-8 pl-8 pr-8 rounded border border-[var(--border)] bg-[var(--background)] text-[10px] font-bold uppercase tracking-widest outline-none appearance-none cursor-pointer text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-colors"
+                  >
+                    <option value="" className="bg-[var(--background)] text-[var(--foreground)]">All Categories & Tags</option>
+                    {uniqueTags.map(tag => (
+                      <option key={tag} value={tag} className="bg-[var(--background)] text-[var(--foreground)]">
+                        #{tag.toLowerCase()}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Manual External Email Entry */}
+              <div>
+                <span className="block text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)] mb-1.5">
+                  Add External Recipient
+                </span>
+                <div className="flex gap-1.5">
+                  <div className="relative flex-1 group">
+                    <UserPlus className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-50" size={13} />
+                    <input
+                      type="text"
+                      placeholder="Type external Gmail..."
+                      value={manualEmail}
+                      onChange={(e) => setManualEmail(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && addManualEmail()}
+                      className="w-full h-8 pl-8 pr-2.5 rounded border border-[var(--border)] bg-[var(--background)] text-xs outline-none transition-colors placeholder:text-[var(--muted)]/40 text-[var(--foreground)] focus:border-[var(--accent)]/50"
+                    />
+                  </div>
+                  <button
+                    aria-label="Add external email"
+                    onClick={addManualEmail}
+                    className="px-3 h-8 rounded border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] font-bold text-[10px] uppercase tracking-wider flex items-center justify-center hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-colors shrink-0"
+                  >
+                    <Plus size={13} />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Manual Entry */}
-          <div className="flex gap-2 px-1">
-            <div className="relative flex-1 group">
-              <UserPlus className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-50" size={14} />
-              <input
-                type="text"
-                placeholder="Type external Gmail..."
-                value={manualEmail}
-                onChange={(e) => setManualEmail(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && addManualEmail()}
-                className="w-full h-9 pl-9 pr-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs outline-none transition-colors placeholder:text-[var(--muted)]/40 text-[var(--foreground)] focus:border-[var(--accent)]/50"
-              />
-            </div>
-            <button aria-label="button"
-              onClick={addManualEmail}
-              className="px-4 h-9 rounded border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] font-bold text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-colors shrink-0"
-            >
-              <Plus size={14} />
-            </button>
-          </div>
-
+          {/* Search Input Always Visible */}
           <div className="px-1">
             <SearchInput
               placeholder="Search by name or email..."
@@ -735,60 +777,89 @@ export default function PromotionalTab() {
         </motion.div>
       </div>
 
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--foreground)]">
-          Recent Campaigns <span className="text-[var(--muted)]">(Last 10)</span>
-        </h3>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {recentLogs.length > 0 ? (
-          recentLogs.map((log) => (
-            <div
-              key={log._id}
-              className="p-4 rounded-xl border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--foreground)]/[0.01] transition-colors overflow-hidden flex flex-col"
-            >
-              <div className="flex justify-between items-start mb-3 gap-4">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-black text-[var(--foreground)] truncate uppercase tracking-tight leading-none">{log.subject}</p>
-                  <p className="text-[10px] text-[var(--muted)] font-medium mt-1.5">{new Date(log.createdAt).toLocaleString()}</p>
-                </div>
-                <button aria-label="button"
-                  onClick={() => useTemplate(log)}
-                  className="shrink-0 px-3 py-1.5 rounded border border-[var(--accent)]/30 text-[10px] font-bold uppercase tracking-widest text-[var(--accent)] bg-[var(--accent)]/10 hover:bg-[var(--accent)] hover:text-white transition-colors"
-                >
-                  Use Template
-                </button>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-1.5 mb-3">
-                <span className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-emerald-500/20 text-emerald-600 bg-emerald-500/10">
-                  <span className="mr-1">✓</span>{log.successCount} Sent
-                </span>
-                <span className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-rose-500/20 text-rose-600 bg-rose-500/10">
-                  <span className="mr-1">✕</span>{log.failedCount} Failed
-                </span>
-                <span className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-[var(--accent)]/20 text-[var(--accent)] bg-[var(--accent)]/5 truncate max-w-[120px]">
-                  <span className="mr-1 opacity-70">👤</span>By {log.sentBy}
-                </span>
-              </div>
-
-              {/* Decorative content preview */}
-              <div className="p-3 rounded border border-[var(--border)] bg-[var(--foreground)]/[0.02] mt-auto">
-                <div className="text-[10px] text-[var(--muted)] font-mono line-clamp-2 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: (log.content || "").replace(/<[^>]*>?/gm, ' ') }}
-                />
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="col-span-full py-12 text-center rounded-xl border border-dashed border-[var(--border)]">
-            <p className="text-sm font-bold text-[var(--muted)]">No campaign history found yet.</p>
-            <p className="text-[10px] font-mono text-[var(--muted)] mt-1">Sent emails will appear here for quick reuse.</p>
+    {/* Collapsible Recent Campaigns */}
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/30 overflow-hidden transition-all">
+      <button
+        type="button"
+        onClick={() => setIsRecentCampaignsOpen(!isRecentCampaignsOpen)}
+        className="w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left hover:bg-[var(--card)]/50 transition-colors"
+      >
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 shrink-0">
+            <Mail size={14} />
           </div>
-        )}
-      </div>
+          <div className="min-w-0">
+            <h3 className="text-xs font-black uppercase tracking-wider text-[var(--foreground)] truncate">
+              Recent Campaigns ({recentLogs.length})
+            </h3>
+            <p className="text-[10px] text-[var(--muted)] truncate">
+              View transmission history and reuse previous email templates
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="hidden sm:inline-block text-[10px] font-bold px-2 py-1 rounded bg-[var(--border)]/60 text-[var(--foreground)]">
+            {isRecentCampaignsOpen ? "Hide History" : "Show History"}
+          </span>
+          <div className="p-1 rounded text-[var(--muted)]">
+            {isRecentCampaignsOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </div>
+        </div>
+      </button>
+
+      {isRecentCampaignsOpen && (
+        <div className="p-4 sm:p-5 border-t border-[var(--border)] animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            {recentLogs.length > 0 ? (
+              recentLogs.map((log) => (
+                <div
+                  key={log._id}
+                  className="p-3.5 sm:p-4 rounded-xl border border-[var(--border)] bg-[var(--card)]/40 hover:bg-[var(--foreground)]/[0.02] transition-colors overflow-hidden flex flex-col"
+                >
+                  <div className="flex justify-between items-start mb-2.5 gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm font-black text-[var(--foreground)] truncate uppercase tracking-tight leading-none">{log.subject}</p>
+                      <p className="text-[9.5px] text-[var(--muted)] font-medium mt-1">{new Date(log.createdAt).toLocaleString()}</p>
+                    </div>
+                    <button
+                      aria-label="button"
+                      onClick={() => useTemplate(log)}
+                      className="shrink-0 px-2.5 py-1 rounded border border-[var(--accent)]/30 text-[9px] font-bold uppercase tracking-widest text-[var(--accent)] bg-[var(--accent)]/10 hover:bg-[var(--accent)] hover:text-white transition-colors"
+                    >
+                      Use Template
+                    </button>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
+                    <span className="text-[8.5px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-emerald-500/20 text-emerald-600 bg-emerald-500/10">
+                      <span className="mr-1">✓</span>{log.successCount} Sent
+                    </span>
+                    <span className="text-[8.5px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-rose-500/20 text-rose-600 bg-rose-500/10">
+                      <span className="mr-1">✕</span>{log.failedCount} Failed
+                    </span>
+                    <span className="text-[8.5px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-[var(--accent)]/20 text-[var(--accent)] bg-[var(--accent)]/5 truncate max-w-[120px]">
+                      <span className="mr-1 opacity-70">👤</span>By {log.sentBy}
+                    </span>
+                  </div>
+
+                  {/* Decorative content preview */}
+                  <div className="p-2.5 rounded border border-[var(--border)] bg-[var(--foreground)]/[0.02] mt-auto">
+                    <div
+                      className="text-[9.5px] text-[var(--muted)] font-mono line-clamp-2 leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: (log.content || "").replace(/<[^>]*>?/gm, ' ') }}
+                    />
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full py-8 text-center rounded-xl border border-dashed border-[var(--border)]">
+                <p className="text-xs font-bold text-[var(--muted)]">No campaign history found yet.</p>
+                <p className="text-[9.5px] font-mono text-[var(--muted)] mt-1">Sent emails will appear here for quick reuse.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
     </div>
   );
@@ -796,22 +867,39 @@ export default function PromotionalTab() {
 
 // ================= HELPER COMPONENTS =================
 function StatTile({ icon, label, value, sub, color }) {
-  const colors = {
-    emerald: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-    amber: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-    blue: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-    indigo: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
+  const colorMap = {
+    emerald: { border: "#22c55e", bg: "rgba(34,197,94,0.1)", text: "#22c55e" },
+    amber:   { border: "#f59e0b", bg: "rgba(245,158,11,0.1)", text: "#f59e0b" },
+    blue:    { border: "#3b82f6", bg: "rgba(59,130,246,0.1)", text: "#3b82f6" },
+    indigo:  { border: "#818cf8", bg: "rgba(129,140,248,0.1)", text: "#818cf8" },
   };
+  const theme = colorMap[color] || colorMap.indigo;
 
   return (
-    <div className={`p-2 sm:p-3 rounded-2xl border ${colors[color]} bg-[var(--card)] flex items-center gap-2 sm:gap-3 transition-all hover:scale-[1.02] hover:shadow-md hover:shadow-${color}-500/5`}>
-      <div className={`w-8 h-8 rounded-xl ${colors[color].split(' ')[0]} flex items-center justify-center shrink-0`}>
-        {icon}
-      </div>
-      <div className="flex flex-col min-w-0">
-        <span className="text-[9px] font-black uppercase tracking-widest opacity-60 leading-none mb-0.5 truncate">{label}</span>
-        <span className="text-base sm:text-lg font-black text-[var(--foreground)] leading-none truncate">{value}</span>
-        <span className="text-[7px] font-bold opacity-40 uppercase tracking-tighter mt-0.5 truncate">{sub}</span>
+    <div className="relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]/40 p-2.5 sm:p-3 transition-colors">
+      <div className="absolute inset-x-0 top-0 h-[2px]" style={{ background: theme.border }} />
+      <div className="flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-[8.5px] sm:text-[9.5px] uppercase tracking-wider font-extrabold text-[var(--muted)] truncate leading-tight">
+            {label}
+          </p>
+          <div className="flex items-baseline gap-1.5 mt-1">
+            <span className="text-base sm:text-lg font-black leading-none tracking-tight text-[var(--foreground)]">
+              {value}
+            </span>
+            {sub && (
+              <span className="text-[8px] font-bold text-[var(--muted)] opacity-60 truncate">
+                {sub}
+              </span>
+            )}
+          </div>
+        </div>
+        <div
+          className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shrink-0"
+          style={{ background: theme.bg, color: theme.text }}
+        >
+          {icon}
+        </div>
       </div>
     </div>
   );

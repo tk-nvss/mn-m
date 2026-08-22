@@ -238,19 +238,26 @@ function AuthContent() {
     }
   };
 
-  const saveSession = (data: any) => {
+  const saveSession = async (data: any) => {
     useAuthStore.getState().login(data.token, data.user);
     setUserName(data.user.name);
     setSuccess("done");
 
-    // Seamlessly link user to push subscription in background if already granted
-    if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
-      import("@/lib/pushNotification").then(({ subscribeToPush }) => {
-        subscribeToPush(data.user.userId).catch(() => {});
-      }).catch(() => {});
+    // Prompt for notification permission on login/register if not already denied
+    if (
+      typeof window !== "undefined" &&
+      "Notification" in window &&
+      Notification.permission !== "denied"
+    ) {
+      try {
+        const { subscribeToPush } = await import("@/lib/pushNotification");
+        await subscribeToPush(data.user?.userId);
+      } catch (err) {
+        console.warn("Auth notification prompt non-blocking error:", err);
+      }
     }
 
-    setTimeout(() => window.location.replace(redirectPath), 1500);
+    setTimeout(() => window.location.replace(redirectPath), 1200);
   };
 
   const containerVariants = {

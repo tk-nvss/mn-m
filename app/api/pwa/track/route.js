@@ -127,6 +127,7 @@ export async function GET(req) {
       totalPushSubscribers,
       pushSubscribersRaw,
       byPushDevice,
+      dailyPushRaw,
     ] = await Promise.all([
       PwaInstall.countDocuments({ event: "installed" }),
       PwaInstall.distinct("fingerprint", { event: "active" }).then((a) => a.length),
@@ -198,13 +199,28 @@ export async function GET(req) {
         { $group: { _id: "$deviceType", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
       ]),
+
+      // Daily push subscribers for last N days
+      PushSubscription.aggregate([
+        { $match: { isActive: true, createdAt: { $gte: since } } },
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { _id: 1 } },
+      ]),
     ]);
 
     // Fill in zeros for missing days
     const installMap = Object.fromEntries(dailyInstallsRaw.map((d) => [d._id, d.count]));
     const activeMap  = Object.fromEntries(dailyActiveRaw.map((d)  => [d._id, d.count]));
+    const pushMap    = Object.fromEntries((dailyPushRaw || []).map((d) => [d._id, d.count]));
+
     const dailyInstalls = dayLabels.map((d) => ({ date: d, count: installMap[d] || 0 }));
     const dailyActive   = dayLabels.map((d) => ({ date: d, count: activeMap[d]  || 0 }));
+    const dailyPush     = dayLabels.map((d) => ({ date: d, count: pushMap[d]    || 0 }));
 
     // Lookup user details for installed users and push subscribers
     const userIds = [
@@ -228,12 +244,14 @@ export async function GET(req) {
     }));
 
     const periodInstalls = dailyInstalls.reduce((sum, d) => sum + d.count, 0);
+    const periodPush     = dailyPush.reduce((sum, d) => sum + d.count, 0);
 
     return NextResponse.json({
       totalInstalls,
       totalActive,
       dismissCount,
       periodInstalls,
+      periodPush,
       totalPushSubscribers,
       byDevice,
       byOS,
@@ -242,6 +260,7 @@ export async function GET(req) {
       recent,
       dailyInstalls,
       dailyActive,
+      dailyPush,
       installedUsers,
       pushSubscribers,
       days,

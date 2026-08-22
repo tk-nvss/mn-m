@@ -103,11 +103,10 @@ export default function RedeemCodesTab() {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
-
+        <div className="space-y-4 sm:space-y-6 md:space-y-8 animate-in fade-in duration-500">
 
             {/* GENERATOR CARD */}
-            <div className="p-5 md:p-6 rounded-[1.5rem] border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--foreground)]/[0.02] shadow-2xl shadow-black/5 relative overflow-hidden">
+            <div className="p-3.5 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--foreground)]/[0.02] shadow-2xl shadow-black/5 relative overflow-hidden">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 relative z-10">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0 shadow-inner">
@@ -316,9 +315,9 @@ export default function RedeemCodesTab() {
                 </div>
 
                 {/* MOBILE LIST */}
-                <div className="lg:hidden space-y-3">
+                <div className="lg:hidden space-y-2.5">
                     {recentCodes.map((code) => (
-                        <div key={code._id} className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] space-y-4">
+                        <div key={code._id} className="p-3 sm:p-4 rounded-xl border border-[var(--border)] bg-[var(--card)] space-y-3">
                             <div className="flex justify-between items-start">
                                 <div className="flex flex-col gap-1">
                                     <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/40">Redeem Code</span>
