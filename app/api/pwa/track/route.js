@@ -125,6 +125,7 @@ export async function GET(req) {
       dailyActiveRaw,
       installedUsersRaw,
       totalPushSubscribers,
+      pushDeniedCount,
       pushSubscribersRaw,
       byPushDevice,
       dailyPushRaw,
