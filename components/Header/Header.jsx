@@ -259,22 +259,43 @@ export default function Header() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleInstallPWA}
-                className="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[var(--foreground)]/5 border border-[var(--border)]/30 text-[var(--foreground)]/60 hover:text-[var(--accent)] transition-colors group backdrop-blur-md"
-                aria-label="Install App"
-                title="Install App"
+                className={`relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full border transition-colors group backdrop-blur-md ${
+                  isStandalone || isPwaInstalled
+                    ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                    : "bg-[var(--foreground)]/5 border-[var(--border)]/30 text-[var(--foreground)]/60 hover:text-[var(--accent)]"
+                }`}
+                aria-label={isStandalone ? "App Running" : isPwaInstalled ? "App Installed" : "Install App"}
+                title={isStandalone ? "App Running (Standalone Mode)" : isPwaInstalled ? "App Installed" : "Install App"}
               >
-                <FiDownload size={14} className="group-hover:translate-y-[1px] transition-transform z-10" />
+                {isStandalone || isPwaInstalled ? (
+                  <FiCheckCircle size={14} className="z-10 text-emerald-400" />
+                ) : (
+                  <FiDownload size={14} className="group-hover:translate-y-[1px] transition-transform z-10" />
+                )}
                 
                 {/* SPINNING RING */}
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0 rounded-full border border-dashed border-[var(--foreground)]/20 pointer-events-none"
+                  className={`absolute inset-0 rounded-full border border-dashed pointer-events-none ${
+                    isStandalone || isPwaInstalled ? "border-emerald-500/30" : "border-[var(--foreground)]/20"
+                  }`}
                 />
                 
                 {/* INDICATOR */}
-                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-[var(--background)] bg-[#0088cc] z-20" />
+                <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-[var(--background)] z-20 transition-colors ${
+                  isStandalone || isPwaInstalled ? "bg-emerald-500" : "bg-[#0088cc] animate-pulse"
+                }`} />
               </motion.button>
+
+              {/* TOAST POPUP */}
+              {pwaToastMsg && (
+                <div className="fixed top-14 sm:top-16 right-3 sm:right-6 z-[9999] max-w-xs animate-in fade-in slide-in-from-top-2 duration-300 pointer-events-none">
+                  <div className="px-3.5 py-2 rounded-xl bg-[var(--card)] border border-emerald-500/30 shadow-2xl text-[11px] font-bold text-[var(--foreground)] backdrop-blur-xl flex items-center gap-2">
+                    <span>{pwaToastMsg}</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* NOTIFICATION TOGGLE */}
