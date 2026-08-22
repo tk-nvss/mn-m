@@ -443,6 +443,23 @@ export async function POST(req: Request) {
       }
     }
 
+    /* ===================================================
+       PUSH NOTIFICATION: Instant alert on success
+    =================================================== */
+    if (finalOrder.status === "success" && finalOrder.userId) {
+      import("@/lib/webPush").then(({ broadcastPushNotification }) => {
+        broadcastPushNotification(
+          {
+            title: "🎉 Top-up Successful!",
+            body: `Your order #${finalOrder.orderId} for ${finalOrder.itemName || "Diamonds"} has been delivered successfully.`,
+            url: "/dashboard/orders",
+            icon: "/logoBB.png",
+          },
+          { userId: finalOrder.userId }
+        ).catch(() => {});
+      }).catch(() => {});
+    }
+
     return NextResponse.json({
       success: finalOrder.status === "success",
       message: finalOrder.status === "success" ? "Topup successful" : "Topup failed",

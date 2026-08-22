@@ -11,6 +11,7 @@ import { saveVerifiedPlayer } from "@/utils/storage/verifiedPlayerStorage";
 import { BuyFlowSkeleton } from "@/components/Skeleton/BuyFlowSkeleton";
 import api from "@/lib/axios";
 import { useAuthStore } from "@/store/useAuthStore";
+import OrderDeliveryPushPrompt from "@/components/Order/OrderDeliveryPushPrompt";
 
 function BuyFlowContent() {
   const { slug, itemSlug } = useParams();
@@ -245,7 +246,8 @@ function BuyFlowContent() {
             <Icons.check className="text-4xl text-white" />
           </div>
           <h2 className="text-3xl font-[900] text-[var(--foreground)] mb-2 uppercase tracking-tight">Order Placed!</h2>
-          <p className="text-[var(--muted)] mb-8 font-medium">Your request is being processed. We'll top up your account soon.</p>
+          <p className="text-[var(--muted)] mb-4 font-medium">Your request is being processed. We&apos;ll top up your account soon.</p>
+          <OrderDeliveryPushPrompt userId={user?.userId} />
           <button aria-label="button" onClick={() => router.push("/")} className="w-full py-4 bg-[var(--accent)] text-black font-[900] uppercase tracking-widest rounded-xl hover:shadow-[0_0_20px_var(--accent)] transition-all">Go Home</button>
         </div>
       </div>

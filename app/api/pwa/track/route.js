@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import PwaInstall from "@/models/PwaInstall";
+import PushSubscription from "@/models/PushSubscription";
 import User from "@/models/User";
 
 /* ── helpers ── */
@@ -123,6 +124,9 @@ export async function GET(req) {
       dailyInstallsRaw,
       dailyActiveRaw,
       installedUsersRaw,
+      totalPushSubscribers,
+      pushSubscribersRaw,
+      byPushDevice,
     ] = await Promise.all([
       PwaInstall.countDocuments({ event: "installed" }),
       PwaInstall.distinct("fingerprint", { event: "active" }).then((a) => a.length),
@@ -178,6 +182,22 @@ export async function GET(req) {
       PwaInstall.find({ event: "installed", userId: { $ne: null } })
         .sort({ createdAt: -1 })
         .select("userId deviceType os browser createdAt"),
+
+      // Total Active Push Subscribers
+      PushSubscription.countDocuments({ isActive: true }),
+
+      // Recent Push Subscriptions
+      PushSubscription.find({ isActive: true })
+        .sort({ createdAt: -1 })
+        .limit(20)
+        .select("endpoint userId deviceType os browser userAgent createdAt"),
+
+      // Push by device
+      PushSubscription.aggregate([
+        { $match: { isActive: true } },
+        { $group: { _id: "$deviceType", count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+      ]),
     ]);
 
     // Fill in zeros for missing days
@@ -186,13 +206,23 @@ export async function GET(req) {
     const dailyInstalls = dayLabels.map((d) => ({ date: d, count: installMap[d] || 0 }));
     const dailyActive   = dayLabels.map((d) => ({ date: d, count: activeMap[d]  || 0 }));
 
-    // Lookup user details for installed users
-    const userIds = [...new Set(installedUsersRaw.map((r) => r.userId).filter(Boolean))];
+    // Lookup user details for installed users and push subscribers
+    const userIds = [
+      ...new Set([
+        ...installedUsersRaw.map((r) => r.userId).filter(Boolean),
+        ...pushSubscribersRaw.map((r) => r.userId).filter(Boolean),
+      ]),
+    ];
     const users = await User.find({ userId: { $in: userIds } })
       .select("userId name email phone avatar userType createdAt");
 
     const userMap = Object.fromEntries(users.map((u) => [u.userId, u]));
     const installedUsers = installedUsersRaw.map((r) => ({
+      ...r.toObject(),
+      user: userMap[r.userId] || null,
+    }));
+
+    const pushSubscribers = pushSubscribersRaw.map((r) => ({
       ...r.toObject(),
       user: userMap[r.userId] || null,
     }));
@@ -204,13 +234,16 @@ export async function GET(req) {
       totalActive,
       dismissCount,
       periodInstalls,
+      totalPushSubscribers,
       byDevice,
       byOS,
       byBrowser,
+      byPushDevice,
       recent,
       dailyInstalls,
       dailyActive,
       installedUsers,
+      pushSubscribers,
       days,
     });
   } catch (err) {

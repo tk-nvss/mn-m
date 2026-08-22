@@ -175,6 +175,21 @@ export async function PATCH(req) {
       );
     }
 
+    // Trigger push notification to user in background ONLY on SUCCESS
+    if (status === "success" && order.userId) {
+      import("@/lib/webPush").then(({ broadcastPushNotification }) => {
+        broadcastPushNotification(
+          {
+            title: "🎉 Top-up Successful!",
+            body: `Your order #${order.orderId} for ${order.itemName || "Diamonds"} has been delivered successfully.`,
+            url: "/dashboard/orders",
+            icon: "/logoBB.png",
+          },
+          { userId: order.userId }
+        ).catch(() => {});
+      }).catch(() => {});
+    }
+
     return Response.json({
       success: true,
       message: "Order status updated",

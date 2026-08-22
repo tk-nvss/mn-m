@@ -6,14 +6,22 @@ import {
   FiSmartphone, FiMonitor, FiTablet,
   FiDownload, FiActivity, FiRefreshCw,
   FiXCircle, FiUser, FiExternalLink,
+  FiBell, FiSend, FiCheckCircle, FiAlertCircle
 } from "react-icons/fi";
 import { LoadingSpinner } from "@/components/common";
 import { formatNumber, formatPercent, formatDateTime } from "@/utils";
 
 export default function PwaStatsTab() {
-  const [data, setData]     = useState(null);
+  const [data, setData]       = useState(null);
   const [loading, setLoading] = useState(true);
-  const [days, setDays]     = useState(7);
+  const [days, setDays]       = useState(7);
+
+  // Push broadcast state
+  const [pushTitle, setPushTitle]   = useState("");
+  const [pushBody, setPushBody]     = useState("");
+  const [pushUrl, setPushUrl]       = useState("/");
+  const [pushSending, setPushSending] = useState(false);
+  const [pushResult, setPushResult] = useState(null);
 
   const fetchStats = async (d = days) => {
     setLoading(true);
@@ -26,6 +34,48 @@ export default function PwaStatsTab() {
   };
 
   useEffect(() => { fetchStats(days); }, [days]);
+
+  const handleSendPush = async (e) => {
+    e.preventDefault();
+    if (!pushTitle.trim() || !pushBody.trim()) return;
+
+    setPushSending(true);
+    setPushResult(null);
+
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
+      const res = await fetch("/api/pwa/push/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: pushTitle,
+          body: pushBody,
+          url: pushUrl || "/",
+        }),
+      });
+
+      const json = await res.json();
+      if (json.success) {
+        setPushResult({
+          type: "success",
+          message: `Broadcast delivered! Sent: ${json.report?.sent || 0}, Failed: ${json.report?.failed || 0} (Total: ${json.report?.total || 0})`,
+        });
+        setPushTitle("");
+        setPushBody("");
+        setPushUrl("/");
+        fetchStats(days);
+      } else {
+        setPushResult({ type: "error", message: json.message || "Failed to send broadcast" });
+      }
+    } catch (err) {
+      setPushResult({ type: "error", message: err.message || "Network error sending push" });
+    } finally {
+      setPushSending(false);
+    }
+  };
 
   const deviceIcon = (type) => {
     if (type === "mobile")  return <FiSmartphone size={12} />;
@@ -54,7 +104,7 @@ export default function PwaStatsTab() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[var(--border)]/50">
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between sm:justify-start gap-3">
-            <h2 className="text-sm font-bold tracking-tight text-[var(--foreground)] uppercase truncate">PWA Install Stats</h2>
+            <h2 className="text-sm font-bold tracking-tight text-[var(--foreground)] uppercase truncate">PWA & Push Notifications Panel</h2>
             <button aria-label="button"
               onClick={() => fetchStats(days)}
               className="p-1.5 shrink-0 rounded border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-all active:scale-95"
@@ -62,7 +112,7 @@ export default function PwaStatsTab() {
               <FiRefreshCw size={12} />
             </button>
           </div>
-          <p className="text-[10px] text-[var(--muted)] mt-0.5 font-mono truncate">Real-time install, active & engagement data</p>
+          <p className="text-[10px] text-[var(--muted)] mt-0.5 font-mono truncate">Real-time install, active devices & push subscriber metrics</p>
         </div>
         <div className="flex items-center gap-2">
           {/* Day toggle */}
@@ -83,12 +133,91 @@ export default function PwaStatsTab() {
       </div>
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-6 md:grid-cols-5 gap-2 sm:gap-3">
+      <div className="grid grid-cols-6 md:grid-cols-6 gap-2 sm:gap-3">
         <StatCard className="col-span-3 md:col-span-1" label="Total Installs"  value={data.totalInstalls}  icon={<FiDownload size={16}  />} color="#ef4444" glow="rgba(239,68,68,0.15)"  />
         <StatCard className="col-span-3 md:col-span-1" label={`Installs (${days === 1 ? '1D' : days === 7 ? '7D' : '30D'})`} value={data.periodInstalls || 0} icon={<FiDownload size={16} />} color="#6366f1" glow="rgba(99,102,241,0.15)" />
         <StatCard className="col-span-2 md:col-span-1" label="Active Devices"  value={data.totalActive}    icon={<FiActivity size={16}  />} color="#22c55e" glow="rgba(34,197,94,0.15)"  />
+        <StatCard className="col-span-2 md:col-span-1" label="Push Subscribers" value={data.totalPushSubscribers || 0} icon={<FiBell size={16} />} color="#a855f7" glow="rgba(168,85,247,0.2)" />
         <StatCard className="col-span-2 md:col-span-1" label="Dismissed"       value={data.dismissCount}   icon={<FiXCircle size={16}   />} color="#f59e0b" glow="rgba(245,158,11,0.15)" />
         <StatCard className="col-span-2 md:col-span-1" label="Conversion" value={`${conversionRate}%`} icon={<FiUser size={16}     />} color="#60a5fa" glow="rgba(96,165,250,0.15)" />
+      </div>
+
+      {/* ── Push Notification Broadcast Form ── */}
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-4 sm:p-5">
+        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-[var(--border)]">
+          <div className="p-1.5 rounded-lg bg-[var(--accent)]/15 text-[var(--accent)]">
+            <FiBell size={14} />
+          </div>
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Send Push Broadcast to All Devices</h3>
+            <p className="text-[10px] text-[var(--muted)]">Send instant notification directly to {data.totalPushSubscribers || 0} subscribed devices</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSendPush} className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] font-bold uppercase text-[var(--muted)] mb-1">Notification Title *</label>
+              <input
+                type="text"
+                value={pushTitle}
+                onChange={(e) => setPushTitle(e.target.value)}
+                placeholder="e.g. 🎉 Flash Sale on MLBB Diamonds!"
+                required
+                className="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-[var(--foreground)] focus:outline-none focus:border-[var(--accent)]"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold uppercase text-[var(--muted)] mb-1">Target Click URL</label>
+              <input
+                type="text"
+                value={pushUrl}
+                onChange={(e) => setPushUrl(e.target.value)}
+                placeholder="e.g. /games/mlbb or /giveaways"
+                className="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-[var(--foreground)] focus:outline-none focus:border-[var(--accent)]"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-bold uppercase text-[var(--muted)] mb-1">Message Body *</label>
+            <textarea
+              value={pushBody}
+              onChange={(e) => setPushBody(e.target.value)}
+              placeholder="e.g. Get up to 20% extra diamonds + instant delivery. Limited time offer!"
+              required
+              rows={2}
+              className="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-[var(--foreground)] focus:outline-none focus:border-[var(--accent)] resize-none"
+            />
+          </div>
+
+          {pushResult && (
+            <div className={`p-2.5 rounded-lg text-xs flex items-center gap-2 ${pushResult.type === "success" ? "bg-emerald-950/40 border border-emerald-500/30 text-emerald-400" : "bg-red-950/40 border border-red-500/30 text-red-400"}`}>
+              {pushResult.type === "success" ? <FiCheckCircle size={14} /> : <FiAlertCircle size={14} />}
+              <span>{pushResult.message}</span>
+            </div>
+          )}
+
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={pushSending || !pushTitle.trim() || !pushBody.trim()}
+              className="bg-[var(--accent)] text-black font-bold text-xs px-4 py-2 rounded-lg hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50"
+            >
+              {pushSending ? (
+                <>
+                  <LoadingSpinner size="sm" />
+                  <span>Broadcasting...</span>
+                </>
+              ) : (
+                <>
+                  <FiSend size={12} />
+                  <span>Send Broadcast Notification</span>
+                </>
+              )}
+            </button>
+          </div>
+        </form>
       </div>
 
       {/* ── Charts row ── */}
@@ -114,11 +243,68 @@ export default function PwaStatsTab() {
         <BreakdownCard title="By Browser" rows={data.byBrowser} renderIcon={() => null} />
       </div>
 
-      {/* ── Installed users ── */}
+      {/* ── Push Subscribers List ── */}
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] overflow-hidden">
+        <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <FiBell size={13} className="text-purple-400" />
+            <h3 className="text-[11px] font-black uppercase tracking-widest text-[var(--muted)]">
+              Active Push Subscribers ({data.pushSubscribers?.length ?? 0})
+            </h3>
+          </div>
+          <span className="text-[10px] text-[var(--muted)]">Recent subscriptions</span>
+        </div>
+        {!data.pushSubscribers?.length ? (
+          <p className="text-center text-[12px] text-[var(--muted)] py-8">No push subscribers yet</p>
+        ) : (
+          <div className="divide-y divide-[var(--border)]">
+            {data.pushSubscribers.map((item, i) => (
+              <div key={i} className="flex items-center justify-between px-4 py-3 gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-8 h-8 rounded-full bg-purple-500/15 border border-purple-500/30 flex items-center justify-center shrink-0 text-purple-400">
+                    <FiBell size={13} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[12px] font-bold text-[var(--foreground)] truncate">
+                      {item.user?.name || item.user?.email || (item.userId ? `User: ${item.userId}` : "Anonymous Device")}
+                    </p>
+                    <p className="text-[10px] text-[var(--muted)] truncate">
+                      {deviceIcon(item.deviceType)} {item.os || "OS"} · {item.browser || "Browser"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="text-right">
+                    <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      Active
+                    </span>
+                    <p className="text-[9px] text-[var(--muted)] mt-1">
+                      {new Date(item.createdAt).toLocaleDateString("en-IN", {
+                        day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                  {item.userId && (
+                    <Link
+                      href={`/owner-panal?tab=users&search=${item.userId}`}
+                      className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 transition-colors"
+                      title="View user"
+                    >
+                      <FiExternalLink size={12} />
+                    </Link>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ── Registered users who installed ── */}
       <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] overflow-hidden">
         <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
           <h3 className="text-[11px] font-black uppercase tracking-widest text-[var(--muted)]">
-            Registered Users Who Installed
+            Registered Users Who Installed PWA
           </h3>
           <span className="text-[10px] text-[var(--muted)]">{data.installedUsers?.length ?? 0} found</span>
         </div>
@@ -226,9 +412,9 @@ function StatCard({ label, value, icon, color, glow, className = "" }) {
 
 /* ── Line chart (SVG-based) ── */
 function LineChart({ title, data, color, glow }) {
-  const max = Math.max(...data.map((d) => d.count), 1);
+  const max = Math.max(...(data?.map((d) => d.count) || [1]), 1);
   
-  const points = data.map((d, i) => {
+  const points = (data || []).map((d, i) => {
     const x = (i / Math.max(data.length - 1, 1)) * 100;
     const y = 100 - (d.count / max) * 100;
     return `${x},${y}`;
@@ -265,7 +451,7 @@ function LineChart({ title, data, color, glow }) {
 
           {/* Interactive Overlay for Tooltips */}
           <div className="absolute inset-0 flex items-end">
-            {data.map((d, i) => {
+            {(data || []).map((d, i) => {
               const pct = Math.round((d.count / max) * 100);
               return (
                 <div key={i} className="flex-1 h-full flex flex-col items-center justify-end group relative z-10 cursor-crosshair">
@@ -289,7 +475,7 @@ function LineChart({ title, data, color, glow }) {
         </div>
         {/* X-axis labels — show every nth */}
         <div className="flex gap-1.5 mt-2">
-          {data.map((d, i) => {
+          {(data || []).map((d, i) => {
             const show = data.length <= 10 || i % Math.ceil(data.length / 7) === 0 || i === data.length - 1;
             return (
               <div key={i} className="flex-1 text-center">

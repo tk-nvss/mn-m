@@ -242,6 +242,14 @@ function AuthContent() {
     useAuthStore.getState().login(data.token, data.user);
     setUserName(data.user.name);
     setSuccess("done");
+
+    // Seamlessly link user to push subscription in background if already granted
+    if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+      import("@/lib/pushNotification").then(({ subscribeToPush }) => {
+        subscribeToPush(data.user.userId).catch(() => {});
+      }).catch(() => {});
+    }
+
     setTimeout(() => window.location.replace(redirectPath), 1500);
   };
 
