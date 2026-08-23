@@ -85,38 +85,38 @@ export default function NotificationPrompt() {
   if (!showPrompt) return null;
 
   return (
-    <div className="fixed top-16 right-4 sm:right-6 z-[99998] max-w-sm w-[92%] sm:w-auto animate-in fade-in slide-in-from-top-3 duration-300">
-      <div className="bg-[var(--card)]/95 backdrop-blur-xl border border-[var(--border)] text-white p-3.5 sm:p-4 rounded-2xl shadow-2xl flex items-start gap-3 relative">
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
+    <div className="fixed top-16 right-4 sm:right-6 z-[99998] max-w-[320px] sm:max-w-xs w-[90%] sm:w-auto animate-in fade-in slide-in-from-top-3 duration-300">
+      <div className="bg-[var(--card)]/95 backdrop-blur-xl border border-[var(--border)] text-white p-2.5 sm:p-3 rounded-xl shadow-xl flex items-start gap-2.5 relative">
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
           subscribed
             ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-400"
             : "bg-[var(--accent)]/15 border border-[var(--accent)]/30 text-[var(--accent)]"
         }`}>
-          {subscribed ? <FiCheck className="text-xl" /> : <FiBell className="text-lg animate-bounce" />}
+          {subscribed ? <FiCheck className="text-base" /> : <FiBell className="text-sm animate-bounce" />}
         </div>
 
-        <div className="flex-1 min-w-0 pr-4">
+        <div className="flex-1 min-w-0 pr-3">
           <p className="text-xs font-bold text-white tracking-wide">
-            {subscribed ? "Notifications Enabled!" : "Instant Order & Top-Up Alerts"}
+            {subscribed ? "Notifications Enabled!" : "Instant Order & Alerts"}
           </p>
-          <p className="text-[11px] text-gray-400 mt-0.5 leading-snug">
+          <p className="text-[11px] text-gray-400 mt-0.5 leading-tight">
             {subscribed
-              ? "You'll now receive instant notifications when your top-up is delivered."
-              : "Get instant delivery alerts on this device when your game top-up is completed."}
+              ? "You'll receive instant alerts when your top-up completes."
+              : "Get instant delivery alerts on this device when top-up is completed."}
           </p>
 
           {!subscribed && (
-            <div className="flex items-center gap-2 mt-2.5">
+            <div className="flex items-center gap-2 mt-2">
               <button
                 onClick={handleSubscribe}
                 disabled={loading}
-                className="bg-[var(--accent)] text-black text-xs font-bold px-3 py-1.5 rounded-lg hover:brightness-110 active:scale-95 transition-all shadow-md flex items-center gap-1.5"
+                className="bg-[var(--accent)] text-black text-[11px] font-bold px-2.5 py-1 rounded-md hover:brightness-110 active:scale-95 transition-all shadow-sm flex items-center gap-1.5"
               >
                 {loading ? "Enabling..." : "Enable Alerts"}
               </button>
               <button
                 onClick={handleDismiss}
-                className="text-xs text-gray-400 hover:text-white px-2 py-1.5 transition-colors"
+                className="text-[11px] text-gray-400 hover:text-white px-2 py-1 transition-colors"
               >
                 Later
               </button>
@@ -126,10 +126,10 @@ export default function NotificationPrompt() {
 
         <button
           onClick={handleDismiss}
-          className="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors"
+          className="absolute top-2.5 right-2.5 text-gray-400 hover:text-white transition-colors"
           aria-label="Close"
         >
-          <FiX className="text-sm" />
+          <FiX className="text-xs" />
         </button>
       </div>
     </div>

@@ -4,38 +4,22 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Globe,
-  Gamepad2,
-  Layers,
-  BookOpen,
-  Trophy,
-  Crown,
   Inbox,
   LifeBuoy,
   Wallet,
-  Users,
+  BookOpen,
   Zap,
-  Gift,
-  Ticket
 } from "lucide-react";
 
 /* ===================== CONFIG ===================== */
 
-const topRow = [
+const quickActions = [
   { title: "Region", href: "/region", icon: Globe, color: "#3b82f6" },
-  { title: "Games", href: "/games", icon: Gamepad2, color: "#22c55e" },
-  { title: "Services", href: "/services", icon: Layers, color: "#a855f7" },
-  { title: "Support", href: "/dashboard/support", icon: LifeBuoy, color: "#06b6d4" },
-  { title: "Top List", href: "/leaderboard", icon: Trophy, color: "#f97316" },
-  { title: "Wallet", href: "/dashboard/wallet", icon: Wallet, color: "#10b981" },
-];
-
-const bottomRow = [
   { title: "Orders", href: "/dashboard/orders", icon: Inbox, color: "#64748b" },
-  { title: "Vouchers", href: "/games?tab=vouchers", icon: Ticket, color: "#f59e0b" },
+  { title: "Support", href: "/dashboard/support", icon: LifeBuoy, color: "#06b6d4" },
+  { title: "Wallet", href: "/dashboard/wallet", icon: Wallet, color: "#10b981" },
   { title: "Blog", href: "/blog", icon: BookOpen, color: "#eab308", isHighlight: true },
   { title: "Earn", href: "/dashboard/coins", icon: Zap, color: "#a855f7", isHighlight: true },
-  { title: "Reseller", href: "/games/membership/reseller-membership", icon: Crown, color: "#fbbf24" },
-  { title: "Redeem", href: "/dashboard/redeem", icon: Gift, color: "#ec4899" },
 ];
 
 /* ===================== COMPONENT ===================== */
@@ -155,20 +139,10 @@ export default function HomeQuickActions() {
   return (
     <section className="relative max-w-7xl mx-auto px-4 mt-1">
       <div className="relative z-10 max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row gap-0.5 md:gap-1">
-          {/* ================= TOP ROW ================= */}
-          <div className="flex justify-between gap-1 flex-1">
-            {topRow.map((item) => (
-              <ActionCard key={item.title} item={item} />
-            ))}
-          </div>
-
-          {/* ================= BOTTOM ROW ================= */}
-          <div className="flex justify-between gap-1 flex-1">
-            {bottomRow.map((item) => (
-              <ActionCard key={item.title} item={item} />
-            ))}
-          </div>
+        <div className="flex justify-between gap-1">
+          {quickActions.map((item) => (
+            <ActionCard key={item.title} item={item} />
+          ))}
         </div>
       </div>
     </section>
