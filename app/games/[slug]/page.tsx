@@ -13,6 +13,7 @@ import GameSwitcher from "@/components/GameDetail/GameSwitcher";
 import GameHeader from "@/components/GameDetail/GameHeader";
 import PackageSelector from "@/components/GameDetail/PackageSelector";
 import BuyPanel from "@/components/GameDetail/BuyPanel";
+import { Gamepad2, Home } from "lucide-react";
 
 import { Suspense } from "react";
 
@@ -108,43 +109,45 @@ function GameDetailContent() {
     return (
       <section className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4 py-20">
         <div className="max-w-md w-full text-center">
-          {/* Icon */}
-          <div className="mb-8 flex justify-center">
+          {/* Gaming Icon */}
+          <div className="mb-6 flex justify-center">
             <div className="relative">
               <div className="absolute inset-0 bg-[var(--accent)]/20 blur-3xl rounded-full" />
-              <svg
-                className="w-28 h-28 text-[var(--accent)]/60 relative"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-                />
-              </svg>
+              <div className="w-20 h-20 rounded-3xl bg-[var(--card)] border border-[var(--border)] shadow-xl flex items-center justify-center relative z-10">
+                <Gamepad2 className="w-10 h-10 text-[var(--accent)]" strokeWidth={1.75} />
+              </div>
             </div>
           </div>
 
           {/* Title */}
-          <h2 className="text-3xl font-extrabold mb-4 bg-gradient-to-r from-[var(--accent)] to-purple-400 bg-clip-text text-transparent">
-            No Items Found
+          <h2 className="text-2xl sm:text-3xl font-extrabold mb-2 bg-gradient-to-r from-[var(--accent)] to-purple-400 bg-clip-text text-transparent">
+            Game Not Found
           </h2>
 
           {/* Message */}
-          <p className="text-[var(--muted)] mb-10 text-base">
-            {error || "We couldn't find any packages for this game. Please try again later or contact support."}
+          <p className="text-[var(--muted)] mb-8 text-sm sm:text-base max-w-sm mx-auto">
+            {error || "We couldn't find any packages for this game. Please check the game name or explore all games."}
           </p>
 
-          {/* Action Button */}
-          <button aria-label="button"
-            onClick={() => router.push("/")}
-            className="px-8 py-4 bg-gradient-to-r from-[var(--accent)] to-purple-600 hover:from-[var(--accent)] hover:to-purple-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-[var(--accent)]/25 hover:shadow-[var(--accent)]/40"
-          >
-            Back to Home
-          </button>
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              aria-label="Back to Games"
+              onClick={() => router.push("/games")}
+              className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-[var(--accent)] to-purple-600 hover:from-[var(--accent)] hover:to-purple-700 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-[var(--accent)]/25 hover:shadow-[var(--accent)]/40 flex items-center justify-center gap-2"
+            >
+              <Gamepad2 size={16} />
+              <span>Back to Games</span>
+            </button>
+            <button
+              aria-label="Back to Home"
+              onClick={() => router.push("/")}
+              className="w-full sm:w-auto px-6 py-3 bg-[var(--card)] hover:bg-[var(--foreground)]/5 border border-[var(--border)] text-[var(--foreground)] font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2"
+            >
+              <Home size={16} />
+              <span>Back to Home</span>
+            </button>
+          </div>
         </div>
       </section>
     );

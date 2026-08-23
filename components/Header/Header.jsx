@@ -35,19 +35,19 @@ const HEADER_CONFIG = {
 
   userMenu: {
     common: [
-      { label: "My Orders", href: "/dashboard/orders", icon: <FiShoppingBag size={14} />, desc: "Track your top-ups", colorClass: "bg-gradient-to-br from-blue-500/20 to-cyan-500/20 text-cyan-400 border-cyan-500/20" },
-      { label: "My Wallet", href: "/dashboard/wallet", icon: <FiLayers size={14} />, desc: "Balance & Recharge", colorClass: "bg-gradient-to-br from-purple-500/20 to-pink-500/20 text-pink-400 border-pink-500/20" },
-      { label: "Earn BBC", href: "/dashboard/coins", icon: <FiZap size={14} />, desc: "FREE Tasks, Check-in & Games", colorClass: "bg-gradient-to-br from-amber-500/20 to-yellow-500/20 text-yellow-400 border-yellow-500/20" },
-      { label: "Redeem Code", href: "/dashboard/redeem", icon: <FiGift size={14} />, desc: "Claim gift credits", colorClass: "bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-emerald-400 border-emerald-500/20" },
-      { label: "Refer & Earn", href: "/dashboard/referral", icon: <FiUsers size={14} />, desc: "Earn rewards", colorClass: "bg-gradient-to-br from-indigo-500/20 to-violet-500/20 text-indigo-400 border-indigo-500/20" },
-      { label: "My Tournaments", href: "/dashboard/tournaments", icon: <FiAward size={14} />, desc: "View your joined scrims", colorClass: "bg-gradient-to-br from-rose-500/20 to-orange-500/20 text-rose-400 border-rose-500/20" },
+      { label: "My Orders", href: "/dashboard/orders", icon: <FiShoppingBag size={20} />, desc: "Track your top-ups", colorClass: "text-cyan-400" },
+      { label: "My Wallet", href: "/dashboard/wallet", icon: <FiLayers size={20} />, desc: "Balance & Recharge", colorClass: "text-pink-400" },
+      { label: "Earn BBC", href: "/dashboard/coins", icon: <FiZap size={18} />, desc: "FREE Tasks, Check-in & Games", colorClass: "text-yellow-400" },
+      { label: "Redeem Code", href: "/dashboard/redeem", icon: <FiGift size={18} />, desc: "Claim gift credits", colorClass: "text-emerald-400" },
+      { label: "Refer & Earn", href: "/dashboard/referral", icon: <FiUsers size={18} />, desc: "Earn rewards", colorClass: "text-indigo-400" },
+      { label: "My Tournaments", href: "/dashboard/tournaments", icon: <FiAward size={18} />, desc: "View your joined scrims", colorClass: "text-rose-400" },
 
-      { label: "My Profile", href: "/dashboard/me", icon: <FiUser size={14} />, desc: "View & Edit Profile", colorClass: "bg-gradient-to-br from-[var(--foreground)]/10 to-[var(--foreground)]/5 text-[var(--foreground)] border-[var(--border)]" },
-      { label: "API Setup", href: "https://bluebuff.in", icon: <FiKey size={14} />, desc: "Developer API Access", colorClass: "bg-gradient-to-br from-slate-500/20 to-gray-500/20 text-slate-600 border-slate-500/20" },
-      { label: "Support", href: "/dashboard/support", icon: <FiMessageSquare size={14} />, desc: "Get help 24/7", colorClass: "bg-gradient-to-br from-sky-500/20 to-blue-500/20 text-sky-400 border-sky-500/20" },
+      { label: "My Profile", href: "/dashboard/me", icon: <FiUser size={18} />, desc: "View & Edit Profile", colorClass: "text-[var(--foreground)]/80" },
+      { label: "API Setup", href: "https://bluebuff.in", icon: <FiKey size={18} />, desc: "Developer API Access", colorClass: "text-slate-400" },
+      { label: "Support", href: "/dashboard/support", icon: <FiMessageSquare size={18} />, desc: "Get help 24/7", colorClass: "text-sky-400" },
     ],
     roles: {
-      owner: { label: "Admin Console", href: "/owner-panal", icon: <FiZap size={14} />, colorClass: "bg-gradient-to-br from-[var(--accent)] to-purple-600 text-white" },
+      owner: { label: "Admin Console", href: "/owner-panal", icon: <FiZap size={18} />, colorClass: "text-purple-400" },
     },
   },
 };
@@ -409,7 +409,7 @@ export default function Header() {
                               <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className="relative flex items-center justify-between p-2.5 rounded-2xl bg-[var(--card)] shadow-sm border border-transparent hover:border-[var(--accent)]/30 hover:shadow-md transition-all group overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                 <div className="flex items-center gap-3 min-w-0 flex-1 relative z-10">
-                                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-inner ${item.colorClass || "bg-[var(--accent)]/10 text-[var(--accent)]"}`}>{item.icon}</div>
+                                  <div className={`shrink-0 transition-transform group-hover:scale-110 ${item.colorClass || "text-[var(--accent)]"}`}>{item.icon}</div>
                                   <div className="min-w-0">
                                     <p className="text-[11px] font-black uppercase tracking-widest text-[var(--foreground)] truncate leading-none mb-1">{item.label}</p>
                                     <p className="text-[9px] text-[var(--muted)] font-bold uppercase tracking-widest truncate leading-none">{item.desc}</p>
@@ -431,9 +431,9 @@ export default function Header() {
                           {/* 4 Items in 2x2 Grid */}
                           <div className="grid grid-cols-2 gap-1.5 mb-1.5">
                             {HEADER_CONFIG.userMenu.common.slice(2, 6).map((item) => (
-                              <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className="relative flex items-center p-2.5 rounded-2xl bg-[var(--card)] shadow-sm border border-transparent hover:border-[var(--accent)]/30 hover:shadow-md transition-all group overflow-hidden gap-2">
+                              <Link key={item.label} href={item.href} onClick={() => setUserMenuOpen(false)} className="relative flex items-center p-2.5 rounded-2xl bg-[var(--card)] shadow-sm border border-transparent hover:border-[var(--accent)]/30 hover:shadow-md transition-all group overflow-hidden gap-2.5">
                                 <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <div className={`w-8 h-8 shrink-0 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-inner ${item.colorClass || "bg-[var(--foreground)]/5 text-[var(--foreground)]"}`}>{item.icon}</div>
+                                <div className={`shrink-0 transition-transform group-hover:scale-110 relative z-10 ${item.colorClass || "text-[var(--foreground)]"}`}>{item.icon}</div>
                                 <div className="flex flex-col min-w-0 relative z-10">
                                   <p className="text-[9px] font-black text-[var(--foreground)] leading-none uppercase tracking-widest truncate mb-0.5">{item.label}</p>
                                   <p className="text-[7px] text-[var(--muted)] font-bold uppercase tracking-widest truncate leading-none">{item.desc}</p>
@@ -447,7 +447,7 @@ export default function Header() {
                             {HEADER_CONFIG.userMenu.common.slice(6).map((item) => (
                               <Link key={item.label} href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined} onClick={() => setUserMenuOpen(false)} className="flex items-center justify-between py-2 px-3 rounded-2xl bg-transparent hover:bg-[var(--card)] hover:shadow-sm transition-all group">
                                 <div className="flex items-center gap-2.5">
-                                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center shadow-inner transition-transform group-hover:scale-105 ${item.colorClass || "bg-[var(--foreground)]/5 text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:bg-[var(--accent)]/10"}`}>{item.icon}</div>
+                                  <div className={`shrink-0 transition-transform group-hover:scale-110 ${item.colorClass || "text-[var(--muted)] group-hover:text-[var(--accent)]"}`}>{item.icon}</div>
                                   <div className="flex flex-col">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-[var(--foreground)] leading-none mb-0.5">{item.label}</p>
                                     <p className="text-[9px] text-[var(--muted)] font-bold uppercase tracking-widest leading-none">{item.desc}</p>
@@ -460,38 +460,31 @@ export default function Header() {
                         </div>
 
                         {user?.userType === "owner" && (
-                          <div className="relative mt-4 group">
+                          <div className="relative mt-2 group">
                             <Link
                               href="/owner-panal"
                               onClick={() => setUserMenuOpen(false)}
-                              className="relative flex items-center justify-between p-3 bg-gradient-to-r from-gray-900 to-black rounded-2xl overflow-hidden transition-all duration-500 shadow-xl border border-gray-800 hover:border-gray-600 hover:shadow-2xl hover:-translate-y-1"
+                              className="relative flex items-center justify-between p-2.5 bg-[var(--card)] border border-[var(--border)] hover:border-[var(--accent)]/30 rounded-2xl transition-all group overflow-hidden"
                             >
-                              {/* Sleek animated background effect */}
-                              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(168,85,247,0.15),transparent_50%)]" />
-                              <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 blur-3xl rounded-full" />
-                              
                               <div className="flex items-center gap-3 relative z-10 w-full">
                                 <div className="relative flex-shrink-0">
-                                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.4)]">
-                                    <FiZap size={16} className="text-white drop-shadow-md" />
+                                  <div className="shrink-0 text-purple-400 group-hover:scale-110 transition-transform">
+                                    <FiZap size={20} />
                                   </div>
-                                  <div className="absolute -bottom-1 -right-1 flex h-2.5 w-2.5">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border border-gray-900 shadow-sm"></span>
+                                  <div className="absolute -bottom-0.5 -right-0.5 flex h-2 w-2">
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                                   </div>
                                 </div>
 
                                 <div className="flex flex-col min-w-0 flex-1">
-                                  <h4 className="text-xs font-black uppercase tracking-widest text-white mb-1 drop-shadow-sm">Admin Console</h4>
+                                  <h4 className="text-xs font-black uppercase tracking-widest text-[var(--foreground)] mb-0.5">Admin Console</h4>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-[8px] font-bold text-purple-300 bg-purple-500/20 px-1.5 py-0.5 rounded-md border border-purple-500/30 uppercase tracking-widest backdrop-blur-md">Elite Access</span>
-                                    <span className="text-[8px] font-bold text-emerald-400 flex items-center gap-1 uppercase tracking-widest"><span className="w-1 h-1 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.8)]"></span>Active</span>
+                                    <span className="text-[8px] font-bold text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20 uppercase tracking-widest">Elite Access</span>
+                                    <span className="text-[8px] font-bold text-emerald-400 flex items-center gap-1 uppercase tracking-widest"><span className="w-1 h-1 rounded-full bg-emerald-400"></span>Active</span>
                                   </div>
                                 </div>
 
-                                <div className="w-7 h-7 rounded-full bg-white/5 border border-white/10 group-hover:bg-white/10 flex items-center justify-center text-white/50 group-hover:text-white transition-all flex-shrink-0 backdrop-blur-sm">
-                                  <FiChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-                                </div>
+                                <FiChevronRight size={14} className="text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:translate-x-1 transition-all" />
                               </div>
                             </Link>
                           </div>

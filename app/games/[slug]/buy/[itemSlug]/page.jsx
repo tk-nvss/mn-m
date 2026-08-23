@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense, useMemo } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { Icons } from "@/components/icons";
+import { FaWhatsapp } from "react-icons/fa";
 import { LoadingSpinner } from "@/components/common";
 
 import AuthGuard from "@/components/AuthGuard";
@@ -586,6 +587,23 @@ function BuyFlowContent() {
                         Please verify account to proceed
                       </p>
                     )}
+
+                    {/* Manual WhatsApp Purchase Support */}
+                    <div className="mt-4 pt-3 border-t border-[var(--border)]">
+                      <a
+                        href={`https://wa.me/${process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP || ""}?text=${encodeURIComponent(
+                          `Hi, I am facing difficulty recharging ${item?.itemName ? `${item.itemName} (₹${item?.sellingPrice})` : "my order"}${verifiedAccount?.playerId ? ` for Player ID: ${verifiedAccount.playerId}` : ""}. Please help me with manual purchase.`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/25 text-[#25D366] transition-all"
+                      >
+                        <FaWhatsapp className="text-base shrink-0 group-hover:scale-110 transition-transform" />
+                        <span className="text-[11px] font-bold text-center leading-tight">
+                          Facing difficulty to recharge? <span className="underline font-black">Contact us on WhatsApp</span> for manual purchase
+                        </span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
