@@ -29,20 +29,22 @@ export default function PackageSelector({
         </div>
 
         {/* View Toggle */}
-        <div className="flex p-0.5 rounded-full bg-[var(--background)] shadow-inner border border-[var(--border)]/50">
+        <div className="flex p-1 rounded-full bg-[var(--background)] shadow-inner border border-[var(--border)]/50 gap-0.5">
           {[
-            { id: "grid", icon: FiGrid },
-            { id: "list", icon: FiList },
+            { id: "grid", icon: FiGrid, label: "Grid view" },
+            { id: "list", icon: FiList, label: "List view" },
           ].map((mode) => (
-            <button aria-label="button"
+            <button
               key={mode.id}
               onClick={() => setViewMode(mode.id)}
-              className={`p-1.5 rounded-full transition-all duration-300 ${viewMode === mode.id
+              aria-label={`Switch to ${mode.label}`}
+              title={mode.label}
+              className={`w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full transition-all duration-300 ${viewMode === mode.id
                 ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm scale-[1.02]"
                 : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
                 }`}
             >
-              <mode.icon size={11} />
+              <mode.icon size={13} />
             </button>
           ))}
         </div>

@@ -113,7 +113,8 @@ export default function StorySlider() {
                       <div className="relative w-[58px] h-[58px] md:w-[70px] md:h-[70px] rounded-full overflow-hidden">
                         <Image
                           src={item.image}
-                          alt={item.title}
+                          alt=""
+                          role="presentation"
                           fill
                           sizes="(max-width: 768px) 58px, 70px"
                           priority={item.id <= 2}

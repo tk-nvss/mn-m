@@ -167,11 +167,18 @@ export default function Header() {
     }, 2000);
   };
 
-  /* ================= SCROLL ================= */
+  /* ================= SCROLL (OPTIMIZED RAF) ================= */
   useEffect(() => {
+    let ticking = false;
     const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isOver = window.scrollY > 20;
+          setScrolled((prev) => (prev !== isOver ? isOver : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);

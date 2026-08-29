@@ -61,7 +61,8 @@ export default function BattleRoyaleSection() {
                   <div className="w-full h-full bg-[var(--background)] rounded-[11px] overflow-hidden flex items-center justify-center relative">
                     <Image 
                       src={game.image}
-                      alt={game.title}
+                      alt=""
+                      role="presentation"
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />

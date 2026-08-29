@@ -169,7 +169,7 @@ export default function FlashSale() {
                                                 <span className="text-[13px] md:text-[15px] font-black italic text-[var(--foreground)] leading-none">
                                                     {item.price}
                                                 </span>
-                                                <span className="text-[8.5px] md:text-[10px] font-bold text-[var(--muted)] line-through opacity-50 decoration-red-500/50">
+                                                <span className="text-[8.5px] md:text-[10px] font-semibold text-[var(--muted)] line-through decoration-red-500/80">
                                                     {item.originalPrice}
                                                 </span>
                                             </div>

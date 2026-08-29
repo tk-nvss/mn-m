@@ -182,7 +182,7 @@ function GamesContent() {
           <div className="flex items-center gap-1.5 mt-0.5">
             <div className={`w-1 h-1 rounded-full bg-gradient-to-br ${gradient}`} />
             <span className="text-[9px] font-medium text-[var(--muted)] uppercase tracking-widest">
-              {count} <span className="opacity-60">Items Found</span>
+              {count} Items Found
             </span>
           </div>
         </div>
@@ -226,33 +226,37 @@ function GamesContent() {
             {/* ACTION GRID */}
             <div className="flex items-center gap-1 relative z-10 pr-0.5">
               {/* VIEW TOGGLE */}
-              <div className="flex p-0.5 rounded-full bg-[var(--background)] shadow-inner border border-[var(--border)]/50">
+              <div className="flex p-1 rounded-full bg-[var(--background)] shadow-inner border border-[var(--border)]/50 gap-0.5">
                 {[
-                  { id: "grid", icon: FiGrid },
-                  { id: "list", icon: FiList },
+                  { id: "grid", icon: FiGrid, label: "Grid view" },
+                  { id: "list", icon: FiList, label: "List view" },
                 ].map((mode) => (
-                  <button aria-label="button"
+                  <button
                     key={mode.id}
                     onClick={() => setViewMode(mode.id)}
-                    className={`p-1.5 rounded-full transition-all duration-300 ${viewMode === mode.id
+                    aria-label={`Switch to ${mode.label}`}
+                    title={mode.label}
+                    className={`w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full transition-all duration-300 ${viewMode === mode.id
                       ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm scale-[1.02]"
                       : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
                       }`}
                   >
-                    <mode.icon size={11} />
+                    <mode.icon size={13} />
                   </button>
                 ))}
               </div>
 
               {/* FILTER BUTTON */}
-              <button aria-label="button"
+              <button
                 onClick={() => setShowFilter(true)}
-                className={`relative flex items-center justify-center w-7 h-7 rounded-full border transition-all duration-300 ${activeFilterCount > 0
+                aria-label="Open filter options"
+                title="Filter games"
+                className={`relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full border transition-all duration-300 ${activeFilterCount > 0
                   ? "border-transparent bg-gradient-to-br from-[var(--accent)] to-indigo-500 text-white shadow-[0_2px_8px_rgba(var(--accent-rgb),0.3)] hover:scale-105"
                   : "border-[var(--border)] bg-[var(--background)] text-[var(--muted)] hover:border-[var(--accent)]/50 hover:text-[var(--accent)] hover:shadow-sm"
                   }`}
               >
-                <FiFilter size={11} />
+                <FiFilter size={13} />
                 {activeFilterCount > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center bg-white text-black rounded-full text-[8px] font-black shadow-md border border-[var(--card)]">
                     {activeFilterCount}

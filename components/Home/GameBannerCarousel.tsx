@@ -7,20 +7,26 @@ import logo from "@/public/logo.png";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BannerSkeleton } from "../Skeleton/Skeleton";
 
-export default function GameBannerCarousel() {
-  const [banners, setBanners] = useState<any[]>([]);
+export default function GameBannerCarousel({ initialBanners = [] }: { initialBanners?: any[] }) {
+  const [banners, setBanners] = useState<any[]>(initialBanners);
   const [current, setCurrent] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(initialBanners.length === 0);
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<any>(null);
 
   useEffect(() => {
+    if (initialBanners.length > 0) {
+      setBanners(initialBanners);
+      setLoading(false);
+      return;
+    }
+
     fetch("/api/game-banners")
       .then((r) => r.json())
       .then((d) => setBanners(d?.data ?? []))
       .catch(() => setBanners([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [initialBanners]);
 
   /* AUTO PLAY */
   useEffect(() => {
@@ -141,7 +147,7 @@ export default function GameBannerCarousel() {
                   <span className="text-white/40 font-bold text-[9px]">/0{banners.length}</span>
                 </div>
                 <div className="h-[2.5px] w-14 bg-white/20 relative overflow-hidden rounded-full backdrop-blur-sm">
-                  <div className="absolute inset-0 bg-[var(--accent)] transition-all duration-500 ease-out" style={{ width: `${((current + 1) / banners.length) * 100}%` }} />
+                  <div className="absolute inset-0 bg-[var(--accent)] origin-left transition-transform duration-500 ease-out" style={{ transform: `scaleX(${((current + 1) / banners.length)})` }} />
                 </div>
               </div>
             </div>
@@ -228,7 +234,7 @@ export default function GameBannerCarousel() {
                   <span className="text-white/40 font-bold text-[9px]">/0{banners.length}</span>
                 </div>
                 <div className="h-[2px] w-12 bg-white/20 relative overflow-hidden rounded-full backdrop-blur-sm">
-                  <div className="absolute inset-0 bg-[var(--accent)] transition-all duration-500 ease-out" style={{ width: `${((current + 1) / banners.length) * 100}%` }} />
+                  <div className="absolute inset-0 bg-[var(--accent)] origin-left transition-transform duration-500 ease-out" style={{ transform: `scaleX(${((current + 1) / banners.length)})` }} />
                 </div>
               </div>
             </div>

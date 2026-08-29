@@ -14,10 +14,24 @@ export const metadata = {
 };
 
 import { getAppSettings } from "@/lib/settings";
+import { connectDB } from "@/lib/mongodb";
+import Banner from "@/models/Banner";
 import WhatsAppCommunityPopup from "@/components/WhatsAppQRPopup";
 import GamesPopup from "@/components/GamesPopup";
 import JoinUsPopup from "@/components/JoinUsPopup";
 import Script from "next/script";
+
+async function getGameBanners() {
+  try {
+    await connectDB();
+    const banners = await Banner.find({ isShow: true })
+      .sort({ bannerDate: -1 })
+      .lean();
+    return JSON.parse(JSON.stringify(banners));
+  } catch (error) {
+    return [];
+  }
+}
 
 const structuredData = [
   {
@@ -145,7 +159,11 @@ const structuredData = [
 ];
 
 export default async function Page() {
-  const settings = await getAppSettings();
+  const [settings, initialBanners] = await Promise.all([
+    getAppSettings(),
+    getGameBanners()
+  ]);
+
   return (
     <main>
       <Script
@@ -160,19 +178,22 @@ export default async function Page() {
       {settings.showGamesPopup && <GamesPopup />}
       {settings.showJoinUsPopup && <JoinUsPopup />}
 
-      <HomeSection bannerSettings={{
-        showTopNoticeBanner: settings.showTopNoticeBanner,
-        showHomeEarnPromotion: settings.showHomeEarnPromotion,
-        showTradeMarketplaceBanner: settings.showTradeMarketplaceBanner,
-        showCustomWebBanner: settings.showCustomWebBanner,
-        showGamesWebBanner: settings.showGamesWebBanner,
-        showGiveawayBanner: settings.showGiveawayBanner,
-        showGameBannerCarousel: settings.showGameBannerCarousel,
-        showStorySlider: settings.showStorySlider,
-        showBattleRoyaleSection: settings.showBattleRoyaleSection,
-        showFlashSale: settings.showFlashSale,
-        showHomeQuickActions: settings.showHomeQuickActions
-      }} />
+      <HomeSection 
+        initialBanners={initialBanners}
+        bannerSettings={{
+          showTopNoticeBanner: settings.showTopNoticeBanner,
+          showHomeEarnPromotion: settings.showHomeEarnPromotion,
+          showTradeMarketplaceBanner: settings.showTradeMarketplaceBanner,
+          showCustomWebBanner: settings.showCustomWebBanner,
+          showGamesWebBanner: settings.showGamesWebBanner,
+          showGiveawayBanner: settings.showGiveawayBanner,
+          showGameBannerCarousel: settings.showGameBannerCarousel,
+          showStorySlider: settings.showStorySlider,
+          showBattleRoyaleSection: settings.showBattleRoyaleSection,
+          showFlashSale: settings.showFlashSale,
+          showHomeQuickActions: settings.showHomeQuickActions
+        }} 
+      />
     </main>
   );
 }

@@ -25,7 +25,7 @@ const GamesPage = dynamic(() => import("@/app/games/page"), {
   loading: () => <div className="min-h-screen w-full animate-pulse bg-[var(--background)]"></div>
 });
 
-export default function HeroSection({ bannerSettings }: { bannerSettings?: any }) {
+export default function HeroSection({ bannerSettings, initialBanners }: { bannerSettings?: any; initialBanners?: any[] }) {
 
   // If bannerSettings isn't passed (e.g. client navigation before cache warms up), default to showing GiveawayBanner only
   const bs = bannerSettings || { 
@@ -79,7 +79,7 @@ export default function HeroSection({ bannerSettings }: { bannerSettings?: any }
       )}
      
 
-      {bs.showGameBannerCarousel !== false && <GameBannerCarousel />}
+      {bs.showGameBannerCarousel !== false && <GameBannerCarousel initialBanners={initialBanners} />}
 
       <div className="space-y-1 mt-2">
         {bs.showStorySlider !== false && <StorySlider />}

@@ -5,7 +5,6 @@ import nextDynamic from "next/dynamic";
 import "./globals.css";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
-import { GoogleAnalytics } from '@next/third-parties/google';
 import { Poppins } from "next/font/google";
 
 import MaintenanceWrapper from "@/components/Layout/MaintenanceWrapper";
@@ -111,6 +110,8 @@ export default async function RootLayout({
   return (
     <html lang="en" className={poppins.variable}>
       <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         {/* Capture beforeinstallprompt BEFORE React hydrates */}
         <script dangerouslySetInnerHTML={{ __html: `
           window.__pwaPrompt = null;
@@ -165,7 +166,20 @@ export default async function RootLayout({
             })
           }}
         />
-        <GoogleAnalytics gaId="G-CKCKWLGJ9N" />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-CKCKWLGJ9N"
+          strategy="lazyOnload"
+        />
+        <Script id="google-analytics-init" strategy="lazyOnload">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-CKCKWLGJ9N', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
 
           <Header />
 
