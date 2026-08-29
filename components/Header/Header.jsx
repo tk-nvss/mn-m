@@ -195,13 +195,13 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Prevent background scroll when drawer is open
+  // Prevent background scroll only when drawer is open
   useEffect(() => {
-    if (userMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    if (!userMenuOpen) return;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [userMenuOpen]);
 
   return (

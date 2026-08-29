@@ -154,6 +154,7 @@ export default function FlashSale() {
                                                 src={item.image}
                                                 alt={item.name}
                                                 fill
+                                                sizes="(max-width: 640px) 140px, 185px"
                                                 className="object-cover"
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-40 group-hover:opacity-60" />

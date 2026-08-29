@@ -48,9 +48,8 @@ export default function ThemeToggle() {
 
   // Load stored theme on mount
   useEffect(() => {
-    const stored = localStorage.getItem("theme") || "dark";
+    const stored = localStorage.getItem("theme") || document.documentElement.getAttribute("data-theme") || "dark";
     setTheme(stored);
-    document.documentElement.setAttribute("data-theme", stored);
   }, []);
 
   // Change theme handler

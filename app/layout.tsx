@@ -112,8 +112,12 @@ export default async function RootLayout({
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-        {/* Capture beforeinstallprompt BEFORE React hydrates */}
+        {/* Pre-initialize theme before first paint to prevent layout reflows */}
         <script dangerouslySetInnerHTML={{ __html: `
+          try {
+            var savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+          } catch(e) {}
           window.__pwaPrompt = null;
           window.addEventListener('beforeinstallprompt', function(e) {
             e.preventDefault();

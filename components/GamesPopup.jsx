@@ -70,9 +70,9 @@ export default function GamesPopup() {
                     alt="Play Games on Website" 
                     width={420} 
                     height={260}
-                    quality={95}
+                    sizes="(max-width: 640px) 90vw, 420px"
+                    quality={80}
                     className="w-full h-auto object-contain rounded-xl"
-                    priority
                   />
                 </div>
 
