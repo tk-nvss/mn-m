@@ -1,16 +1,19 @@
 "use client";
 // Seasonal theme manager for global effects 
 
+import dynamic from "next/dynamic";
 import { useUIStore } from "@/store/useUIStore";
-import SnowEffect from "@/components/Seasonal/SnowEffect";
-import ValentineEffect from "@/components/Seasonal/ValentineEffect";
-import HoliEffect from "@/components/Seasonal/HoliEffect";
-import DiwaliEffect from "@/components/Seasonal/DiwaliEffect";
-import MonsoonEffect from "@/components/Seasonal/MonsoonEffect";
-import EidEffect from "@/components/Seasonal/EidEffect";
+
+const SnowEffect = dynamic(() => import("@/components/Seasonal/SnowEffect"));
+const ValentineEffect = dynamic(() => import("@/components/Seasonal/ValentineEffect"));
+const HoliEffect = dynamic(() => import("@/components/Seasonal/HoliEffect"));
+const DiwaliEffect = dynamic(() => import("@/components/Seasonal/DiwaliEffect"));
+const MonsoonEffect = dynamic(() => import("@/components/Seasonal/MonsoonEffect"));
+const EidEffect = dynamic(() => import("@/components/Seasonal/EidEffect"));
 
 export default function SeasonalEffectManager() {
   const activeThemeEffect = useUIStore((state) => state.activeThemeEffect);
+  if (!activeThemeEffect) return null;
 
   switch (activeThemeEffect) {
     case "christmas":

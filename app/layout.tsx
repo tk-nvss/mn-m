@@ -166,18 +166,39 @@ export default async function RootLayout({
             })
           }}
         />
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-CKCKWLGJ9N"
-          strategy="lazyOnload"
-        />
-        <Script id="google-analytics-init" strategy="lazyOnload">
+        {/* Defer Analytics to Idle / First Interaction to completely eliminate Forced Reflows */}
+        <Script id="google-analytics-deferred" strategy="afterInteractive">
           {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-CKCKWLGJ9N', {
-              page_path: window.location.pathname,
-            });
+            (function() {
+              var loaded = false;
+              function initGA() {
+                if (loaded) return;
+                loaded = true;
+                ['scroll', 'touchstart', 'mousemove', 'click', 'keydown'].forEach(function(e) {
+                  window.removeEventListener(e, initGA);
+                });
+                var script = document.createElement('script');
+                script.async = true;
+                script.src = 'https://www.googletagmanager.com/gtag/js?id=G-CKCKWLGJ9N';
+                document.head.appendChild(script);
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                window.gtag = gtag;
+                gtag('js', new Date());
+                gtag('config', 'G-CKCKWLGJ9N', {
+                  page_path: window.location.pathname,
+                  send_page_view: true
+                });
+              }
+              if ('requestIdleCallback' in window) {
+                window.requestIdleCallback(function() { setTimeout(initGA, 2500); });
+              } else {
+                setTimeout(initGA, 3000);
+              }
+              ['scroll', 'touchstart', 'mousemove', 'click', 'keydown'].forEach(function(e) {
+                window.addEventListener(e, initGA, { passive: true, once: true });
+              });
+            })();
           `}
         </Script>
 

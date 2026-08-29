@@ -1,25 +1,24 @@
 // app/page.tsx
+import dynamic from "next/dynamic";
 import HomeSection from "@/components/Home/Home";
-import TelegramQRPopup from "@/components/TelegramQRPopup";
+import { getAppSettings } from "@/lib/settings";
+import { connectDB } from "@/lib/mongodb";
+import Banner from "@/models/Banner";
+import Script from "next/script";
+
+const TelegramQRPopup = dynamic(() => import("@/components/TelegramQRPopup"));
+const WhatsAppCommunityPopup = dynamic(() => import("@/components/WhatsAppQRPopup"));
+const GamesPopup = dynamic(() => import("@/components/GamesPopup"));
+const JoinUsPopup = dynamic(() => import("@/components/JoinUsPopup"));
 
 export const metadata = {
   title: "Cheapest MLBB Diamond Top Up India | mlbbtopup.in",
   description:
     "Safe & instant MLBB diamond top up in India. Cheapest rates for Weekly Pass, Starlight & skins. Secure UPI/Paytm payments with 5-minute delivery. Trusted by thousands.",
-
   alternates: {
     canonical: "https://mlbbtopup.in",
   },
-
 };
-
-import { getAppSettings } from "@/lib/settings";
-import { connectDB } from "@/lib/mongodb";
-import Banner from "@/models/Banner";
-import WhatsAppCommunityPopup from "@/components/WhatsAppQRPopup";
-import GamesPopup from "@/components/GamesPopup";
-import JoinUsPopup from "@/components/JoinUsPopup";
-import Script from "next/script";
 
 async function getGameBanners() {
   try {
