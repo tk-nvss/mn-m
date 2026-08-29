@@ -86,20 +86,20 @@ export default function NotificationPrompt() {
 
   return (
     <div className="fixed top-16 right-4 sm:right-6 z-[99998] max-w-[320px] sm:max-w-xs w-[90%] sm:w-auto animate-in fade-in slide-in-from-top-3 duration-300">
-      <div className="bg-[var(--card)]/95 backdrop-blur-xl border border-[var(--border)] text-white p-2.5 sm:p-3 rounded-xl shadow-xl flex items-start gap-2.5 relative">
+      <div className="bg-[var(--card)]/95 backdrop-blur-xl border border-[var(--border)] text-[var(--foreground)] p-2.5 sm:p-3 rounded-xl shadow-xl flex items-start gap-2.5 relative">
         <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
           subscribed
-            ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-400"
+            ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-500"
             : "bg-[var(--accent)]/15 border border-[var(--accent)]/30 text-[var(--accent)]"
         }`}>
           {subscribed ? <FiCheck className="text-base" /> : <FiBell className="text-sm animate-bounce" />}
         </div>
 
         <div className="flex-1 min-w-0 pr-3">
-          <p className="text-xs font-bold text-white tracking-wide">
+          <p className="text-xs font-bold text-[var(--foreground)] tracking-wide">
             {subscribed ? "Notifications Enabled!" : "Instant Order & Alerts"}
           </p>
-          <p className="text-[11px] text-gray-400 mt-0.5 leading-tight">
+          <p className="text-[11px] text-[var(--muted)] mt-0.5 leading-tight">
             {subscribed
               ? "You'll receive instant alerts when your top-up completes."
               : "Get instant delivery alerts on this device when top-up is completed."}
@@ -110,13 +110,14 @@ export default function NotificationPrompt() {
               <button
                 onClick={handleSubscribe}
                 disabled={loading}
-                className="bg-[var(--accent)] text-black text-[11px] font-bold px-2.5 py-1 rounded-md hover:brightness-110 active:scale-95 transition-all shadow-sm flex items-center gap-1.5"
+                className="bg-blue-600 hover:bg-blue-700 !text-white text-[11px] font-bold px-2.5 py-1 rounded-md hover:brightness-110 active:scale-95 transition-all shadow-sm flex items-center gap-1.5"
+                style={{ color: '#ffffff' }}
               >
                 {loading ? "Enabling..." : "Enable Alerts"}
               </button>
               <button
                 onClick={handleDismiss}
-                className="text-[11px] text-gray-400 hover:text-white px-2 py-1 transition-colors"
+                className="text-[11px] text-[var(--muted)] hover:text-[var(--foreground)] px-2 py-1 transition-colors font-medium"
               >
                 Later
               </button>
@@ -126,7 +127,7 @@ export default function NotificationPrompt() {
 
         <button
           onClick={handleDismiss}
-          className="absolute top-2.5 right-2.5 text-gray-400 hover:text-white transition-colors"
+          className="absolute top-2.5 right-2.5 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
           aria-label="Close"
         >
           <FiX className="text-xs" />

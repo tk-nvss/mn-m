@@ -237,7 +237,7 @@ export default function PWAInstallBanner() {
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           {/* App icon */}
           <div style={{ flexShrink: 0, width: 28, height: 28, borderRadius: "50%", overflow: "hidden", border: "1px solid var(--border)", background: "var(--background)" }}>
-            <Image src="/logoBB.png" alt="MLBB Topup" width={28} height={28} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+            <Image src="/pwa-icon.png" alt="MLBB Topup" width={28} height={28} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
           </div>
           {/* Text */}
           <div style={{ minWidth: 0, display: "flex", flexDirection: "column", paddingRight: "4px" }}>
@@ -274,7 +274,7 @@ export default function PWAInstallBanner() {
                 {/* App row */}
                 <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:16 }}>
                   <div style={{ width:52, height:52, borderRadius:13, overflow:"hidden", border:"1px solid var(--border)", background:"var(--background)", flexShrink:0 }}>
-                    <Image src="/logoBB.png" alt="MLBB Topup" width={52} height={52} style={{ objectFit:"cover", width:"100%", height:"100%" }} />
+                    <Image src="/pwa-icon.png" alt="MLBB Topup" width={52} height={52} style={{ objectFit:"cover", width:"100%", height:"100%" }} />
                   </div>
                   <div>
                     <p style={{ margin:0, fontWeight:800, fontSize:15, color:"var(--foreground)" }}>Install app</p>

@@ -79,7 +79,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
-    apple: "/logoBB.png",
+    apple: "/pwa-icon.png",
   },
   robots: {
     index: true,

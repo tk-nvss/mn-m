@@ -113,10 +113,11 @@ export default function TelegramQRPopup() {
                   href={TELEGRAM_URL}
                   target="_blank"
                   rel="noopener noreferrer"
+                  style={{ color: '#ffffff' }}
                   className="w-full h-9 flex items-center justify-center gap-2 rounded-xl bg-[#0088cc] !text-white font-bold text-xs tracking-wide shadow-[0_8px_20px_-6px_rgba(0,136,204,0.4)] hover:shadow-[0_12px_25px_-6px_rgba(0,136,204,0.5)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
                 >
-                  Join Telegram
-                  <FiArrowRight size={14} />
+                  <span className="!text-white font-bold">Join Telegram</span>
+                  <FiArrowRight size={14} className="!text-white" />
                 </a>
 
               </div>

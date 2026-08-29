@@ -102,10 +102,11 @@ export default function WhatsAppCommunityPopup() {
                   href="https://whatsapp.com/channel/0029Vb87jgR17En1n5PKy129"
                   target="_blank"
                   rel="noopener noreferrer"
+                  style={{ color: '#ffffff' }}
                   className="w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-[#0066FF] !text-white font-bold text-xs tracking-wide shadow-[0_8px_20px_-6px_rgba(0,102,255,0.4)] hover:shadow-[0_12px_25px_-6px_rgba(0,102,255,0.5)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
                 >
-                  Join Now
-                  <FiArrowRight size={14} />
+                  <span className="!text-white font-bold">Join Now</span>
+                  <FiArrowRight size={14} className="!text-white" />
                 </a>
 
               </div>
