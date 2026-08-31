@@ -26,6 +26,15 @@
   --color-card: var(--card);
 }
 
+/* 🌟 Smooth Global Theme Transition */
+html, body {
+  transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme] {
+  transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), color 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* 🌙 Dark Mode */
 html[data-theme="dark"] {
   --background: #000000;
