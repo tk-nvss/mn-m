@@ -30,6 +30,10 @@ const PromoLogSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    recipients: {
+      type: [String],
+      default: [],
+    },
     sentBy: {
       type: String, // email of the owner who sent it
       index: true,

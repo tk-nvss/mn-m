@@ -20,7 +20,9 @@ import {
   Calendar,
   ChevronDown,
   ShoppingBag,
-  Smartphone
+  Smartphone,
+  Copy,
+  Check
 } from "lucide-react";
 import { StatusBadge, SearchInput, EmptyState, Pagination } from "@/components/common";
 import { formatCurrency, formatDate, formatTime, formatDateTime } from "@/utils";
@@ -30,7 +32,17 @@ export default function OrdersTab() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [copiedKey, setCopiedKey] = useState(null);
 
+  const handleCopy = (text, key, e) => {
+    if (e) e.stopPropagation();
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => {
+      setCopiedKey((prev) => (prev === key ? null : prev));
+    }, 1500);
+  };
 
   const [page, setPage] = useState(1);
   const [limit] = useState(30);
@@ -212,14 +224,9 @@ export default function OrdersTab() {
                         className="group hover:bg-[var(--foreground)]/[0.03] transition-colors cursor-pointer"
                       >
                         <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--accent)]">
-                              <Gamepad2 size={16} />
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="text-[var(--foreground)] font-bold uppercase text-xs">{o.gameSlug}</span>
-                              <span className="text-[10px] text-[var(--muted)] font-medium truncate max-w-[120px] lowercase">{o.email}</span>
-                            </div>
+                          <div className="flex flex-col">
+                            <span className="text-[var(--foreground)] font-bold uppercase text-xs">{o.gameSlug}</span>
+                            <span className="text-[10px] text-[var(--muted)] font-medium truncate max-w-[140px] lowercase">{o.email}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -229,8 +236,29 @@ export default function OrdersTab() {
                           </div>
                         </td>
                         <td className="px-6 py-4 max-w-xs">
-                          <span className="text-[var(--foreground)]/60 font-medium truncate block">{o.itemName}</span>
-                          <span className="text-[10px] text-[var(--muted)]/40 font-mono uppercase">{o.playerId} • {o.playerName || "Unknown"}</span>
+                          <span className="text-[var(--foreground)]/80 font-bold truncate block text-xs">{o.itemName}</span>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-[10px] text-[var(--muted)] font-mono uppercase tracking-tight truncate">
+                              {o.playerId}{o.zoneId ? ` (${o.zoneId})` : ""} {o.playerName ? `• ${o.playerName}` : ""}
+                            </span>
+                            {o.playerId && (
+                              <button
+                                type="button"
+                                onClick={(e) => handleCopy(o.zoneId ? `${o.playerId} ${o.zoneId}` : o.playerId, `player-${o._id}`, e)}
+                                className="p-1 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0"
+                                title="Copy Player ID & Zone"
+                              >
+                                {copiedKey === `player-${o._id}` ? (
+                                  <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-0.5">
+                                    <Check size={11} className="text-emerald-500" />
+                                    <span className="text-[8px] uppercase tracking-wider font-extrabold">Copied</span>
+                                  </span>
+                                ) : (
+                                  <Copy size={11} />
+                                )}
+                              </button>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-4">
                           <span className="text-[10px] font-bold text-[var(--muted)] uppercase border border-[var(--border)] px-2 py-1 rounded-md bg-[var(--foreground)]/[0.02]">
@@ -275,14 +303,9 @@ export default function OrdersTab() {
                     className="p-3 rounded-[1.2rem] border border-[var(--border)] bg-[var(--card)] active:bg-[var(--foreground)]/[0.05] transition-all"
                   >
                     <div className="flex justify-between items-start mb-2.5">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-lg bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--accent)]">
-                          <Gamepad2 size={12} />
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                          <p className="font-bold text-[var(--foreground)] uppercase text-[10px] leading-none mb-0.5 truncate">{o.gameSlug}</p>
-                          <p className="text-[9px] text-[var(--muted)] font-medium truncate max-w-[120px] lowercase leading-none">{o.email}</p>
-                        </div>
+                      <div className="flex flex-col min-w-0">
+                        <p className="font-bold text-[var(--foreground)] uppercase text-[10px] leading-none mb-0.5 truncate">{o.gameSlug}</p>
+                        <p className="text-[9px] text-[var(--muted)] font-medium truncate max-w-[150px] lowercase leading-none">{o.email}</p>
                       </div>
                       <div className="flex flex-col items-end">
                         <span className="text-sm font-black text-emerald-500 tabular-nums">{formatCurrency(o.price)}</span>
@@ -290,10 +313,28 @@ export default function OrdersTab() {
                       </div>
                     </div>
 
-                      <div className="flex items-center justify-between gap-3 text-[10px]">
+                    <div className="flex items-center justify-between gap-3 text-[10px]">
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-[var(--foreground)]/60 line-clamp-1 italic truncate">"{o.itemName}"</p>
-                        <p className="text-[8px] font-mono text-[var(--muted)]/40 mt-0.5 uppercase tracking-tighter truncate">{o.playerId} • {o.playerName || "Unknown"}</p>
+                        <p className="font-bold text-[var(--foreground)]/80 line-clamp-1 truncate">"{o.itemName}"</p>
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <p className="text-[8.5px] font-mono text-[var(--muted)] uppercase tracking-tight truncate">
+                            {o.playerId}{o.zoneId ? ` (${o.zoneId})` : ""} {o.playerName ? `• ${o.playerName}` : ""}
+                          </p>
+                          {o.playerId && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleCopy(o.zoneId ? `${o.playerId} ${o.zoneId}` : o.playerId, `m-player-${o._id}`, e)}
+                              className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0"
+                              title="Copy Player ID"
+                            >
+                              {copiedKey === `m-player-${o._id}` ? (
+                                <Check size={10} className="text-emerald-500" />
+                              ) : (
+                                <Copy size={10} />
+                              )}
+                            </button>
+                          )}
+                        </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -361,7 +402,25 @@ export default function OrdersTab() {
               <div className="p-5 md:p-6 border-b border-white/5 bg-gradient-to-b from-[var(--card)]/50 to-transparent">
                 <div className="flex items-start justify-between mb-5">
                   <div className="space-y-0.5">
-                    <p className="text-[9px] font-mono font-black text-[var(--accent)] uppercase tracking-[0.2em] opacity-80 mb-1 drop-shadow-[0_0_8px_rgba(var(--accent-rgb),0.5)]">#{selectedOrder.orderId.toUpperCase()}</p>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <p className="text-[9px] font-mono font-black text-[var(--accent)] uppercase tracking-[0.2em] opacity-80 drop-shadow-[0_0_8px_rgba(var(--accent-rgb),0.5)]">
+                        #{selectedOrder.orderId.toUpperCase()}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={(e) => handleCopy(selectedOrder.orderId, `drawer-oid-${selectedOrder._id}`, e)}
+                        className="p-1 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] transition-all shrink-0"
+                        title="Copy Order ID"
+                      >
+                        {copiedKey === `drawer-oid-${selectedOrder._id}` ? (
+                          <span className="text-[8px] font-bold text-emerald-500 flex items-center gap-0.5">
+                            <Check size={10} className="text-emerald-500" /> Copied
+                          </span>
+                        ) : (
+                          <Copy size={10} />
+                        )}
+                      </button>
+                    </div>
                     <h3 className="text-xl font-black uppercase tracking-tight text-[var(--foreground)]">Order Details</h3>
                   </div>
                   <button aria-label="button"
@@ -402,9 +461,37 @@ export default function OrdersTab() {
                 </DrawerSection>
 
                 <DrawerSection icon={<Smartphone size={14} />} title="Player ID Info">
-                  <DrawerDetail label="Player Name" value={selectedOrder.playerName || "Unknown"} />
-                  <DrawerDetail label="Player ID" value={selectedOrder.playerId} emphasize />
-                  <DrawerDetail label="Server/Zone" value={selectedOrder.zoneId || "GLOBAL"} />
+                  <DrawerDetail
+                    label="Player Name"
+                    value={selectedOrder.playerName || "Unknown"}
+                    copyText={selectedOrder.playerName}
+                    onCopy={(txt, e) => handleCopy(txt, `drawer-pname-${selectedOrder._id}`, e)}
+                    isCopied={copiedKey === `drawer-pname-${selectedOrder._id}`}
+                  />
+                  <DrawerDetail
+                    label="Player ID"
+                    value={selectedOrder.playerId}
+                    emphasize
+                    copyText={selectedOrder.playerId}
+                    onCopy={(txt, e) => handleCopy(txt, `drawer-pid-${selectedOrder._id}`, e)}
+                    isCopied={copiedKey === `drawer-pid-${selectedOrder._id}`}
+                  />
+                  <DrawerDetail
+                    label="Server/Zone"
+                    value={selectedOrder.zoneId || "GLOBAL"}
+                    copyText={selectedOrder.zoneId}
+                    onCopy={(txt, e) => handleCopy(txt, `drawer-zone-${selectedOrder._id}`, e)}
+                    isCopied={copiedKey === `drawer-zone-${selectedOrder._id}`}
+                  />
+                  {selectedOrder.playerId && selectedOrder.zoneId && (
+                    <DrawerDetail
+                      label="Combo (ID + Zone)"
+                      value={`${selectedOrder.playerId} ${selectedOrder.zoneId}`}
+                      copyText={`${selectedOrder.playerId} ${selectedOrder.zoneId}`}
+                      onCopy={(txt, e) => handleCopy(txt, `drawer-combo-${selectedOrder._id}`, e)}
+                      isCopied={copiedKey === `drawer-combo-${selectedOrder._id}`}
+                    />
+                  )}
                 </DrawerSection>
 
                 <DrawerSection icon={<CreditCard size={14} />} title="Payment Info">
@@ -420,8 +507,20 @@ export default function OrdersTab() {
                 </DrawerSection>
 
                 <DrawerSection icon={<User size={14} />} title="Buyer Info">
-                  <DrawerDetail label="Email" value={selectedOrder.email || "GUEST"} />
-                  <DrawerDetail label="Phone" value={selectedOrder.phone || "N/A"} />
+                  <DrawerDetail
+                    label="Email"
+                    value={selectedOrder.email || "GUEST"}
+                    copyText={selectedOrder.email}
+                    onCopy={(txt, e) => handleCopy(txt, `drawer-email-${selectedOrder._id}`, e)}
+                    isCopied={copiedKey === `drawer-email-${selectedOrder._id}`}
+                  />
+                  <DrawerDetail
+                    label="Phone"
+                    value={selectedOrder.phone || "N/A"}
+                    copyText={selectedOrder.phone}
+                    onCopy={(txt, e) => handleCopy(txt, `drawer-phone-${selectedOrder._id}`, e)}
+                    isCopied={copiedKey === `drawer-phone-${selectedOrder._id}`}
+                  />
                   <DrawerDetail label="Time" value={formatDateTime(selectedOrder.createdAt)} />
                 </DrawerSection>
 
@@ -641,14 +740,32 @@ function DrawerSection({ icon, title, children }) {
   );
 }
 
-function DrawerDetail({ label, value, emphasize }) {
+function DrawerDetail({ label, value, emphasize, copyText, onCopy, isCopied }) {
   return (
     <div className="flex items-end justify-between gap-1 group w-full">
       <span className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-widest whitespace-nowrap mb-0.5">{label}</span>
       <div className="flex-1 border-b-2 border-dotted border-[var(--border)]/30 mx-2 mb-1.5 opacity-50 group-hover:opacity-100 transition-opacity" />
-      <span className={`text-xs md:text-sm font-black text-right truncate max-w-[55%] ${emphasize ? "text-[var(--accent)] drop-shadow-[0_0_5px_rgba(var(--accent-rgb),0.3)] italic uppercase" : "text-[var(--foreground)]"}`}>
-        {value || "N/A"}
-      </span>
+      <div className="flex items-center gap-1.5 justify-end max-w-[60%]">
+        <span className={`text-xs md:text-sm font-black text-right truncate ${emphasize ? "text-[var(--accent)] drop-shadow-[0_0_5px_rgba(var(--accent-rgb),0.3)] italic uppercase" : "text-[var(--foreground)]"}`}>
+          {value || "N/A"}
+        </span>
+        {copyText && (
+          <button
+            type="button"
+            onClick={(e) => onCopy && onCopy(copyText, e)}
+            className="p-1 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0"
+            title={`Copy ${label}`}
+          >
+            {isCopied ? (
+              <span className="text-[8.5px] font-bold text-emerald-500 flex items-center gap-0.5">
+                <Check size={10} className="text-emerald-500" />
+              </span>
+            ) : (
+              <Copy size={10} />
+            )}
+          </button>
+        )}
+      </div>
     </div>
   );
 }

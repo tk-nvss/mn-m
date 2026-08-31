@@ -132,6 +132,15 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    lastPromoSentAt: {
+      type: Date,
+      default: null,
+      index: true,
+    },
+    promoSentCount: {
+      type: Number,
+      default: 0,
+    },
     tags: {
       type: [String],
       default: ["new"],
@@ -146,6 +155,7 @@ const UserSchema = new mongoose.Schema(
 
 UserSchema.index({ userType: 1 });
 UserSchema.index({ createdAt: -1 });
+UserSchema.index({ lastPromoSentAt: 1 });
 
 export default mongoose.models.User ||
   mongoose.model("User", UserSchema);

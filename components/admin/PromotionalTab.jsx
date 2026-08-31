@@ -21,7 +21,13 @@ import {
   Info,
   Filter,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Clock,
+  CheckCheck,
+  Eye,
+  Edit3,
+  Smartphone,
+  Monitor
 } from "lucide-react";
 import { SearchInput, Pagination, LoadingSpinner } from "@/components/common";
 
@@ -30,14 +36,17 @@ export default function PromotionalTab() {
   const [loading, setLoading] = useState(true);
   const [selectedEmails, setSelectedEmails] = useState([]);
   const [subject, setSubject] = useState("");
-  const [promoTitle, setPromoTitle] = useState("");
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [sending, setSending] = useState(false);
+  const [composerMode, setComposerMode] = useState("edit"); // "edit" | "preview"
+  const [previewDevice, setPreviewDevice] = useState("mobile"); // "mobile" | "desktop"
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [isRecentCampaignsOpen, setIsRecentCampaignsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState("all");
+  const [selectedPromoStatus, setSelectedPromoStatus] = useState("all");
   const [stats, setStats] = useState({ todayEmails: 0, totalEmails: 0 });
   const [recentLogs, setRecentLogs] = useState([]);
   const [manualEmail, setManualEmail] = useState("");
@@ -53,11 +62,29 @@ export default function PromotionalTab() {
 
   const ALLOWED_TAGS = ["premium", "rare", "new", "loyal", "vip", "special"];
 
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const fetchUsers = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const res = await fetch(`/api/admin/users/data?page=${page}&limit=50&role=${selectedRole === 'all' ? '' : selectedRole}&tag=${selectedTag || ''}`, {
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: "100",
+        role: selectedRole === 'all' ? '' : selectedRole,
+        tag: selectedTag || '',
+        promoStatus: selectedPromoStatus === 'all' ? '' : selectedPromoStatus,
+        search: debouncedSearch.trim(),
+        sortBy: selectedPromoStatus === 'never' ? 'createdAt' : (selectedPromoStatus !== 'all' ? 'lastPromoSentAt' : 'name')
+      });
+      const res = await fetch(`/api/admin/users/data?${queryParams.toString()}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -75,7 +102,7 @@ export default function PromotionalTab() {
 
   useEffect(() => {
     fetchUsers();
-  }, [page, selectedRole, selectedTag]);
+  }, [page, selectedRole, selectedTag, selectedPromoStatus, debouncedSearch]);
 
   useEffect(() => {
     fetchStats();
@@ -99,7 +126,6 @@ export default function PromotionalTab() {
 
   const useTemplate = (log) => {
     setSubject(log.subject || "");
-    setPromoTitle(log.promoTitle || "");
     setContent(log.content || "");
     setImageUrl(log.imageUrl || "");
     setStatus({ type: "success", message: "Template loaded." });
@@ -107,32 +133,26 @@ export default function PromotionalTab() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const allDisplayUsers = [
-    ...users.filter(u => !manualEmails.includes(u.email.toLowerCase())),
-    ...manualEmails.map(email => ({
-      _id: `manual-${email}`,
-      email,
-      name: "External Gmail",
-      userType: "external",
-      isManual: true,
-      tags: ["External"]
-    }))
+  const filteredUsers = [
+    ...users.filter(u => !manualEmails.includes(u.email?.toLowerCase())),
+    ...manualEmails
+      .filter(email => {
+        const matchesSearch = !search || email.toLowerCase().includes(search.toLowerCase());
+        const matchesRole = selectedRole === "all" || selectedRole === "external";
+        const matchesPromo = selectedPromoStatus === "all" || selectedPromoStatus === "never";
+        return matchesSearch && matchesRole && matchesPromo;
+      })
+      .map(email => ({
+        _id: `manual-${email}`,
+        email,
+        name: "External Gmail",
+        userType: "external",
+        isManual: true,
+        tags: ["External"],
+        lastPromoSentAt: null,
+        promoSentCount: 0
+      }))
   ];
-
-  const filteredUsers = allDisplayUsers.filter(u => {
-    const searchLower = search.toLowerCase();
-    const matchesSearch = u.name?.toLowerCase().includes(searchLower) ||
-      u.email?.toLowerCase().includes(searchLower) ||
-      u.tags?.some(t => t.toLowerCase().includes(searchLower));
-
-    // Role and Tag filtering is now handled by the API, but we keep this for manual emails and local search
-    const matchesRole = selectedRole === "all" ||
-      (selectedRole === "external" ? u.isManual : u.userType === selectedRole);
-
-    const matchesTag = !selectedTag || u.tags?.includes(selectedTag);
-
-    return matchesSearch && matchesRole && matchesTag;
-  });
 
   const uniqueTags = Array.from(new Set([...users.flatMap(u => u.tags || []), ...ALLOWED_TAGS]));
 
@@ -140,7 +160,7 @@ export default function PromotionalTab() {
     try {
       setTagUpdateLoading(true);
 
-      const userToUpdate = allDisplayUsers.find(user => user._id === userId);
+      const userToUpdate = filteredUsers.find(user => user._id === userId);
 
       if (userToUpdate?.isManual) {
         // Just update local state for manual/external contacts
@@ -263,6 +283,39 @@ export default function PromotionalTab() {
     }
   };
 
+  const selectUnsentOnPage = () => {
+    const unsentEmails = filteredUsers.filter(u => !u.lastPromoSentAt).map(u => u.email);
+    if (unsentEmails.length === 0) {
+      setStatus({ type: "info", message: "All contacts on this page were already emailed." });
+      return;
+    }
+    const allUnsentSelected = unsentEmails.every(email => selectedEmails.includes(email));
+    if (allUnsentSelected) {
+      setSelectedEmails(prev => prev.filter(email => !unsentEmails.includes(email)));
+    } else {
+      setSelectedEmails(prev => [...new Set([...prev, ...unsentEmails])]);
+    }
+  };
+
+  const formatPromoDate = (dateStr) => {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return null;
+
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  };
+
   const toggleSelectUser = (email) => {
     if (selectedEmails.includes(email)) {
       setSelectedEmails(selectedEmails.filter(e => e !== email));
@@ -310,7 +363,6 @@ export default function PromotionalTab() {
           body: JSON.stringify({
             emails: currentBatch,
             subject,
-            promoTitle,
             content,
             imageUrl,
           }),
@@ -320,6 +372,20 @@ export default function PromotionalTab() {
         if (data.success) {
           totalSuccess += data.report.success;
           totalFailed += data.report.failed;
+
+          // Instantly update user status in UI
+          const batchEmailSet = new Set(currentBatch.map(e => e.toLowerCase().trim()));
+          setUsers(prev => prev.map(u => {
+            if (u.email && batchEmailSet.has(u.email.toLowerCase().trim())) {
+              return {
+                ...u,
+                lastPromoSentAt: new Date().toISOString(),
+                promoSentCount: (u.promoSentCount || 0) + 1
+              };
+            }
+            return u;
+          }));
+
           // Update stats after each success
           fetchStats();
         } else {
@@ -339,10 +405,11 @@ export default function PromotionalTab() {
         message: `Transmission complete: ${totalSuccess} sent, ${totalFailed} failed.`
       });
       setSubject("");
-      setPromoTitle("");
       setContent("");
       setImageUrl("");
       setSelectedEmails([]);
+      fetchUsers();
+      fetchStats();
 
     } catch (err) {
       console.error("Transmission Error:", err);
@@ -381,20 +448,13 @@ export default function PromotionalTab() {
         </div>
 
         {/* STATS TILES */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
           <StatTile 
             icon={<Send size={18} />} 
             label="Mails Today" 
             value={stats.todayEmails.toLocaleString()} 
             sub="Active Campaign"
             color="emerald"
-          />
-          <StatTile 
-            icon={<Mail size={18} />} 
-            label="Total reach" 
-            value={stats.totalEmails.toLocaleString()} 
-            sub="Past Lifetime"
-            color="amber"
           />
           <StatTile 
             icon={<Globe size={18} />} 
@@ -431,17 +491,28 @@ export default function PromotionalTab() {
                 type="button"
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider border transition-all ${
-                  showFilters || selectedRole !== "all" || selectedTag
+                  showFilters || selectedRole !== "all" || selectedTag || selectedPromoStatus !== "all"
                     ? "bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/30"
                     : "border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.03]"
                 }`}
               >
                 <Filter size={11} />
                 <span>Filters</span>
-                {(selectedRole !== "all" || selectedTag) && (
+                {(selectedRole !== "all" || selectedTag || selectedPromoStatus !== "all") && (
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
                 )}
                 {showFilters ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
+              </button>
+
+              {/* Quick Select Unsent on page */}
+              <button
+                type="button"
+                onClick={selectUnsentOnPage}
+                className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 hover:brightness-110 active:scale-95 transition-all px-2 py-1 border border-emerald-500/30 rounded bg-emerald-500/10 hover:bg-emerald-500/20 flex items-center gap-1"
+                title="Select all unsent contacts on this page"
+              >
+                <CheckCheck size={11} />
+                <span>+ Unsent</span>
               </button>
 
               <button
@@ -449,14 +520,67 @@ export default function PromotionalTab() {
                 onClick={toggleSelectAll}
                 className="text-[10px] font-black uppercase tracking-wider text-[var(--accent)] hover:brightness-110 active:scale-95 transition-all px-1.5 py-1"
               >
-                {filteredUsers.every(u => selectedEmails.includes(u.email)) && filteredUsers.length > 0 ? "Deselect All" : "Select All"}
+                {filteredUsers.every(u => selectedEmails.includes(u.email)) && filteredUsers.length > 0 ? "Deselect Page" : "Select Page"}
               </button>
             </div>
+          </div>
+
+          {/* Quick Filter Status Tabs */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 px-1 custom-scrollbar">
+            {[
+              { id: "all", label: "All Contacts" },
+              { id: "never", label: "🟢 Unsent Only" },
+              { id: "sent_today", label: "Sent Today" },
+              { id: "sent_7d", label: "Sent > 7d Ago" },
+              { id: "sent", label: "Sent Before" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => { setSelectedPromoStatus(tab.id); setPage(1); }}
+                className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider whitespace-nowrap transition-all ${
+                  selectedPromoStatus === tab.id
+                    ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm"
+                    : "bg-[var(--card)]/80 border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.04]"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
 
           {/* Expandable Filter Drawer */}
           {showFilters && (
             <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)]/50 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+              {/* Send History Filter */}
+              <div>
+                <span className="block text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)] mb-1.5">
+                  Filter by Promo History
+                </span>
+                <div className="flex flex-wrap gap-1 items-center">
+                  {[
+                    { id: "all", label: "All" },
+                    { id: "never", label: "Never Sent (Unsent)" },
+                    { id: "sent_today", label: "Sent Today" },
+                    { id: "sent_7d", label: "Sent > 7 Days Ago" },
+                    { id: "sent", label: "Sent (Anytime)" },
+                  ].map((item) => (
+                    <button
+                      aria-label="button"
+                      key={item.id}
+                      onClick={() => { setSelectedPromoStatus(item.id); setPage(1); }}
+                      className={`px-2.5 py-1 rounded text-[9.5px] font-bold uppercase tracking-wider transition-colors ${
+                        selectedPromoStatus === item.id
+                          ? "bg-[var(--accent)] text-white"
+                          : "border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Role Selection */}
               <div>
                 <span className="block text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)] mb-1.5">
@@ -579,14 +703,36 @@ export default function PromotionalTab() {
                         {u.isManual ? <Globe size={14} /> : (u.name?.charAt(0).toUpperCase() || 'U')}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <p className="text-sm font-bold text-[var(--foreground)] truncate leading-tight">{u.name}</p>
                           {u.isManual && <span className="px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)] text-[8px] font-black uppercase tracking-widest shrink-0">Manual</span>}
                         </div>
                         <p className="text-[11px] text-[var(--muted)]/60 font-medium truncate lowercase leading-tight mb-1">{u.email}</p>
 
-                        {/* Tags Display */}
-                        <div className="flex flex-wrap gap-1.5 mt-2">
+                        {/* Tags & Send History Display */}
+                        <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                          {/* Dedicated Last Sent Status Badge */}
+                          {!u.isManual && (
+                            u.lastPromoSentAt ? (
+                              <span 
+                                title={`Last sent: ${new Date(u.lastPromoSentAt).toLocaleString()} (${u.promoSentCount || 1} total)`}
+                                className="px-2 py-0.5 rounded border border-blue-500/30 bg-blue-500/10 text-blue-600 text-[8.5px] font-black uppercase tracking-wider flex items-center gap-1 shadow-sm"
+                              >
+                                <Clock size={10} className="text-blue-500 shrink-0" />
+                                <span>Last Sent: {formatPromoDate(u.lastPromoSentAt)}</span>
+                                {(u.promoSentCount > 1) && <span className="px-1 rounded bg-blue-500/20 text-blue-700 text-[7.5px] font-bold">{u.promoSentCount}x</span>}
+                              </span>
+                            ) : (
+                              <span 
+                                title="Has not received any promotional emails"
+                                className="px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 text-[8.5px] font-black uppercase tracking-wider flex items-center gap-1 shadow-sm"
+                              >
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 animate-pulse" />
+                                <span>Last Sent: Never</span>
+                              </span>
+                            )
+                          )}
+
                           {u.tags?.map(tag => (
                             <span key={tag} className={`px-1.5 py-0.5 rounded border text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5 transition-colors ${getTagColor(tag)}`}>
                               {tag}
@@ -677,67 +823,215 @@ export default function PromotionalTab() {
           animate={{ opacity: 1, x: 0 }}
           className="space-y-4"
         >
-          <h3 className="text-xs font-black uppercase tracking-widest text-[var(--muted)] flex items-center gap-2 px-1">
-            <Mail size={14} className="text-[var(--accent)]" /> Email Composer
-          </h3>
-
-          <div className="space-y-4 border border-[var(--border)] rounded-xl bg-[var(--background)] p-5 relative overflow-hidden">
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Subject Line</label>
-              <input
-                type="text"
-                placeholder="Ex: Exclusive Offer for You! 🎉"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                className="w-full h-9 px-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
-              />
+          <div className="flex items-center justify-between px-1 gap-2">
+            <h3 className="text-xs font-black uppercase tracking-widest text-[var(--muted)] flex items-center gap-2">
+              <Mail size={14} className="text-[var(--accent)]" /> Email Composer
+            </h3>
+            <div className="flex items-center gap-1 bg-[var(--foreground)]/[0.04] p-0.5 rounded-lg border border-[var(--border)]">
+              <button
+                type="button"
+                onClick={() => setComposerMode("edit")}
+                className={`px-2.5 py-1 rounded-md text-[9.5px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all ${
+                  composerMode === "edit"
+                    ? "bg-[var(--accent)] text-white shadow-sm"
+                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                }`}
+              >
+                <Edit3 size={11} />
+                <span>Editor</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setComposerMode("preview")}
+                className={`px-2.5 py-1 rounded-md text-[9.5px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all ${
+                  composerMode === "preview"
+                    ? "bg-[var(--accent)] text-white shadow-sm"
+                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                }`}
+              >
+                <Eye size={11} />
+                <span>Live Preview</span>
+              </button>
             </div>
+          </div>
 
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Email Header / Title (Appears in body)</label>
-              <input
-                type="text"
-                placeholder="Ex: SPECIAL PROMOTION"
-                value={promoTitle}
-                onChange={(e) => setPromoTitle(e.target.value)}
-                className="w-full h-9 px-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
-              />
-            </div>
+          <div className="space-y-4 border border-[var(--border)] rounded-xl bg-[var(--background)] p-4 sm:p-5 relative overflow-hidden">
+            {composerMode === "preview" ? (
+              <div className="space-y-3 animate-in fade-in duration-150">
+                {/* Preview Toolbar: Device Switch & Subject Header */}
+                <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-[var(--foreground)]/[0.03] border border-[var(--border)]">
+                  <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                    <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)] shrink-0">Subject:</span>
+                    <span className="font-bold text-[var(--foreground)] text-xs truncate">
+                      {subject || <span className="italic text-[var(--muted)]/50 font-normal">No subject provided</span>}
+                    </span>
+                  </div>
 
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Banner Image URL (Optional)</label>
-              <input
-                type="text"
-                placeholder="Ex: https://example.com/banner.png"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                className="w-full h-9 px-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
-              />
-              {imageUrl && (
-                <div className="mt-2 rounded overflow-hidden border border-[var(--border)] aspect-video bg-[var(--foreground)]/[0.02] relative group">
-                  <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="text-white text-[10px] font-bold uppercase tracking-widest">Image Preview</span>
+                  {/* Device Toggle */}
+                  <div className="flex items-center gap-1 bg-[var(--background)] p-0.5 rounded-md border border-[var(--border)] shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDevice("mobile")}
+                      className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 transition-all ${
+                        previewDevice === "mobile"
+                          ? "bg-[var(--foreground)] text-[var(--background)]"
+                          : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                      }`}
+                    >
+                      <Smartphone size={11} />
+                      <span className="hidden xs:inline">Mobile</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDevice("desktop")}
+                      className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 transition-all ${
+                        previewDevice === "desktop"
+                          ? "bg-[var(--foreground)] text-[var(--background)]"
+                          : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                      }`}
+                    >
+                      <Monitor size={11} />
+                      <span className="hidden xs:inline">Desktop</span>
+                    </button>
                   </div>
                 </div>
-              )}
-            </div>
 
-            <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Message Body</label>
-                <div className="flex gap-2">
-                  <span className="text-[9px] font-bold text-[var(--muted)]/40 uppercase tracking-widest">Supports HTML</span>
-                  <span className="text-[9px] font-bold text-[var(--accent)] uppercase tracking-widest cursor-help" title="Use HTML tags like <b>, <br>, <p> etc.">Rich Format</span>
+                {/* Email Mockup Container */}
+                <div className="p-3 sm:p-6 rounded-xl bg-[#0f172a]/5 dark:bg-black/30 border border-slate-200/80 dark:border-slate-800 text-[#0f172a] shadow-inner max-h-[500px] overflow-y-auto custom-scrollbar flex justify-center">
+                  {previewDevice === "mobile" ? (
+                    /* SMARTPHONE DEVICE FRAME */
+                    <div className="w-full max-w-[340px] bg-slate-950 p-2 sm:p-2.5 rounded-[36px] shadow-2xl border-[3px] border-slate-800 relative transition-all">
+                      {/* Speaker & Dynamic Island / Notch */}
+                      <div className="flex items-center justify-between px-4 pt-1.5 pb-2 text-[10px] text-slate-400 font-bold">
+                        <span>9:41</span>
+                        <div className="w-16 h-3.5 bg-black rounded-full mx-auto" />
+                        <div className="flex items-center gap-1 text-[9px]">
+                          <span>5G</span>
+                          <div className="w-3.5 h-2 border border-slate-400 rounded-sm p-[1px]">
+                            <div className="w-full h-full bg-slate-400 rounded-[0.5px]" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Phone Screen Canvas */}
+                      <div className="bg-[#f8fafc] rounded-[26px] overflow-hidden p-3.5 sm:p-4 text-[#0f172a] font-sans shadow-inner">
+                        {/* Brand Header */}
+                        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200/60">
+                          <img src="https://mlbbtopup.in/logoBB.png" alt="Logo" className="h-5 w-auto object-contain" />
+                          <span className="font-black text-xs text-[#0f172a] tracking-tight">mlbbtopup.in</span>
+                        </div>
+
+                        {/* Banner Image */}
+                        {imageUrl && (
+                          <img src={imageUrl} alt="Promotion Banner" className="w-full rounded-lg mb-3 object-cover max-h-40 block border border-slate-100 shadow-sm" />
+                        )}
+
+                        {/* Body Content */}
+                        {content ? (
+                          <div
+                            className="text-xs text-[#334155] leading-relaxed mb-4 whitespace-pre-wrap font-sans"
+                            dangerouslySetInnerHTML={{ __html: content }}
+                          />
+                        ) : (
+                          <p className="text-xs text-slate-400 italic mb-4 leading-relaxed">
+                            (Your message body content will render here in real-time)
+                          </p>
+                        )}
+
+                        {/* Footer */}
+                        <div className="border-t border-slate-200/60 mt-4 pt-2.5 text-center text-[9px] text-[#94a3b8] leading-tight">
+                          <p className="mb-0.5"><span className="text-[#2563eb] font-semibold">mlbbtopup.in</span> • Support</p>
+                          <p className="text-[8.5px] text-[#cbd5e1]">© 2026 mlbbtopup.in. All rights reserved.</p>
+                        </div>
+                      </div>
+
+                      {/* Home Indicator Bar */}
+                      <div className="w-24 h-1 bg-slate-600 rounded-full mx-auto mt-2" />
+                    </div>
+                  ) : (
+                    /* DESKTOP EMAIL CANVAS */
+                    <div className="w-full max-w-[460px] bg-white p-5 sm:p-6 rounded-xl border border-[#e2e8f0] shadow-sm font-sans">
+                      {/* Header */}
+                      <div className="flex items-center gap-2 mb-4">
+                        <img src="https://mlbbtopup.in/logoBB.png" alt="Logo" className="h-6 w-auto object-contain" />
+                        <span className="font-extrabold text-sm text-[#0f172a] tracking-tight">mlbbtopup.in</span>
+                      </div>
+
+                      {/* Banner Image */}
+                      {imageUrl && (
+                        <img src={imageUrl} alt="Promotion Banner" className="w-full rounded-lg mb-4 object-cover max-h-48 block border border-slate-100" />
+                      )}
+
+                      {/* Body Content */}
+                      {content ? (
+                        <div
+                          className="text-xs text-[#334155] leading-relaxed mb-5 whitespace-pre-wrap font-sans"
+                          dangerouslySetInnerHTML={{ __html: content }}
+                        />
+                      ) : (
+                        <p className="text-xs text-slate-400 italic mb-5 leading-relaxed">
+                          (Your message body content will render here in real-time)
+                        </p>
+                      )}
+
+                      {/* Footer */}
+                      <div className="border-t border-[#f1f5f9] mt-6 pt-3 text-center text-[10px] text-[#94a3b8] leading-tight">
+                        <p className="mb-1"><span className="text-[#2563eb] font-semibold">mlbbtopup.in</span> • Support</p>
+                        <p className="text-[9px] text-[#cbd5e1]">© 2026 mlbbtopup.in. All rights reserved.</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-              <textarea
-                placeholder="Dear customer, we have a special promotion for you..."
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="w-full min-h-[180px] p-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none resize-y custom-scrollbar leading-relaxed placeholder:text-[var(--muted)]/40"
-              />
-            </div>
+            ) : (
+              <>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Subject Line</label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Exclusive Offer for You! 🎉"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    className="w-full h-9 px-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Banner Image URL (Optional)</label>
+                  <input
+                    type="text"
+                    placeholder="Ex: https://example.com/banner.png"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    className="w-full h-9 px-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none placeholder:text-[var(--muted)]/40"
+                  />
+                  {imageUrl && (
+                    <div className="mt-2 rounded overflow-hidden border border-[var(--border)] aspect-video bg-[var(--foreground)]/[0.02] relative group">
+                      <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span className="text-white text-[10px] font-bold uppercase tracking-widest">Image Preview</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">Message Body</label>
+                    <div className="flex gap-2">
+                      <span className="text-[9px] font-bold text-[var(--muted)]/40 uppercase tracking-widest">Supports HTML</span>
+                      <span className="text-[9px] font-bold text-[var(--accent)] uppercase tracking-widest cursor-help" title="Use HTML tags like <b>, <br>, <p> etc.">Rich Format</span>
+                    </div>
+                  </div>
+                  <textarea
+                    placeholder="Dear customer, we have a special promotion for you..."
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    className="w-full min-h-[180px] p-3 rounded border border-[var(--border)] bg-[var(--background)] text-xs text-[var(--foreground)] focus:border-[var(--accent)]/50 transition-all outline-none resize-y custom-scrollbar leading-relaxed placeholder:text-[var(--muted)]/40"
+                  />
+                </div>
+              </>
+            )}
 
             <AnimatePresence mode="wait">
               {status.message && (

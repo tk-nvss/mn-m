@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import jwt from "jsonwebtoken";
 import { sendPromoMail } from "@/lib/sendPromoMail";
 import PromoLog from "@/models/PromoLog";
+import User from "@/models/User";
 
 export async function POST(req) {
     try {
@@ -19,7 +20,7 @@ export async function POST(req) {
             return Response.json({ message: "Forbidden" }, { status: 403 });
 
         /* ================= PAYLOAD ================= */
-        const { emails, subject, content, imageUrl, promoTitle } = await req.json();
+        const { emails, subject, content, imageUrl } = await req.json();
 
         if (!emails || !Array.isArray(emails) || emails.length === 0) {
             return Response.json({ success: false, message: "No recipients selected." }, { status: 400 });
@@ -30,7 +31,29 @@ export async function POST(req) {
         }
 
         /* ================= SENDING ================= */
-        const report = await sendPromoMail({ emails, subject, content, imageUrl, promoTitle });
+        const report = await sendPromoMail({ emails, subject, content, imageUrl });
+
+        /* ================= TRACK USERS ================= */
+        const sentEmails = (report.successEmails && report.successEmails.length > 0)
+            ? report.successEmails
+            : (report.success > 0 ? emails : []);
+
+        if (sentEmails.length > 0) {
+            try {
+                const regexEmails = sentEmails.map(e => new RegExp(`^${e.toLowerCase().trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}$`, 'i'));
+                const updateResult = await User.updateMany(
+                    { email: { $in: regexEmails } },
+                    {
+                        $set: { lastPromoSentAt: new Date() },
+                        $inc: { promoSentCount: 1 }
+                    },
+                    { strict: false }
+                );
+                console.log(`[Promo Mail] Updated ${updateResult.modifiedCount || 0} user records with lastPromoSentAt.`);
+            } catch (userUpdateErr) {
+                console.error("Failed to update user promo stats:", userUpdateErr);
+            }
+        }
 
         /* ================= LOGGING ================= */
         try {
@@ -42,6 +65,7 @@ export async function POST(req) {
                 count: emails.length,
                 successCount: report.success,
                 failedCount: report.failed,
+                recipients: emails,
                 sentBy: decoded.email || decoded.userId || "Unknown Owner"
             });
         } catch (logErr) {

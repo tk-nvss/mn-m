@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
+import Order from "@/models/Order";
 import jwt from "jsonwebtoken";
 
 export async function GET(req) {
@@ -25,7 +26,7 @@ export async function GET(req) {
 
     /* ================= QUERY ================= */
     /* ================= SINGLE OPTIMIZED AGGREGATION ================= */
-    const [statsResult, totalUsers] = await Promise.all([
+    const [statsResult, totalUsers, payingUsersFacet] = await Promise.all([
       User.aggregate([
         {
           $facet: {
@@ -53,14 +54,60 @@ export async function GET(req) {
         }
       ]),
       User.countDocuments({}),
+      Order.aggregate([
+        {
+          $match: { status: "success", email: { $exists: true, $ne: "" } }
+        },
+        {
+          $facet: {
+            "allTime": [
+              { $group: { _id: { $toLower: "$email" } } },
+              { $count: "count" }
+            ],
+            "day": [
+              { $match: { createdAt: { $gte: last24h } } },
+              { $group: { _id: { $toLower: "$email" } } },
+              { $count: "count" }
+            ],
+            "week": [
+              { $match: { createdAt: { $gte: last7d } } },
+              { $group: { _id: { $toLower: "$email" } } },
+              { $count: "count" }
+            ],
+            "month": [
+              { $match: { createdAt: { $gte: last30d } } },
+              { $group: { _id: { $toLower: "$email" } } },
+              { $count: "count" }
+            ]
+          }
+        }
+      ])
     ]);
 
     const stats = statsResult[0];
+    const payingFacet = payingUsersFacet[0] || {};
+    const payingStats = {
+      allTime: payingFacet.allTime?.[0]?.count || 0,
+      day: payingFacet.day?.[0]?.count || 0,
+      week: payingFacet.week?.[0]?.count || 0,
+      month: payingFacet.month?.[0]?.count || 0,
+    };
+
+    const conversionStats = {
+      allTime: totalUsers > 0 ? Math.round((payingStats.allTime / totalUsers) * 100) : 0,
+      day: totalUsers > 0 ? Math.max(Math.round((payingStats.day / totalUsers) * 100), payingStats.day > 0 ? 1 : 0) : 0,
+      week: totalUsers > 0 ? Math.max(Math.round((payingStats.week / totalUsers) * 100), payingStats.week > 0 ? 1 : 0) : 0,
+      month: totalUsers > 0 ? Math.max(Math.round((payingStats.month / totalUsers) * 100), payingStats.month > 0 ? 1 : 0) : 0,
+    };
 
     /* ================= RESPONSE ================= */
     return Response.json({
       success: true,
       total: totalUsers,
+      payingUsers: payingStats.allTime,
+      payingStats,
+      conversionRate: conversionStats.allTime,
+      conversionStats,
       activeStats: {
         day: stats.active[0]?.day || 0,
         week: stats.active[0]?.week || 0,

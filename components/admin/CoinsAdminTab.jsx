@@ -23,7 +23,7 @@ import {
   FiAlertCircle,
   FiCheck,
 } from "react-icons/fi";
-import { Icons } from "@/components/icons";
+import { Coins, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { StatusBadge, SearchInput, EmptyState, Pagination, LoadingSpinner } from "@/components/common";
 import { formatCurrency, formatCoins, formatNumber, formatDate, formatDateTime } from "@/utils";
 
@@ -96,6 +96,14 @@ export default function CoinsAdminTab() {
   const [adjAmount, setAdjAmount] = useState("");
   const [adjAction, setAdjAction] = useState("add");
 
+  const [coinStats, setCoinStats] = useState({
+    totalAvailable: 0,
+    totalEarned: 0,
+    totalSpent: 0,
+    todayEarned: 0,
+    todaySpent: 0
+  });
+
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const showToast = (msg, type) => {
@@ -156,7 +164,9 @@ export default function CoinsAdminTab() {
       if (data.success) {
         setHistory(data.transactions || []);
         setPages(data.pages || 1);
-
+        if (data.stats) {
+          setCoinStats(data.stats);
+        }
       }
     } finally {
       setLoading(false);
@@ -330,11 +340,80 @@ export default function CoinsAdminTab() {
             onClick={() => { setView("tasks"); setPage(1); }}
             className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wide border transition-all ${
               view === "tasks" ? "bg-[var(--accent)]/15 border-[var(--accent)]/40 text-[var(--accent)]"
-              : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:border(--accent)/30"
+              : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30"
             }`}
           >
             Tasks
           </button>
+        </div>
+      </div>
+
+      {/* ── COIN STATS OVERVIEW ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Total in Circulation */}
+        <div className="p-3 sm:p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/[0.04] flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">In Circulation</span>
+            <div className="p-1 rounded-md bg-amber-500/10 text-amber-400">
+              <Coins size={12} />
+            </div>
+          </div>
+          <div className="mt-2">
+            <span className="text-base sm:text-lg font-black text-amber-400 tabular-nums">
+              {formatNumber(coinStats.totalAvailable)} <span className="text-[9px] font-bold">BBC</span>
+            </span>
+            <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">Active User Balances</p>
+          </div>
+        </div>
+
+        {/* Total Distributed */}
+        <div className="p-3 sm:p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Total Distributed</span>
+            <div className="p-1 rounded-md bg-emerald-500/10 text-emerald-400">
+              <ArrowUpRight size={12} />
+            </div>
+          </div>
+          <div className="mt-2">
+            <span className="text-base sm:text-lg font-black text-emerald-400 tabular-nums">
+              {formatNumber(coinStats.totalEarned)} <span className="text-[9px] font-bold">BBC</span>
+            </span>
+            <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">All-time Claims & Tasks</p>
+          </div>
+        </div>
+
+        {/* Total Redeemed */}
+        <div className="p-3 sm:p-3.5 rounded-xl border border-purple-500/20 bg-purple-500/[0.04] flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Total Spent</span>
+            <div className="p-1 rounded-md bg-purple-500/10 text-purple-400">
+              <ArrowDownRight size={12} />
+            </div>
+          </div>
+          <div className="mt-2">
+            <span className="text-base sm:text-lg font-black text-purple-400 tabular-nums">
+              {formatNumber(coinStats.totalSpent)} <span className="text-[9px] font-bold">BBC</span>
+            </span>
+            <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">Used for Discounts</p>
+          </div>
+        </div>
+
+        {/* Today's Activity */}
+        <div className="p-3 sm:p-3.5 rounded-xl border border-[var(--border)] bg-[var(--card)] flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Today's Flow</span>
+            <span className="text-[8px] font-black uppercase bg-[var(--foreground)]/[0.05] px-1.5 py-0.5 rounded text-[var(--muted)]">Today</span>
+          </div>
+          <div className="mt-2 flex items-baseline justify-between">
+            <div>
+              <span className="text-xs sm:text-sm font-black text-emerald-400 tabular-nums">+{formatNumber(coinStats.todayEarned)}</span>
+              <span className="text-[8px] text-[var(--muted)] block font-semibold">Earned</span>
+            </div>
+            <div className="text-right">
+              <span className="text-xs sm:text-sm font-black text-rose-400 tabular-nums">-{formatNumber(coinStats.todaySpent)}</span>
+              <span className="text-[8px] text-[var(--muted)] block font-semibold">Spent</span>
+            </div>
+          </div>
         </div>
       </div>
 

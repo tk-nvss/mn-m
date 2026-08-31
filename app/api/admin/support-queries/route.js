@@ -31,18 +31,64 @@ export async function GET(req) {
     verifyAdmin(req);
 
     /* ================= STATS ================= */
-    const startOfDay = new Date(new Date().setHours(0, 0, 0, 0));
+    const now = new Date();
+    const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const last7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const last30d = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-    const [openCount, todayCount] = await Promise.all([
-      SupportQuery.countDocuments({ status: { $in: ["open", "in_progress"] } }),
-      SupportQuery.countDocuments({ createdAt: { $gte: startOfDay } }),
+    const [statsFacet, totalCount] = await Promise.all([
+      SupportQuery.aggregate([
+        {
+          $facet: {
+            "statusCounts": [
+              {
+                $group: {
+                  _id: "$status",
+                  count: { $sum: 1 }
+                }
+              }
+            ],
+            "period": [
+              {
+                $group: {
+                  _id: null,
+                  day: { $sum: { $cond: [{ $gte: ["$createdAt", last24h] }, 1, 0] } },
+                  week: { $sum: { $cond: [{ $gte: ["$createdAt", last7d] }, 1, 0] } },
+                  month: { $sum: { $cond: [{ $gte: ["$createdAt", last30d] }, 1, 0] } },
+                }
+              }
+            ]
+          }
+        }
+      ]),
+      SupportQuery.countDocuments({})
     ]);
+
+    const statusCounts = statsFacet[0]?.statusCounts || [];
+    const periodData = statsFacet[0]?.period?.[0] || { day: 0, week: 0, month: 0 };
+
+    let openCount = 0;
+    let resolvedCount = 0;
+
+    for (const item of statusCounts) {
+      if (["open", "in_progress"].includes(item._id)) {
+        openCount += item.count;
+      } else if (["resolved", "closed"].includes(item._id)) {
+        resolvedCount += item.count;
+      }
+    }
+
+    const resolutionRate = totalCount > 0 ? Math.round((resolvedCount / totalCount) * 100) : 100;
 
     return Response.json({
       success: true,
       stats: {
+        total: totalCount,
         open: openCount,
-        today: todayCount,
+        resolved: resolvedCount,
+        resolutionRate,
+        periodStats: periodData,
+        today: periodData.day,
       },
     });
   } catch (err) {

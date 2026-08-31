@@ -25,6 +25,7 @@ export async function GET(req) {
         const search = searchParams.get("search")?.trim();
         const userType = searchParams.get("userType")?.trim() || searchParams.get("role")?.trim();
         const tag = searchParams.get("tag")?.trim();
+        const promoStatus = searchParams.get("promoStatus")?.trim();
 
         const from = searchParams.get("from");
         const to = searchParams.get("to");
@@ -45,7 +46,9 @@ export async function GET(req) {
             joinDate: { createdAt: order },
             lastLogin: { lastLogin: order },
             totalOrders: { totalOrders: order },
-            coins: { coins: order }
+            coins: { coins: order },
+            lastPromoSentAt: { lastPromoSentAt: order },
+            promo: { lastPromoSentAt: order }
         };
 
         const currentSort = sortMap[sortBy] || { lowerName: 1 };
@@ -71,6 +74,24 @@ export async function GET(req) {
         // 🏷️ Filter by tag
         if (tag) {
             filter.tags = tag;
+        }
+
+        // ✉️ Filter by promo status
+        if (promoStatus && promoStatus !== 'all') {
+            if (promoStatus === 'never') {
+                filter.lastPromoSentAt = { $in: [null, undefined] };
+            } else if (promoStatus === 'sent') {
+                filter.lastPromoSentAt = { $ne: null };
+            } else if (promoStatus === 'sent_today') {
+                const past24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                filter.lastPromoSentAt = { $gte: past24h };
+            } else if (promoStatus === 'sent_7d') {
+                const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+                filter.lastPromoSentAt = { $lte: sevenDaysAgo, $ne: null };
+            } else if (promoStatus === 'sent_30d') {
+                const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+                filter.lastPromoSentAt = { $lte: thirtyDaysAgo, $ne: null };
+            }
         }
 
         // 📅 Filter by createdAt date range
@@ -115,7 +136,9 @@ export async function GET(req) {
                 $addFields: {
                     tags: { $ifNull: ["$tags", ["new"]] },
                     totalOrders: { $ifNull: [{ $arrayElemAt: ["$orderStats.count", 0] }, 0] },
-                    lowerName: { $toLower: { $ifNull: ["$name", ""] } }
+                    lowerName: { $toLower: { $ifNull: ["$name", ""] } },
+                    lastPromoSentAt: { $ifNull: ["$lastPromoSentAt", null] },
+                    promoSentCount: { $ifNull: ["$promoSentCount", 0] }
                 }
             },
             // 🔴 Sort first to ensure pagination works across the "all" results

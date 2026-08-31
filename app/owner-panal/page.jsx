@@ -665,7 +665,7 @@ export default function AdminPanalPage() {
               <UiSettingsTab />
             )}
             {activeTab === "analytics" && (
-              <AnalyticsTab />
+              <AnalyticsTab onNavigate={setActiveTab} />
             )}
             {activeTab === "pwa-stats" && (
               <PwaStatsTab />

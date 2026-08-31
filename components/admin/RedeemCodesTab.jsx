@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiGift, FiPlus, FiClock, FiUser, FiTrash2, FiZap, FiHash, FiType } from "react-icons/fi";
+import { Ticket, Gift, CheckCircle2, Percent } from "lucide-react";
 import { StatusBadge, CopyButton } from "@/components/common";
-import { formatCurrency, formatDate, formatDateTime } from "@/utils";
+import { formatCurrency, formatDate, formatDateTime, formatNumber } from "@/utils";
 
 export default function RedeemCodesTab() {
     const [amount, setAmount] = useState("");
@@ -102,8 +103,78 @@ export default function RedeemCodesTab() {
         }
     };
 
+    const availableCount = Math.max((summary.total || 0) - (summary.totalUsed || 0), 0);
+    const claimRate = summary.total > 0 ? Math.round(((summary.totalUsed || 0) / summary.total) * 100) : 0;
+
     return (
         <div className="space-y-4 sm:space-y-6 md:space-y-8 animate-in fade-in duration-500">
+
+            {/* ── STATS OVERVIEW ── */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                {/* Total Codes */}
+                <div className="p-3.5 rounded-xl border border-indigo-500/20 bg-indigo-500/[0.04] flex flex-col justify-between">
+                    <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Total Codes</span>
+                        <div className="p-1 rounded-md bg-indigo-500/10 text-indigo-400">
+                            <Ticket size={12} />
+                        </div>
+                    </div>
+                    <div className="mt-2">
+                        <span className="text-base sm:text-lg font-black text-indigo-400 tabular-nums">
+                            {formatNumber(summary.total || 0)}
+                        </span>
+                        <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">Generated Vouchers</p>
+                    </div>
+                </div>
+
+                {/* Available Codes */}
+                <div className="p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/[0.04] flex flex-col justify-between">
+                    <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Available</span>
+                        <div className="p-1 rounded-md bg-amber-500/10 text-amber-400">
+                            <Gift size={12} />
+                        </div>
+                    </div>
+                    <div className="mt-2">
+                        <span className="text-base sm:text-lg font-black text-amber-400 tabular-nums">
+                            {formatNumber(availableCount)}
+                        </span>
+                        <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">Ready to Claim</p>
+                    </div>
+                </div>
+
+                {/* Claimed Codes */}
+                <div className="p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] flex flex-col justify-between">
+                    <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Claimed</span>
+                        <div className="p-1 rounded-md bg-emerald-500/10 text-emerald-400">
+                            <CheckCircle2 size={12} />
+                        </div>
+                    </div>
+                    <div className="mt-2">
+                        <span className="text-base sm:text-lg font-black text-emerald-400 tabular-nums">
+                            {formatNumber(summary.totalUsed || 0)}
+                        </span>
+                        <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">Used by Players</p>
+                    </div>
+                </div>
+
+                {/* Claim Rate */}
+                <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--card)] flex flex-col justify-between">
+                    <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Claim Rate</span>
+                        <div className="p-1 rounded-md bg-[var(--foreground)]/[0.05] text-[var(--muted)]">
+                            <Percent size={12} />
+                        </div>
+                    </div>
+                    <div className="mt-2">
+                        <span className="text-base sm:text-lg font-black text-[var(--foreground)] tabular-nums">
+                            {claimRate}%
+                        </span>
+                        <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">Redemption Velocity</p>
+                    </div>
+                </div>
+            </div>
 
             {/* GENERATOR CARD */}
             <div className="p-3.5 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--foreground)]/[0.02] shadow-2xl shadow-black/5 relative overflow-hidden">
