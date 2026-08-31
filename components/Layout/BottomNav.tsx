@@ -15,9 +15,14 @@ export default function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Hide BottomNav on admin / full-screen checkout pages
+  // Hide BottomNav on admin, auth pages, and inside game detail/purchase pages
   const hideOnRoutes = ["/admin", "/owner-panal", "/login", "/register"];
-  if (hideOnRoutes.some((route) => pathname?.startsWith(route))) return null;
+  if (
+    pathname?.startsWith("/games/") ||
+    hideOnRoutes.some((route) => pathname?.startsWith(route))
+  ) {
+    return null;
+  }
 
   const isHomeActive = pathname === "/";
 

@@ -95,19 +95,19 @@ export default function GameSwitcher() {
     };
 
     if (loading) return (
-        <div className="w-full flex gap-4 overflow-hidden mb-5">
-            {[1, 2, 3, 4, 5, 6].map(i => (
-                <div key={i} className="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white/5" />
+        <div className="w-full flex gap-2.5 overflow-hidden mb-3">
+            {[1, 2, 3, 4, 5, 6, 7].map(i => (
+                <div key={i} className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/5" />
             ))}
         </div>
     );
 
     return (
-        <div className="w-full mb-3 relative z-20">
-            <div className="flex items-center justify-between mb-2 px-1">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-[2px] bg-[var(--accent)]" />
-                    <h3 className="text-[10px] md:text-xs font-black text-[var(--foreground)] uppercase tracking-[0.3em] opacity-50">
+        <div className="w-full mb-2 relative z-20">
+            <div className="flex items-center justify-between mb-1.5 px-1">
+                <div className="flex items-center gap-2">
+                    <div className="w-6 h-[2px] bg-[var(--accent)]" />
+                    <h3 className="text-[9px] sm:text-[10px] font-black text-[var(--foreground)] uppercase tracking-[0.25em] opacity-50">
                         Switch Game
                     </h3>
                 </div>
@@ -115,7 +115,7 @@ export default function GameSwitcher() {
 
             <div
                 ref={scrollContainerRef}
-                className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide snap-x no-scrollbar pt-2"
+                className="flex gap-2 sm:gap-2.5 overflow-x-auto pb-1.5 -mx-4 px-4 scrollbar-hide snap-x no-scrollbar pt-1"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 {games.map((game, idx) => {
@@ -126,19 +126,19 @@ export default function GameSwitcher() {
                     return (
                         <div
                             key={`${game.gameSlug}-${idx}-${isVariant ? 'wp' : 'reg'}`}
-                            className="flex-shrink-0 flex flex-col items-center gap-1.5 snap-center"
+                            className="flex-shrink-0 w-[54px] sm:w-[60px] flex flex-col items-center gap-1.5 snap-center cursor-pointer"
+                            onClick={() => handleSwitch(game)}
                         >
                             <button aria-label="button"
-                                onClick={() => handleSwitch(game)}
                                 className={`
-                                    relative w-11 h-11 md:w-12 md:h-12 rounded-2xl group
+                                    relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl group transition-all cursor-pointer
                                     ${isActive
-                                        ? "ring-2 ring-[var(--accent)] shadow-[0_8px_20px_-5px_rgba(var(--accent-rgb),0.4)]"
-                                        : "opacity-50 hover:opacity-100 grayscale hover:grayscale-0"
+                                        ? "ring-2 ring-[var(--accent)]"
+                                        : "opacity-45 hover:opacity-100 grayscale hover:grayscale-0"
                                     }
                                 `}
                             >
-                                <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[var(--card)] ring-1 ring-white/10 group-hover:ring-white/20">
+                                <div className="relative w-full h-full rounded-xl overflow-hidden bg-[var(--card)] ring-1 ring-white/10 group-hover:ring-white/20">
                                     <Image
                                         src={game.gameImageId?.image || "/placeholder.jpg"}
                                         alt={game.gameName}
@@ -148,16 +148,11 @@ export default function GameSwitcher() {
                                     />
                                     <div className={`absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 ${isActive ? 'opacity-100' : ''}`} />
                                 </div>
-
-                                {/* Active Glow Backdrop */}
-                                {isActive && (
-                                    <div className="absolute inset-0 -z-10 bg-[var(--accent)] blur-md opacity-30 scale-110 rounded-2xl" />
-                                )}
                             </button>
 
-                            {/* Game Name Label - Always Visible */}
+                            {/* Game Name Label - 2 lines wrapped */}
                             <p className={`
-                                text-[7px] md:text-[8px] font-black uppercase tracking-wider text-center max-w-[4.5rem] md:max-w-[5.5rem] line-clamp-2 leading-tight
+                                text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider text-center w-full block line-clamp-2 leading-[1.2] min-h-[20px]
                                 ${isActive ? 'text-[var(--accent)]' : 'text-[var(--muted)] opacity-60 group-hover:opacity-100'}
                             `}>
                                 {game.gameName}

@@ -9,6 +9,7 @@
   --foreground: #0f172a;
   --accent: #3b82f6;
   --accent-hover: #2563eb;
+  --accent-rgb: 59, 130, 246;
   --muted: #64748b;
   --border: #e2e8f0;
   --card: #f1f5f9;
@@ -31,6 +32,7 @@ html[data-theme="dark"] {
   --foreground: #f1f5f9;
   --accent: #7dd3fc;
   --accent-hover: #38bdf8;
+  --accent-rgb: 125, 211, 252;
   --muted: #94a3b8;
   --border: #111111;
   --card: #000000;
@@ -42,6 +44,7 @@ html[data-theme="light"] {
   --foreground: #0f172a;
   --accent: #3b82f6;
   --accent-hover: #2563eb;
+  --accent-rgb: 59, 130, 246;
   --muted: #64748b;
   --border: #e2e8f0;
   --card: #f8fafc;

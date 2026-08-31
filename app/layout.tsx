@@ -116,7 +116,22 @@ export default async function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: `
           try {
             var savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme !== 'light' && savedTheme !== 'dark') {
+              savedTheme = 'dark';
+            }
             document.documentElement.setAttribute('data-theme', savedTheme);
+            var savedAccent = localStorage.getItem('theme-accent');
+            var savedAccentHover = localStorage.getItem('theme-accent-hover');
+            var savedAccentRgb = localStorage.getItem('theme-accent-rgb');
+            if (savedAccent) {
+              document.documentElement.style.setProperty('--accent', savedAccent);
+            }
+            if (savedAccentHover) {
+              document.documentElement.style.setProperty('--accent-hover', savedAccentHover);
+            }
+            if (savedAccentRgb) {
+              document.documentElement.style.setProperty('--accent-rgb', savedAccentRgb);
+            }
           } catch(e) {}
           window.__pwaPrompt = null;
           window.addEventListener('beforeinstallprompt', function(e) {
