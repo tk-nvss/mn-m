@@ -349,11 +349,11 @@ export default function Header() {
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       {user ? (
                         <>
-                          <div className="w-8 h-8 rounded-lg overflow-hidden border border-[var(--border)] shadow-sm shrink-0">
+                          <div className="w-8 h-8 rounded-full overflow-hidden border border-[var(--border)] shadow-sm shrink-0">
                             {user?.avatar ? (
-                              <Image src={user.avatar} alt={`${user.name || "User"} Profile Avatar`} width={32} height={32} className="object-cover" />
+                              <Image src={user.avatar} alt={`${user.name || "User"} Profile Avatar`} width={32} height={32} className="object-cover w-full h-full rounded-full" />
                             ) : (
-                              <div className="w-full h-full bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] text-sm font-black">{user.name?.charAt(0)}</div>
+                              <div className="w-full h-full bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] text-sm font-black rounded-full">{user.name?.charAt(0)}</div>
                             )}
                           </div>
                           <div className="flex flex-col min-w-0 flex-1">
@@ -364,12 +364,12 @@ export default function Header() {
                               </span>
                             </div>
                             <span className="text-[10px] font-medium text-[var(--foreground)] opacity-70 truncate italic leading-tight mb-1">{user.email}</span>
-                            <CopyButton text={user.userId} label={`ID: ${user.userId}`} size="xs" variant="subtle" />
+                            <CopyButton text={user.userId} label={user.userId} size="xs" variant="subtle" className="font-mono text-[9px] truncate max-w-full" />
                           </div>
                         </>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]"><FiUser size={16} /></div>
+                          <div className="w-8 h-8 rounded-full bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]"><FiUser size={16} /></div>
                           <span className="text-sm font-bold">Guest Account</span>
                         </div>
                       )}

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FiZap, FiClock, FiChevronRight } from "react-icons/fi";
+import { FiZap, FiClock } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { ProductCardSkeleton } from "../Skeleton/Skeleton";
 
@@ -37,16 +37,6 @@ const flashSaleData = [
         slug: "starlight-card-manual",
         badge: "New"
     },
-    // {
-    //     id: 3,
-    //     name: "Weekly Card Plus",
-    //     game: "HOK",
-    //     image: "/game-assets/hok.jpg",
-    //     price: "₹240",
-    //     originalPrice: "₹299",
-    //     slug: "honor-of-kings57",
-    //     badge: "Best"
-    // },
     {
         id: 5,
         name: "Weekly Bundle",
@@ -67,7 +57,6 @@ const flashSaleData = [
         slug: "honor-of-kings57",
         badge: "Best"
     },
-
 ];
 
 export default function FlashSale() {
@@ -75,8 +64,7 @@ export default function FlashSale() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Mock loading for premium feel
-        const timer = setTimeout(() => setLoading(false), 800);
+        const timer = setTimeout(() => setLoading(false), 500);
         return () => clearTimeout(timer);
     }, []);
 
@@ -93,25 +81,22 @@ export default function FlashSale() {
     }, []);
 
     return (
-        <section className="relative py-1.5 px-4 overflow-hidden border-b border-[var(--border)] bg-[var(--card)]/30">
-            {/* Background Decorative */}
-            <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-amber-500/5 blur-[80px] pointer-events-none" />
-
+        <section className="relative py-2.5 px-4 overflow-hidden border-b border-[var(--border)] bg-[var(--card)]/20">
             <div className="max-w-7xl mx-auto">
-                {/* Compact Header */}
-                <div className="flex items-center justify-between mb-1.5">
+                {/* Header - Clean, No Fuzzy Shadows */}
+                <div className="flex items-center justify-between mb-2.5">
                     <div className="flex items-center gap-2">
-                        <div className="p-1 rounded-lg bg-amber-500 text-black shadow-[0_0_15px_rgba(245,158,11,0.3)] shrink-0">
-                            <FiZap size={12} fill="currentColor" />
+                        <div className="p-1 rounded-lg bg-amber-500 text-black shrink-0">
+                            <FiZap size={13} fill="currentColor" />
                         </div>
-                        <h2 className="text-base sm:text-lg font-black uppercase tracking-tighter italic text-[var(--foreground)]">
+                        <h2 className="text-sm sm:text-base font-black uppercase tracking-wider italic text-[var(--foreground)]">
                             Flash <span className="text-amber-500">Sale</span>
                         </h2>
                     </div>
 
-                    <div className="flex items-center gap-2 bg-[var(--foreground)]/[0.03] backdrop-blur-md border border-[var(--border)] px-3 py-1 rounded-xl">
-                        <FiClock className="text-amber-500 hidden sm:block" size={10} />
-                        <div className="flex items-center gap-2 font-bold text-[10px] tabular-nums text-amber-500">
+                    <div className="flex items-center gap-1.5 bg-[var(--foreground)]/5 border border-[var(--border)] px-2.5 py-1 rounded-xl">
+                        <FiClock className="text-amber-500 hidden sm:block" size={11} />
+                        <div className="flex items-center gap-1.5 font-bold text-[10px] tabular-nums text-amber-500">
                             <span className="opacity-60 text-[8px] uppercase tracking-widest text-[var(--foreground)] mr-1 hidden md:block">Ends In</span>
                             <span>{String(timeLeft.hours).padStart(2, '0')}</span>
                             <span className="opacity-30 text-[var(--foreground)]">:</span>
@@ -122,55 +107,55 @@ export default function FlashSale() {
                     </div>
                 </div>
 
-                {/* Compact Horizontal Slider */}
-                <div className="overflow-x-auto pb-2 custom-scrollbar-premium snap-x snap-mandatory">
-                    <div className="flex gap-3 md:gap-4 px-1 min-w-max md:min-w-0">
+                {/* Horizontal Cards Slider */}
+                <div className="overflow-x-auto pb-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory">
+                    <div className="flex gap-2.5 sm:gap-3.5 px-0.5 min-w-max md:min-w-0">
                         {loading ? (
                             [1, 2, 3, 4].map(i => (
-                                <div key={i} className="w-[125px] sm:w-[150px] md:w-[200px]">
+                                <div key={i} className="w-[125px] sm:w-[150px] md:w-[185px]">
                                     <ProductCardSkeleton />
                                 </div>
                             ))
                         ) : (
-                            flashSaleData.map((item, index) => (
+                            flashSaleData.map((item) => (
                                 <div
                                     key={item.id}
                                     className="snap-start"
                                 >
                                     <Link
                                         href={`/games/${item.slug}`}
-                                        className="group relative block w-[120px] sm:w-[145px] md:w-[185px] bg-[var(--card)]/40 backdrop-blur-lg border border-[var(--border)] rounded-[1rem] p-1.5 shadow-md hover:border-amber-500/30 transition-colors"
+                                        className="group relative block w-[122px] sm:w-[145px] md:w-[175px] bg-[var(--card)] border border-[var(--border)] rounded-2xl p-1.5 hover:border-amber-500/50 transition-all duration-200"
                                     >
                                         {/* Game Badge */}
-                                        <div className="absolute top-2.5 left-2.5 z-20">
-                                            <span className="text-[7px] md:text-[8.5px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-amber-500 text-black shadow-lg">
+                                        <div className="absolute top-2 left-2 z-20">
+                                            <span className="text-[7.5px] md:text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-amber-500 text-black">
                                                 {item.game}
                                             </span>
                                         </div>
 
                                         {/* Image Container */}
-                                        <div className="relative aspect-[16/13] rounded-[0.8rem] overflow-hidden mb-1 ring-1 ring-[var(--border)] bg-[var(--foreground)]/[0.05]">
+                                        <div className="relative aspect-[16/13] rounded-xl overflow-hidden mb-1 border border-[var(--border)] bg-[var(--background)]">
                                             <Image
                                                 src={item.image}
                                                 alt={item.name}
                                                 fill
                                                 sizes="(max-width: 640px) 140px, 185px"
-                                                className="object-cover"
+                                                className="object-cover group-hover:scale-105 transition-transform duration-300"
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-40 group-hover:opacity-60" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-40 group-hover:opacity-60" />
                                         </div>
 
-                                        {/* Compact Info */}
+                                        {/* Info */}
                                         <div className="space-y-0.5 px-0.5 pt-0.5">
-                                            <h3 className="text-[10.5px] md:text-[13px] font-black uppercase tracking-tight text-[var(--foreground)] truncate group-hover:text-amber-500 leading-tight">
+                                            <h3 className="text-[11px] md:text-[12.5px] font-black uppercase tracking-tight text-[var(--foreground)] truncate group-hover:text-amber-500 leading-tight">
                                                 {item.name}
                                             </h3>
 
                                             <div className="flex items-baseline justify-between pt-0.5">
-                                                <span className="text-[13px] md:text-[15px] font-black italic text-[var(--foreground)] leading-none">
+                                                <span className="text-[12.5px] md:text-[14px] font-black italic text-[var(--foreground)] leading-none">
                                                     {item.price}
                                                 </span>
-                                                <span className="text-[8.5px] md:text-[10px] font-semibold text-[var(--muted)] line-through decoration-red-500/80">
+                                                <span className="text-[9px] md:text-[10px] font-semibold text-[var(--muted)] line-through decoration-red-500/80">
                                                     {item.originalPrice}
                                                 </span>
                                             </div>
@@ -181,23 +166,6 @@ export default function FlashSale() {
                         )}
                     </div>
                 </div>
-
-                <style jsx global>{`
-                    .custom-scrollbar-premium::-webkit-scrollbar {
-                        height: 3px;
-                    }
-                    .custom-scrollbar-premium::-webkit-scrollbar-track {
-                        background: var(--border);
-                        border-radius: 10px;
-                    }
-                    .custom-scrollbar-premium::-webkit-scrollbar-thumb {
-                        background: var(--accent);
-                        border-radius: 10px;
-                    }
-                    .custom-scrollbar-premium::-webkit-scrollbar-thumb:hover {
-                        background: rgba(245, 158, 11, 0.4);
-                    }
-                `}</style>
             </div>
         </section>
     );

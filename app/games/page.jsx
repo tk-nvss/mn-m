@@ -2,8 +2,7 @@
 
 import { useEffect, useMemo, useState, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { FiFilter, FiX, FiSearch, FiGrid, FiList, FiTrendingUp, FiZap, FiPackage, FiTv, FiLayers } from "react-icons/fi";
-import { GiCrown, GiCrossedSwords, GiTicket, GiStarMedal, GiGamepad } from "react-icons/gi";
+import { FiFilter, FiX, FiSearch, FiGrid, FiList, FiTrendingUp, FiZap, FiPackage, FiTv, FiLayers, FiAward, FiTag, FiStar } from "react-icons/fi";
 import GameGrid from "@/components/Games/GameGrid";
 import GameList from "@/components/Games/GameList";
 import FilterModal from "@/components/Games/FilterModal";
@@ -166,25 +165,17 @@ function GamesContent() {
 
   /* ================= RENDER COMPONENTS ================= */
   const SectionHeader = ({ title, icon: Icon, count, gradient }) => (
-    <div className="group flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 border-b border-[var(--border)]/30 pb-2">
-      <div className="flex items-center gap-2.5">
-        {/* Simple elegant icon */}
-        <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--card)] border border-[var(--border)] shadow-sm transition-all duration-300 group-hover:border-[var(--accent)]/40 group-hover:shadow-md">
-          <div className={`absolute inset-0 rounded-lg bg-gradient-to-br ${gradient} opacity-10`} />
-          <Icon size={15} className="relative z-10 text-[var(--foreground)] opacity-80 group-hover:opacity-100 transition-opacity" />
-        </div>
-
-        {/* Text Content */}
+    <div className="group flex items-center justify-between gap-2 mb-3 border-b border-[var(--border)]/30 pb-2">
+      <div className="flex items-center gap-2">
+        <div className={`w-1 h-4 rounded-full bg-gradient-to-b ${gradient}`} />
         <div className="flex flex-col">
-          <h2 className="text-base sm:text-lg font-bold tracking-wider uppercase text-[var(--foreground)] leading-tight">
-            {title}
+          <h2 className="text-xs sm:text-sm font-black tracking-wider uppercase text-[var(--foreground)] leading-tight flex items-center gap-1.5">
+            {Icon && <Icon size={13} className="text-[var(--foreground)] opacity-75 shrink-0" />}
+            <span>{title}</span>
           </h2>
-          <div className="flex items-center gap-1.5 mt-0.5">
-            <div className={`w-1 h-1 rounded-full bg-gradient-to-br ${gradient}`} />
-            <span className="text-[9px] font-medium text-[var(--muted)] uppercase tracking-widest">
-              {count} Items Found
-            </span>
-          </div>
+          <span className="text-[8.5px] font-bold text-[var(--muted)] uppercase tracking-widest mt-0.5">
+            {count} Items Found
+          </span>
         </div>
       </div>
     </div>
@@ -198,12 +189,9 @@ function GamesContent() {
       <div className="absolute bottom-[10%] left-[-10%] w-[400px] h-[400px] bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* ================= COMPACT SEARCH & CONTROLS ================= */}
+        {/* ================= COMPACT SEARCH & CONTROLS (NO SHADOWS) ================= */}
         <div className="space-y-3 mb-6">
-          <div className="relative bg-[var(--card)] backdrop-blur-3xl border border-[var(--border)] rounded-full p-1 shadow-sm flex items-center gap-1 transition-shadow duration-300 hover:shadow-md focus-within:shadow-[0_4px_15px_rgba(var(--accent-rgb),0.1)] focus-within:border-[var(--accent)]/50">
-            {/* Soft inner glow on focus */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent)]/5 to-transparent rounded-full opacity-0 focus-within:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
+          <div className="relative bg-[var(--card)] backdrop-blur-3xl border border-[var(--border)] rounded-full p-1 flex items-center gap-1 focus-within:border-[var(--accent)]">
             {/* SEARCH */}
             <div className="relative flex-1 group/search z-10">
               <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within/search:text-[var(--accent)] transition-colors" size={12} />
@@ -225,8 +213,8 @@ function GamesContent() {
 
             {/* ACTION GRID */}
             <div className="flex items-center gap-1 relative z-10 pr-0.5">
-              {/* VIEW TOGGLE */}
-              <div className="flex p-1 rounded-full bg-[var(--background)] shadow-inner border border-[var(--border)]/50 gap-0.5">
+              {/* VIEW TOGGLE - NO SHADOW */}
+              <div className="flex p-0.5 rounded-full bg-[var(--background)] border border-[var(--border)] gap-0.5">
                 {[
                   { id: "grid", icon: FiGrid, label: "Grid view" },
                   { id: "list", icon: FiList, label: "List view" },
@@ -236,8 +224,8 @@ function GamesContent() {
                     onClick={() => setViewMode(mode.id)}
                     aria-label={`Switch to ${mode.label}`}
                     title={mode.label}
-                    className={`w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full transition-all duration-300 ${viewMode === mode.id
-                      ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm scale-[1.02]"
+                    className={`w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full transition-all duration-200 ${viewMode === mode.id
+                      ? "bg-[var(--foreground)] text-[var(--background)]"
                       : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
                       }`}
                   >
@@ -246,19 +234,19 @@ function GamesContent() {
                 ))}
               </div>
 
-              {/* FILTER BUTTON */}
+              {/* FILTER BUTTON - NO SHADOW */}
               <button
                 onClick={() => setShowFilter(true)}
                 aria-label="Open filter options"
                 title="Filter games"
-                className={`relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full border transition-all duration-300 ${activeFilterCount > 0
-                  ? "border-transparent bg-gradient-to-br from-[var(--accent)] to-indigo-500 text-white shadow-[0_2px_8px_rgba(var(--accent-rgb),0.3)] hover:scale-105"
-                  : "border-[var(--border)] bg-[var(--background)] text-[var(--muted)] hover:border-[var(--accent)]/50 hover:text-[var(--accent)] hover:shadow-sm"
+                className={`relative flex items-center justify-center w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full border transition-all duration-200 ${activeFilterCount > 0
+                  ? "border-transparent bg-[var(--accent)] text-white"
+                  : "border-[var(--border)] bg-[var(--background)] text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
                   }`}
               >
                 <FiFilter size={13} />
                 {activeFilterCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center bg-white text-black rounded-full text-[8px] font-black shadow-md border border-[var(--card)]">
+                  <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center bg-white text-black rounded-full text-[8px] font-black border border-[var(--card)]">
                     {activeFilterCount}
                   </span>
                 )}
@@ -294,7 +282,7 @@ function GamesContent() {
                 <div className="mb-6">
                   <SectionHeader
                     title="MLBB Special"
-                    icon={GiCrown}
+                    icon={FiZap}
                     count={processedMlbbGames.length}
                     gradient="from-blue-500 to-indigo-600"
                   />
@@ -310,7 +298,7 @@ function GamesContent() {
                 <div className="mb-6">
                   <SectionHeader
                     title="Full Armory"
-                    icon={GiCrossedSwords}
+                    icon={FiLayers}
                     count={processedGames.filter(g => activeTab !== "others" || !isMlbbGame(g)).length}
                     gradient="from-[var(--accent)] to-cyan-600"
                   />
@@ -326,7 +314,7 @@ function GamesContent() {
                 <div className="mb-4 border-t border-[var(--border)]/40 pt-4">
                   <SectionHeader
                     title="Premium Memberships"
-                    icon={GiCrown}
+                    icon={FiAward}
                     count={processedMemberships.length}
                     gradient="from-pink-500 to-rose-600"
                   />
@@ -344,7 +332,7 @@ function GamesContent() {
                 <div className="mb-4 border-t border-[var(--border)]/40 pt-4">
                   <SectionHeader
                     title="Premium Vouchers"
-                    icon={GiTicket}
+                    icon={FiTag}
                     count={processedVouchers.length}
                     gradient="from-amber-400 to-orange-600"
                   />
@@ -362,7 +350,7 @@ function GamesContent() {
                 <div className="mb-4 border-t border-[var(--border)]/40 pt-4">
                   <SectionHeader
                     title="Premium Services"
-                    icon={GiStarMedal}
+                    icon={FiPackage}
                     count={processedServices.length}
                     gradient="from-blue-400 to-indigo-600"
                   />

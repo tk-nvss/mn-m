@@ -72,7 +72,7 @@ export default function GameBannerCarousel({ initialBanners = [] }: { initialBan
           {/* Left Preview Slide */}
           <div 
             onClick={() => paginate(-1)}
-            className="w-[11%] lg:w-[12%] h-[230px] lg:h-[270px] shrink-0 rounded-[1.25rem] overflow-hidden relative opacity-40 hover:opacity-85 scale-[0.92] hover:scale-95 transition-all duration-500 cursor-pointer border border-[var(--border)] shadow-sm bg-[var(--card)] group"
+            className="w-[11%] lg:w-[12%] h-[230px] lg:h-[270px] shrink-0 rounded-none overflow-hidden relative opacity-40 hover:opacity-85 scale-[0.92] hover:scale-95 transition-all duration-500 cursor-pointer border border-[var(--border)] shadow-sm bg-[var(--card)] group"
           >
             <Image
               src={prevBanner.bannerImage || logo}
@@ -89,8 +89,8 @@ export default function GameBannerCarousel({ initialBanners = [] }: { initialBan
             </div>
           </div>
 
-          {/* Center Highlighted Slide (ACTIVE FOCUS) */}
-          <div className="flex-1 h-[280px] lg:h-[330px] rounded-[1.5rem] lg:rounded-[1.75rem] overflow-hidden relative opacity-100 scale-100 z-20 border border-[var(--border)] shadow-xl bg-[var(--card)] group">
+          {/* Center Highlighted Slide (ACTIVE FOCUS - NO BORDER RADIUS) */}
+          <div className="flex-1 h-[280px] lg:h-[330px] rounded-none overflow-hidden relative opacity-100 scale-100 z-20 border border-[var(--border)] shadow-xl bg-[var(--card)] group">
             <Link href="/" className="relative block w-full h-full overflow-hidden">
               <Image
                 src={currentBanner.bannerImage || logo}
@@ -105,15 +105,9 @@ export default function GameBannerCarousel({ initialBanners = [] }: { initialBan
               {/* Gradient Overlay for Text Readability */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
 
-              {/* Content Overlay */}
+              {/* Content Overlay - Without LIVE FEATURE */}
               <div className="absolute inset-0 flex flex-col justify-end p-5 lg:p-7 z-10">
                 <div className="max-w-xl">
-                  {/* Tactical Badge */}
-                  <div className="mb-1.5 flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_8px_var(--accent)] animate-pulse" />
-                    <span className="text-[var(--accent)] text-[9px] font-black uppercase tracking-[0.2em] font-mono">LIVE FEATURE</span>
-                  </div>
-
                   <h2 className="text-white font-black text-xl md:text-3xl lg:text-4xl tracking-tighter leading-[0.95] uppercase mb-0.5 italic drop-shadow-lg">
                     {currentBanner.bannerTitle}
                   </h2>
@@ -156,7 +150,7 @@ export default function GameBannerCarousel({ initialBanners = [] }: { initialBan
           {/* Right Preview Slide */}
           <div 
             onClick={() => paginate(1)}
-            className="w-[11%] lg:w-[12%] h-[230px] lg:h-[270px] shrink-0 rounded-[1.25rem] overflow-hidden relative opacity-40 hover:opacity-85 scale-[0.92] hover:scale-95 transition-all duration-500 cursor-pointer border border-[var(--border)] shadow-sm bg-[var(--card)] group"
+            className="w-[11%] lg:w-[12%] h-[230px] lg:h-[270px] shrink-0 rounded-none overflow-hidden relative opacity-40 hover:opacity-85 scale-[0.92] hover:scale-95 transition-all duration-500 cursor-pointer border border-[var(--border)] shadow-sm bg-[var(--card)] group"
           >
             <Image
               src={nextBanner.bannerImage || logo}
@@ -175,9 +169,9 @@ export default function GameBannerCarousel({ initialBanners = [] }: { initialBan
         </div>
       ) : null}
 
-      {/* MOBILE / SINGLE BANNER VIEW */}
+      {/* MOBILE / SINGLE BANNER VIEW (NO BORDER RADIUS, NO LIVE FEATURE) */}
       <div
-        className={`${showMulti ? "md:hidden" : "block"} relative w-full h-[200px] sm:h-[260px] rounded-[1.25rem] sm:rounded-[1.75rem] overflow-hidden border border-[var(--border)] shadow-xl group bg-[var(--card)]`}
+        className={`${showMulti ? "md:hidden" : "block"} relative w-full h-[200px] sm:h-[260px] rounded-none overflow-hidden border border-[var(--border)] shadow-xl group bg-[var(--card)]`}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
@@ -196,11 +190,6 @@ export default function GameBannerCarousel({ initialBanners = [] }: { initialBan
 
           <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 z-10">
             <div className="max-w-xl">
-              <div className="mb-2 flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_8px_var(--accent)] animate-pulse" />
-                <span className="text-[var(--accent)] text-[9px] font-black uppercase tracking-[0.2em] font-mono">LIVE FEATURE</span>
-              </div>
-
               <h2 className="text-white font-black text-xl sm:text-3xl tracking-tighter leading-[0.95] uppercase mb-1 italic drop-shadow-lg">
                 {currentBanner.bannerTitle}
               </h2>
