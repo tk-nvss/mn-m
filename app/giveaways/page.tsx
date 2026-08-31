@@ -6,6 +6,7 @@ import { Icons } from "@/components/icons";
 import { EmptyState } from "@/components/common";
 import GiveawayEntryModal from "@/components/Giveaway/GiveawayEntryModal";
 import { useAuthStore } from "@/store/useAuthStore";
+import { FiGift, FiZap, FiAward, FiPackage, FiShare2, FiChevronRight, FiCheckCircle } from "react-icons/fi";
 
 // Helper function to pick dynamic icon & style based on giveaway title/prize
 function getGiveawayIcon(title: string = "", prize: string = "") {
@@ -19,18 +20,18 @@ function getGiveawayIcon(title: string = "", prize: string = "") {
   }
   if (t.includes("pass") || t.includes("weekly") || t.includes("wdp")) {
     return {
-      icon: Icons.zap,
+      icon: FiZap,
       colorClass: "bg-amber-500/10 text-amber-400 border-amber-500/20",
     };
   }
   if (t.includes("membership") || t.includes("month")) {
     return {
-      icon: Icons.award,
+      icon: FiAward,
       colorClass: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
     };
   }
   return {
-    icon: Icons.gift,
+    icon: FiGift,
     colorClass: "bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/20",
   };
 }
@@ -79,51 +80,47 @@ export default function GiveawaysPage() {
   };
 
   return (
-    <div className="min-h-screen pb-16 pt-3 sm:pt-4 bg-[var(--background)]">
+    <div className="min-h-screen pb-12 pt-3 sm:pt-4 bg-[var(--background)]">
       
       {/* ── SIMPLE COMPACT PAGE HEADING ───────────────────────────────────────────── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-4">
-        <div className="flex items-center justify-between gap-3 border-b border-[var(--border)]/50 pb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] border border-[var(--accent)]/20 shrink-0">
-              <Icons.gift size={16} />
-            </div>
+        <div className="flex items-center justify-between gap-3 border-b border-[var(--border)]/40 pb-2.5">
+          <div className="flex items-center gap-2">
+            <div className="w-1 h-4.5 bg-gradient-to-b from-[var(--accent)] to-cyan-500 rounded-full" />
             <div>
-              <h1 className="text-base sm:text-lg font-black uppercase tracking-tight text-[var(--foreground)] leading-none italic">
-                Live Drops & <span className="text-[var(--accent)]">Free Giveaways</span>
+              <h1 className="text-sm sm:text-base font-black uppercase tracking-wider text-[var(--foreground)] leading-none italic flex items-center gap-1.5">
+                <FiGift size={14} className="text-[var(--accent)]" />
+                <span>Live Drops & <span className="text-[var(--accent)]">Free Giveaways</span></span>
               </h1>
-              <p className="text-[10px] text-[var(--muted)] font-medium mt-0.5 leading-tight">
-                Enter 100% free drops to win MLBB Diamonds, Redeem Codes, & Weekly Passes.
+              <p className="text-[9.5px] text-[var(--muted)] font-medium mt-0.5 leading-tight">
+                Enter 100% free drops to win MLBB Diamonds, Redeem Codes & Passes.
               </p>
             </div>
           </div>
 
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--card)]/60 border border-[var(--border)] text-[9px] font-bold text-[var(--foreground)] shrink-0">
+          <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[var(--foreground)]/5 border border-[var(--border)] text-[8.5px] font-black uppercase tracking-wider text-[var(--foreground)] shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            100% Free Entry
+            100% Free
           </span>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
         
         {/* ── ACTIVE GIVEAWAYS SECTION ──────────────────────────────────────── */}
-        <section className="space-y-3.5">
+        <section className="space-y-2.5">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500 border border-red-500/20">
-              <Icons.zap size={14} />
-            </div>
-            <div>
-              <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-[var(--foreground)] leading-none">
-                Active Giveaways
-              </h2>
-            </div>
+            <div className="w-1 h-4 bg-gradient-to-b from-red-500 to-amber-500 rounded-full" />
+            <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)] leading-none flex items-center gap-1.5">
+              <FiZap size={13} className="text-red-500" />
+              <span>Active Giveaways</span>
+            </h2>
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
               {[1, 2, 3].map(i => (
-                <div key={i} className="h-36 rounded-xl bg-[var(--card)]/40 border border-[var(--border)] animate-pulse" />
+                <div key={i} className="h-32 rounded-xl bg-[var(--card)] border border-[var(--border)] shimmer-overlay" />
               ))}
             </div>
           ) : giveaways.length === 0 ? (
@@ -134,68 +131,70 @@ export default function GiveawaysPage() {
               size="md"
             />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
               {giveaways.map(g => {
                 const isFull = g.maxEntries > 0 && g.entryCount >= g.maxEntries;
                 const fillPercent = g.maxEntries > 0 ? Math.min(100, Math.round((g.entryCount / g.maxEntries) * 100)) : 0;
                 const iconInfo = getGiveawayIcon(g.title, g.prize);
                 const IconComponent = iconInfo.icon;
+                const displayTitle = g.title?.replace(/reedm/gi, "REDEEM");
+                const displayPrize = g.prize?.replace(/reedm/gi, "REDEEM");
 
                 return (
                   <motion.div
                     key={g._id}
-                    whileHover={{ y: isFull ? 0 : -3 }}
+                    whileHover={{ y: isFull ? 0 : -2 }}
                     onClick={() => !isFull && setSelectedGiveaway(g)}
-                    className={`group relative flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl bg-[var(--card)]/60 border transition-all duration-300 backdrop-blur-sm ${
+                    className={`group relative flex flex-col justify-between p-3 sm:p-3.5 rounded-xl bg-[var(--card)] border transition-all duration-200 ${
                       isFull 
                         ? "opacity-60 border-[var(--border)]" 
-                        : "cursor-pointer border-[var(--border)] hover:border-[var(--accent)]/40 shadow-sm hover:shadow-md"
+                        : "cursor-pointer border-[var(--border)] hover:border-[var(--accent)]/50"
                     }`}
                   >
-                    <div className="space-y-2.5">
+                    <div className="space-y-2">
                       {/* Badge & Fill Count Header */}
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-1.5">
                           {!isFull ? (
-                            <span className="flex h-2 w-2 relative">
+                            <span className="flex h-1.5 w-1.5 relative">
                               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500" />
                             </span>
                           ) : null}
-                          <span className={`text-[9px] font-black uppercase tracking-widest ${isFull ? "text-[var(--muted)]" : "text-red-500"}`}>
+                          <span className={`text-[8.5px] font-black uppercase tracking-wider ${isFull ? "text-[var(--muted)]" : "text-red-500"}`}>
                             {isFull ? "CLOSED" : "LIVE DROP"}
                           </span>
                         </div>
 
-                        <span className="text-[9px] font-bold text-[var(--muted)] bg-[var(--background)] px-2 py-0.5 rounded-full border border-[var(--border)] font-mono">
+                        <span className="text-[8px] font-bold text-[var(--muted)] bg-[var(--background)] px-1.5 py-0.5 rounded-md border border-[var(--border)] font-mono">
                           {g.maxEntries > 0 ? `${g.entryCount || 0}/${g.maxEntries} Filled` : `${g.entryCount || 0} Joined`}
                         </span>
                       </div>
 
-                      {/* Dynamic Icon & Title */}
+                      {/* Icon & Title */}
                       <div className="flex items-start gap-2.5">
-                        <div className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center shadow-sm border ${
+                        <div className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border ${
                           isFull 
                             ? "bg-[var(--foreground)]/5 border-[var(--border)] text-[var(--muted)]" 
                             : iconInfo.colorClass
                         }`}>
-                          <IconComponent size={16} />
+                          <IconComponent size={14} />
                         </div>
 
                         <div className="min-w-0 flex-1">
-                          <h3 className="font-bold text-[var(--foreground)] text-xs leading-snug tracking-tight group-hover:text-[var(--accent)] transition-colors line-clamp-2">
-                            {g.title}
+                          <h3 className="font-black text-[var(--foreground)] text-[11px] sm:text-xs leading-snug tracking-tight group-hover:text-[var(--accent)] transition-colors line-clamp-2 uppercase">
+                            {displayTitle}
                           </h3>
-                          <p className="text-[10px] font-semibold text-[var(--muted)] mt-0.5 truncate">
-                            Prize: {g.prize}
+                          <p className="text-[9.5px] font-semibold text-[var(--muted)] mt-0.5 truncate">
+                            Prize: {displayPrize}
                           </p>
                         </div>
                       </div>
 
-                      {/* Compact Entry Progress Bar */}
+                      {/* Entry Progress Bar */}
                       {g.maxEntries > 0 && (
-                        <div className="pt-1">
-                          <div className="h-1.5 w-full bg-[var(--background)] rounded-full overflow-hidden border border-[var(--border)]">
+                        <div className="pt-0.5">
+                          <div className="h-1 w-full bg-[var(--background)] rounded-full overflow-hidden border border-[var(--border)]">
                             <div 
                               className={`h-full transition-all duration-500 ${isFull ? "bg-slate-400" : "bg-[var(--accent)]"}`}
                               style={{ width: `${fillPercent}%` }}
@@ -206,22 +205,22 @@ export default function GiveawaysPage() {
                     </div>
 
                     {/* Compact Footer Actions */}
-                    <div className="pt-3 mt-3 border-t border-[var(--border)]/60 flex items-center justify-between gap-2">
+                    <div className="pt-2 mt-2 border-t border-[var(--border)]/40 flex items-center justify-between gap-2">
                       <button 
-                        className="flex items-center gap-1 px-2 py-1 text-[9px] font-bold text-[var(--muted)] hover:text-[var(--foreground)] bg-[var(--background)] rounded-lg transition-colors border border-[var(--border)]"
+                        className="flex items-center gap-1 px-2 py-1 text-[8.5px] font-bold text-[var(--muted)] hover:text-[var(--foreground)] bg-[var(--background)] rounded-md transition-colors border border-[var(--border)] cursor-pointer"
                         onClick={(e) => handleShare(e, g)}
                         aria-label="Share Giveaway"
                       >
-                        <Icons.share size={11} />
+                        <FiShare2 size={10} />
                         <span>{copiedId === g._id ? "Copied!" : "Share"}</span>
                       </button>
 
                       <button
                         disabled={isFull}
-                        className={`flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
+                        className={`flex items-center justify-center gap-1 px-3 py-1 rounded-md text-[9.5px] font-black uppercase tracking-wider transition-all cursor-pointer ${
                           isFull 
                             ? "bg-[var(--foreground)]/5 text-[var(--muted)] cursor-not-allowed" 
-                            : "bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white shadow-sm hover:shadow active:scale-95"
+                            : "bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white active:scale-95"
                         }`}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -229,7 +228,7 @@ export default function GiveawaysPage() {
                         }}
                       >
                         <span>{isFull ? "Full" : "Enter"}</span>
-                        {!isFull && <Icons.chevronRight size={12} />}
+                        {!isFull && <FiChevronRight size={11} />}
                       </button>
                     </div>
                   </motion.div>
@@ -241,36 +240,35 @@ export default function GiveawaysPage() {
 
         {/* ── YOUR WINS SECTION ────────────────────────────────────────────── */}
         {wonGiveaways.length > 0 && (
-          <section className="space-y-3 pt-2">
+          <section className="space-y-2.5 pt-1">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
-                <Icons.award size={14} />
-              </div>
-              <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-[var(--foreground)] leading-none">
-                Your Claimed Rewards
+              <div className="w-1 h-4 bg-gradient-to-b from-amber-500 to-yellow-500 rounded-full" />
+              <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)] leading-none flex items-center gap-1.5">
+                <FiAward size={13} className="text-amber-500" />
+                <span>Your Claimed Rewards</span>
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
               {wonGiveaways.map(g => (
                 <div 
                   key={g._id} 
-                  className="flex items-center gap-3 p-3 rounded-xl bg-amber-500/5 border border-amber-500/20 shadow-sm"
+                  className="flex items-center gap-2.5 p-2.5 rounded-xl bg-amber-500/5 border border-amber-500/20"
                 >
-                  <div className="shrink-0 w-9 h-9 rounded-lg flex items-center justify-center bg-amber-500/10 text-amber-500 border border-amber-500/20">
-                    <Icons.award size={18} />
+                  <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                    <FiAward size={16} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1 mb-0.5">
-                      <Icons.checkCircle size={10} className="text-amber-500" />
-                      <span className="text-[8px] font-black uppercase tracking-widest text-amber-500">
+                      <FiCheckCircle size={9} className="text-amber-500" />
+                      <span className="text-[7.5px] font-black uppercase tracking-widest text-amber-500">
                         REWARD CLAIMED
                       </span>
                     </div>
-                    <h3 className="font-bold text-[var(--foreground)] text-xs truncate">
+                    <h3 className="font-bold text-[var(--foreground)] text-[11px] truncate">
                       {g.title}
                     </h3>
-                    <p className="text-[10px] text-[var(--muted)] font-medium truncate">
+                    <p className="text-[9px] text-[var(--muted)] font-medium truncate">
                       Prize: {g.prize}
                     </p>
                   </div>
@@ -282,33 +280,32 @@ export default function GiveawaysPage() {
 
         {/* ── COMPLETED DROPS ─────────────────────────────────────────────── */}
         {pastGiveaways.length > 0 && (
-          <section className="space-y-3 pt-2">
+          <section className="space-y-2.5 pt-1">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-[var(--foreground)]/5 flex items-center justify-center text-[var(--muted)] border border-[var(--border)]">
-                <Icons.package size={14} />
-              </div>
-              <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-[var(--foreground)] leading-none">
-                Completed Drops
+              <div className="w-1 h-4 bg-[var(--muted)]/40 rounded-full" />
+              <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)] leading-none flex items-center gap-1.5">
+                <FiPackage size={13} className="text-[var(--muted)]" />
+                <span>Completed Drops</span>
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {pastGiveaways.map(g => (
                 <div 
                   key={g._id} 
-                  className="flex items-center gap-3 p-3 rounded-xl bg-[var(--card)]/30 border border-[var(--border)] opacity-75"
+                  className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[var(--card)]/40 border border-[var(--border)] opacity-75"
                 >
-                  <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center bg-[var(--foreground)]/5 text-[var(--muted)] border border-[var(--border)]">
-                    <Icons.checkCircle size={14} />
+                  <div className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center bg-[var(--foreground)]/5 text-[var(--muted)] border border-[var(--border)]">
+                    <FiCheckCircle size={12} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)] bg-[var(--background)] px-1.5 py-0.5 rounded border border-[var(--border)] inline-block mb-0.5">
+                    <span className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)] bg-[var(--background)] px-1 py-0.5 rounded border border-[var(--border)] inline-block mb-0.5">
                       ENDED
                     </span>
-                    <h3 className="font-bold text-[var(--foreground)] text-[11px] truncate leading-snug">
+                    <h3 className="font-bold text-[var(--foreground)] text-[10.5px] truncate leading-snug">
                       {g.title}
                     </h3>
-                    <p className="text-[9px] text-[var(--muted)] truncate">
+                    <p className="text-[8.5px] text-[var(--muted)] truncate">
                       {g.prize}
                     </p>
                   </div>
