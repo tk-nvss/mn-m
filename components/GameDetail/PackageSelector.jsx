@@ -57,6 +57,7 @@ export default function PackageSelector({
             {items.map((item) => {
               const discount = calculateDiscount(item.sellingPrice, item.dummyPrice);
               const isActive = activeItem.itemSlug === item.itemSlug;
+              const isOOS = item.isOutOfStock || item.itemAvailablity === false;
 
               return (
                 <div
@@ -67,12 +68,21 @@ export default function PackageSelector({
                   }}
                   className={`relative group rounded-xl p-2.5 cursor-pointer border-2 transition-all duration-300 flex flex-col justify-between min-h-[4.25rem] bg-[var(--card)]/60 backdrop-blur-sm
                   ${isActive
-                      ? "border-[var(--accent)] shadow-sm scale-[1.01] z-10"
-                      : "border-[var(--border)] hover:border-[var(--accent)]/40"
+                      ? isOOS ? "border-rose-500/60 shadow-sm scale-[1.01] z-10" : "border-[var(--accent)] shadow-sm scale-[1.01] z-10"
+                      : isOOS ? "border-[var(--border)]/60 opacity-70 hover:opacity-100" : "border-[var(--border)] hover:border-[var(--accent)]/40"
                     }`}
                 >
                   {/* WRAPPED CORNER BADGE */}
-                  {discount > 0 && (
+                  {isOOS ? (
+                    <div className="absolute -top-1 -left-1 z-20">
+                       <div className="relative scale-[0.7] origin-top-left">
+                          <div className="absolute top-4 left-0.5 w-1.2 h-2 bg-rose-600 brightness-[0.4]" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%)' }} />
+                          <div className="bg-gradient-to-br from-rose-500 to-rose-600 text-white text-[8px] font-black uppercase pl-2 pr-3.5 py-0.5 shadow-sm corner-ribbon flex items-center relative overflow-hidden">
+                            OUT OF SERVICE
+                          </div>
+                       </div>
+                    </div>
+                  ) : discount > 0 && (
                     <div className="absolute -top-1 -left-1 z-20">
                        <div className="relative scale-[0.7] origin-top-left">
                           <div className="absolute top-4 left-0.5 w-1.2 h-2 bg-[var(--accent)] brightness-[0.4]" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%)' }} />
@@ -86,7 +96,7 @@ export default function PackageSelector({
                   {/* RIBBON (TOP RIGHT) */}
                   <div className={`absolute top-0 right-2.5 w-7 h-10 transition-all duration-300 ribbon-shape flex items-center justify-center pt-0.5 shadow-sm
                     ${isActive 
-                        ? "bg-gradient-to-b from-[var(--accent)]/30 to-[var(--accent)]/10" 
+                        ? isOOS ? "bg-gradient-to-b from-rose-500/20 to-transparent" : "bg-gradient-to-b from-[var(--accent)]/30 to-[var(--accent)]/10" 
                         : "bg-gradient-to-b from-[var(--accent)]/[0.08] to-transparent"
                     }
                   `}>
@@ -96,20 +106,20 @@ export default function PackageSelector({
                             alt={`${item.itemName || "Package"} Top Up icon`}
                             fill
                             unoptimized
-                            className={`object-contain transition-all duration-300 ${isActive ? "opacity-100 scale-105" : "opacity-40 group-hover:opacity-100"}`}
+                            className={`object-contain transition-all duration-300 ${isOOS ? "grayscale opacity-40" : isActive ? "opacity-100 scale-105" : "opacity-40 group-hover:opacity-100"}`}
                         />
                     </div>
                   </div>
 
                   {/* CONTENT */}
                   <div className="relative z-10 flex flex-col h-full pr-8 pt-0.5">
-                    <p className={`text-[9.5px] font-black tracking-tight uppercase leading-tight mb-1 truncate ${isActive ? "text-[var(--foreground)]" : "text-[var(--muted)] group-hover:text-[var(--foreground)]"}`}>
+                    <p className={`text-[9.5px] font-black tracking-tight uppercase leading-tight mb-1 truncate ${isActive ? (isOOS ? "text-rose-400" : "text-[var(--foreground)]") : "text-[var(--muted)] group-hover:text-[var(--foreground)]"}`}>
                       {item.itemName}
                     </p>
 
                     <div className="flex flex-col mt-auto">
                         <div className="flex items-baseline gap-1">
-                          <span className={`text-base font-black tracking-tight leading-none ${isActive ? "text-[var(--accent)]" : "text-[var(--foreground)]"}`}>
+                          <span className={`text-base font-black tracking-tight leading-none ${isActive ? (isOOS ? "text-rose-400" : "text-[var(--accent)]") : "text-[var(--foreground)]"}`}>
                             ₹{item.sellingPrice}
                           </span>
                           {item.dummyPrice > item.sellingPrice && (
@@ -123,7 +133,7 @@ export default function PackageSelector({
 
                   {/* ACTIVE INDICATOR */}
                   {isActive && (
-                    <div className="absolute bottom-2 right-2 text-[var(--accent)]">
+                    <div className={`absolute bottom-2 right-2 ${isOOS ? "text-rose-500" : "text-[var(--accent)]"}`}>
                       <FiCheckCircle size={11} />
                     </div>
                   )}
@@ -136,25 +146,35 @@ export default function PackageSelector({
             <div ref={sliderRef} className="flex gap-2.5 overflow-x-auto snap-x snap-mandatory pb-3 pt-2 px-1 scrollbar-hide no-scrollbar -mx-1">
               {items.map((item) => {
                 const isActive = activeItem.itemSlug === item.itemSlug;
+                const isOOS = item.isOutOfStock || item.itemAvailablity === false;
                 return (
                   <div
                     key={item.itemSlug}
                     onClick={() => scrollToItem(item)}
                     className={`relative snap-center min-w-[130px] rounded-xl p-2.5 cursor-pointer border-2 transition-all duration-300 flex flex-col justify-between min-h-[4.25rem] overflow-hidden bg-[var(--card)]/60
-                    ${isActive ? "border-[var(--accent)] bg-[var(--accent)]/[0.08] shadow-sm scale-[1.01]" : "border-[var(--border)] opacity-80 hover:opacity-100 hover:border-[var(--accent)]/40"}
+                    ${isActive 
+                      ? isOOS ? "border-rose-500/60 bg-rose-500/[0.06] shadow-sm scale-[1.01]" : "border-[var(--accent)] bg-[var(--accent)]/[0.08] shadow-sm scale-[1.01]" 
+                      : isOOS ? "border-[var(--border)] opacity-60 hover:opacity-100" : "border-[var(--border)] opacity-80 hover:opacity-100 hover:border-[var(--accent)]/40"}
                   `}>
                      <div className={`absolute top-0 right-2.5 w-7 h-10 transition-all duration-300 ribbon-shape flex items-center justify-center pt-0.5
-                        ${isActive ? "bg-gradient-to-b from-[var(--accent)]/30 to-transparent" : "bg-[var(--accent)]/5"}
+                        ${isActive ? (isOOS ? "bg-gradient-to-b from-rose-500/20 to-transparent" : "bg-gradient-to-b from-[var(--accent)]/30 to-transparent") : "bg-[var(--accent)]/5"}
                      `}>
                         <div className="relative w-4 h-4">
-                          <Image src={item?.itemImageId?.image || item?.image || "/logo.png"} alt={`${item.itemName || "Package"} Top Up icon`} fill unoptimized className={`object-contain transition-all duration-300 ${isActive ? "opacity-100 scale-105" : "opacity-30"}`} />
+                          <Image src={item?.itemImageId?.image || item?.image || "/logo.png"} alt={`${item.itemName || "Package"} Top Up icon`} fill unoptimized className={`object-contain transition-all duration-300 ${isOOS ? "grayscale opacity-30" : isActive ? "opacity-100 scale-105" : "opacity-30"}`} />
                         </div>
                      </div>
                     <div className="relative z-10 flex flex-col h-full pr-8 pt-0.5">
-                      <p className={`text-[9.5px] font-black tracking-tight uppercase leading-tight mb-1 truncate ${isActive ? "text-[var(--foreground)]" : "text-[var(--muted)]"}`}>
-                        {item.itemName}
-                      </p>
-                      <p className={`text-base font-black tracking-tight leading-none mt-auto ${isActive ? "text-[var(--accent)]" : "text-[var(--foreground)]"}`}>₹{item.sellingPrice}</p>
+                      <div className="flex items-center gap-1">
+                        <p className={`text-[9.5px] font-black tracking-tight uppercase leading-tight mb-1 truncate ${isActive ? "text-[var(--foreground)]" : "text-[var(--muted)]"}`}>
+                          {item.itemName}
+                        </p>
+                        {isOOS && (
+                          <span className="text-[6.5px] font-black uppercase text-rose-500 bg-rose-500/10 px-1 py-0.2 rounded border border-rose-500/20 mb-1">
+                            OOS
+                          </span>
+                        )}
+                      </div>
+                      <p className={`text-base font-black tracking-tight leading-none mt-auto ${isActive ? (isOOS ? "text-rose-400" : "text-[var(--accent)]") : "text-[var(--foreground)]"}`}>₹{item.sellingPrice}</p>
                     </div>
                   </div>
                 );

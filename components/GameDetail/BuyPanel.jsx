@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FiArrowRight, FiShield, FiZap } from "react-icons/fi";
+import { FiArrowRight, FiShield, FiZap, FiAlertCircle } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import { LoadingSpinner } from "@/components/common";
 import { formatCurrency } from "@/utils";
@@ -17,6 +17,13 @@ export default function BuyPanel({
 }) {
   if (!activeItem) return null;
 
+  // 1. If this specific item is Out of Stock / Out of Service, do NOT show the panel at all
+  const isOutOfStock = activeItem.itemAvailablity === false || activeItem.isOutOfStock === true;
+  if (isOutOfStock) return null;
+
+  // 2. If item is available, check if game is manual WhatsApp order vs automated gateway
+  const isManualWhatsApp = gameAvailablity === false;
+
   const itemImage =
     activeItem?.itemImageId?.image ||
     activeItem?.image ||
@@ -27,9 +34,9 @@ export default function BuyPanel({
     activeItem.dummyPrice
   );
 
-  const isUnavailable = gameAvailablity === false || activeItem.itemAvailablity === false || activeItem.isOutOfStock === true;
-
-  const supportUrl = `https://wa.me/${process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP}?text=Hi, I want to buy ${activeItem.itemName} for ₹${activeItem.sellingPrice}`;
+  const supportUrl = `https://wa.me/${process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP || "916383038691"}?text=${encodeURIComponent(
+    `Hi, I want to order ${activeItem.itemName}`
+  )}`;
 
   return (
     <div
@@ -45,7 +52,7 @@ export default function BuyPanel({
           <div className="relative bg-[var(--card)]/95 backdrop-blur-2xl rounded-2xl overflow-hidden z-10 border border-[var(--border)]/80">
 
             {/* Top accent line */}
-            <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[var(--accent)]/60 to-transparent" />
+            <div className={`h-[2px] w-full bg-gradient-to-r ${isManualWhatsApp ? "from-transparent via-emerald-500/60 to-transparent" : "from-transparent via-[var(--accent)]/60 to-transparent"}`} />
 
             <div className="px-3.5 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-3">
 
@@ -114,15 +121,15 @@ export default function BuyPanel({
               </div>
 
               {/* Right: CTA Button */}
-              {isUnavailable ? (
+              {isManualWhatsApp ? (
                 <a
                   href={supportUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="shrink-0 relative h-10 sm:h-11 px-3.5 sm:px-4 rounded-xl overflow-hidden flex items-center justify-center gap-1.5 bg-[#25D366] text-black hover:brightness-110 transition-all duration-300 font-[1000] uppercase tracking-tight text-[10px] sm:text-xs shadow-md shadow-[#25D366]/20 active:scale-95"
+                  className="shrink-0 relative h-10 sm:h-11 px-4 sm:px-5 rounded-xl overflow-hidden flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] !text-white shadow-lg shadow-emerald-500/20 active:scale-95 transition-all duration-300 font-black uppercase tracking-wider text-[11px] sm:text-xs border border-white/20 group"
                 >
-                  <FaWhatsapp size={14} />
-                  <span>Support</span>
+                  <FaWhatsapp size={16} className="!text-white group-hover:scale-110 transition-transform shrink-0" />
+                  <span className="!text-white font-[1000] drop-shadow-sm whitespace-nowrap">Order on WP</span>
                 </a>
               ) : (
                 <button
