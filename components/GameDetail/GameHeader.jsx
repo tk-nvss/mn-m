@@ -7,7 +7,7 @@ export default function GameHeader({ game }) {
   if (!game) return null;
 
   return (
-    <div className="relative max-w-6xl mx-auto mb-2 mt-0">
+    <div className="relative w-full mb-2 mt-0">
       <div className="relative p-2 md:p-2.5 bg-[var(--card)] border border-[var(--border)] rounded-2xl flex items-center justify-between gap-3">
         {/* LEFT: Game Identity */}
         <div className="relative z-10 flex items-center gap-2.5 md:gap-3">

@@ -200,15 +200,15 @@ function GameDetailContent() {
 
   /* ================= RENDER ================= */
   return (
-    <section className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 pb-28 pt-2">
-      <GameSwitcher />
-      {/* ================= HEADER ================= */}
-      <div>
-        <GameHeader game={game} />
-      </div>
+    <section className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-3 sm:px-4 pb-28 pt-2">
+      <div className="w-full max-w-6xl mx-auto space-y-2.5">
+        {/* ================= SWITCH GAME ================= */}
+        <GameSwitcher />
 
-      {/* ================= PACKAGE SELECTOR ================= */}
-      <div>
+        {/* ================= HEADER ================= */}
+        <GameHeader game={game} />
+
+        {/* ================= PACKAGE SELECTOR ================= */}
         <PackageSelector
           items={visibleItems}
           activeItem={activeItem}
@@ -220,24 +220,24 @@ function GameDetailContent() {
           calculateDiscount={calculateDiscount}
           scrollToItem={scrollToItem}
         />
+
+        {/* ================= PURCHASE GUIDE ================= */}
+        {!isBGMI && (
+          <div className="w-full mt-6">
+            <MLBBPurchaseGuide />
+          </div>
+        )}
       </div>
 
       {/* ================= BUY PANEL ================= */}
-      <div>
-        <BuyPanel
-          activeItem={activeItem}
-          gameAvailablity={game.gameAvailablity}
-          redirecting={redirecting}
-          goBuy={goBuy}
-          calculateDiscount={calculateDiscount}
-          buyPanelRef={buyPanelRef}
-        />
-      </div>
-
-      {/* ================= PURCHASE GUIDE ================= */}
-      <div className="max-w-6xl mx-auto mt-6">
-        {!isBGMI && <MLBBPurchaseGuide />}
-      </div>
+      <BuyPanel
+        activeItem={activeItem}
+        gameAvailablity={game.gameAvailablity}
+        redirecting={redirecting}
+        goBuy={goBuy}
+        calculateDiscount={calculateDiscount}
+        buyPanelRef={buyPanelRef}
+      />
     </section>
   );
 }

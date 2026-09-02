@@ -43,13 +43,10 @@ export default function BuyPanel({
       ref={buyPanelRef}
       className="fixed bottom-0 left-0 right-0 z-50 p-2 sm:p-3 pointer-events-none pb-[max(0.5rem,env(safe-area-inset-bottom))]"
     >
-      <div className="relative w-full max-w-4xl mx-auto pointer-events-auto">
-        <div className="relative rounded-2xl overflow-hidden shadow-[0_-6px_24px_rgba(0,0,0,0.4)]">
-          {/* Animated gradient border */}
-          <div className="absolute inset-0 rounded-2xl p-[1px] bg-gradient-to-br from-[var(--accent)]/40 via-white/5 to-purple-500/20 pointer-events-none z-0" />
-
+      <div className="relative w-full max-w-6xl mx-auto pointer-events-auto">
+        <div className="relative rounded-2xl overflow-hidden">
           {/* Main Card */}
-          <div className="relative bg-[var(--card)]/95 backdrop-blur-2xl rounded-2xl overflow-hidden z-10 border border-[var(--border)]/80">
+          <div className="relative bg-[var(--card)]/95 backdrop-blur-2xl rounded-2xl overflow-hidden z-10 border border-[var(--border)]">
 
             {/* Top accent line */}
             <div className={`h-[2px] w-full bg-gradient-to-r ${isManualWhatsApp ? "from-transparent via-emerald-500/60 to-transparent" : "from-transparent via-[var(--accent)]/60 to-transparent"}`} />
@@ -59,7 +56,7 @@ export default function BuyPanel({
               {/* Left: Product Thumbnail & Info */}
               <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                 {/* Image */}
-                <div className="relative shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden border border-white/10 shadow-md">
+                <div className="relative shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden border border-[var(--border)]">
                   <Image
                     src={itemImage}
                     alt={activeItem.itemName}
@@ -68,7 +65,7 @@ export default function BuyPanel({
                     className="object-cover"
                   />
                   {discount > 0 && (
-                    <div className="absolute top-0 left-0 bg-gradient-to-br from-rose-500 to-red-600 text-white text-[7px] font-black px-1 py-0.2 rounded-br-md shadow z-20">
+                    <div className="absolute top-0 left-0 bg-rose-600 text-white text-[7px] font-black px-1 py-0.2 rounded-br-md z-20">
                       -{discount}%
                     </div>
                   )}
@@ -87,34 +84,18 @@ export default function BuyPanel({
                     </span>
                   </div>
 
-                  {/* Member & Reseller Price (below) */}
-                  {(activeItem.memberPrice || activeItem.adminPrice) && (
+                  {/* Member Price (below) */}
+                  {activeItem.memberPrice && (
                     <div className="flex items-center gap-2 flex-wrap mt-1">
-                      {activeItem.memberPrice && (
-                        <Link
-                          href="/games/membership/silver-membership"
-                          className="inline-flex items-center gap-1 text-[8.5px] font-bold text-[var(--accent)] hover:opacity-80 transition-opacity"
-                        >
-                          <span className="text-[7px] font-black uppercase tracking-wider px-1 py-0.5 rounded bg-[var(--accent)]/10 border border-[var(--accent)]/20 leading-none">
-                            MEM
-                          </span>
-                          <span className="font-black leading-none">₹{activeItem.memberPrice}</span>
-                        </Link>
-                      )}
-
-                      {activeItem.adminPrice && (
-                        <a
-                          href={supportUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-[8.5px] font-bold text-purple-400 hover:opacity-80 transition-opacity"
-                        >
-                          <span className="text-[7px] font-black uppercase tracking-wider px-1 py-0.5 rounded bg-purple-500/10 border border-purple-500/20 leading-none">
-                            RESELLER
-                          </span>
-                          <span className="font-black leading-none">₹{activeItem.adminPrice}</span>
-                        </a>
-                      )}
+                      <Link
+                        href="/games/membership/silver-membership"
+                        className="inline-flex items-center gap-1 text-[var(--foreground)] hover:opacity-80 transition-opacity"
+                      >
+                        <span className="text-[7px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--foreground)]/10 text-[var(--foreground)]/80 border border-[var(--border)] leading-none">
+                          MEM
+                        </span>
+                        <span className="text-[9.5px] font-black text-[var(--foreground)] leading-none">₹{activeItem.memberPrice}</span>
+                      </Link>
                     </div>
                   )}
                 </div>
@@ -126,10 +107,10 @@ export default function BuyPanel({
                   href={supportUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="shrink-0 relative h-10 sm:h-11 px-4 sm:px-5 rounded-xl overflow-hidden flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] !text-white shadow-lg shadow-emerald-500/20 active:scale-95 transition-all duration-300 font-black uppercase tracking-wider text-[11px] sm:text-xs border border-white/20 group"
+                  className="shrink-0 relative h-10 sm:h-11 px-4 sm:px-5 rounded-xl overflow-hidden flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] !text-white active:scale-95 transition-all duration-300 font-black uppercase tracking-wider text-[11px] sm:text-xs border border-white/10 group"
                 >
                   <FaWhatsapp size={16} className="!text-white group-hover:scale-110 transition-transform shrink-0" />
-                  <span className="!text-white font-[1000] drop-shadow-sm whitespace-nowrap">Order on WP</span>
+                  <span className="!text-white font-[1000] whitespace-nowrap">Order on WP</span>
                 </a>
               ) : (
                 <button
@@ -141,7 +122,7 @@ export default function BuyPanel({
                     transition-all duration-300 active:scale-95 font-[1000] uppercase tracking-tight text-xs
                     ${redirecting
                       ? 'bg-[var(--muted)]/20 text-[var(--muted)] cursor-not-allowed'
-                      : 'bg-gradient-to-br from-[var(--foreground)] to-[var(--foreground)]/90 text-[var(--background)] shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 hover:scale-[1.02]'
+                      : 'bg-[var(--foreground)] text-[var(--background)] hover:brightness-110 active:scale-[0.98]'
                     }
                   `}
                 >

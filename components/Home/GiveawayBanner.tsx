@@ -44,23 +44,20 @@ export default function GiveawayBanner() {
       <section className="w-full max-w-7xl mx-auto px-4 mt-2 mb-1 relative z-30">
         <div 
           onClick={() => router.push('/giveaways')}
-          className="group cursor-pointer relative flex items-center justify-between px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-[2rem] bg-[var(--card)] border border-[var(--border)] transition-all duration-500 overflow-hidden shadow-sm hover:shadow-md hover:border-[var(--accent)]/50"
+          className="group cursor-pointer relative flex items-center justify-between px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-[2rem] bg-[var(--card)] border border-[var(--border)] transition-all duration-300 overflow-hidden hover:border-[var(--accent)]/40"
         >
-          {/* Subtle Ambient Glow */}
-          <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-[var(--accent)]/10 to-transparent" />
-          
           <div className="relative z-10 flex items-center gap-3 sm:gap-4 min-w-0">
             {/* Icon */}
             <div className="flex items-center ml-1 shrink-0">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center border border-[var(--accent)]/30 z-30 shadow-sm transition-transform group-hover:scale-105 bg-[var(--accent)]/15 text-[var(--accent)]">
-                <FiGift size={16} className="sm:w-4 sm:h-4 drop-shadow-sm" />
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center border border-[var(--accent)]/30 z-30 transition-transform group-hover:scale-105 bg-[var(--accent)]/15 text-[var(--accent)]">
+                <FiGift size={16} className="sm:w-4 sm:h-4" />
               </div>
             </div>
             
             {/* Text Content */}
             <div className="flex flex-col justify-center min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
                 <h3 className="text-[8px] sm:text-[8.5px] font-black tracking-widest text-emerald-400 leading-tight uppercase truncate">
                   GIVEAWAY LIVE
                 </h3>
@@ -98,7 +95,7 @@ export default function GiveawayBanner() {
 
             {/* Action Button */}
             <button 
-              className="h-6 sm:h-7 px-3 sm:px-3.5 rounded-lg bg-[var(--accent)] hover:brightness-110 !text-white flex items-center justify-center gap-1 text-[9px] sm:text-[10px] font-black uppercase tracking-wider shadow-md shadow-[var(--accent)]/20 transition-all hover:scale-105 active:scale-95"
+              className="h-6 sm:h-7 px-3 sm:px-3.5 rounded-lg bg-[var(--accent)] hover:brightness-110 !text-white flex items-center justify-center gap-1 text-[9px] sm:text-[10px] font-black uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
               onClick={e => { e.stopPropagation(); router.push('/giveaways'); }}
             >
               <span>Enter</span>
