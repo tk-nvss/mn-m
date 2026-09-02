@@ -4,12 +4,12 @@ import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { 
-  FiGrid, 
-  FiShoppingBag, 
-  FiGift, 
-  FiHeadphones 
-} from "react-icons/fi";
-import { FaTrophy } from "react-icons/fa";
+  Gamepad2, 
+  Trophy, 
+  Gift, 
+  ShoppingBag, 
+  Headset 
+} from "lucide-react";
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -27,25 +27,25 @@ export default function BottomNav() {
   const isHomeActive = pathname === "/";
 
   const navItems = [
-    { label: "Games", icon: FiGrid, path: "/games", action: () => router.push("/games") },
-    { label: "Tournaments", icon: FaTrophy, path: "/dashboard/tournaments", action: () => router.push("/dashboard/tournaments") },
-    { label: "Giveaways", icon: FiGift, path: "/giveaways", action: () => router.push("/giveaways") },
-    { label: "Orders", icon: FiShoppingBag, path: "/dashboard/orders", action: () => router.push("/dashboard/orders") },
-    { label: "Support", icon: FiHeadphones, path: "/dashboard/support", action: () => router.push("/dashboard/support") },
+    { label: "Games", icon: Gamepad2, path: "/games", action: () => router.push("/games") },
+    { label: "Tournaments", icon: Trophy, path: "/dashboard/tournaments", action: () => router.push("/dashboard/tournaments") },
+    { label: "Giveaways", icon: Gift, path: "/giveaways", action: () => router.push("/giveaways") },
+    { label: "Orders", icon: ShoppingBag, path: "/dashboard/orders", action: () => router.push("/dashboard/orders") },
+    { label: "Support", icon: Headset, path: "/dashboard/support", action: () => router.push("/dashboard/support") },
   ];
 
   return (
     <div className="md:hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-[100] pointer-events-none w-auto max-w-[96%] flex justify-center px-1">
       {/* Floating Pill Container - Uses Dynamic Theme Variables */}
-      <div className="pointer-events-auto relative flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 rounded-full bg-[var(--card)]/90 backdrop-blur-2xl border border-[var(--border)] shadow-[0_12px_40px_rgba(0,0,0,0.35)] text-[var(--foreground)]">
+      <div className="pointer-events-auto relative flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 rounded-full bg-[var(--card)]/90 backdrop-blur-2xl border border-[var(--border)] text-[var(--foreground)]">
         
         {/* Combined Left Capsule: Home Button with Brand MT Logo + Indicator Dot */}
         <button
           onClick={() => router.push("/")}
           className={`group relative flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 active:scale-95 shrink-0 ${
             isHomeActive
-              ? "bg-[var(--accent)] text-white shadow-[0_0_20px_rgba(var(--accent-rgb),0.45)] scale-105 border border-[var(--accent)]"
-              : "bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 border border-[var(--border)] hover:scale-105"
+              ? "bg-[var(--accent)] text-white"
+              : "bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 border border-[var(--border)]"
           }`}
           aria-label="Home"
           title="Home"
@@ -58,7 +58,7 @@ export default function BottomNav() {
               width={22}
               height={22}
               className={`w-5 h-5 object-contain transition-transform duration-300 ${
-                isHomeActive ? "scale-105 brightness-110" : ""
+                isHomeActive ? "brightness-110" : ""
               }`}
               priority
             />
@@ -66,7 +66,7 @@ export default function BottomNav() {
 
           {/* Theme Indicator Dot */}
           <span className={`w-1.5 h-1.5 rounded-full ${
-            isHomeActive ? "bg-white shadow-[0_0_6px_#ffffff]" : "bg-[var(--accent)] shadow-[0_0_8px_var(--accent)] animate-pulse"
+            isHomeActive ? "bg-white" : "bg-[var(--accent)]"
           }`} />
         </button>
 
@@ -81,15 +81,17 @@ export default function BottomNav() {
               onClick={item.action}
               className={`relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full transition-all duration-300 shrink-0 active:scale-95 ${
                 isActive
-                  ? "bg-[var(--accent)] text-white shadow-[0_0_18px_rgba(var(--accent-rgb),0.4)] scale-105"
+                  ? "bg-[var(--accent)] text-white"
                   : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/10"
               }`}
               aria-label={item.label}
               title={item.label}
             >
               <Icon 
-                className={`text-[1.05rem] sm:text-[1.1rem] transition-transform duration-200 ${
-                  isActive ? "text-white scale-105" : ""
+                size={18}
+                strokeWidth={2.2}
+                className={`transition-transform duration-200 ${
+                  isActive ? "text-white" : ""
                 }`} 
               />
             </button>

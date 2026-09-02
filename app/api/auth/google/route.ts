@@ -10,22 +10,47 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 export async function POST(req: Request) {
   try {
     await connectDB();
-    const { token } = await req.json();
+    const { token, access_token } = await req.json();
 
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    let email: string = "";
+    let name: string = "";
+    let picture: string = "";
+    let sub: string = "";
 
-    const payload = ticket.getPayload();
-    if (!payload?.email) {
-      return Response.json(
-        { success: false, message: "Invalid Google token" },
-        { status: 401 }
-      );
+    if (access_token || (token && token.startsWith("ya29."))) {
+      const tokenToUse = access_token || token;
+      const userRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+        headers: { Authorization: `Bearer ${tokenToUse}` },
+      });
+      const userInfo = await userRes.json();
+      if (!userInfo?.email) {
+        return Response.json(
+          { success: false, message: "Invalid Google access token" },
+          { status: 401 }
+        );
+      }
+      email = userInfo.email;
+      name = userInfo.name || "";
+      picture = userInfo.picture || "";
+      sub = userInfo.sub || "";
+    } else {
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+
+      const payload = ticket.getPayload();
+      if (!payload?.email) {
+        return Response.json(
+          { success: false, message: "Invalid Google token" },
+          { status: 401 }
+        );
+      }
+      email = payload.email;
+      name = payload.name || "";
+      picture = payload.picture || "";
+      sub = payload.sub || "";
     }
-
-    const { sub, email, name, picture } = payload;
     
     if (!email.toLowerCase().endsWith("@gmail.com")) {
       return Response.json(

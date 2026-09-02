@@ -52,29 +52,29 @@ export default function GiveawayBanner() {
           <div className="relative z-10 flex items-center gap-3 sm:gap-4 min-w-0">
             {/* Icon */}
             <div className="flex items-center ml-1 shrink-0">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[0.8rem] sm:rounded-[1rem] flex items-center justify-center border border-[var(--accent)]/30 z-30 shadow-sm transition-transform group-hover:scale-105 bg-[var(--accent)]/15 text-[var(--accent)]">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center border border-[var(--accent)]/30 z-30 shadow-sm transition-transform group-hover:scale-105 bg-[var(--accent)]/15 text-[var(--accent)]">
                 <FiGift size={16} className="sm:w-4 sm:h-4 drop-shadow-sm" />
               </div>
             </div>
             
             {/* Text Content */}
             <div className="flex flex-col justify-center min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shrink-0" />
-                <h3 className="text-[9px] sm:text-[10px] font-black tracking-widest text-red-500 leading-tight uppercase truncate">
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <h3 className="text-[8px] sm:text-[8.5px] font-black tracking-widest text-emerald-400 leading-tight uppercase truncate">
                   GIVEAWAY LIVE
                 </h3>
                 {g.maxEntries > 0 ? (
-                  <span className="text-[8px] sm:text-[9px] font-bold text-[var(--muted)] uppercase truncate">
+                  <span className="text-[7.5px] sm:text-[8px] font-bold text-[var(--muted)]/70 uppercase truncate">
                     • {g.entryCount || 0}/{g.maxEntries} Filled
                   </span>
                 ) : (
-                  <span className="text-[8px] sm:text-[9px] font-bold text-[var(--muted)] uppercase truncate">
+                  <span className="text-[7.5px] sm:text-[8px] font-bold text-[var(--muted)]/70 uppercase truncate">
                     • {g.entryCount || 0} Entered
                   </span>
                 )}
               </div>
-              <p key={animKey} className="gw-content text-[12px] sm:text-[14px] font-black tracking-wide text-[var(--foreground)] mt-0.5 truncate">
+              <p key={animKey} className="gw-content text-[11px] sm:text-[12.5px] font-black tracking-normal text-[var(--foreground)] mt-0.5 truncate">
                 {g.title}
               </p>
             </div>
@@ -98,10 +98,11 @@ export default function GiveawayBanner() {
 
             {/* Action Button */}
             <button 
-              className="h-7 sm:h-8 px-3 sm:px-4 rounded-full sm:rounded-[0.5rem] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white flex items-center justify-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] font-black uppercase tracking-wider shadow-md shadow-[var(--accent)]/20 transition-all hover:scale-105 active:scale-95"
+              className="h-6 sm:h-7 px-3 sm:px-3.5 rounded-lg bg-[var(--accent)] hover:brightness-110 !text-white flex items-center justify-center gap-1 text-[9px] sm:text-[10px] font-black uppercase tracking-wider shadow-md shadow-[var(--accent)]/20 transition-all hover:scale-105 active:scale-95"
               onClick={e => { e.stopPropagation(); router.push('/giveaways'); }}
             >
-              Enter <FiChevronRight size={12} />
+              <span>Enter</span>
+              <FiChevronRight size={11} />
             </button>
             
             {/* Close Button */}
@@ -110,7 +111,7 @@ export default function GiveawayBanner() {
                 e.stopPropagation();
                 setVisible(false);
               }}
-              className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-red-500 hover:bg-red-500/10 transition-all duration-300"
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/10 transition-all duration-300"
               aria-label="Close"
             >
               <FiX size={14} />

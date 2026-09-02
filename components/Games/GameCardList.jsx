@@ -9,10 +9,17 @@ export default function GameCardList({ game, isOutOfStock, index = 0 }) {
   const disabled = isOutOfStock(game.gameName);
 
   let displayTagName = game?.tagId?.tagName;
+  let tagBg = game?.tagId?.tagBackground;
+  let tagColor = game?.tagId?.tagColor;
+
   if (game?.gameSlug === "mobile-legends-philippines888") {
-    displayTagName = "Mlbb small";
+    displayTagName = "MLBB Small India";
+    tagBg = "#991b1b";
+    tagColor = "#ffffff";
   } else if (game?.gameSlug === "bgmi226") {
-    displayTagName = "indian";
+    displayTagName = "Indian";
+    tagBg = "#1e3a8a";
+    tagColor = "#ffffff";
   }
 
   return (
@@ -93,17 +100,17 @@ export default function GameCardList({ game, isOutOfStock, index = 0 }) {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {!disabled && game.tagId && (
+            {!disabled && (displayTagName || game.tagId) && (
               <span
-                className="text-[7.5px] sm:text-[8px] font-black uppercase tracking-[0.12em] px-3 py-1 rounded-lg border shadow-sm flex items-center gap-1.5"
+                className="text-[6.5px] sm:text-[7.5px] font-black uppercase tracking-wider px-2 py-0.5 rounded border shadow-sm flex items-center gap-1 leading-none"
                 style={{
-                  background: game.tagId.tagBackground,
-                  color: game.tagId.tagColor,
-                  borderColor: game.tagId.tagBackground,
+                  background: tagBg || game?.tagId?.tagBackground || "rgba(var(--accent-rgb), 0.2)",
+                  color: tagColor || game?.tagId?.tagColor || "#ffffff",
+                  borderColor: tagBg ? `${tagBg}80` : (game?.tagId?.tagBackground || "rgba(var(--accent-rgb), 0.3)"),
                 }}
               >
-                {displayTagName === "Manual" && <FiZap size={12} fill="currentColor" />}
-                {displayTagName}
+                {displayTagName === "Manual" && <FiZap size={10} fill="currentColor" />}
+                {displayTagName || game?.tagId?.tagName}
               </span>
             )}
             {disabled && (

@@ -23,7 +23,11 @@ import {
   Plus,
   Tag,
   IdCard,
+  Copy,
+  Check,
+  ExternalLink,
 } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import { SearchInput, StatusBadge, CopyButton, EmptyState, Pagination } from "@/components/common";
 import { formatDate, formatDateTime, formatCurrency, formatNumber } from "@/utils";
 
@@ -32,6 +36,15 @@ export default function UsersTab() {
   const [loading, setLoading] = useState(true);
   const [updatingUserId, setUpdatingUserId] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [copiedKey, setCopiedKey] = useState(null);
+
+  const handleCopy = (text, key, e) => {
+    if (e) e.stopPropagation();
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(null), 2000);
+  };
   const [activeStats, setActiveStats] = useState({
     day: 0,
     week: 0,
@@ -341,10 +354,24 @@ export default function UsersTab() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                                   <td className="px-6 py-4">
                         <div className="flex flex-col text-[var(--muted)]">
-                          <span className="text-[var(--foreground)] font-medium text-xs">{u.email}</span>
-                          <span className="text-[11px] mt-0.5">{u.phone || "No phone linked"}</span>
+                          <span className="text-[var(--foreground)] font-medium text-xs truncate max-w-[180px]">{u.email}</span>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-[11px]">{u.phone || "No phone linked"}</span>
+                            {u.phone && (
+                              <a
+                                href={getWhatsAppUrl(u.phone, u)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="text-emerald-400 hover:text-emerald-300 transition-colors p-0.5"
+                                title="Chat with User on WhatsApp"
+                              >
+                                <FaWhatsapp size={13} />
+                              </a>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -371,20 +398,16 @@ export default function UsersTab() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
-                          <span className="text-xs font-semibold text-[var(--foreground)]">
-                            {u.lastLogin ? new Date(u.lastLogin).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : "Never"}
-                          </span>
-                          <span className="text-[10px] text-[var(--muted)]/60">
-                            {u.lastLogin ? new Date(u.lastLogin).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) : ""}
+                          <span className="text-xs font-medium text-[var(--foreground)]">
+                            {u.lastLogin
+                              ? new Date(u.lastLogin).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+                              : "Never"}
                           </span>
                           {u.lastLoginIp && (
                             <span className="text-[9px] text-[var(--accent)]/50 font-mono mt-0.5">{u.lastLoginIp.split(',')[0]}</span>
                           )}
                         </div>
                       </td>
-                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wider ${getRoleClass(u.userType)}`}>
-                          {u.userType}
-                        </span>
                     </motion.tr>
                   ))}
                 </tbody>
@@ -428,9 +451,23 @@ export default function UsersTab() {
                   </div>
 
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-[var(--muted)]/60 px-0.5">
-                      <Mail size={10} className="shrink-0 text-[var(--accent)]" />
-                      <span className="text-[10px] font-medium break-all lowercase">{u.email}</span>
+                    <div className="flex items-center justify-between text-[var(--muted)]/80 px-0.5">
+                      <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
+                        <Mail size={10} className="shrink-0 text-[var(--accent)]" />
+                        <span className="text-[10px] font-medium truncate lowercase">{u.email}</span>
+                      </div>
+                      {u.phone && (
+                        <a
+                          href={getWhatsAppUrl(u.phone, u)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded shrink-0 hover:bg-emerald-500/20 transition-all"
+                        >
+                          <FaWhatsapp size={10} />
+                          <span>WhatsApp</span>
+                        </a>
+                      )}
                     </div>
 
                     <div className="flex items-center justify-between gap-4 pt-2.5 border-t border-[var(--border)]" onClick={(e) => e.stopPropagation()}>
@@ -597,17 +634,56 @@ export default function UsersTab() {
                 </DrawerSection>
 
                 <DrawerSection icon={<IdCard size={14} />} title="Identity">
-                  <div className="grid grid-cols-2 gap-2">
-                    <DrawerDetail full label="Full Name" value={selectedUser.name} highlight />
-                    <DrawerDetail label="User ID" value={selectedUser.userId} code />
-                    <DrawerDetail label="Orders" value={selectedUser.totalOrders || 0} />
+                  <div className="grid grid-cols-1 gap-2">
+                    <DrawerDetail
+                      label="Full Name"
+                      value={selectedUser.name}
+                      copyText={selectedUser.name}
+                      onCopy={(txt, e) => handleCopy(txt, `user-name-${selectedUser._id}`, e)}
+                      isCopied={copiedKey === `user-name-${selectedUser._id}`}
+                    />
+                    <DrawerDetail
+                      label="User ID"
+                      value={selectedUser.userId}
+                      copyText={selectedUser.userId}
+                      onCopy={(txt, e) => handleCopy(txt, `user-id-${selectedUser._id}`, e)}
+                      isCopied={copiedKey === `user-id-${selectedUser._id}`}
+                      code
+                    />
+                    <DrawerDetail label="Orders Count" value={selectedUser.totalOrders || 0} />
                   </div>
                 </DrawerSection>
 
                 <DrawerSection icon={<Mail size={14} />} title="Contact">
                   <div className="grid grid-cols-1 gap-2">
-                    <DrawerDetail label="Email Address" value={selectedUser.email} />
-                    <DrawerDetail label="Phone Number" value={selectedUser.phone || "Not provided"} />
+                    <DrawerDetail
+                      label="Email Address"
+                      value={selectedUser.email}
+                      copyText={selectedUser.email}
+                      onCopy={(txt, e) => handleCopy(txt, `user-email-${selectedUser._id}`, e)}
+                      isCopied={copiedKey === `user-email-${selectedUser._id}`}
+                    />
+                    <DrawerDetail
+                      label="Phone Number"
+                      value={selectedUser.phone || "Not provided"}
+                      copyText={selectedUser.phone}
+                      onCopy={(txt, e) => handleCopy(txt, `user-phone-${selectedUser._id}`, e)}
+                      isCopied={copiedKey === `user-phone-${selectedUser._id}`}
+                      whatsappUrl={selectedUser.phone ? getWhatsAppUrl(selectedUser.phone, selectedUser) : null}
+                    />
+
+                    {selectedUser.phone && (
+                      <a
+                        href={getWhatsAppUrl(selectedUser.phone, selectedUser)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1.5 flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-emerald-400 font-bold text-xs transition-all active:scale-[0.98] group shadow-[0_0_12px_rgba(16,185,129,0.1)]"
+                      >
+                        <FaWhatsapp size={15} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+                        <span>Chat with User on WhatsApp</span>
+                        <ExternalLink size={11} className="opacity-60" />
+                      </a>
+                    )}
                   </div>
                 </DrawerSection>
 
@@ -791,25 +867,71 @@ function Avatar({ user, size = "md" }) {
 }
 
 /* ================= HELPERS ================= */
+/* ================= HELPERS ================= */
+
+function getWhatsAppUrl(phone, user) {
+  if (!phone) return null;
+  let clean = phone.toString().replace(/[^0-9]/g, "");
+  if (clean.length === 10) {
+    clean = "91" + clean;
+  }
+  const userName = user?.name || "Player";
+  const text = `Hello ${userName}! Contacting you from BlueBuff...`;
+  return `https://wa.me/${clean}?text=${encodeURIComponent(text)}`;
+}
+
 function DrawerSection({ icon, title, children }) {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-3 text-[var(--muted)]/40">
-        <div className="text-[var(--accent)]">{icon}</div>
-        <h4 className="text-xs font-bold uppercase tracking-widest">{title}</h4>
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 text-[var(--foreground)]">
+        <div className="p-1.5 rounded-lg bg-[var(--accent)]/10 text-[var(--accent)]">{icon}</div>
+        <h4 className="text-[10px] font-black uppercase tracking-widest">{title}</h4>
+        <div className="h-px flex-1 bg-gradient-to-r from-[var(--border)] to-transparent ml-2" />
       </div>
-      <div className="grid grid-cols-1 gap-4 px-1">{children}</div>
+      <div className="flex flex-col gap-2 px-1 mt-1">{children}</div>
     </div>
   );
 }
 
-function DrawerDetail({ label, value }) {
+function DrawerDetail({ label, value, emphasize, copyText, onCopy, isCopied, whatsappUrl, code }) {
   return (
-    <div className="flex flex-col gap-1 border-b border-[var(--border)] pb-3">
-      <span className="text-[10px] font-semibold text-[var(--muted)] uppercase tracking-wider">{label}</span>
-      <span className="text-sm font-medium text-[var(--foreground)]">
-        {value || "Not available"}
-      </span>
+    <div className="flex items-end justify-between gap-1 group w-full py-0.5">
+      <span className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-widest whitespace-nowrap mb-0.5">{label}</span>
+      <div className="flex-1 border-b-2 border-dotted border-[var(--border)]/30 mx-2 mb-1.5 opacity-50 group-hover:opacity-100 transition-opacity" />
+      <div className="flex items-center gap-1.5 justify-end max-w-[65%]">
+        {whatsappUrl ? (
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs md:text-sm font-black text-right truncate text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-1 transition-colors"
+            title="Open WhatsApp chat with user"
+          >
+            <span className="truncate">{value || "N/A"}</span>
+            <FaWhatsapp size={12} className="text-emerald-400 shrink-0 inline-block ml-0.5" />
+          </a>
+        ) : (
+          <span className={`text-xs md:text-sm font-black text-right truncate ${code ? "font-mono" : ""} ${emphasize ? "text-[var(--accent)] drop-shadow-[0_0_5px_rgba(var(--accent-rgb),0.3)] italic uppercase" : "text-[var(--foreground)]"}`}>
+            {value || "N/A"}
+          </span>
+        )}
+        {copyText && (
+          <button
+            type="button"
+            onClick={(e) => onCopy && onCopy(copyText, e)}
+            className="p-1 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0"
+            title={`Copy ${label}`}
+          >
+            {isCopied ? (
+              <span className="text-[8.5px] font-bold text-emerald-500 flex items-center gap-0.5">
+                <Check size={10} className="text-emerald-500" />
+              </span>
+            ) : (
+              <Copy size={10} />
+            )}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
