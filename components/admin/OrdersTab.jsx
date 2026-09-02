@@ -22,8 +22,10 @@ import {
   ShoppingBag,
   Smartphone,
   Copy,
-  Check
+  Check,
+  ExternalLink
 } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import { StatusBadge, SearchInput, EmptyState, Pagination } from "@/components/common";
 import { formatCurrency, formatDate, formatTime, formatDateTime } from "@/utils";
 
@@ -520,8 +522,22 @@ export default function OrdersTab() {
                     copyText={selectedOrder.phone}
                     onCopy={(txt, e) => handleCopy(txt, `drawer-phone-${selectedOrder._id}`, e)}
                     isCopied={copiedKey === `drawer-phone-${selectedOrder._id}`}
+                    whatsappUrl={selectedOrder.phone ? getWhatsAppUrl(selectedOrder.phone, selectedOrder) : null}
                   />
                   <DrawerDetail label="Time" value={formatDateTime(selectedOrder.createdAt)} />
+
+                  {selectedOrder.phone && (
+                    <a
+                      href={getWhatsAppUrl(selectedOrder.phone, selectedOrder)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1.5 flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-emerald-400 font-bold text-xs transition-all active:scale-[0.98] group shadow-[0_0_12px_rgba(16,185,129,0.1)]"
+                    >
+                      <FaWhatsapp size={15} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+                      <span>Chat with Buyer on WhatsApp</span>
+                      <ExternalLink size={11} className="opacity-60" />
+                    </a>
+                  )}
                 </DrawerSection>
 
                 <div className="pb-6" />
@@ -727,6 +743,18 @@ function StatusDropdown({ value, onChange, options, disabled, compact }) {
 
 /* ================= HELPERS Interface ================= */
 
+function getWhatsAppUrl(phone, order) {
+  if (!phone) return null;
+  let clean = phone.toString().replace(/[^0-9]/g, "");
+  if (clean.length === 10) {
+    clean = "91" + clean;
+  }
+  const orderId = order?.orderId || (order?._id ? String(order._id).slice(-8).toUpperCase() : "");
+  const itemName = order?.itemName || "Diamond Top-up";
+  const text = `Hello! Regarding your order #${orderId} (${itemName}) on BlueBuff...`;
+  return `https://wa.me/${clean}?text=${encodeURIComponent(text)}`;
+}
+
 function DrawerSection({ icon, title, children }) {
   return (
     <div className="space-y-2">
@@ -740,15 +768,28 @@ function DrawerSection({ icon, title, children }) {
   );
 }
 
-function DrawerDetail({ label, value, emphasize, copyText, onCopy, isCopied }) {
+function DrawerDetail({ label, value, emphasize, copyText, onCopy, isCopied, whatsappUrl }) {
   return (
     <div className="flex items-end justify-between gap-1 group w-full">
       <span className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-widest whitespace-nowrap mb-0.5">{label}</span>
       <div className="flex-1 border-b-2 border-dotted border-[var(--border)]/30 mx-2 mb-1.5 opacity-50 group-hover:opacity-100 transition-opacity" />
-      <div className="flex items-center gap-1.5 justify-end max-w-[60%]">
-        <span className={`text-xs md:text-sm font-black text-right truncate ${emphasize ? "text-[var(--accent)] drop-shadow-[0_0_5px_rgba(var(--accent-rgb),0.3)] italic uppercase" : "text-[var(--foreground)]"}`}>
-          {value || "N/A"}
-        </span>
+      <div className="flex items-center gap-1.5 justify-end max-w-[65%]">
+        {whatsappUrl ? (
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs md:text-sm font-black text-right truncate text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-1 transition-colors"
+            title="Open WhatsApp chat with buyer"
+          >
+            <span className="truncate">{value || "N/A"}</span>
+            <FaWhatsapp size={12} className="text-emerald-400 shrink-0 inline-block ml-0.5" />
+          </a>
+        ) : (
+          <span className={`text-xs md:text-sm font-black text-right truncate ${emphasize ? "text-[var(--accent)] drop-shadow-[0_0_5px_rgba(var(--accent-rgb),0.3)] italic uppercase" : "text-[var(--foreground)]"}`}>
+            {value || "N/A"}
+          </span>
+        )}
         {copyText && (
           <button
             type="button"
