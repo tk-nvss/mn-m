@@ -36,7 +36,7 @@ export default function GameCardGrid({ game, isOutOfStock, index = 0 }) {
         <div className="relative w-full aspect-square p-1.5 sm:p-2 flex items-center justify-center shrink-0 bg-black/10 overflow-hidden">
           
           {/* Left background image */}
-          <div className="absolute w-[80%] h-[88%] z-0 transform -rotate-[10deg] -translate-x-3.5 sm:-translate-x-5 scale-95 opacity-40 blur-[2px] shadow-xl transition-all duration-300 group-hover:-rotate-[12deg] group-hover:-translate-x-5 sm:group-hover:-translate-x-7 group-hover:opacity-60">
+          <div className="absolute w-[80%] h-[88%] z-0 transform -rotate-[6deg] -translate-x-3.5 sm:-translate-x-5 scale-95 opacity-30 blur-[1px]">
             <Image
               src={game.gameImageId?.image || logo}
               alt=""
@@ -50,7 +50,7 @@ export default function GameCardGrid({ game, isOutOfStock, index = 0 }) {
           </div>
 
           {/* Right background image */}
-          <div className="absolute w-[80%] h-[88%] z-0 transform rotate-[10deg] translate-x-3.5 sm:translate-x-5 scale-95 opacity-40 blur-[2px] shadow-xl transition-all duration-300 group-hover:rotate-[12deg] group-hover:translate-x-5 sm:group-hover:translate-x-7 group-hover:opacity-60">
+          <div className="absolute w-[80%] h-[88%] z-0 transform rotate-[6deg] translate-x-3.5 sm:translate-x-5 scale-95 opacity-30 blur-[1px]">
             <Image
               src={game.gameImageId?.image || logo}
               alt=""
@@ -64,7 +64,7 @@ export default function GameCardGrid({ game, isOutOfStock, index = 0 }) {
           </div>
 
           {/* Main card */}
-          <div className="relative w-[92%] h-[98%] z-10 shadow-2xl transition-transform duration-300 group-hover:scale-[1.02] border border-white/10 bg-[var(--background)]">
+          <div className="relative w-[92%] h-[98%] z-10 border border-white/10 bg-[var(--background)]">
             <Image
               src={game.gameImageId?.image || logo}
               alt={game.gameName}
@@ -79,13 +79,13 @@ export default function GameCardGrid({ game, isOutOfStock, index = 0 }) {
             />
 
           {/* OVERLAYS */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 group-hover:opacity-80" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60" />
 
           {/* TAG / BADGE */}
           {!disabled && (displayTagName || game.tagId) && (
             <div className="absolute top-1.5 left-1.5 z-20">
               <span
-                className="text-[6.5px] sm:text-[7px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-[4px] shadow-md border flex items-center gap-0.5 leading-none backdrop-blur-sm"
+                className="text-[6.5px] sm:text-[7px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-[4px] border flex items-center gap-0.5 leading-none"
                 style={{
                   background: tagBg || game?.tagId?.tagBackground || "rgba(var(--accent-rgb), 0.2)",
                   color: tagColor || game?.tagId?.tagColor || "#ffffff",
@@ -98,19 +98,10 @@ export default function GameCardGrid({ game, isOutOfStock, index = 0 }) {
             </div>
           )}
 
-          {/* VIEW BUTTON */}
-          {!disabled && (
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-2xl">
-                <FiEye size={16} />
-              </div>
-            </div>
-          )}
-
           {/* OUT OF STOCK OVERLAY */}
           {disabled && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
-              <span className="px-3 py-1.5 rounded-lg bg-red-500/90 text-white text-[8px] font-black uppercase tracking-widest italic shadow-2xl text-center leading-tight">
+              <span className="px-3 py-1.5 rounded-lg bg-red-500/90 text-white text-[8px] font-black uppercase tracking-widest italic text-center leading-tight">
                 OUT OF STOCK
               </span>
             </div>
@@ -123,12 +114,12 @@ export default function GameCardGrid({ game, isOutOfStock, index = 0 }) {
           <div className="flex items-center justify-between gap-1.5">
             <h3
               className={`text-[10px] sm:text-xs font-black uppercase tracking-tight leading-tight flex-1
-              ${disabled ? "text-[var(--muted)]" : "text-[var(--foreground)] group-hover:text-[var(--accent)]"}`}
+              ${disabled ? "text-[var(--muted)]" : "text-[var(--foreground)]"}`}
             >
               {game.gameName}
             </h3>
             {!disabled && (
-              <FiChevronRight className="text-[var(--muted)] group-hover:text-[var(--accent)] shrink-0 transition-transform group-hover:translate-x-0.5" size={12} />
+              <FiChevronRight className="text-[var(--muted)] shrink-0" size={12} />
             )}
           </div>
         </div>

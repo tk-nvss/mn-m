@@ -47,7 +47,7 @@ export default function GameSwitcher() {
                             _variant: "weekly-pass",
                             gameSlug: WEEKLY_PASS_SLUG,
                             gameImageId: {
-                                image: "/game-assets/weeklypass.jpg",
+                                image: "/game-assets/weeklypass.webp",
                             },
                         });
                     }

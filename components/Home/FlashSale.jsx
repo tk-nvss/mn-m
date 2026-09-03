@@ -11,7 +11,7 @@ const flashSaleData = [
         id: 1,
         name: "Weekly Pass",
         game: "MLBB",
-        image: "/game-assets/weeklypass.jpg",
+        image: "/game-assets/weeklypass.webp",
         price: "₹150",
         originalPrice: "₹175",
         slug: "mobile-legends270?type=weekly-pass",
@@ -21,7 +21,7 @@ const flashSaleData = [
         id: 2,
         name: "Blessing Welkin",
         game: "Genshin",
-        image: "/game-assets/genshin.jpg",
+        image: "/game-assets/genshin.webp",
         price: "₹405",
         originalPrice: "₹450",
         slug: "genshin-impact742",
@@ -41,7 +41,7 @@ const flashSaleData = [
         id: 5,
         name: "Weekly Bundle",
         game: "MLBB",
-        image: "/game-assets/weekly-monthly-bundle.jpg",
+        image: "/game-assets/weekly-monthly-bundle.webp",
         price: "₹85",
         originalPrice: "₹100",
         slug: "weeklymonthly-bundle261",
@@ -51,7 +51,7 @@ const flashSaleData = [
         id: 6,
         name: "Weekly Card plus",
         game: "HOK",
-        image: "/game-assets/hok.jpg",
+        image: "/game-assets/hok.webp",
         price: "₹380",
         originalPrice: "₹450",
         slug: "honor-of-kings57",
@@ -140,9 +140,9 @@ export default function FlashSale() {
                                                 alt={item.name}
                                                 fill
                                                 sizes="(max-width: 640px) 140px, 185px"
-                                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                                className="object-cover"
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-40 group-hover:opacity-60" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-40" />
                                         </div>
 
                                         {/* Info */}

@@ -38,7 +38,7 @@ export default function GameCardList({ game, isOutOfStock, index = 0 }) {
         <div className="relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 ml-2 mr-2">
           
           {/* Left background image */}
-          <div className="absolute inset-0 z-0 transform -rotate-[15deg] -translate-x-4 sm:-translate-x-5 scale-90 opacity-50 blur-[2px] transition-transform duration-300 group-hover:-rotate-[20deg] group-hover:-translate-x-6">
+          <div className="absolute inset-0 z-0 transform -rotate-[10deg] -translate-x-4 sm:-translate-x-5 scale-90 opacity-40 blur-[1px]">
             <Image
               src={game.gameImageId?.image || logo}
               alt=""
@@ -51,7 +51,7 @@ export default function GameCardList({ game, isOutOfStock, index = 0 }) {
           </div>
 
           {/* Right background image */}
-          <div className="absolute inset-0 z-0 transform rotate-[15deg] translate-x-4 sm:translate-x-5 scale-90 opacity-50 blur-[2px] transition-transform duration-300 group-hover:rotate-[20deg] group-hover:translate-x-6">
+          <div className="absolute inset-0 z-0 transform rotate-[10deg] translate-x-4 sm:translate-x-5 scale-90 opacity-40 blur-[1px]">
             <Image
               src={game.gameImageId?.image || logo}
               alt=""
@@ -65,10 +65,10 @@ export default function GameCardList({ game, isOutOfStock, index = 0 }) {
 
           {/* Center main image */}
           <div className={`
-            relative w-full h-full rounded-none border z-10 transition-transform duration-300 group-hover:scale-105 shadow-lg bg-[var(--background)]
+            relative w-full h-full rounded-none border z-10 bg-[var(--background)]
             ${disabled
               ? "border-white/10"
-              : "border-white/10 group-hover:border-[var(--accent)]/30"
+              : "border-white/10"
             }
           `}>
             <Image
@@ -93,7 +93,7 @@ export default function GameCardList({ game, isOutOfStock, index = 0 }) {
           <div className="flex flex-col mb-1.5 sm:mb-2">
             <h3
               className={`text-base sm:text-lg font-[1000] uppercase italic tracking-tighter leading-tight
-              ${disabled ? "text-[var(--muted)]" : "text-[var(--foreground)] group-hover:text-[var(--accent)]"}`}
+              ${disabled ? "text-[var(--muted)]" : "text-[var(--foreground)]"}`}
             >
               {game.gameName}
             </h3>
@@ -128,11 +128,6 @@ export default function GameCardList({ game, isOutOfStock, index = 0 }) {
               <FiArrowRight size={20} />
             </div>
           </div>
-        )}
-
-        {/* HOVER ACCENT LINE */}
-        {!disabled && (
-          <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[var(--accent)] opacity-0 group-hover:opacity-100 rounded-r-full shadow-[0_0_15px_var(--accent)]" />
         )}
       </Link>
     </div>

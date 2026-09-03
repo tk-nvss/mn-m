@@ -18,7 +18,7 @@ const storyData = [
     title: "Weekly Pass",
     badge: "Best",
     color: "#15803d", // Green
-    image: "/game-assets/weeklypass.jpg",
+    image: "/game-assets/weeklypass.webp",
     link: "/games/mobile-legends270?type=weekly-pass",
   },
   {
@@ -26,7 +26,7 @@ const storyData = [
     title: "Weekly Bundle",
     badge: "Hot",
     color: "#b91c1c", // Red
-    image: "/game-assets/weekly-monthly-bundle.jpg",
+    image: "/game-assets/weekly-monthly-bundle.webp",
     link: "/games/weeklymonthly-bundle261",
   },
   {
@@ -34,7 +34,7 @@ const storyData = [
     title: "MLBB India",
     badge: "Live",
     color: "#15803d", // Green
-    image: "/game-assets/mlbbindia.jpg",
+    image: "/game-assets/mlbbindia.webp",
     link: "/games/mobile-legends270",
   },
   {
@@ -42,14 +42,14 @@ const storyData = [
     title: "MLBB Double",
     badge: "New",
     color: "#1d4ed8", // Blue
-    image: "/game-assets/double-dias.jpg",
+    image: "/game-assets/double-dias.webp",
     link: "/games/mlbb-double332",
   },
   {
     id: 4,
     title: "MLBB Small",
     color: "#7e22ce", // Purple
-    image: "/game-assets/mlbb-ph-small.jpg",
+    image: "/game-assets/mlbb-ph-small.webp",
     link: "/games/mobile-legends-philippines888",
   },
 
@@ -66,7 +66,7 @@ const storyData = [
     title: "Honour of Kings",
     badge: "New",
     color: "#15803d", // Green
-    image: "/game-assets/hok.jpg",
+    image: "/game-assets/hok.webp",
     link: "/games/honor-of-kings57",
   },
   {
@@ -74,7 +74,7 @@ const storyData = [
     title: "Membership",
     badge: "VIP",
     color: "#db2777", // Pink
-    image: "/membership/silver-m.png",
+    image: "/membership/silver-m.webp",
     link: "/games/membership/silver-membership",
   },
   {
@@ -82,7 +82,7 @@ const storyData = [
     title: "Reseller",
     badge: "B2B",
     color: "#ca8a04", // Yellow/Gold
-    image: "/membership/reseller-m.png",
+    image: "/membership/reseller-m.webp",
     link: "/games/membership/reseller-membership",
   },
 ];
@@ -95,16 +95,16 @@ export default function StorySlider() {
           {storyData.map((item) => (
             <div
               key={item.id}
-              className="opacity-100 translate-y-0"
+              className="opacity-100"
             >
               <Link
                 href={item.link}
                 className="group relative flex flex-col items-center min-w-[72px] md:min-w-[82px] snap-center"
               >
                 <div className="relative">
-                  {/* Clean Colored Ring (No Shadow, No Glow) */}
+                  {/* Clean Colored Ring (Static, No Animation) */}
                   <div
-                    className="relative p-[2px] rounded-full transition-transform duration-500 group-hover:scale-105 z-10"
+                    className="relative p-[2px] rounded-full z-10"
                     style={{
                       background: item.color || 'var(--accent)'
                     }}
@@ -118,16 +118,16 @@ export default function StorySlider() {
                           fill
                           sizes="(max-width: 768px) 58px, 70px"
                           priority={item.id <= 2}
-                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                          className="object-cover"
                         />
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Title - Clean & Aligned */}
+                {/* Title - Clean & Static */}
                 <div className="mt-2 h-[24px] md:h-[28px] w-full max-w-[76px] md:max-w-[88px] flex items-start justify-center text-center">
-                  <span className="text-[9px] md:text-[10px] font-bold text-[var(--muted)] group-hover:text-[var(--foreground)] transition-colors duration-200 tracking-wider text-center uppercase leading-[1.2] line-clamp-2">
+                  <span className="text-[9px] md:text-[10px] font-bold text-[var(--muted)] group-hover:text-[var(--foreground)] tracking-wider text-center uppercase leading-[1.2] line-clamp-2">
                     {item.title}
                   </span>
                 </div>

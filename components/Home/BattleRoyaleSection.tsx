@@ -15,7 +15,7 @@ const brGames = [
     gradient: "from-orange-500/10 to-transparent",
     borderHover: "hover:border-orange-500/40",
     tagBadge: "bg-orange-500/10 text-orange-500 border-orange-500/25",
-    image: "/game-assets/bgmi_india.png",
+    image: "/game-assets/bgmi_india.webp",
     link: "/games/bgmi226",
   },
   {
@@ -46,7 +46,7 @@ export default function BattleRoyaleSection() {
             </h2>
           </div>
           <span className="text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)]/70 flex items-center gap-1">
-            <FiZap size={10} className="text-amber-500 animate-pulse" />
+            <FiZap size={10} className="text-amber-500" />
             Instant UC
           </span>
         </div>
@@ -57,16 +57,16 @@ export default function BattleRoyaleSection() {
             <Link
               key={game.id}
               href={game.link}
-              className={`group relative overflow-hidden rounded-2xl bg-[var(--card)]/90 backdrop-blur-md border border-[var(--border)] p-2 sm:p-2.5 transition-all duration-200 hover:-translate-y-0.5 ${game.borderHover} cursor-pointer shadow-xs`}
+              className={`group relative overflow-hidden rounded-2xl bg-[var(--card)]/90 backdrop-blur-md border border-[var(--border)] p-2 sm:p-2.5 ${game.borderHover} cursor-pointer`}
             >
               {/* Subtle hover gradient */}
               <div
-                className={`absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r ${game.gradient} transition-opacity duration-300 pointer-events-none`}
+                className={`absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r ${game.gradient} transition-opacity duration-200 pointer-events-none`}
               />
 
               <div className="flex items-center gap-2 sm:gap-2.5 relative z-10">
                 {/* Game Thumbnail - Compact & Sharp */}
-                <div className="relative w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--background)] p-0.5 group-hover:scale-105 transition-transform duration-200">
+                <div className="relative w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--background)] p-0.5">
                   <div className="relative w-full h-full rounded-[9px] overflow-hidden">
                     <Image
                       src={game.image}

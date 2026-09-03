@@ -57,7 +57,7 @@ export default function ServiceGridSection({
               <div className="relative w-full aspect-square p-2 sm:p-3 flex items-center justify-center shrink-0 bg-black/10 overflow-hidden">
                 
                 {/* Left background image */}
-                <div className="absolute w-[75%] h-[85%] z-0 transform -rotate-[10deg] -translate-x-4 sm:-translate-x-6 scale-95 opacity-40 blur-[2px] shadow-xl transition-all duration-300 group-hover:-rotate-[12deg] group-hover:-translate-x-6 sm:group-hover:-translate-x-8 group-hover:opacity-60">
+                <div className="absolute w-[75%] h-[85%] z-0 transform -rotate-[6deg] -translate-x-4 sm:-translate-x-6 scale-95 opacity-30 blur-[1px]">
                   <Image
                     src={item.image}
                     alt=""
@@ -70,7 +70,7 @@ export default function ServiceGridSection({
                 </div>
 
                 {/* Right background image */}
-                <div className="absolute w-[75%] h-[85%] z-0 transform rotate-[10deg] translate-x-4 sm:translate-x-6 scale-95 opacity-40 blur-[2px] shadow-xl transition-all duration-300 group-hover:rotate-[12deg] group-hover:translate-x-6 sm:group-hover:translate-x-8 group-hover:opacity-60">
+                <div className="absolute w-[75%] h-[85%] z-0 transform rotate-[6deg] translate-x-4 sm:translate-x-6 scale-95 opacity-30 blur-[1px]">
                   <Image
                     src={item.image}
                     alt=""
@@ -83,7 +83,7 @@ export default function ServiceGridSection({
                 </div>
 
                 {/* Main card */}
-                <div className="relative w-[85%] h-[95%] z-10 shadow-2xl transition-transform duration-300 group-hover:scale-[1.02] border border-white/10 bg-[var(--background)]">
+                <div className="relative w-[85%] h-[95%] z-10 border border-white/10 bg-[var(--background)]">
                   <Image
                     src={item.image}
                     alt={item.gameName || item.name}
@@ -94,28 +94,21 @@ export default function ServiceGridSection({
                   />
 
                   {/* OVERLAYS */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 group-hover:opacity-80" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60" />
 
                   {/* CATEGORY & MANUAL BADGES */}
-                  <div className="absolute top-3 left-3 right-3 z-20 flex justify-between items-start gap-2">
+                  <div className="absolute top-2 left-2 right-2 z-20 flex justify-between items-start gap-1.5">
                     {showCategory && item.category && (
-                      <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-white">
+                      <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-[0.15em] px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-md border border-white/10 text-white">
                         {item.category}
                       </span>
                     )}
                     {item.isManual && (
-                      <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-lg bg-amber-500/80 backdrop-blur-md border border-amber-400/30 text-white shadow-[0_0_10px_rgba(245,158,11,0.3)] flex items-center gap-1">
+                      <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-[0.15em] px-1.5 py-0.5 rounded bg-amber-500/80 backdrop-blur-md border border-amber-400/30 text-white flex items-center gap-1">
                         <FiZap size={8} fill="currentColor" />
                         Manual
                       </span>
                     )}
-                  </div>
-
-                  {/* VIEW BUTTON (MATCHING GAMECARD) */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-2xl">
-                      <FiEye size={18} />
-                    </div>
                   </div>
                 </div>
               </div>
@@ -123,25 +116,22 @@ export default function ServiceGridSection({
               {/* CONTENT */}
               <div className="p-2 sm:p-2.5 relative">
                 <div className="mb-1 flex items-start justify-between gap-2">
-                  <h3 className="text-[10px] sm:text-xs font-black uppercase tracking-tight italic leading-tight line-clamp-2 text-[var(--foreground)] group-hover:text-[var(--accent)]">
+                  <h3 className="text-[10px] sm:text-xs font-black uppercase tracking-tight italic leading-tight line-clamp-2 text-[var(--foreground)]">
                     {item.gameName || item.name}
                   </h3>
-                  <FiChevronRight className="text-[var(--muted)] group-hover:text-[var(--accent)]" size={14} />
+                  <FiChevronRight className="text-[var(--muted)]" size={14} />
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]/40 group-hover:bg-[var(--accent)] shadow-[0_0_8px_var(--accent)]" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]/40" />
 
                   {item.isManual && (
-                    <span className="flex-1 text-right text-[7px] font-black text-amber-500 uppercase tracking-widest opacity-80 group-hover:opacity-100">
+                    <span className="flex-1 text-right text-[7px] font-black text-amber-500 uppercase tracking-widest opacity-80">
                       • Manual
                     </span>
                   )}
                 </div>
               </div>
-
-              {/* ACCENT BAR REMOVED ANIMATION */}
-              <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-[var(--accent)] group-hover:w-full shadow-[0_0_10px_var(--accent)]" />
             </Link>
           </div>
         ))}
