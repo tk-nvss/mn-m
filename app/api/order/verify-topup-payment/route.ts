@@ -5,7 +5,6 @@ import Order from "@/models/Order";
 import User from "@/models/User";
 import CoinTransaction from "@/models/CoinTransaction";
 import { getAppSettings } from "@/lib/settings";
-import { placeSmileOrder } from "@/lib/smileOne";
 
 export async function POST(req: Request) {
   try {
@@ -277,83 +276,53 @@ export async function POST(req: Request) {
 
     // Fetch App Settings for provider check
     const settings = await getAppSettings();
-    const useSmileOne = settings.mlbbWeeklyProvider === "smileone";
+    const provider = settings.topupProvider || "1game";
 
     for (let i = 0; i < multiplier; i++) {
       try {
-        console.log(`[fulfillment] START | Order: ${orderId} | Game: ${finalOrder.gameSlug} | Item: ${baseItemSlug} | Player: ${finalOrder.playerId} | Zone: ${finalOrder.zoneId}`);
+        console.log(`[fulfillment] START | Order: ${orderId} | Game: ${finalOrder.gameSlug} | Item: ${baseItemSlug} | Player: ${finalOrder.playerId} | Zone: ${finalOrder.zoneId} | Provider: ${provider}`);
         console.log(`[fulfillment] Attempt ${i + 1}/${multiplier}`);
 
         let gameData: any;
         let isSuccess = false;
 
-
-        // Check if we should use Smile One for Weekly Pass
-        const isWeeklyPass = finalOrder.gameSlug === "mobile-legends270" && (baseItemSlug.toLowerCase().includes("weekly") || baseItemSlug.includes("pass"));
-
-        if (useSmileOne && isWeeklyPass) {
-          console.log(`[fulfillment] Using SmileOne for Weekly Pass`);
-          const smileResp = await placeSmileOrder({
-            playerId: String(finalOrder.playerId),
-            zoneId: String(finalOrder.zoneId),
+        if (provider === "bluebuff") {
+          const bluebuffUrl = `${process.env.BLUEBUFF_API_BASE || "https://api.bluebuff.in"}/api/service/order`;
+          const bluebuffKey = process.env.BLUEBUFF_API_KEY!;
+          const bluebuffBody = {
             gameSlug: finalOrder.gameSlug,
             itemSlug: baseItemSlug,
-            orderId: multiplier > 1 ? `${orderId}-${i}` : orderId
-          });
-          gameData = smileResp.data;
-          isSuccess = smileResp.success;
-        } else if (finalOrder.gameSlug === "bgmi-manual") {
-          const mewjiUrl = `${process.env.MEWJI_API_BASE}/order/create`;
-          const mewjiKey = process.env.MEWJI_API_KEY!;
-          const mewjiBody = {
-            gameSlug: "bgmi-manual",
-            itemSlug: baseItemSlug,
             playerId: String(finalOrder.playerId),
+            zoneId: finalOrder.zoneId ? String(finalOrder.zoneId) : undefined,
           };
 
-          const mewjiHeaders = {
-            "Content-Type": "application/json",
-            "X-API-KEY": mewjiKey,
-          };
+          console.log(`[fulfillment] Calling Bluebuff API:`, bluebuffUrl, JSON.stringify(bluebuffBody));
 
-          console.log(`[fulfillment] === BGMI MEWJI REQUEST START ===`);
-          console.log(`[fulfillment] Order ID: ${orderId}`);
-          console.log(`[fulfillment] Method: POST | URL: ${mewjiUrl}`);
-          console.log(`[fulfillment] Headers:`, JSON.stringify({ ...mewjiHeaders, "X-API-KEY": mewjiKey ? '***' + mewjiKey.slice(-4) : 'MISSING' }, null, 2));
-          console.log(`[fulfillment] Body Payload:`, JSON.stringify(mewjiBody, null, 2));
-          console.log(`[fulfillment] ===============================`);
-
-          const gameResp = await fetch(mewjiUrl, {
+          const gameResp = await fetch(bluebuffUrl, {
             method: "POST",
-            headers: mewjiHeaders,
-            body: JSON.stringify(mewjiBody),
+            headers: {
+              "Content-Type": "application/json",
+              "x-api-key": bluebuffKey,
+            },
+            body: JSON.stringify(bluebuffBody),
           });
-
-          console.log(`[fulfillment] MEWJI RESPONSE STATUS: ${gameResp.status} ${gameResp.statusText}`);
 
           const responseText = await gameResp.text();
-          console.log(`[fulfillment] MEWJI RAW RESPONSE:`, responseText);
-
           try {
             gameData = JSON.parse(responseText);
-            console.log(`[fulfillment] MEWJI PARSED JSON:`, JSON.stringify(gameData, null, 2));
-          } catch (e) {
-            console.error(`[fulfillment] Mewji JSON Parse Error:`, e);
-            gameData = { success: false, message: "Invalid JSON from Mewji" };
+          } catch {
+            gameData = { success: false, message: responseText };
           }
-
-          isSuccess = gameResp.ok && (gameData?.success === true || gameData?.status === "success" || gameData?.order?.status === "success");
-          console.log(`[fulfillment] BGMI SUCCESS CHECK -> isSuccess: ${isSuccess}`);
-          console.log(`[fulfillment] === BGMI MEWJI REQUEST END ===`);
-
-
+          console.log(`[fulfillment] Bluebuff Response:`, JSON.stringify(gameData));
+          isSuccess = gameResp.ok && (
+            gameData?.success === true ||
+            gameData?.status === "success" ||
+            gameData?.order?.status === "success" ||
+            gameData?.order?.topupStatus === "success"
+          );
         } else {
           // Default provider (1game)
-          console.log(`[fulfillment] Order ID: ${orderId}`);
-          console.log(`[fulfillment] Method: POST | URL: ${process.env.NEXT_PUBLIC_API_BASE}/api-service/order`);
-          console.log(`[fulfillment] Body Payload:`, JSON.stringify({ playerId: String(finalOrder.playerId), zoneId: String(finalOrder.zoneId), productId: `${finalOrder.gameSlug}_${baseItemSlug}`, currency: "USD" }, null, 2));
-
-          console.log(`[fulfillment] ===============================`);
+          console.log(`[fulfillment] Calling 1Game API:`, `${process.env.NEXT_PUBLIC_API_BASE}/api-service/order`);
           const gameResp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api-service/order`, {
             method: "POST",
             headers: {

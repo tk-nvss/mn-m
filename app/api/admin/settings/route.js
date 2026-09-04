@@ -71,11 +71,11 @@ export async function PATCH(req) {
         }
 
         const body = await req.json();
-        const { maintenanceMode, mlbbWeeklyProvider, ordersDisabled } = body;
+        const { maintenanceMode, topupProvider, ordersDisabled } = body;
 
         let settings = await AppSettings.findOne({});
         if (!settings) {
-            settings = new AppSettings({ maintenanceMode: false, mlbbWeeklyProvider: "1game", ordersDisabled: false });
+            settings = new AppSettings({ maintenanceMode: false, topupProvider: "1game", ordersDisabled: false });
         }
 
         if (typeof maintenanceMode === "boolean") {
@@ -103,8 +103,8 @@ export async function PATCH(req) {
         if (typeof body.showHomeQuickActions === "boolean") settings.showHomeQuickActions = body.showHomeQuickActions;
         if (typeof body.showBottomNav === "boolean") settings.showBottomNav = body.showBottomNav;
 
-        if (mlbbWeeklyProvider && ["1game", "smileone"].includes(mlbbWeeklyProvider)) {
-            settings.mlbbWeeklyProvider = mlbbWeeklyProvider;
+        if (topupProvider && ["1game", "bluebuff"].includes(topupProvider)) {
+            settings.topupProvider = topupProvider;
         }
 
         await settings.save();

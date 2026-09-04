@@ -8,7 +8,6 @@ import { validateApiKey } from "@/lib/apiKeyAuth";
 import { ensureDailyReset } from "@/lib/apiKeyUtils";
 import { calculateItemPrice } from "@/lib/pricingUtils";
 import { getAppSettings } from "@/lib/settings";
-import { placeSmileOrder } from "@/lib/smileOne";
 
 export async function POST(req) {
     try {
@@ -153,23 +152,47 @@ export async function POST(req) {
 
             // 2. Call external fulfillment service
             const settings = await getAppSettings();
-            const useSmileOne = settings.mlbbWeeklyProvider === "smileone";
-            const isWeeklyPass = gameSlug === "mobile-legends270" && (itemSlug.toLowerCase().includes("weekly") || itemSlug.includes("pass"));
+            const provider = settings.topupProvider || "1game";
 
             let gameData;
             let isSuccess = false;
 
-            if (useSmileOne && isWeeklyPass) {
-                const smileResp = await placeSmileOrder({
+            if (provider === "bluebuff") {
+                const bluebuffUrl = `${process.env.BLUEBUFF_API_BASE || "https://api.bluebuff.in"}/api/service/order`;
+                const bluebuffKey = process.env.BLUEBUFF_API_KEY;
+                const bluebuffBody = {
+                    gameSlug,
+                    itemSlug,
                     playerId: String(playerId),
-                    zoneId: String(zoneId || ""),
-                    gameSlug: gameSlug,
-                    itemSlug: itemSlug,
-                    orderId: orderId
+                    zoneId: zoneId ? String(zoneId) : undefined,
+                };
+
+                console.log(`[Service API] Calling Bluebuff API:`, bluebuffUrl, JSON.stringify(bluebuffBody));
+
+                const gameResp = await fetch(bluebuffUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-api-key": bluebuffKey,
+                    },
+                    body: JSON.stringify(bluebuffBody),
                 });
-                gameData = smileResp.data;
-                isSuccess = smileResp.success;
+
+                const responseText = await gameResp.text();
+                try {
+                    gameData = JSON.parse(responseText);
+                } catch {
+                    gameData = { success: false, message: responseText };
+                }
+                console.log(`[Service API] Bluebuff Response:`, JSON.stringify(gameData));
+                isSuccess = gameResp.ok && (
+                    gameData?.success === true ||
+                    gameData?.status === "success" ||
+                    gameData?.order?.status === "success" ||
+                    gameData?.order?.topupStatus === "success"
+                );
             } else {
+                console.log(`[Service API] Calling 1Game API:`, `${process.env.NEXT_PUBLIC_API_BASE}/api-service/order`);
                 const gameResp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api-service/order`, {
                     method: "POST",
                     headers: {

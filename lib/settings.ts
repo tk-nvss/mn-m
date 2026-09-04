@@ -10,7 +10,7 @@ export const getAppSettings = unstable_cache(
             if (!settings) {
                 return { 
                     maintenanceMode: false, 
-                    mlbbWeeklyProvider: "1game",
+                    topupProvider: "1game",
                     showTopNoticeBanner: false,
                     showHomeEarnPromotion: false,
                     showTradeMarketplaceBanner: false,
@@ -31,7 +31,7 @@ export const getAppSettings = unstable_cache(
             }
             return {
                 maintenanceMode: !!settings.maintenanceMode,
-                mlbbWeeklyProvider: settings.mlbbWeeklyProvider || "1game",
+                topupProvider: settings.topupProvider || "1game",
                 showTopNoticeBanner: !!settings.showTopNoticeBanner,
                 showHomeEarnPromotion: !!settings.showHomeEarnPromotion,
                 showTradeMarketplaceBanner: !!settings.showTradeMarketplaceBanner,
@@ -53,7 +53,7 @@ export const getAppSettings = unstable_cache(
             console.error("Error fetching app settings:", error);
             return { 
                 maintenanceMode: false, 
-                mlbbWeeklyProvider: "1game",
+                topupProvider: "1game",
                 showTopNoticeBanner: false,
                 showHomeEarnPromotion: false,
                 showTradeMarketplaceBanner: false,

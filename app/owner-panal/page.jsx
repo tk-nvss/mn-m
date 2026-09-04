@@ -258,6 +258,7 @@ export default function AdminPanalPage() {
   const [queries, setQueries] = useState([]);
 
   const [balance, setBalance] = useState(null);
+  const [providerBalances, setProviderBalances] = useState({ activeProvider: "1game", oneGame: null, bluebuff: null });
   const [banners, setBanners] = useState([]);
 
 
@@ -290,6 +291,11 @@ export default function AdminPanalPage() {
       const data = await res.json();
       if (data.success) {
         setBalance(data?.balance?.data?.balance ?? data.balance);
+        setProviderBalances({
+          activeProvider: data.activeProvider || "1game",
+          oneGame: data.oneGame,
+          bluebuff: data.bluebuff,
+        });
       }
     } catch (err) {
       console.error("Balance fetch failed", err);
@@ -489,15 +495,33 @@ export default function AdminPanalPage() {
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] shrink-0 animate-pulse" />
               </div>
               
-              {/* BALANCE BELOW TEXT */}
-              <div className="flex items-center gap-1.5">
-                <span className="text-[8px] md:text-[9px] uppercase tracking-widest text-[var(--muted)] font-black">Balance:</span>
-                <span className="text-xs md:text-sm font-black text-[var(--foreground)] tabular-nums">
-                  {balance !== null ? balance : "---"} USD
-                </span>
-                <span className="text-[7px] md:text-[8px] font-black text-emerald-500 uppercase tracking-widest border border-emerald-500/20 bg-emerald-500/10 px-1.5 py-0.5 rounded-md ml-1">
-                  Active
-                </span>
+              {/* DUAL BALANCES (1Game & Bluebuff) */}
+              <div className="flex items-center gap-1.5 sm:gap-2.5 flex-wrap">
+                {/* 1Game */}
+                <div className={`flex items-center gap-1 sm:gap-1.5 px-2 py-1 rounded-xl border text-[10px] sm:text-xs font-bold transition-all ${providerBalances.activeProvider === '1game' ? 'bg-[var(--foreground)]/5 border-emerald-500/40 text-[var(--foreground)]' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--muted)]'}`}>
+                  <span className="text-[8px] md:text-[9px] uppercase tracking-wider text-[var(--muted)] font-black">1Game:</span>
+                  <span className="text-xs md:text-sm font-black text-[var(--foreground)] tabular-nums">
+                    {providerBalances.oneGame?.balance !== undefined ? `$${providerBalances.oneGame.balance.toFixed(2)}` : (balance !== null ? `$${balance}` : "---")}
+                  </span>
+                  {providerBalances.activeProvider === "1game" && (
+                    <span className="text-[7px] md:text-[8px] font-black text-emerald-400 uppercase tracking-widest border border-emerald-500/30 bg-emerald-500/10 px-1 py-0.2 rounded">
+                      Active
+                    </span>
+                  )}
+                </div>
+
+                {/* Bluebuff */}
+                <div className={`flex items-center gap-1 sm:gap-1.5 px-2 py-1 rounded-xl border text-[10px] sm:text-xs font-bold transition-all ${providerBalances.activeProvider === 'bluebuff' ? 'bg-[var(--foreground)]/5 border-cyan-500/40 text-[var(--foreground)]' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--muted)]'}`}>
+                  <span className="text-[8px] md:text-[9px] uppercase tracking-wider text-[var(--muted)] font-black">Bluebuff:</span>
+                  <span className="text-xs md:text-sm font-black text-[var(--foreground)] tabular-nums">
+                    {providerBalances.bluebuff?.balance !== undefined ? `$${providerBalances.bluebuff.balance.toFixed(2)}` : "---"}
+                  </span>
+                  {providerBalances.activeProvider === "bluebuff" && (
+                    <span className="text-[7px] md:text-[8px] font-black text-cyan-400 uppercase tracking-widest border border-cyan-500/30 bg-cyan-500/10 px-1 py-0.2 rounded">
+                      Active
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -533,17 +557,34 @@ export default function AdminPanalPage() {
             
             <div className="flex-1 overflow-y-auto custom-scrollbar pb-6">
               
-              {/* BALANCE WIDGET INSIDE SIDEBAR */}
-              <div className="p-5 border-b border-[var(--border)] bg-[var(--card)]/30">
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] uppercase tracking-widest text-[var(--muted)] font-bold">Account Balance</span>
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-xl font-black text-[var(--foreground)]">
-                      {balance !== null ? balance : "Loading…"}
-                    </span>
-                    <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">
-                      Available
-                    </span>
+              {/* DUAL BALANCE WIDGET INSIDE SIDEBAR */}
+              <div className="p-4 border-b border-[var(--border)] bg-[var(--card)]/30 space-y-2.5">
+                <span className="text-[9px] uppercase tracking-widest text-[var(--muted)] font-black">API Provider Balances</span>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className={`p-2.5 rounded-xl border ${providerBalances.activeProvider === '1game' ? 'bg-emerald-500/5 border-emerald-500/30' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)]'}`}>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[9px] font-bold text-[var(--muted)]">1Game</span>
+                      {providerBalances.activeProvider === '1game' && <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />}
+                    </div>
+                    <div className="text-sm font-black text-[var(--foreground)] mt-0.5">
+                      {providerBalances.oneGame?.balance !== undefined ? `$${providerBalances.oneGame.balance.toFixed(2)}` : '---'}
+                    </div>
+                    {providerBalances.activeProvider === '1game' && (
+                      <span className="text-[7px] font-bold text-emerald-400 uppercase tracking-widest block mt-0.5">ACTIVE</span>
+                    )}
+                  </div>
+
+                  <div className={`p-2.5 rounded-xl border ${providerBalances.activeProvider === 'bluebuff' ? 'bg-cyan-500/5 border-cyan-500/30' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)]'}`}>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[9px] font-bold text-[var(--muted)]">Bluebuff</span>
+                      {providerBalances.activeProvider === 'bluebuff' && <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />}
+                    </div>
+                    <div className="text-sm font-black text-[var(--foreground)] mt-0.5">
+                      {providerBalances.bluebuff?.balance !== undefined ? `$${providerBalances.bluebuff.balance.toFixed(2)}` : '---'}
+                    </div>
+                    {providerBalances.activeProvider === 'bluebuff' && (
+                      <span className="text-[7px] font-bold text-cyan-400 uppercase tracking-widest block mt-0.5">ACTIVE</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -677,7 +718,7 @@ export default function AdminPanalPage() {
               <BlocklistTab />
             )}
             {activeTab === "settings" && (
-              <SettingsTab />
+              <SettingsTab onProviderChange={fetchBalance} providerBalances={providerBalances} />
             )}
           </div>
 

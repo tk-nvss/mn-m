@@ -10,9 +10,9 @@ const AppSettingsSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
-        mlbbWeeklyProvider: {
+        topupProvider: {
             type: String,
-            enum: ["1game", "smileone"],
+            enum: ["1game", "bluebuff"],
             default: "1game",
         },
         showTopNoticeBanner: { type: Boolean, default: false },
