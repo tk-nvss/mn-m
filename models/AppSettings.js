@@ -30,6 +30,7 @@ const AppSettingsSchema = new mongoose.Schema(
         showBattleRoyaleSection: { type: Boolean, default: true },
         showFlashSale: { type: Boolean, default: true },
         showHomeQuickActions: { type: Boolean, default: true },
+        showEventsSection: { type: Boolean, default: true },
         showBottomNav: { type: Boolean, default: true },
         // We can add more settings here in the future
     },

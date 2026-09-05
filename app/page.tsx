@@ -190,7 +190,8 @@ export default async function Page() {
           showStorySlider: settings.showStorySlider,
           showBattleRoyaleSection: settings.showBattleRoyaleSection,
           showFlashSale: settings.showFlashSale,
-          showHomeQuickActions: settings.showHomeQuickActions
+          showHomeQuickActions: settings.showHomeQuickActions,
+          showEventsSection: settings.showEventsSection
         }} 
       />
     </main>

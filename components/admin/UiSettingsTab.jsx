@@ -129,7 +129,8 @@ const UiSettingsTab = () => {
         "showStorySlider",
         "showBattleRoyaleSection",
         "showFlashSale",
-        "showHomeQuickActions"
+        "showHomeQuickActions",
+        "showEventsSection"
       ]
     },
     {

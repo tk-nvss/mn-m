@@ -26,6 +26,7 @@ export const getAppSettings = unstable_cache(
                     showBattleRoyaleSection: true,
                     showFlashSale: true,
                     showHomeQuickActions: true,
+                    showEventsSection: true,
                     showBottomNav: true,
                 };
             }
@@ -47,6 +48,7 @@ export const getAppSettings = unstable_cache(
                 showBattleRoyaleSection: settings.showBattleRoyaleSection !== false,
                 showFlashSale: settings.showFlashSale !== false,
                 showHomeQuickActions: settings.showHomeQuickActions !== false,
+                showEventsSection: settings.showEventsSection !== false,
                 showBottomNav: settings.showBottomNav !== false,
             };
         } catch (error) {
@@ -69,6 +71,7 @@ export const getAppSettings = unstable_cache(
                 showBattleRoyaleSection: true,
                 showFlashSale: true,
                 showHomeQuickActions: true,
+                showEventsSection: true,
                 showBottomNav: true,
             };
         }

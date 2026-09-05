@@ -13,7 +13,7 @@ export default function ServicesPage() {
       icon: Icons.package,
       badge: "API ACCESS",
       active: true,
-      href: "https://bluebuff.in",
+      href: "https://api.bluebuff.in",
     },
     {
       title: "Free Manual Web / Link in Bio",

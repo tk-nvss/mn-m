@@ -29,6 +29,7 @@ import {
   FiFileText,
   FiShield,
   FiBarChart2,
+  FiCalendar,
 } from "react-icons/fi";
 
 import AuthGuard from "@/components/AuthGuard";
@@ -47,6 +48,7 @@ import UsdtTab from "@/components/admin/UsdtTab";
 import PromotionalTab from "@/components/admin/PromotionalTab";
 import CoinsAdminTab from "@/components/admin/CoinsAdminTab";
 import TournamentsAdminTab from "@/components/admin/TournamentsAdminTab";
+import EventsAdminTab from "@/components/admin/EventsAdminTab";
 
 
 
@@ -71,15 +73,16 @@ const MENU_CATEGORIES = [
   {
     category: "Marketing & Engagement",
     items: [
-      { id: "blogs", label: "Blogs", icon: FiFileText, href: "/owner-panal/blogs" },
-      { id: "redeem", label: "Redeem Codes", icon: FiGift },
-      { id: "coins", label: "Coins", icon: FiZap },
-      { id: "promotional", label: "Promotional", icon: FiStar },
-      { id: "banners", label: "Banners", icon: FiImage },
-      { id: "tournaments", label: "Tournaments", icon: FiAward },
-      { id: "analytics", label: "Analytics", icon: FiBarChart2 },
-      { id: "pwa-stats", label: "PWA Stats", icon: FiSmartphone },
-      { id: "giveaway", label: "Giveaway", icon: FiGift },
+       { id: "events", label: "Events Calendar", icon: FiCalendar },
+       { id: "blogs", label: "Blogs", icon: FiFileText, href: "/owner-panal/blogs" },
+       { id: "redeem", label: "Redeem Codes", icon: FiGift },
+       { id: "coins", label: "Coins", icon: FiZap },
+       { id: "promotional", label: "Promotional", icon: FiStar },
+       { id: "banners", label: "Banners", icon: FiImage },
+       { id: "tournaments", label: "Tournaments", icon: FiAward },
+       { id: "analytics", label: "Analytics", icon: FiBarChart2 },
+       { id: "pwa-stats", label: "PWA Stats", icon: FiSmartphone },
+       { id: "giveaway", label: "Giveaway", icon: FiGift },
     ]
   },
   {
@@ -698,6 +701,9 @@ export default function AdminPanalPage() {
                 savingPricing={savingPricing}
                 onSave={savePricing}
               />
+            )}
+            {activeTab === "events" && (
+              <EventsAdminTab />
             )}
             {activeTab === "tournaments" && (
               <TournamentsAdminTab />

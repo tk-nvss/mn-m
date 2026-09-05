@@ -6,7 +6,7 @@ import Image from "next/image";
 import { 
   Gamepad2, 
   Trophy, 
-  Gift, 
+  CalendarDays, 
   ShoppingBag, 
   Headset 
 } from "lucide-react";
@@ -28,8 +28,8 @@ export default function BottomNav() {
 
   const navItems = [
     { label: "Games", icon: Gamepad2, path: "/games", action: () => router.push("/games") },
+    { label: "Events", icon: CalendarDays, path: "/events", action: () => router.push("/events") },
     { label: "Tournaments", icon: Trophy, path: "/dashboard/tournaments", action: () => router.push("/dashboard/tournaments") },
-    { label: "Giveaways", icon: Gift, path: "/giveaways", action: () => router.push("/giveaways") },
     { label: "Orders", icon: ShoppingBag, path: "/dashboard/orders", action: () => router.push("/dashboard/orders") },
     { label: "Support", icon: Headset, path: "/dashboard/support", action: () => router.push("/dashboard/support") },
   ];
