@@ -12,8 +12,8 @@ import {
 } from "react-icons/fi";
 
 export default function HomeEventsSection() {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchUpcoming = async () => {

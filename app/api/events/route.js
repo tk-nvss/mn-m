@@ -12,6 +12,12 @@ export async function GET(req) {
     const upcomingOnly = searchParams.get('upcomingOnly');
     const limit = parseInt(searchParams.get('limit') || '100', 10);
 
+    const id = searchParams.get('id') || searchParams.get('eventId');
+    if (id) {
+      const event = await Event.findById(id).lean();
+      return NextResponse.json({ success: true, event, events: event ? [event] : [] });
+    }
+
     const query = {};
     if (status && status !== 'all') {
       query.status = status;
