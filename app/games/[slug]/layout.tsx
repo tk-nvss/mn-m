@@ -8,7 +8,7 @@ type Props = {
 
 // Known game name maps for fast SEO resolution
 const GAME_META_MAP: Record<string, { name: string; brand: string; desc: string; lowPrice: string; highPrice: string; keywords: string[] }> = {
-  "mobile-legends270": {
+  "mobile-legends114": {
     name: "Mobile Legends: Bang Bang Diamonds",
     brand: "Moonton",
     desc: "Buy Mobile Legends: Bang Bang (MLBB) diamonds in India at the cheapest price. Instant Weekly Diamond Pass, Starlight, and diamond packages delivered in 5 minutes via UPI.",

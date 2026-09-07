@@ -43,7 +43,7 @@ function GamesContent() {
   const [loading, setLoading] = useState(true);
 
   /* ================= CONFIG ================= */
-  const WEEKLY_PASS_SLUG = "mobile-legends270";
+  const WEEKLY_PASS_SLUG = "mobile-legends114";
 
   const outOfStockGames = [
     "mobile-legends-backup826"

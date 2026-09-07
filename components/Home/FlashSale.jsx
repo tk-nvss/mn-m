@@ -14,7 +14,7 @@ const flashSaleData = [
         image: "/game-assets/weeklypass.webp",
         price: "₹151",
         originalPrice: "₹175",
-        slug: "mobile-legends270?type=weekly-pass",
+        slug: "mobile-legends114?type=weekly-pass",
         badge: "Hot"
     },
     {
@@ -24,7 +24,7 @@ const flashSaleData = [
         image: "/game-assets/genshin.webp",
         price: "₹410",
         originalPrice: "₹450",
-        slug: "genshin-impact742",
+        slug: "genshin-impact265",
         badge: "Sale"
     },
     {
@@ -44,7 +44,7 @@ const flashSaleData = [
         image: "/game-assets/weekly-monthly-bundle.webp",
         price: "₹86",
         originalPrice: "₹100",
-        slug: "weeklymonthly-bundle261",
+        slug: "weeklymonthly-bundle468",
         badge: "Value"
     },
     {

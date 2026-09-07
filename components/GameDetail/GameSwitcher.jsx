@@ -15,7 +15,7 @@ export default function GameSwitcher() {
 
     const isWeeklyPassQuery = searchParams.get("type") === "weekly-pass";
     const currentSlug = params?.slug;
-    const WEEKLY_PASS_SLUG = "mobile-legends270";
+    const WEEKLY_PASS_SLUG = "mobile-legends114";
 
     useEffect(() => {
         let mounted = true;

@@ -30,8 +30,8 @@ export async function POST(req) {
             }, { status: 400 });
         }
 
-        // ⚡ REGION RESTRICTION CHECK for mobile-legends270 via Service API
-        if ((gameSlug === "mobile-legends270" || gameSlug === "mlbb-double332" || gameSlug === "weeklymonthly-bundle261") && data.success === 200) {
+        // ⚡ REGION RESTRICTION CHECK for mobile-legends114 via Service API
+        if ((gameSlug === "mobile-legends114" || gameSlug === "mlbb-double332" || gameSlug === "weeklymonthly-bundle468") && data.success === 200) {
             const playerRegion = data.data?.region?.toUpperCase();
             const restrictedRegions = ["INDO", "ID", "PH", "SG", "RU", "MY", "MM"];
 
