@@ -10,7 +10,7 @@ export default function HelpImagePopup() {
   return (
     <>
       {/* Question Mark Button (INLINE, not fixed) */}
-      <button aria-label="button"
+      <button
         onClick={() => setOpen(true)}
         className="w-9 h-9 rounded-full bg-[var(--accent)]
                    text-white flex items-center justify-center

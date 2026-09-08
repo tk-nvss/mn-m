@@ -26,9 +26,11 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.mts",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts"
-, "app/games/page.jsx", "components/Header/Header.jsx", "app/owner-panal/page.jsx", "app/blog/page.jsx", "components/Home/TrustHighlights.tsx", "app/admin-panal/page.jsx", "app/login/page.jsx", "app/terms-and-conditions/page.jsx", "app/privacy-policy/page.jsx"  ],
+    ".next/dev/types/**/*.ts"
+  ],
   "exclude": ["node_modules"]
 }
