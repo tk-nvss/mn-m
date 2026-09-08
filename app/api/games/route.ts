@@ -249,6 +249,9 @@ export async function GET() {
 
       "mobile-legends-philippines888",
       "bgmi226",
+       "mlbb-russia46",
+         "mobile-legends-united-states41",
+
     ];
 
     await connectDB();
