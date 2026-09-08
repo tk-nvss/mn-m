@@ -3,21 +3,21 @@
 import { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  FiAward, FiChevronRight, FiLoader, FiSearch,
-  FiZap, FiUsers, FiStar, FiGrid, FiShield, FiMessageCircle
+  FiAward, FiChevronRight, FiSearch,
+  FiZap, FiUsers, FiStar, FiGrid, FiClock, FiLayers, FiCheck
 } from "react-icons/fi";
 import { GiTrophy } from "react-icons/gi";
 import Image from "next/image";
 import Link from "next/link";
 import { TournamentSkeleton } from "@/components/Skeleton/Skeleton";
-import { StatusBadge, LoadingSpinner, EmptyState } from "@/components/common";
-import { Icons } from "@/components/icons";
-import { formatCoins } from "@/utils";
+import { StatusBadge } from "@/components/common";
+import { formatCoins, formatDateTime } from "@/utils";
 
 interface Tournament {
   _id: string;
   game: string;
   title: string;
+  subtitle?: string;
   format: string;
   prize: string;
   slots: number;
@@ -28,75 +28,164 @@ interface Tournament {
   winner?: string | null;
 }
 
-const GAME_META: Record<string, { name: string; logo: string; href: string }> = {
-  mlbb:     { name: "Mobile Legends", logo: "/logoBB.png", href: "/tournament/mlbb" },
-  freefire: { name: "Free Fire",      logo: "/logoBB.png", href: "/tournament/freefire" },
-  codm:     { name: "COD Mobile",     logo: "/logoBB.png", href: "/tournament/codm" },
+const GAME_META: Record<string, { name: string; tag: string; logo: string; href: string }> = {
+  mlbb: {
+    name: "Mobile Legends: Bang Bang",
+    tag: "MLBB",
+    logo: "/game-assets/mlbbindia.webp",
+    href: "/tournament/mlbb",
+  },
+  freefire: {
+    name: "Free Fire MAX",
+    tag: "Free Fire",
+    logo: "/logoBB.png",
+    href: "/tournament/freefire",
+  },
+  codm: {
+    name: "Call of Duty: Mobile",
+    tag: "CODM",
+    logo: "/logoBB.png",
+    href: "/tournament/codm",
+  },
 };
 
-// ── Section Header ──────────────────────────────────────────────────────
-const SectionHeader = ({ title, subtitle, icon: Icon }: any) => (
-  <div className="flex items-center gap-3 mb-4">
-    <div className="w-9 h-9 rounded-xl border border-[var(--border)] bg-[var(--card)] flex items-center justify-center text-[var(--muted)]">
-      <Icon size={15} />
-    </div>
-    <div>
-      <h2 className="text-[11px] font-black uppercase tracking-widest text-[var(--foreground)] leading-none mb-0.5">{title}</h2>
-      <p className="text-[9px] text-[var(--muted)]/50 font-bold uppercase tracking-wide">{subtitle}</p>
-    </div>
-  </div>
-);
-
 // ── Tournament Card ─────────────────────────────────────────────────────
-const TournamentCard = ({ t }: { t: Tournament }) => {
-  const meta = GAME_META[t.game] || { logo: "/logoBB.png", href: `/tournament/${t.game}` };
+const TournamentCard = ({ t, isJoined }: { t: Tournament; isJoined?: boolean }) => {
+  const meta = GAME_META[t.game] || {
+    name: t.game.toUpperCase(),
+    tag: t.game.toUpperCase(),
+    logo: "/logoBB.png",
+    href: `/tournament/${t.game}`,
+  };
   const isFree = t.entryCoins === 0;
+  const pct = Math.min(100, Math.round(((t.slotsFilled || 0) / (t.slots || 1)) * 100));
+  const cardHref = isJoined ? "/dashboard/tournaments" : `${meta.href}?id=${t._id}`;
 
   return (
-    <Link href={`${meta.href}?id=${t._id}`} className="block group">
+    <Link href={cardHref} className="block group h-full">
       <motion.div
-        whileHover={{ y: -2 }}
-        className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 space-y-3.5 hover:border-[var(--accent)]/30 transition-all duration-200"
+        whileHover={{ y: -3 }}
+        transition={{ duration: 0.2 }}
+        className={`h-full flex flex-col justify-between overflow-hidden rounded-2xl border bg-[var(--card)] p-5 hover:border-[var(--accent)]/40 hover:shadow-lg hover:shadow-[var(--accent)]/5 transition-all duration-200 space-y-4 ${
+          isJoined ? "border-emerald-500/30 bg-emerald-500/[0.02]" : "border-[var(--border)]"
+        }`}
       >
-        {/* Top row: logo + title + status */}
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl overflow-hidden border border-[var(--border)] shrink-0">
-              <Image src={meta.logo} alt={t.game} width={36} height={36} className="object-cover" />
+        {/* Top: Game info + Status */}
+        <div className="space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--background)] shrink-0 flex items-center justify-center">
+                <Image
+                  src={meta.logo}
+                  alt={meta.name}
+                  width={44}
+                  height={44}
+                  className="object-cover w-full h-full"
+                  onError={(e: any) => {
+                    e.currentTarget.src = "/logoBB.png";
+                  }}
+                />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[8px] font-black uppercase tracking-widest text-[var(--accent)] px-1.5 py-0.5 rounded bg-[var(--accent)]/10 border border-[var(--accent)]/20">
+                    {meta.tag}
+                  </span>
+                  <span className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted)]/60">
+                    {t.format}
+                  </span>
+                  {isJoined && (
+                    <span className="px-1.5 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase tracking-widest flex items-center gap-1">
+                      <FiCheck size={9} /> Registered
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-xs font-black uppercase tracking-tight text-[var(--foreground)] truncate mt-1">
+                  {t.title}
+                </h3>
+              </div>
             </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-black uppercase tracking-tight truncate text-[var(--foreground)]">{t.title}</p>
-              <p className="text-[7px] text-[var(--muted)]/50 uppercase tracking-widest">{t.game.toUpperCase()} · {t.format}</p>
-            </div>
+            <StatusBadge status={t.status} size="xs" />
           </div>
-          <StatusBadge status={t.status} size="xs" />
+
+          {/* Match Start Time Schedule */}
+          {t.startsAt && (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--background)]/60">
+              <FiClock size={11} className="text-[var(--accent)] shrink-0" />
+              <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--muted)]">
+                Starts: <span className="text-[var(--foreground)] font-black">{formatDateTime(t.startsAt)}</span>
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Middle: prize + slots */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <GiTrophy size={11} className="text-amber-500" />
-            <span className="text-[9px] font-black uppercase tracking-tight text-[var(--foreground)]">{t.prize}</span>
+        {/* Middle: Prize + Slots filled bar */}
+        <div className="space-y-2.5 pt-1">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <GiTrophy size={13} className="text-amber-500 shrink-0" />
+              <div className="flex flex-col">
+                <span className="text-[7px] font-black uppercase tracking-widest text-[var(--muted)]/50">Prize Pool</span>
+                <span className="text-[10px] font-black uppercase tracking-tight text-amber-500">
+                  {t.prize}
+                </span>
+              </div>
+            </div>
+
+            <div className="text-right">
+              <span className="text-[7px] font-black uppercase tracking-widest text-[var(--muted)]/50 block">Registered</span>
+              <div className="flex items-center gap-1 text-[var(--foreground)] justify-end">
+                <FiUsers size={10} className="text-[var(--muted)]" />
+                <span className="text-[9px] font-black">{t.slotsFilled || 0}/{t.slots}</span>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-1 text-[var(--muted)]/50">
-            <FiUsers size={10} />
-            <span className="text-[8px] font-bold">{t.slotsFilled}/{t.slots}</span>
+
+          {/* Slots Progress Bar */}
+          <div className="space-y-1">
+            <div className="h-1.5 w-full rounded-full bg-[var(--border)] overflow-hidden">
+              <motion.div
+                className={`h-full rounded-full ${isJoined ? "bg-emerald-500" : "bg-gradient-to-r from-[var(--accent)] to-purple-400"}`}
+                initial={{ width: 0 }}
+                animate={{ width: `${pct}%` }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              />
+            </div>
+            <div className="flex justify-between items-center text-[7px] font-bold text-[var(--muted)]/40 uppercase tracking-widest">
+              <span>{pct}% Filled</span>
+              <span>{t.slots - (t.slotsFilled || 0)} slots left</span>
+            </div>
           </div>
         </div>
 
-        {/* Bottom: entry + arrow */}
-        <div className="flex items-center justify-between pt-0.5 border-t border-[var(--border)]">
-          <span className={`px-2.5 py-1 rounded-lg border text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5 ${
-            isFree
-              ? "bg-emerald-500/8 border-emerald-500/20 text-emerald-500"
-              : "bg-[var(--accent)]/8 border-[var(--accent)]/20 text-[var(--accent)]"
-          }`}>
-            {isFree ? <FiStar size={9} /> : <FiZap size={9} />}
+        {/* Bottom: Entry Badge + Action CTA */}
+        <div className="pt-2 border-t border-[var(--border)] flex items-center justify-between gap-2">
+          <span
+            className={`px-3 py-1.5 rounded-xl border text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 ${
+              isFree
+                ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-500"
+                : "bg-[var(--accent)]/10 border-[var(--accent)]/25 text-[var(--accent)]"
+            }`}
+          >
+            {isFree ? <FiStar size={10} /> : <FiZap size={10} />}
             {isFree ? "Free Entry" : formatCoins(t.entryCoins)}
           </span>
-          <div className="w-7 h-7 rounded-xl border border-[var(--border)] flex items-center justify-center text-[var(--muted)] group-hover:bg-[var(--accent)] group-hover:text-white group-hover:border-[var(--accent)] transition-all">
-            <FiChevronRight size={13} />
-          </div>
+
+          {isJoined ? (
+            <span
+              style={{ color: "#ffffff" }}
+              className="px-3.5 py-1.5 rounded-xl bg-emerald-600 !text-white text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 group-hover:bg-emerald-500 transition-all shadow-sm"
+            >
+              Registered <FiCheck size={11} />
+            </span>
+          ) : (
+            <span
+              style={{ color: "#ffffff" }}
+              className="px-3.5 py-1.5 rounded-xl bg-[var(--accent)] !text-white text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 group-hover:opacity-90 group-hover:scale-105 transition-all shadow-sm"
+            >
+              Join <FiChevronRight size={11} />
+            </span>
+          )}
         </div>
       </motion.div>
     </Link>
@@ -107,166 +196,303 @@ const TournamentCard = ({ t }: { t: Tournament }) => {
 export default function TournamentHub() {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const [joinedIds, setJoinedIds] = useState<string[]>([]);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch("/api/tournaments/register", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(r => r.json())
+        .then(d => {
+          if (d.success && Array.isArray(d.data)) {
+            const ids = d.data.map((e: any) => e.tournamentId?._id || e.tournamentId).filter(Boolean);
+            setJoinedIds(ids);
+          }
+        })
+        .catch(() => {});
+    }
+
     fetch("/api/tournaments")
-      .then(r => r.json())
-      .then(d => { if (d.success) setTournaments(d.data); })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success) setTournaments(d.data);
+      })
       .finally(() => setLoading(false));
   }, []);
 
-  const active    = useMemo(() => tournaments.filter(t => t.status !== "ended"), [tournaments]);
-  const ended     = useMemo(() => tournaments.filter(t => t.status === "ended").slice(0, 5), [tournaments]);
-  const featured  = useMemo(() => active.slice(0, 5), [active]);
-  const freeTourneys = useMemo(() => active.filter(t => t.entryCoins === 0).slice(0, 5), [active]);
-  const gameGroups = useMemo(() => {
-    const g: Record<string, Tournament[]> = {};
-    active.forEach(t => { if (!g[t.game]) g[t.game] = []; g[t.game].push(t); });
-    return g;
-  }, [active]);
-  const uniqueGameIds = useMemo(() => Object.keys(gameGroups), [gameGroups]);
+  const active = useMemo(() => tournaments.filter((t) => t.status !== "ended"), [tournaments]);
+  const ended = useMemo(() => tournaments.filter((t) => t.status === "ended").slice(0, 6), [tournaments]);
+
+  // Filtered active tournaments
+  const filteredActive = useMemo(() => {
+    if (selectedFilter === "all") return active;
+    if (selectedFilter === "free") return active.filter((t) => t.entryCoins === 0);
+    return active.filter((t) => t.game.toLowerCase() === selectedFilter.toLowerCase());
+  }, [active, selectedFilter]);
+
+  // Counts for tabs
+  const mlbbCount = useMemo(() => active.filter((t) => t.game === "mlbb").length, [active]);
+  const ffCount = useMemo(() => active.filter((t) => t.game === "freefire").length, [active]);
+  const codmCount = useMemo(() => active.filter((t) => t.game === "codm").length, [active]);
+  const freeCount = useMemo(() => active.filter((t) => t.entryCoins === 0).length, [active]);
+
+  const filterTabs = [
+    { id: "all", label: "All Tournaments", count: active.length },
+    { id: "mlbb", label: "Mobile Legends", count: mlbbCount },
+    { id: "freefire", label: "Free Fire", count: ffCount },
+    { id: "codm", label: "COD Mobile", count: codmCount },
+    { id: "free", label: "Free Entry", count: freeCount },
+  ];
 
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pb-32">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 space-y-10">
 
-      <div className="max-w-3xl mx-auto px-4 pt-8 space-y-10">
-
-        {/* ── HOST / SPONSOR NOTICE ── */}
+        {/* ── TOP HERO HEADER & ACTION BAR ── */}
         <motion.div
-          initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between px-4 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--card)]"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-[var(--border)]"
         >
-          <div className="flex items-center gap-2">
-            <FiMessageCircle className="text-[var(--muted)]/50" size={11} />
-            <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/50">
-              Want to <span className="text-[var(--foreground)]">Host</span> or <span className="text-[var(--foreground)]">Sponsor</span>?
-            </span>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-px bg-[var(--accent)]" />
+              <span className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--accent)]">
+                Blue Buff India Esports
+              </span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight leading-none text-[var(--foreground)]">
+              Competitive <span className="text-[var(--accent)]">Arena</span>
+            </h1>
+            <p className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-wide leading-relaxed max-w-md">
+              Join daily community scrims & cash cups. Compete with your squad, win Weekly Passes, Diamonds & cash prizes.
+            </p>
           </div>
-          <Link href="/support"
-            className="text-[8px] font-black uppercase tracking-widest text-[var(--accent)] hover:underline transition-colors">
-            Contact Support
-          </Link>
+
+          {/* Quick Action Navigation */}
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/dashboard/tournaments"
+              style={{ color: "#ffffff" }}
+              className="px-4 py-2.5 rounded-xl bg-[var(--accent)] !text-white text-[9px] font-black uppercase tracking-widest flex items-center gap-2 hover:opacity-90 transition-opacity shadow-sm"
+            >
+              <GiTrophy size={13} /> My Tournaments
+            </Link>
+          </div>
         </motion.div>
 
-        {/* ── HERO HEADER ── */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-px bg-[var(--accent)]" />
-            <span className="text-[8px] font-black uppercase tracking-[0.3em] text-[var(--accent)]">Blue Buff Esports</span>
-          </div>
-          <h1 className="text-3xl font-black uppercase tracking-tight leading-tight text-[var(--foreground)]">
-            Esports<br /><span className="text-[var(--accent)]">Zone</span>
-          </h1>
-          <p className="text-[10px] font-bold text-[var(--muted)]/50 uppercase tracking-wide leading-relaxed max-w-xs">
-            Join tournaments, win prizes, and climb the ranks. Pick your game to start.
-          </p>
-        </motion.div>
+        {/* ── FILTER TABS ── */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+          {filterTabs.map((tab) => {
+            const isSelected = selectedFilter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setSelectedFilter(tab.id)}
+                className={`px-3.5 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest flex items-center gap-2 transition-all whitespace-nowrap border ${
+                  isSelected
+                    ? "bg-[var(--accent)] text-white border-[var(--accent)] shadow-sm"
+                    : "bg-[var(--card)] text-[var(--muted)] border-[var(--border)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span
+                  className={`text-[8px] px-1.5 py-0.2 rounded-md font-bold ${
+                    isSelected ? "bg-black/20 text-white" : "bg-[var(--background)] text-[var(--muted)]"
+                  }`}
+                >
+                  {tab.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
         {/* ── LOADING ── */}
         {loading ? (
-          <div className="space-y-10">
-            {[1, 2].map(i => (
-              <div key={i} className="space-y-4">
-                <div className="w-40 h-5 bg-[var(--card)] rounded-lg animate-pulse" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {[1, 2].map(j => <TournamentSkeleton key={j} />)}
-                </div>
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[1, 2, 3].map((j) => (
+              <TournamentSkeleton key={j} />
             ))}
           </div>
-
-        ) : active.length === 0 ? (
-          <div className="py-20 text-center space-y-3">
-            <div className="w-14 h-14 rounded-2xl border border-[var(--border)] flex items-center justify-center text-[var(--muted)]/30 mx-auto">
+        ) : filteredActive.length === 0 ? (
+          <div className="py-20 text-center space-y-4 rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 p-8">
+            <div className="w-14 h-14 rounded-2xl border border-[var(--border)] bg-[var(--card)] flex items-center justify-center text-[var(--muted)]/40 mx-auto">
               <FiSearch size={22} />
             </div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)]/40">No Active Tournaments</p>
-            <p className="text-[9px] text-[var(--muted)]/30 uppercase tracking-wide">New events added daily. Check back soon!</p>
+            <div className="space-y-1">
+              <p className="text-[11px] font-black uppercase tracking-widest text-[var(--foreground)]">
+                No Tournaments Found
+              </p>
+              <p className="text-[9px] text-[var(--muted)]/50 uppercase tracking-wide">
+                {selectedFilter !== "all"
+                  ? "No active tournaments under this category right now."
+                  : "New community tournaments and scrims are posted daily. Check back soon!"}
+              </p>
+            </div>
+            {selectedFilter !== "all" && (
+              <button
+                onClick={() => setSelectedFilter("all")}
+                className="px-3.5 py-1.5 rounded-xl border border-[var(--border)] text-[9px] font-black uppercase tracking-widest text-[var(--accent)] hover:border-[var(--accent)]/40"
+              >
+                View All Events
+              </button>
+            )}
           </div>
-
         ) : (
           <div className="space-y-12">
-
-            {/* 1. Featured */}
-            <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
-              <SectionHeader title="Featured Events" subtitle="The most popular tournaments happening now" icon={FiStar} />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {featured.map((t, i) => (
-                  <motion.div key={t._id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
-                    <TournamentCard t={t} />
-                  </motion.div>
-                ))}
+            {/* ── ACTIVE TOURNAMENTS GRID ── */}
+            <section className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FiLayers className="text-[var(--accent)]" size={14} />
+                  <h2 className="text-[11px] font-black uppercase tracking-widest text-[var(--foreground)]">
+                    Active Tournaments ({filteredActive.length})
+                  </h2>
+                </div>
               </div>
-            </motion.section>
 
-            {/* 2. Free Entry */}
-            {freeTourneys.length > 0 && (
-              <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
-                <SectionHeader title="Free Entry Tournaments" subtitle="No coins needed. Join and win Weekly Passes!" icon={FiZap} />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {freeTourneys.map((t, i) => (
-                    <motion.div key={t._id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
-                      <TournamentCard t={t} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <AnimatePresence mode="popLayout">
+                  {filteredActive.map((t) => (
+                    <motion.div
+                      key={t._id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <TournamentCard t={t} isJoined={joinedIds.includes(t._id)} />
                     </motion.div>
                   ))}
-                </div>
-              </motion.section>
-            )}
+                </AnimatePresence>
+              </div>
+            </section>
 
-            {/* 3. Browse by Game */}
-            <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}>
-              <SectionHeader title="Browse by Game" subtitle="Select your favorite title to find dedicated rooms" icon={FiGrid} />
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {uniqueGameIds.map((gameId, i) => {
-                  const meta = GAME_META[gameId] ?? { name: gameId.toUpperCase(), logo: "/logoBB.png", href: `/tournament/${gameId}` };
-                  const count = gameGroups[gameId].length;
+            {/* ── BROWSE BY GAME SECTION ── */}
+            <section className="space-y-4 pt-4 border-t border-[var(--border)]">
+              <div className="flex items-center gap-2">
+                <FiGrid className="text-[var(--accent)]" size={14} />
+                <div>
+                  <h2 className="text-[11px] font-black uppercase tracking-widest text-[var(--foreground)]">
+                    Browse by Game
+                  </h2>
+                  <p className="text-[8px] text-[var(--muted)]/50 font-bold uppercase tracking-wide">
+                    Dedicated tournament rooms & custom match rules
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {Object.entries(GAME_META).map(([gameKey, meta]) => {
+                  const count = active.filter((t) => t.game === gameKey).length;
                   return (
-                    <motion.div key={gameId} whileHover={{ y: -2 }}>
-                      <Link href={meta.href}
-                        className="group block p-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] hover:border-[var(--accent)]/30 transition-all">
-                        <div className="flex flex-col items-center gap-3 text-center">
-                          <div className="w-12 h-12 rounded-xl overflow-hidden border border-[var(--border)] group-hover:border-[var(--accent)]/30 transition-colors">
-                            <Image src={meta.logo} alt={meta.name} width={48} height={48} className="object-cover" />
-                          </div>
-                          <div>
-                            <p className="text-[10px] font-black uppercase tracking-tight text-[var(--foreground)] mb-1">{meta.name}</p>
-                            <span className="text-[8px] font-black uppercase tracking-widest text-[var(--accent)]">{count} Rooms</span>
+                    <Link
+                      key={gameKey}
+                      href={meta.href}
+                      className="group block p-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] hover:border-[var(--accent)]/40 hover:shadow-md transition-all"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-12 h-12 rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--background)] shrink-0 flex items-center justify-center group-hover:border-[var(--accent)]/40 transition-colors">
+                          <Image
+                            src={meta.logo}
+                            alt={meta.name}
+                            width={48}
+                            height={48}
+                            className="object-cover w-full h-full"
+                            onError={(e: any) => {
+                              e.currentTarget.src = "/logoBB.png";
+                            }}
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-black uppercase tracking-tight text-[var(--foreground)] group-hover:text-[var(--accent)] transition-colors truncate">
+                            {meta.name}
+                          </p>
+                          <div className="flex items-center justify-between mt-1">
+                            <span className="text-[8px] font-black uppercase tracking-widest text-[var(--accent)]">
+                              {count} {count === 1 ? "Event" : "Events"} Active
+                            </span>
+                            <FiChevronRight
+                              size={12}
+                              className="text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:translate-x-0.5 transition-all"
+                            />
                           </div>
                         </div>
-                      </Link>
-                    </motion.div>
+                      </div>
+                    </Link>
                   );
                 })}
               </div>
-            </motion.section>
+            </section>
 
-            {/* 4. Ended */}
+            {/* ── RECENTLY ENDED / HALL OF FAME ── */}
             {ended.length > 0 && (
-              <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }}>
-                <SectionHeader title="Recently Ended" subtitle="Hall of fame — See who dominated the arena" icon={FiAward} />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 opacity-70">
-                  {ended.map(t => {
-                    const meta = GAME_META[t.game] || { logo: "/logoBB.png" };
+              <section className="space-y-4 pt-4 border-t border-[var(--border)]">
+                <div className="flex items-center gap-2">
+                  <FiAward className="text-amber-500" size={14} />
+                  <div>
+                    <h2 className="text-[11px] font-black uppercase tracking-widest text-[var(--foreground)]">
+                      Recent Champions & Results
+                    </h2>
+                    <p className="text-[8px] text-[var(--muted)]/50 font-bold uppercase tracking-wide">
+                      Hall of fame — Completed matches
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 opacity-80">
+                  {ended.map((t) => {
+                    const meta = GAME_META[t.game] || {
+                      name: t.game.toUpperCase(),
+                      tag: t.game.toUpperCase(),
+                      logo: "/logoBB.png",
+                    };
                     return (
-                      <div key={t._id} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 space-y-3">
+                      <div
+                        key={t._id}
+                        className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 space-y-3"
+                      >
                         <div className="flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-xl overflow-hidden border border-[var(--border)] shrink-0">
-                              <Image src={meta.logo} alt={t.game} width={32} height={32} className="object-cover" />
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl overflow-hidden border border-[var(--border)] shrink-0 flex items-center justify-center">
+                              <Image
+                                src={meta.logo}
+                                alt={t.game}
+                                width={32}
+                                height={32}
+                                className="object-cover"
+                                onError={(e: any) => {
+                                  e.currentTarget.src = "/logoBB.png";
+                                }}
+                              />
                             </div>
                             <div className="min-w-0">
-                              <p className="text-[9px] font-black uppercase tracking-tight truncate text-[var(--foreground)]">{t.title}</p>
-                              <p className="text-[7px] text-[var(--muted)]/40 uppercase tracking-widest">{t.game}</p>
+                              <p className="text-[9px] font-black uppercase tracking-tight truncate text-[var(--foreground)]">
+                                {t.title}
+                              </p>
+                              <p className="text-[7px] text-[var(--muted)]/50 uppercase tracking-widest">
+                                {meta.tag} · {t.format}
+                              </p>
                             </div>
                           </div>
                           <StatusBadge status="ended" size="xs" />
                         </div>
+
                         <div className="flex items-center justify-between px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--background)]">
                           <div className="flex items-center gap-2">
-                            <FiAward size={11} className="text-amber-500" />
+                            <FiAward size={13} className="text-amber-500" />
                             <div>
-                              <p className="text-[6px] font-black uppercase tracking-widest text-[var(--muted)]/40">Champion</p>
-                              <p className="text-[9px] font-black uppercase text-amber-500">{t.winner || "TBA"}</p>
+                              <p className="text-[6px] font-black uppercase tracking-widest text-[var(--muted)]/40">
+                                Champion
+                              </p>
+                              <p className="text-[9px] font-black uppercase text-amber-500">
+                                {t.winner || "TBA"}
+                              </p>
                             </div>
                           </div>
                           <GiTrophy className="text-amber-500/20" size={18} />
@@ -275,37 +501,10 @@ export default function TournamentHub() {
                     );
                   })}
                 </div>
-              </motion.section>
+              </section>
             )}
-
-            {/* 5. Trust Banner */}
-            <div className="flex items-center gap-4 p-5 rounded-2xl border border-[var(--border)] bg-[var(--card)]">
-              <div className="w-12 h-12 rounded-xl border border-[var(--accent)]/20 bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
-                <FiShield size={20} />
-              </div>
-              <div>
-                <p className="text-[11px] font-black uppercase tracking-widest text-[var(--foreground)] mb-1">Verified &amp; Fair Play</p>
-                <p className="text-[8px] font-bold text-[var(--muted)]/50 uppercase tracking-wide leading-relaxed">
-                  All tournaments are moderated by Blue Buff India. Anti-cheat active for every room. Results verified within 24 hours.
-                </p>
-              </div>
-            </div>
-
           </div>
         )}
-
-        {/* Footer */}
-        <div className="flex items-center justify-center gap-3 pt-8 border-t border-[var(--border)]">
-          {[FiStar, FiZap, FiAward].map((Icon, i) => (
-            <div key={i} className="w-7 h-7 rounded-lg border border-[var(--border)] flex items-center justify-center text-[var(--muted)]/30">
-              <Icon size={12} />
-            </div>
-          ))}
-          <p className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/25">
-            Powered by Blue Buff India Esports
-          </p>
-        </div>
-
       </div>
     </main>
   );

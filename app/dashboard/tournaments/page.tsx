@@ -9,55 +9,34 @@ import { FiChevronLeft, FiAward, FiMessageCircle } from "react-icons/fi";
 export default function MyTournamentsPage() {
   return (
     <AuthGuard>
-      <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-        {/* Notice for Hosts/Sponsors */}
-        <motion.div 
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between p-2 px-4 rounded-xl bg-[var(--accent)]/5 border border-[var(--accent)]/10"
-        >
-          <div className="flex items-center gap-2">
-            <FiMessageCircle className="text-[var(--accent)]" size={12} />
-            <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]">
-              Want to <span className="text-[var(--accent)]">Host</span> or <span className="text-[var(--accent)]">Sponsor</span>?
-            </span>
-          </div>
-          <Link href="/dashboard/support" className="text-[8px] font-black uppercase tracking-widest text-[var(--foreground)] hover:text-[var(--accent)] underline underline-offset-4 decoration-[var(--accent)]/30 transition-colors">
-            Contact Support
-          </Link>
-        </motion.div>
+      <div className="max-w-5xl mx-auto px-3.5 sm:px-6 pt-4 sm:pt-8 pb-32 space-y-3.5 sm:space-y-5">
 
-        {/* Header */}
-        <div className="flex flex-col gap-4">
-          <Link href="/dashboard" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[var(--muted)] hover:text-[var(--accent)] transition-colors w-fit">
-            <FiChevronLeft size={14} /> Dashboard
-          </Link>
-          
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-6 h-[1px] bg-[var(--accent)]" />
-                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-[var(--accent)] italic">Blue Buff Scrims</span>
-              </div>
-              <h1 className="text-xl sm:text-2xl font-[900] italic tracking-tighter uppercase leading-none">
-                MY <span className="text-[var(--accent)]">TOURNAMENTS</span>
-              </h1>
-            </div>
-            <Link 
-              href="/tournament" 
-              className="px-4 py-2 rounded-xl bg-[var(--accent)] text-white text-[8px] sm:text-[9px] font-black uppercase tracking-widest shadow-lg shadow-[var(--accent)]/20 hover:brightness-110 transition-all flex items-center gap-2 w-fit"
-              style={{ color: "#ffffff", backgroundColor: "var(--accent)" }}
+        {/* ── COMPACT HEADER ── */}
+        <div className="flex items-center justify-between gap-2 pb-2 border-b border-[var(--border)]">
+          <div>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-1 text-[8px] sm:text-[8.5px] font-black uppercase tracking-widest text-[var(--muted)]/60 hover:text-[var(--foreground)] transition-colors mb-0.5"
             >
-              <FiAward size={12} /> 
-              <span>Join New Tournament</span>
+              <FiChevronLeft size={11} /> Dashboard
             </Link>
+            <h1 className="text-lg sm:text-2xl font-black uppercase tracking-tight text-[var(--foreground)] leading-none">
+              My <span className="text-[var(--accent)]">Tournaments</span>
+            </h1>
           </div>
+
+          <Link 
+            href="/tournament" 
+            style={{ color: "#ffffff", backgroundColor: "var(--accent)" }}
+            className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-[var(--accent)] !text-white text-[8px] sm:text-[9px] font-black uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center gap-1.5 shrink-0 shadow-sm"
+          >
+            <FiAward size={11} /> 
+            <span>+ Join Event</span>
+          </Link>
         </div>
 
-        {/* The List Component */}
-        <div className="pt-4">
-           <JoinedTournaments />
-        </div>
+        {/* ── THE LIST COMPONENT ── */}
+        <JoinedTournaments />
       </div>
     </AuthGuard>
   );

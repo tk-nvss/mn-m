@@ -168,9 +168,12 @@ export async function GET(req) {
       .populate("tournamentId")
       .sort({ createdAt: -1 });
 
-    console.log(`Found ${entries.length} entries`);
+    // Filter out any entries where the tournament was deleted
+    const validEntries = entries.filter((e) => Boolean(e.tournamentId));
 
-    return NextResponse.json({ success: true, data: entries });
+    console.log(`Found ${validEntries.length} valid entries`);
+
+    return NextResponse.json({ success: true, data: validEntries });
   } catch (err) {
     console.error("Fetch joined tournaments error:", err);
     return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });

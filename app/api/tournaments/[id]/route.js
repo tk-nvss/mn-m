@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
 import Tournament from "@/models/Tournament";
+import TournamentEntry from "@/models/TournamentEntry";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
@@ -51,8 +52,11 @@ export async function DELETE(req, { params }) {
     if (auth.error)
       return NextResponse.json({ success: false, message: auth.error }, { status: auth.status });
 
-    await Tournament.findByIdAndDelete(id);
-    return NextResponse.json({ success: true, message: "Deleted" });
+    await Promise.all([
+      Tournament.findByIdAndDelete(id),
+      TournamentEntry.deleteMany({ tournamentId: id })
+    ]);
+    return NextResponse.json({ success: true, message: "Tournament and associated entries deleted" });
   } catch (err) {
     console.error("DELETE /api/tournaments/[id]", err);
     return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
