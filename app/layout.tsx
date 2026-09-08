@@ -108,7 +108,7 @@ export default async function RootLayout({
   const settings = await getAppSettings();
 
   return (
-    <html lang="en" className={poppins.variable}>
+    <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
@@ -235,11 +235,6 @@ export default async function RootLayout({
           {settings.showBottomNav !== false && <BottomNav />}
           <PWAInstallBanner />
           <NotificationPrompt />
-          <div />
-
-
-
-
       </body>
     </html>
   );

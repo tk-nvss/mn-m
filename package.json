@@ -19,7 +19,6 @@
     "bcryptjs": "^3.0.3",
     "canvas-confetti": "^1.9.4",
     "cloudinary": "^2.8.0",
-    "critters": "^0.0.23",
     "crypto-js": "^4.2.0",
     "framer-motion": "^12.23.26",
     "google-auth-library": "^10.5.0",

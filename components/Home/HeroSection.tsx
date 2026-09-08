@@ -3,8 +3,6 @@
 import { useState, useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
 import GameBannerCarousel from "./GameBannerCarousel";
-import HomeServices from "./HomeServices";
-import TrustHighlights from "./TrustHighlights";
 import TopNoticeBanner from "./TopNoticeBanner";
 import StorySlider from "./StorySlider";
 import BattleRoyaleSection from "./BattleRoyaleSection";
@@ -19,8 +17,7 @@ import GiveawayBanner from "./GiveawayBanner";
 // Lazy-load below-fold & heavy components to reduce initial bundle
 const FlashSale = dynamic(() => import("./FlashSale"), { ssr: false });
 const HomeQuickActions = dynamic(() => import("./HomeQuickActions"), { ssr: false });
-const HomeReferralStats = dynamic(() => import("./HomeReferralStats"), { ssr: false });
-const GamesPage = dynamic(() => import("@/app/games/page"), { 
+const GameCatalogSection = dynamic(() => import("@/components/Games/GameCatalogSection"), { 
   ssr: false,
   loading: () => <div className="min-h-screen w-full animate-pulse bg-[var(--background)]"></div>
 });
@@ -89,29 +86,15 @@ export default function HeroSection({ bannerSettings, initialBanners }: { banner
       </div>
 
 
-      {/* <PromoBanner /> */}
+        {bs.showHomeQuickActions !== false && (
+        <div className="space-y-1">
+          <HomeQuickActions />
+        </div>
+      )}
 
-      <div className="space-y-1">
-
-        {bs.showHomeQuickActions !== false && <HomeQuickActions />}
-        {/* <HomeReferralStats /> */}
-      </div>
-
-      <GamesPage />
+      <GameCatalogSection />
       <SupportBanner />
-
-      {/* <div className="mt-1 space-y-12 pb-10">
-        <HomeServices />
-        <TrustHighlights />
-      </div> */}
-
       <SEOContent />
-
-
-      {/* <ScrollingNoticeBand /> */}
-
-
-
     </>
 
   );
