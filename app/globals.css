@@ -59,6 +59,21 @@ html[data-theme="light"] {
   --card: #f8fafc;
 }
 
+/* 🌓 Theme-adaptive Logo Display */
+.logo-dark-theme {
+  display: none !important;
+}
+.logo-light-theme {
+  display: inline-block !important;
+}
+
+html[data-theme="dark"] .logo-dark-theme {
+  display: inline-block !important;
+}
+html[data-theme="dark"] .logo-light-theme {
+  display: none !important;
+}
+
 /* 💠 Cyber */
 html[data-theme="cyber"] {
   --background: #030712;
@@ -539,9 +554,9 @@ a:hover {
   inset: -6px;
   border-radius: 9999px;
   background: conic-gradient(from 0deg,
-      rgba(96, 165, 250, 0.8),
-      rgba(168, 85, 247, 0.8),
-      rgba(96, 165, 250, 0.8));
+      rgba(249, 115, 22, 0.8),
+      rgba(251, 146, 60, 0.8),
+      rgba(234, 88, 12, 0.8));
   filter: blur(10px);
   opacity: 0.65;
   z-index: -1;

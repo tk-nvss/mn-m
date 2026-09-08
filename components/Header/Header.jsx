@@ -230,12 +230,20 @@ export default function Header() {
             >
               <div className="hover:scale-105 active:scale-95 transition-transform duration-300">
                 <Image
-                  src={HEADER_CONFIG.logo.src}
+                  src="/logoBB.png"
                   alt={HEADER_CONFIG.logo.alt}
                   width={HEADER_CONFIG.logo.width}
                   height={HEADER_CONFIG.logo.height}
                   priority
-                  className="h-9 w-auto transition-all duration-300"
+                  className="h-9 w-auto transition-all duration-300 logo-light-theme"
+                />
+                <Image
+                  src="/logoBB-dark.png"
+                  alt={HEADER_CONFIG.logo.alt}
+                  width={HEADER_CONFIG.logo.width}
+                  height={HEADER_CONFIG.logo.height}
+                  priority
+                  className="h-9 w-auto transition-all duration-300 logo-dark-theme"
                 />
               </div>
             </Link>
@@ -364,8 +372,7 @@ export default function Header() {
                                 {user.userType === "owner" ? "owner" : user.userType === "admin" ? "reseller" : user.userType === "member" ? "member" : "user"}
                               </span>
                             </div>
-                            <span className="text-[10px] font-medium text-[var(--foreground)] opacity-70 truncate italic leading-tight mb-1">{user.email}</span>
-                            <CopyButton text={user.userId} label={user.userId} size="xs" variant="subtle" className="font-mono text-[9px] truncate max-w-full" />
+                            <span className="text-[10px] font-medium text-[var(--foreground)] opacity-70 truncate italic leading-tight">{user.email}</span>
                           </div>
                         </>
                       ) : (

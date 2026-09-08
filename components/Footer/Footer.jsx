@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { QRCodeCanvas } from "qrcode.react";
 import {
   FiInstagram,
@@ -65,8 +66,24 @@ export default function Footer() {
           {/* BRAND BLOCK - COMPACT */}
           <div className="md:col-span-4 space-y-2.5">
             <div>
-              <Link href="/" className="group inline-block">
-                <h2 className="text-2xl md:text-3xl font-black italic tracking-tighter lowercase leading-none bg-gradient-to-r from-[var(--accent)] via-[var(--foreground)] to-[var(--accent)] bg-clip-text text-transparent group-hover:brightness-110 transition-all">
+              <Link href="/" className="group inline-flex items-center gap-2.5">
+                <div className="relative w-8 h-8 md:w-9 md:h-9 shrink-0 flex items-center justify-center transition-transform group-hover:scale-105">
+                  <Image
+                    src="/logoBB.png"
+                    alt="mlbbtopup.in logo"
+                    width={36}
+                    height={36}
+                    className="w-full h-full object-contain logo-light-theme"
+                  />
+                  <Image
+                    src="/logoBB-dark.png"
+                    alt="mlbbtopup.in logo"
+                    width={36}
+                    height={36}
+                    className="w-full h-full object-contain logo-dark-theme"
+                  />
+                </div>
+                <h2 className="text-2xl md:text-3xl font-black italic tracking-tighter lowercase leading-none text-[var(--foreground)] transition-colors">
                   {SITE_DOMAIN}
                 </h2>
               </Link>

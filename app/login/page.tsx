@@ -317,7 +317,15 @@ function AuthContent() {
                 width={320}
                 height={320}
                 priority
-                className="relative z-10 w-auto h-28 md:h-32 lg:h-40 object-contain drop-shadow-xl hover:scale-105 transition-transform duration-300"
+                className="relative z-10 w-auto h-28 md:h-32 lg:h-40 object-contain drop-shadow-xl hover:scale-105 transition-transform duration-300 logo-light-theme"
+              />
+              <Image
+                src="/logo-dark.png"
+                alt="MLBB TOPUP Logo"
+                width={320}
+                height={320}
+                priority
+                className="relative z-10 w-auto h-28 md:h-32 lg:h-40 object-contain drop-shadow-xl hover:scale-105 transition-transform duration-300 logo-dark-theme"
               />
             </motion.div>
           </div>
@@ -345,7 +353,15 @@ function AuthContent() {
                       width={100}
                       height={100}
                       priority
-                      className="relative z-10 w-auto h-14 sm:h-16 object-contain"
+                      className="relative z-10 w-auto h-14 sm:h-16 object-contain logo-light-theme"
+                    />
+                    <Image
+                      src="/logo-dark.png"
+                      alt="Logo"
+                      width={100}
+                      height={100}
+                      priority
+                      className="relative z-10 w-auto h-14 sm:h-16 object-contain logo-dark-theme"
                     />
                   </div>
                 </motion.div>

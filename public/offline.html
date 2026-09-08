@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Offline | mlbbtopup.in</title>
   <link rel="icon" href="/favicon.ico">
-  <meta name="theme-color" content="#070913">
+  <meta name="theme-color" content="#0a0a0c">
   <style>
     * {
       box-sizing: border-box;
@@ -16,68 +16,68 @@
       -webkit-user-select: none;
     }
     body {
-      background: #070913;
+      background: #0a0a0c;
       color: #ffffff;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 20px;
       text-align: center;
-      overflow-x: hidden;
       position: relative;
-    }
-    /* Animated Gaming Cyber Grid Background */
-    .grid-bg {
-      position: absolute;
-      inset: 0;
-      background-image: 
-        linear-gradient(to right, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
-      background-size: 32px 32px;
-      mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 30%, transparent 75%);
-      -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 30%, transparent 75%);
-      pointer-events: none;
+      overflow: hidden;
     }
     .ambient-glow {
       position: absolute;
-      width: 380px;
-      height: 380px;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(236, 72, 153, 0.12) 40%, transparent 70%);
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(168, 85, 247, 0.08) 50%, transparent 70%);
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       pointer-events: none;
-      filter: blur(40px);
+      filter: blur(50px);
     }
     .card {
       position: relative;
       z-index: 10;
-      max-width: 380px;
+      max-width: 340px;
       width: 100%;
-      background: rgba(15, 18, 30, 0.92);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 28px;
-      padding: 24px 20px;
-      box-shadow: 0 24px 60px -15px rgba(0, 0, 0, 0.8), 0 0 30px rgba(59, 130, 246, 0.1);
+      background: rgba(18, 18, 24, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 28px 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .icon-box {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f87171;
+      margin-bottom: 16px;
     }
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 10px;
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 3px 10px;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.25);
       color: #f87171;
       border-radius: 20px;
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 800;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
     .pulse-dot {
       width: 6px;
@@ -92,101 +92,18 @@
       50% { opacity: 0.4; transform: scale(0.8); }
     }
     h1 {
-      font-size: 20px;
-      font-weight: 900;
+      font-size: 18px;
+      font-weight: 800;
       color: #ffffff;
-      margin-bottom: 4px;
-      letter-spacing: -0.02em;
+      margin-bottom: 6px;
     }
     .desc {
       font-size: 12px;
-      color: rgba(255, 255, 255, 0.65);
-      line-height: 1.4;
-      margin-bottom: 14px;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.45;
+      margin-bottom: 22px;
+      max-width: 280px;
     }
-    
-    /* Arcade Mini Game Box */
-    .game-container {
-      position: relative;
-      width: 100%;
-      height: 150px;
-      background: #0a0d18;
-      border: 1.5px dashed rgba(99, 102, 241, 0.35);
-      border-radius: 18px;
-      overflow: hidden;
-      margin-bottom: 16px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-    .game-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(10, 13, 24, 0.82);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      backdrop-filter: blur(2px);
-      transition: opacity 0.2s;
-    }
-    .game-overlay.hidden {
-      display: none;
-    }
-    .game-title {
-      font-size: 13px;
-      font-weight: 900;
-      color: #38bdf8;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .game-hint {
-      font-size: 11px;
-      font-weight: 700;
-      color: #cbd5e1;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 3px 10px;
-      border-radius: 8px;
-      animation: bounce 1.4s infinite;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-3px); }
-    }
-    .score-badge {
-      position: absolute;
-      top: 8px;
-      left: 10px;
-      font-size: 10px;
-      font-weight: 900;
-      color: #fbbf24;
-      background: rgba(0,0,0,0.6);
-      padding: 2px 8px;
-      border-radius: 6px;
-      pointer-events: none;
-      z-index: 5;
-    }
-    .high-badge {
-      position: absolute;
-      top: 8px;
-      right: 10px;
-      font-size: 10px;
-      font-weight: 900;
-      color: #94a3b8;
-      background: rgba(0,0,0,0.6);
-      padding: 2px 8px;
-      border-radius: 6px;
-      pointer-events: none;
-      z-index: 5;
-    }
-
     .btn-retry {
       display: flex;
       align-items: center;
@@ -194,66 +111,60 @@
       gap: 8px;
       width: 100%;
       padding: 12px 16px;
-      border-radius: 14px;
-      font-size: 13px;
-      font-weight: 900;
+      border-radius: 12px;
+      font-size: 12.5px;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      background: linear-gradient(135deg, #0066FF, #0050E6);
+      letter-spacing: 0.04em;
+      background: #2563eb;
       color: #ffffff;
       border: none;
       cursor: pointer;
-      box-shadow: 0 6px 20px -4px rgba(0, 102, 255, 0.5);
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
       transition: all 0.2s ease;
     }
     .btn-retry:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px -4px rgba(0, 102, 255, 0.65);
-      filter: brightness(1.1);
+      background: #1d4ed8;
+      transform: translateY(-1px);
     }
     .btn-retry:active {
       transform: scale(0.98);
     }
     .status-footer {
-      margin-top: 12px;
-      font-size: 10.5px;
+      margin-top: 14px;
+      font-size: 10px;
       font-weight: 600;
       color: rgba(255, 255, 255, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
     }
   </style>
 </head>
 <body>
-  <div class="grid-bg"></div>
   <div class="ambient-glow"></div>
 
   <div class="card">
+    <div class="icon-box">
+      <!-- Wi-Fi Off SVG Icon -->
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+        <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      </svg>
+    </div>
+
     <div class="badge">
       <span class="pulse-dot"></span>
-      Signal Lost • Offline
+      Offline
     </div>
 
-    <h1>Respawning Connection... 👾</h1>
-    <p class="desc">No internet detected. While we wait for your Wi-Fi/data to reconnect, catch some diamonds!</p>
+    <h1>No Internet Connection</h1>
+    <p class="desc">Please check your Wi-Fi or mobile data network. We'll automatically reconnect once you're back online.</p>
 
-    <!-- Interactive Mini Game -->
-    <div class="game-container" id="game-box" onclick="handleGameTap(event)">
-      <div class="score-badge">💎 <span id="score-text">0</span></div>
-      <div class="high-badge">BEST: <span id="high-text">0</span></div>
-      
-      <canvas id="gameCanvas" width="340" height="150"></canvas>
-
-      <div class="game-overlay" id="game-overlay">
-        <div class="game-title" id="overlay-title">🎮 Diamond Jumper</div>
-        <div class="game-hint" id="overlay-btn">Tap / Click to Jump</div>
-      </div>
-    </div>
-
-    <button class="btn-retry" id="retry-btn" onclick="checkConnection()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <button class="btn-retry" onclick="checkConnection()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="23 4 23 10 17 10"></polyline>
         <polyline points="1 20 1 14 7 14"></polyline>
         <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
@@ -261,265 +172,35 @@
       Retry Connection
     </button>
 
-    <div class="status-footer">
-      <span id="status-label">Auto-reconnecting as soon as online...</span>
-    </div>
+    <div class="status-footer">Auto-reconnecting as soon as online...</div>
   </div>
 
   <script>
-    /* ================= MINI GAME LOGIC ================= */
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const overlay = document.getElementById('game-overlay');
-    const overlayTitle = document.getElementById('overlay-title');
-    const overlayBtn = document.getElementById('overlay-btn');
-    const scoreText = document.getElementById('score-text');
-    const highText = document.getElementById('high-text');
-
-    let gameState = 'IDLE'; // IDLE, PLAYING, GAMEOVER
-    let score = 0;
-    let highScore = parseInt(localStorage.getItem('mlbb_offline_high') || '0', 10);
-    highText.innerText = highScore;
-
-    let player = {
-      x: 35,
-      y: 110,
-      width: 22,
-      height: 22,
-      vy: 0,
-      gravity: 0.55,
-      jump: -8.8,
-      ground: 110,
-      rotation: 0
-    };
-
-    let obstacles = [];
-    let diamonds = [];
-    let gameSpeed = 3.2;
-    let frame = 0;
-    let animId = null;
-
-    function resetGame() {
-      player.y = player.ground;
-      player.vy = 0;
-      player.rotation = 0;
-      obstacles = [];
-      diamonds = [];
-      score = 0;
-      gameSpeed = 3.2;
-      frame = 0;
-      scoreText.innerText = score;
-    }
-
-    function jump() {
-      if (player.y >= player.ground - 2) {
-        player.vy = player.jump;
-      }
-    }
-
-    function handleGameTap(e) {
-      if (e) e.preventDefault();
-      if (gameState === 'IDLE' || gameState === 'GAMEOVER') {
-        resetGame();
-        gameState = 'PLAYING';
-        overlay.classList.add('hidden');
-        loop();
-      } else if (gameState === 'PLAYING') {
-        jump();
-      }
-    }
-
-    window.addEventListener('keydown', (e) => {
-      if (e.code === 'Space' || e.code === 'ArrowUp') {
-        handleGameTap(e);
-      }
-    });
-
-    function loop() {
-      if (gameState !== 'PLAYING') return;
-      frame++;
-
-      // Update Player Physics
-      player.vy += player.gravity;
-      player.y += player.vy;
-      if (player.y > player.ground) {
-        player.y = player.ground;
-        player.vy = 0;
-        player.rotation = 0;
-      } else {
-        player.rotation += 0.08;
-      }
-
-      // Spawn Obstacles (Cactus/Spike)
-      if (frame % 80 === 0) {
-        obstacles.push({
-          x: canvas.width + 10,
-          y: 112,
-          width: 14,
-          height: 20
-        });
-      }
-
-      // Spawn Diamond Collectibles
-      if (frame % 130 === 0) {
-        diamonds.push({
-          x: canvas.width + 10,
-          y: 65 + Math.random() * 35,
-          size: 14,
-          collected: false
-        });
-      }
-
-      // Clear Canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw Ground Line
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(0, 132);
-      ctx.lineTo(canvas.width, 132);
-      ctx.stroke();
-
-      // Draw Player (Gamer Avatar with Glow)
-      ctx.save();
-      ctx.translate(player.x + player.width / 2, player.y + player.height / 2);
-      ctx.rotate(player.rotation);
-      ctx.fillStyle = '#38bdf8';
-      ctx.shadowColor = '#0284c7';
-      ctx.shadowBlur = 10;
-      ctx.fillRect(-player.width / 2, -player.height / 2, player.width, player.height);
-      // Face
-      ctx.fillStyle = '#000000';
-      ctx.fillRect(player.width / 6, -player.height / 4, 4, 4);
-      ctx.restore();
-
-      // Draw & Update Obstacles
-      for (let i = obstacles.length - 1; i >= 0; i--) {
-        const obs = obstacles[i];
-        obs.x -= gameSpeed;
-
-        // Draw Spike
-        ctx.fillStyle = '#f43f5e';
-        ctx.shadowColor = '#e11d48';
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        ctx.moveTo(obs.x, obs.y + obs.height);
-        ctx.lineTo(obs.x + obs.width / 2, obs.y);
-        ctx.lineTo(obs.x + obs.width, obs.y + obs.height);
-        ctx.closePath();
-        ctx.fill();
-
-        // Collision Check
-        if (
-          player.x < obs.x + obs.width &&
-          player.x + player.width > obs.x &&
-          player.y + player.height > obs.y
-        ) {
-          gameOver();
-          return;
-        }
-
-        if (obs.x + obs.width < 0) {
-          obstacles.splice(i, 1);
-          score += 1;
-          scoreText.innerText = score;
-          if (score % 5 === 0) gameSpeed += 0.2;
-        }
-      }
-
-      // Draw & Update Diamonds
-      for (let i = diamonds.length - 1; i >= 0; i--) {
-        const d = diamonds[i];
-        d.x -= gameSpeed;
-
-        // Draw Diamond Shape
-        ctx.save();
-        ctx.translate(d.x, d.y);
-        ctx.fillStyle = '#38bdf8';
-        ctx.shadowColor = '#38bdf8';
-        ctx.shadowBlur = 12;
-        ctx.beginPath();
-        ctx.moveTo(0, -d.size / 2);
-        ctx.lineTo(d.size / 2, 0);
-        ctx.lineTo(0, d.size / 2);
-        ctx.lineTo(-d.size / 2, 0);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-
-        // Diamond Pickup Check
-        if (
-          !d.collected &&
-          Math.hypot((player.x + 10) - d.x, (player.y + 10) - d.y) < 22
-        ) {
-          d.collected = true;
-          score += 5;
-          scoreText.innerText = score;
-          diamonds.splice(i, 1);
-        } else if (d.x < -20) {
-          diamonds.splice(i, 1);
-        }
-      }
-
-      animId = requestAnimationFrame(loop);
-    }
-
-    function gameOver() {
-      gameState = 'GAMEOVER';
-      cancelAnimationFrame(animId);
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem('mlbb_offline_high', highScore.toString());
-        highText.innerText = highScore;
-      }
-      overlayTitle.innerText = '💀 Game Over!';
-      overlayBtn.innerText = `Score: ${score} • Tap to Retry`;
-      overlay.classList.remove('hidden');
-    }
-
-    // Initial Background Render
-    function renderStatic() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(0, 132);
-      ctx.lineTo(canvas.width, 132);
-      ctx.stroke();
-
-      ctx.fillStyle = '#38bdf8';
-      ctx.fillRect(35, 110, 22, 22);
-    }
-    renderStatic();
-
-    /* ================= CONNECTION LOGIC ================= */
     function checkConnection() {
-      const btn = document.getElementById('retry-btn');
-      btn.innerText = 'Checking Network...';
+      const btn = document.querySelector('.btn-retry');
+      btn.innerText = 'Connecting...';
+      btn.style.opacity = '0.7';
+
       if (navigator.onLine) {
-        btn.innerText = 'Online! Reloading...';
-        setTimeout(() => window.location.reload(), 300);
+        window.location.reload();
       } else {
         setTimeout(() => {
           btn.innerHTML = `
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="23 4 23 10 17 10"></polyline>
               <polyline points="1 20 1 14 7 14"></polyline>
               <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
             </svg>
             Retry Connection
           `;
-        }, 500);
+          btn.style.opacity = '1';
+        }, 800);
       }
     }
 
-    // Auto-reload when network returns
+    // Auto-reload as soon as internet connection is restored
     window.addEventListener('online', () => {
-      document.getElementById('status-label').innerText = '⚡ Connection Restored! Reloading...';
-      setTimeout(() => {
-        window.location.reload();
-      }, 400);
+      window.location.reload();
     });
   </script>
 </body>
