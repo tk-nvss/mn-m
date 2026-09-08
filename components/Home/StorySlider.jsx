@@ -27,7 +27,7 @@ const storyData = [
     badge: "Hot",
     color: "#b91c1c", // Red
     image: "/game-assets/weekly-monthly-bundle.webp",
-    link: "/games/weeklymonthly-bundle468",
+    link: "/games/weeklymonthly-bundle646",
   },
   {
     id: 2,

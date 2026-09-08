@@ -44,7 +44,7 @@ const flashSaleData = [
         image: "/game-assets/weekly-monthly-bundle.webp",
         price: "₹86",
         originalPrice: "₹100",
-        slug: "weeklymonthly-bundle468",
+        slug: "weeklymonthly-bundle646",
         badge: "Value"
     },
     {

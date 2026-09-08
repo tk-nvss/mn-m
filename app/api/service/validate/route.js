@@ -31,7 +31,7 @@ export async function POST(req) {
         }
 
         // ⚡ REGION RESTRICTION CHECK for mobile-legends114 via Service API
-        if ((gameSlug === "mobile-legends114" || gameSlug === "mlbb-double332" || gameSlug === "weeklymonthly-bundle468") && data.success === 200) {
+        if ((gameSlug === "mobile-legends114" || gameSlug === "mlbb-double332" || gameSlug === "weeklymonthly-bundle646") && data.success === 200) {
             const playerRegion = data.data?.region?.toUpperCase();
             const restrictedRegions = ["INDO", "ID", "PH", "SG", "RU", "MY", "MM"];
 

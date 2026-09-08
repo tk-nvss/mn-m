@@ -206,7 +206,7 @@ export async function GET() {
           image: HOK_IMAGE,
         };
       }
-      if (updatedGame.gameSlug === "weeklymonthly-bundle468") {
+      if (updatedGame.gameSlug === "weeklymonthly-bundle646") {
         updatedGame.gameImageId = {
           ...updatedGame.gameImageId,
           image: WEEKLY_MONTHLY_IMAGE,
@@ -229,7 +229,7 @@ export async function GET() {
       "mobile-legends114",
       "mlbb-double332",
       "sgmy-mlbb893",
-      "magic-chess-gogo-india924",
+      // "magic-chess-gogo-india924",
       "mlbb-indo42",
       // "mlbb-russia953",
       "pubg-mobile138",
@@ -242,7 +242,7 @@ export async function GET() {
       "wuthering-of-waves464",
       "where-winds-meet280",
       "mlbb-smallphp980",
-      "weeklymonthly-bundle468",
+      "weeklymonthly-bundle646",
       "asphalt9877",
       "8ballpool498",
       // "mobile-legends-exclusive952",

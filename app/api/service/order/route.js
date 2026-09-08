@@ -30,7 +30,7 @@ export async function POST(req) {
         }
 
         // ⚡ REGION RESTRICTION CHECK for mobile-legends114 and mlbb-double332
-        if (gameSlug === "mobile-legends114" || gameSlug === "mlbb-double332" || gameSlug === "weeklymonthly-bundle468") {
+        if (gameSlug === "mobile-legends114" || gameSlug === "mlbb-double332" || gameSlug === "weeklymonthly-bundle646") {
             try {
                 const regionCheckResp = await fetch("https://game-off-ten.vercel.app/api/v1/check-region", {
                     method: "POST",
