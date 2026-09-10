@@ -498,6 +498,7 @@ export default function OrdersTab() {
 
                 <DrawerSection icon={<CreditCard size={14} />} title="Payment Info">
                   <DrawerDetail label="Payment Method" value={selectedOrder.paymentMethod} />
+                  <DrawerDetail label="Platform" value={selectedOrder.platform?.toLowerCase() === "pwa" ? "📱 Installed PWA" : "🌐 Web Browser"} />
                   <div className="flex items-center justify-between gap-1 group w-full py-0.5">
                     <span className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-widest">Payment Status</span>
                     <StatusBadge status={selectedOrder.paymentStatus} size="xs" />

@@ -205,6 +205,7 @@ function BuyFlowContent() {
         email: userEmail || null,
         phone: userPhone || localStorage.getItem("phone"),
         currency: "INR",
+        platform: typeof window !== "undefined" && (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) ? "pwa" : "web",
       };
 
       const { data } = await api.post("/api/order/create-gateway-order", orderPayload);

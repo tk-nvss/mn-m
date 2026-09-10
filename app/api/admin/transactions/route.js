@@ -28,7 +28,10 @@ export async function GET(req) {
 
     /* ================= BASE FILTER ================= */
     let filter = {
-      paymentStatus: { $in: ["success", "completed", "paid"] },
+      $or: [
+        { status: "success" },
+        { paymentStatus: { $in: ["success", "completed", "paid"] } }
+      ]
     };
 
     /* ================= SINGLE OPTIMIZED AGGREGATION ================= */

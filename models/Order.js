@@ -37,6 +37,13 @@ const OrderSchema = new mongoose.Schema(
       default: "pending",
     },
 
+    /* ================= PLATFORM SOURCE ================= */
+    platform: {
+      type: String,
+      enum: ["pwa", "web", "PWA", "WEB"],
+      default: "web",
+    },
+
     /* ================= GATEWAY DATA ================= */
     gatewayOrderId: String, // Order ID from payment gateway
     gatewayResponse: mongoose.Schema.Types.Mixed, // Full gateway response
@@ -53,5 +60,8 @@ OrderSchema.index({ createdAt: -1 });
 OrderSchema.index({ status: 1, createdAt: -1 });
 OrderSchema.index({ paymentStatus: 1, createdAt: -1 });
 OrderSchema.index({ topupStatus: 1, createdAt: -1 });
+OrderSchema.index({ platform: 1, createdAt: -1 });
+OrderSchema.index({ platform: 1, status: 1, createdAt: -1 });
+OrderSchema.index({ email: 1, status: 1, createdAt: -1 });
 
 export default mongoose.models.Order || mongoose.model("Order", OrderSchema);

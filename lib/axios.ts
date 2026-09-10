@@ -42,6 +42,12 @@ api.interceptors.request.use(
       config.headers['X-App-Timestamp'] = timestamp;
       config.headers['X-App-Signature'] = signature;
       
+      // Detect PWA / Standalone vs Web Browser
+      const isPwa =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        (navigator as { standalone?: boolean }).standalone === true;
+      config.headers['X-Client-Platform'] = isPwa ? 'pwa' : 'web';
+
       const adminPin = sessionStorage.getItem('adminPin');
       if (adminPin) {
         config.headers['x-admin-pin'] = adminPin;

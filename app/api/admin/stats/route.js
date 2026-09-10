@@ -24,11 +24,29 @@ export async function GET(req) {
         const startOfWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         const startOfMonth = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-        const [walletStats, txStats, totalActive] = await Promise.all([
-            // User Wallet Stats
+        const [walletAgg, txStats, totalActive] = await Promise.all([
+            // User Wallet Stats with robust numeric conversion
             User.aggregate([
-                { $match: { wallet: { $gt: 0 } } },
-                { $group: { _id: null, totalBalance: { $sum: "$wallet" } } }
+                {
+                    $project: {
+                        numericWallet: {
+                            $convert: {
+                                input: "$wallet",
+                                to: "double",
+                                onError: 0,
+                                onNull: 0
+                            }
+                        }
+                    }
+                },
+                { $match: { numericWallet: { $gt: 0 } } },
+                {
+                    $group: {
+                        _id: null,
+                        totalBalance: { $sum: "$numericWallet" },
+                        activeWallets: { $sum: 1 }
+                    }
+                }
             ]),
             // Transaction Aggregates grouped by time facets
             WalletTransaction.aggregate([
@@ -63,24 +81,26 @@ export async function GET(req) {
         ]);
 
         const txData = txStats[0];
+        const walletResult = {
+            totalBalance: walletAgg[0]?.totalBalance || 0,
+            activeWallets: walletAgg[0]?.activeWallets || totalActive || 0,
+            deposits: {
+                day: txData?.deposits[0]?.day || 0,
+                week: txData?.deposits[0]?.week || 0,
+                month: txData?.deposits[0]?.month || 0,
+            },
+            usage: {
+                day: txData?.usage[0]?.day || 0,
+                week: txData?.usage[0]?.week || 0,
+                month: txData?.usage[0]?.month || 0,
+            }
+        };
 
         /* ================= RESPONSE ================= */
         return Response.json({
             success: true,
-            data: {
-                totalBalance: walletStats[0]?.totalBalance || 0,
-                activeWallets: totalActive,
-                deposits: {
-                    day: txData.deposits[0]?.day || 0,
-                    week: txData.deposits[0]?.week || 0,
-                    month: txData.deposits[0]?.month || 0,
-                },
-                usage: {
-                    day: txData.usage[0]?.day || 0,
-                    week: txData.usage[0]?.week || 0,
-                    month: txData.usage[0]?.month || 0,
-                }
-            },
+            data: walletResult,
+            walletStats: walletResult
         });
     } catch (err) {
         console.error("Stats fetch failed", err);

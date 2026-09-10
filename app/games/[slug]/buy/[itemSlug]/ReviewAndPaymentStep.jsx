@@ -66,6 +66,7 @@ export default function ReviewAndPaymentStep({
         email: userEmail || null,
         phone: storedPhone,
         currency: "INR",
+        platform: typeof window !== "undefined" && (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true) ? "pwa" : "web",
       };
 
       const { data } = await api.post("/api/order/create-gateway-order", orderPayload);

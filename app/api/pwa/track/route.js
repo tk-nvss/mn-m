@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import PwaInstall from "@/models/PwaInstall";
 import PushSubscription from "@/models/PushSubscription";
 import User from "@/models/User";
+import Order from "@/models/Order";
 
 /* ── helpers ── */
 function parseDevice(ua) {
@@ -129,6 +130,7 @@ export async function GET(req) {
       pushSubscribersRaw,
       byPushDevice,
       dailyPushRaw,
+      pwaPurchasesRaw,
     ] = await Promise.all([
       PwaInstall.countDocuments({ event: "installed" }),
       PwaInstall.distinct("fingerprint", { event: "active" }).then((a) => a.length),
@@ -215,6 +217,22 @@ export async function GET(req) {
         },
         { $sort: { _id: 1 } },
       ]),
+
+      // PWA Purchases stats
+      Order.aggregate([
+        { $match: { platform: { $in: ["pwa", "PWA"] } } },
+        {
+          $group: {
+            _id: null,
+            totalOrders: { $sum: 1 },
+            successOrders: { $sum: { $cond: [{ $eq: ["$status", "success"] }, 1, 0] } },
+            totalRevenue: { $sum: { $cond: [{ $eq: ["$status", "success"] }, "$price", 0] } },
+            periodOrders: { $sum: { $cond: [{ $gte: ["$createdAt", since] }, 1, 0] } },
+            periodSuccessOrders: { $sum: { $cond: [{ $and: [{ $gte: ["$createdAt", since] }, { $eq: ["$status", "success"] }] }, 1, 0] } },
+            periodRevenue: { $sum: { $cond: [{ $and: [{ $gte: ["$createdAt", since] }, { $eq: ["$status", "success"] }] }, "$price", 0] } },
+          }
+        }
+      ]),
     ]);
 
     // Fill in zeros for missing days
@@ -256,6 +274,15 @@ export async function GET(req) {
       ? Math.round(((totalPushSubscribers || 0) / totalPushEvents) * 100)
       : (totalPushSubscribers > 0 ? 100 : 0);
 
+    const pwaOrderAgg = pwaPurchasesRaw?.[0] || {
+      totalOrders: 0,
+      successOrders: 0,
+      totalRevenue: 0,
+      periodOrders: 0,
+      periodSuccessOrders: 0,
+      periodRevenue: 0,
+    };
+
     return NextResponse.json({
       totalInstalls,
       totalActive,
@@ -265,6 +292,17 @@ export async function GET(req) {
       totalPushSubscribers,
       pushDeniedCount: pushDenied,
       pushConversionRate,
+      pwaPurchases: {
+        totalOrders: pwaOrderAgg.totalOrders || 0,
+        successOrders: pwaOrderAgg.successOrders || 0,
+        totalRevenue: pwaOrderAgg.totalRevenue || 0,
+        periodOrders: pwaOrderAgg.periodOrders || 0,
+        periodSuccessOrders: pwaOrderAgg.periodSuccessOrders || 0,
+        periodRevenue: pwaOrderAgg.periodRevenue || 0,
+        aov: pwaOrderAgg.periodSuccessOrders > 0 
+          ? Math.round(pwaOrderAgg.periodRevenue / pwaOrderAgg.periodSuccessOrders) 
+          : (pwaOrderAgg.successOrders > 0 ? Math.round(pwaOrderAgg.totalRevenue / pwaOrderAgg.successOrders) : 0),
+      },
       byDevice,
       byOS,
       byBrowser,

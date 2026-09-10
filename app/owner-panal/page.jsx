@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Icons } from "@/components/icons";
 import { LoadingSpinner } from "@/components/common";
@@ -51,61 +51,124 @@ import TournamentsAdminTab from "@/components/admin/TournamentsAdminTab";
 import EventsAdminTab from "@/components/admin/EventsAdminTab";
 
 
-
 import UiSettingsTab from "@/components/admin/UiSettingsTab";
 import PwaStatsTab from "@/components/admin/PwaStatsTab";
 import GiveawayAdminTab from "@/components/admin/GiveawayAdminTab";
 import BlocklistTab from "@/components/admin/BlocklistTab";
 import AnalyticsTab from "@/components/admin/AnalyticsTab";
-
+import ActivityTab from "@/components/admin/ActivityTab";
 
 
 const MENU_CATEGORIES = [
   {
-    category: "Finance & Orders",
+    category: "Insights & Overview",
+    items: [
+      { id: "analytics", label: "Analytics & Growth", icon: FiBarChart2 },
+      { id: "activity", label: "Live Activity", icon: FiZap },
+      { id: "pwa-stats", label: "App & PWA Stats", icon: FiSmartphone },
+    ]
+  },
+  {
+    category: "Commerce & Finance",
     items: [
       { id: "orders", label: "Orders", icon: FiShoppingCart },
       { id: "transactions", label: "Transactions", icon: FiRepeat },
-      { id: "wallet", label: "Wallet", icon: FiPocket },
-      { id: "usdt", label: "USDT", icon: FiDatabase },
+      { id: "pricing", label: "Pricing & Catalog", icon: FiTag },
+      { id: "wallet", label: "Wallet Balances", icon: FiPocket },
+      { id: "usdt", label: "USDT Crypto", icon: FiDatabase },
     ]
   },
   {
-    category: "Marketing & Engagement",
+    category: "Customers & Support",
     items: [
-       { id: "events", label: "Events Calendar", icon: FiCalendar },
-       { id: "blogs", label: "Blogs", icon: FiFileText, href: "/owner-panal/blogs" },
-       { id: "redeem", label: "Redeem Codes", icon: FiGift },
-       { id: "coins", label: "Coins", icon: FiZap },
-       { id: "promotional", label: "Promotional", icon: FiStar },
-       { id: "banners", label: "Banners", icon: FiImage },
-       { id: "tournaments", label: "Tournaments", icon: FiAward },
-       { id: "analytics", label: "Analytics", icon: FiBarChart2 },
-       { id: "pwa-stats", label: "PWA Stats", icon: FiSmartphone },
-       { id: "giveaway", label: "Giveaway", icon: FiGift },
-    ]
-  },
-  {
-    category: "Platform Management",
-    items: [
-      { id: "users", label: "Users", icon: FiUsers },
-      { id: "memberships", label: "Memberships", icon: FiShield },
+      { id: "users", label: "User Accounts", icon: FiUsers },
+      { id: "memberships", label: "Memberships & VIP", icon: FiShield },
       { id: "queries", label: "Support Queries", icon: FiMessageSquare },
-      { id: "pricing", label: "Pricing", icon: FiTag },
+      { id: "blocklist", label: "Blocklist / Fraud", icon: FiShield },
+    ]
+  },
+  {
+    category: "Marketing & Growth",
+    items: [
+      { id: "promotional", label: "Promotions & Offers", icon: FiStar },
+      { id: "redeem", label: "Redeem Codes", icon: FiGift },
+      { id: "coins", label: "Coin Rewards", icon: FiZap },
+      { id: "banners", label: "Store Banners", icon: FiImage },
+      { id: "giveaway", label: "Giveaways", icon: FiGift },
+      { id: "events", label: "Events Calendar", icon: FiCalendar },
+      { id: "tournaments", label: "Tournaments", icon: FiAward },
+      { id: "blogs", label: "Blogs & Articles", icon: FiFileText, href: "/owner-panal/blogs" },
+    ]
+  },
+  {
+    category: "System & Settings",
+    items: [
+      { id: "ui-settings", label: "UI & Layout", icon: FiLayout },
       { id: "api-keys", label: "API Keys", icon: FiKey },
-      { id: "blocklist", label: "Blocklist", icon: FiShield },
-      { id: "ui-settings", label: "UI Settings", icon: FiLayout },
-      { id: "settings", label: "Settings", icon: FiSettings },
+      { id: "settings", label: "General Settings", icon: FiSettings },
     ]
   }
 ];
 
+const VALID_TABS = [
+  "analytics", "activity", "pwa-stats",
+  "orders", "transactions", "pricing", "wallet", "usdt",
+  "users", "memberships", "queries", "blocklist",
+  "promotional", "redeem", "coins", "banners", "giveaway", "events", "tournaments",
+  "ui-settings", "api-keys", "settings"
+];
+
 export default function AdminPanalPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("orders");
+  const [activeTab, setActiveTabState] = useState("orders");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // Sync activeTab with URL (?tab=xyz) & restore on reload / back-forward
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    const tabFromUrl = params.get("tab");
+
+    if (tabFromUrl && VALID_TABS.includes(tabFromUrl)) {
+      setActiveTabState(tabFromUrl);
+      localStorage.setItem("adminActiveTab", tabFromUrl);
+    } else {
+      const savedTab = localStorage.getItem("adminActiveTab");
+      if (savedTab && VALID_TABS.includes(savedTab)) {
+        setActiveTabState(savedTab);
+        const newUrl = `${window.location.pathname}?tab=${savedTab}`;
+        window.history.replaceState({ tab: savedTab }, "", newUrl);
+      } else {
+        const newUrl = `${window.location.pathname}?tab=orders`;
+        window.history.replaceState({ tab: "orders" }, "", newUrl);
+      }
+    }
+
+    const handlePopState = (e) => {
+      const currentParams = new URLSearchParams(window.location.search);
+      const currentTab = currentParams.get("tab") || e.state?.tab || "orders";
+      if (VALID_TABS.includes(currentTab)) {
+        setActiveTabState(currentTab);
+        localStorage.setItem("adminActiveTab", currentTab);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  const handleTabChange = useCallback((tabId) => {
+    if (!VALID_TABS.includes(tabId)) return;
+    setActiveTabState(tabId);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("adminActiveTab", tabId);
+      const newUrl = `${window.location.pathname}?tab=${tabId}`;
+      window.history.pushState({ tab: tabId }, "", newUrl);
+    }
+  }, []);
 
   const [pinPrompt, setPinPrompt] = useState(true);
   const [pinDigits, setPinDigits] = useState(["", "", "", "", "", ""]);
@@ -561,43 +624,47 @@ export default function AdminPanalPage() {
             <div className="flex-1 overflow-y-auto custom-scrollbar pb-6">
               
               {/* DUAL BALANCE WIDGET INSIDE SIDEBAR */}
-              <div className="p-4 border-b border-[var(--border)] bg-[var(--card)]/30 space-y-2.5">
-                <span className="text-[9px] uppercase tracking-widest text-[var(--muted)] font-black">API Provider Balances</span>
+              <div className="p-3 border-b border-[var(--border)] bg-[var(--card)]/30 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] uppercase tracking-widest text-[var(--muted)] font-black">API Provider Balances</span>
+                  <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Live
+                  </span>
+                </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className={`p-2.5 rounded-xl border ${providerBalances.activeProvider === '1game' ? 'bg-emerald-500/5 border-emerald-500/30' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)]'}`}>
+                  <div className={`p-2 rounded-lg border ${providerBalances.activeProvider === '1game' ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)]'}`}>
                     <div className="flex items-center justify-between">
-                      <span className="text-[9px] font-bold text-[var(--muted)]">1Game</span>
-                      {providerBalances.activeProvider === '1game' && <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />}
+                      <span className="text-[9.5px] font-bold text-[var(--muted)]">1Game</span>
+                      {providerBalances.activeProvider === '1game' && (
+                        <span className="text-[7.5px] font-bold text-emerald-500 bg-emerald-500/15 px-1 py-0.2 rounded">ACTIVE</span>
+                      )}
                     </div>
-                    <div className="text-sm font-black text-[var(--foreground)] mt-0.5">
+                    <div className="text-sm font-black text-[var(--foreground)] mt-0.5 tabular-nums">
                       {providerBalances.oneGame?.balance !== undefined ? `$${providerBalances.oneGame.balance.toFixed(2)}` : '---'}
                     </div>
-                    {providerBalances.activeProvider === '1game' && (
-                      <span className="text-[7px] font-bold text-emerald-400 uppercase tracking-widest block mt-0.5">ACTIVE</span>
-                    )}
                   </div>
 
-                  <div className={`p-2.5 rounded-xl border ${providerBalances.activeProvider === 'bluebuff' ? 'bg-cyan-500/5 border-cyan-500/30' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)]'}`}>
+                  <div className={`p-2 rounded-lg border ${providerBalances.activeProvider === 'bluebuff' ? 'bg-cyan-500/10 border-cyan-500/30' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)]'}`}>
                     <div className="flex items-center justify-between">
-                      <span className="text-[9px] font-bold text-[var(--muted)]">Bluebuff</span>
-                      {providerBalances.activeProvider === 'bluebuff' && <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />}
+                      <span className="text-[9.5px] font-bold text-[var(--muted)]">Bluebuff</span>
+                      {providerBalances.activeProvider === 'bluebuff' && (
+                        <span className="text-[7.5px] font-bold text-cyan-400 bg-cyan-500/15 px-1 py-0.2 rounded">ACTIVE</span>
+                      )}
                     </div>
-                    <div className="text-sm font-black text-[var(--foreground)] mt-0.5">
+                    <div className="text-sm font-black text-[var(--foreground)] mt-0.5 tabular-nums">
                       {providerBalances.bluebuff?.balance !== undefined ? `$${providerBalances.bluebuff.balance.toFixed(2)}` : '---'}
                     </div>
-                    {providerBalances.activeProvider === 'bluebuff' && (
-                      <span className="text-[7px] font-bold text-cyan-400 uppercase tracking-widest block mt-0.5">ACTIVE</span>
-                    )}
                   </div>
                 </div>
               </div>
 
               {/* CATEGORIZED MENU WITH ICONS */}
-              <div className="px-3 py-2 space-y-4 mt-1">
+              <div className="px-3 py-3 space-y-4">
                 {MENU_CATEGORIES.map((category) => (
-                  <div key={category.category} className="space-y-1.5">
-                    <h3 className="px-2 pb-1 text-[9px] font-black uppercase tracking-[0.1em] text-[var(--muted)]/70">
-                      {category.category}
+                  <div key={category.category} className="space-y-1">
+                    <h3 className="px-2 pb-1 text-[9px] font-black uppercase tracking-[0.12em] text-[var(--muted)]/80 flex items-center justify-between">
+                      <span>{category.category}</span>
+                      <span className="text-[8px] font-normal text-[var(--muted)]/50">{category.items.length}</span>
                     </h3>
                     <div className="space-y-0.5">
                       {category.items.map((item) => {
@@ -610,25 +677,31 @@ export default function AdminPanalPage() {
                               if (item.href) {
                                 router.push(item.href);
                               } else {
-                                setActiveTab(item.id);
+                                handleTabChange(item.id);
                                 setIsSidebarOpen(false);
                               }
                             }}
                             className={`
-                              w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all tracking-wide group
+                              w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all tracking-wide group cursor-pointer
                               ${isActive 
-                                ? "bg-[var(--accent)]/10 text-[var(--accent)]" 
-                                : "text-[var(--foreground)]/70 hover:bg-[var(--foreground)]/5 hover:text-[var(--foreground)]"
+                                ? "bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 shadow-xs" 
+                                : "text-[var(--foreground)]/70 hover:bg-[var(--foreground)]/5 hover:text-[var(--foreground)] border border-transparent"
                               }
                             `}
                           >
-                            <div className={`
-                              flex items-center justify-center w-6 h-6 rounded-md transition-colors
-                              ${isActive ? "bg-[var(--accent)] text-white shadow-sm shadow-[var(--accent)]/30" : "bg-[var(--foreground)]/5 group-hover:bg-[var(--foreground)]/10"}
-                            `}>
-                              <Icon size={12} />
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className={`
+                                flex items-center justify-center w-6 h-6 rounded-md transition-colors shrink-0
+                                ${isActive ? "bg-[var(--accent)] text-white shadow-sm shadow-[var(--accent)]/30" : "bg-[var(--foreground)]/5 group-hover:bg-[var(--foreground)]/10"}
+                              `}>
+                                <Icon size={12} />
+                              </div>
+                              <span className="truncate">{item.label}</span>
                             </div>
-                            {item.label}
+
+                            {item.id === "activity" && (
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                            )}
                           </button>
                         );
                       })}
@@ -712,7 +785,10 @@ export default function AdminPanalPage() {
               <UiSettingsTab />
             )}
             {activeTab === "analytics" && (
-              <AnalyticsTab onNavigate={setActiveTab} />
+              <AnalyticsTab onNavigate={handleTabChange} />
+            )}
+            {activeTab === "activity" && (
+              <ActivityTab onNavigate={handleTabChange} />
             )}
             {activeTab === "pwa-stats" && (
               <PwaStatsTab />

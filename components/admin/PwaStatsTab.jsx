@@ -7,10 +7,11 @@ import {
   FiDownload, FiActivity, FiRefreshCw,
   FiXCircle, FiUser, FiExternalLink,
   FiBell, FiSend, FiCheckCircle, FiAlertCircle,
-  FiImage, FiTag, FiChevronDown, FiChevronUp
+  FiImage, FiTag, FiChevronDown, FiChevronUp,
+  FiShoppingCart
 } from "react-icons/fi";
 import { LoadingSpinner } from "@/components/common";
-import { formatNumber, formatPercent, formatDateTime } from "@/utils";
+import { formatNumber, formatPercent, formatDateTime, formatCurrency } from "@/utils";
 
 const PRESET_IMAGES = [
   { label: "Starlight Pass", url: "/game-assets/starkight.webp" },
@@ -150,8 +151,8 @@ export default function PwaStatsTab() {
         </div>
       </div>
 
-      {/* ── Stat cards (Unified Total, Period & Conversions) ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+      {/* ── Stat cards (Unified Total, Period, Conversions & Purchases) ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
         <StatCard
           label="App Installs"
           value={data.totalInstalls}
@@ -181,6 +182,20 @@ export default function PwaStatsTab() {
           subText={`${data.pushDeniedCount || 0} rejected`}
           icon={<FiActivity size={14} />}
           color="#22c55e"
+        />
+        <StatCard
+          label="PWA Revenue"
+          value={formatCurrency(data.pwaPurchases?.periodRevenue || 0)}
+          subText={`All-time: ${formatCurrency(data.pwaPurchases?.totalRevenue || 0)}`}
+          icon={<FiShoppingCart size={14} />}
+          color="#10b981"
+        />
+        <StatCard
+          label="PWA Orders"
+          value={data.pwaPurchases?.periodOrders || 0}
+          subText={`AOV: ${formatCurrency(data.pwaPurchases?.aov || 0)}`}
+          icon={<FiSmartphone size={14} />}
+          color="#8b5cf6"
         />
       </div>
 

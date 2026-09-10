@@ -297,6 +297,10 @@ export async function POST(req: Request) {
       Date.now().toString(36).toUpperCase() +
       crypto.randomBytes(6).toString("hex").toUpperCase();
 
+    const platform = (
+      (body.platform || req.headers.get("x-client-platform") || "web") as string
+    ).toLowerCase() === "pwa" ? "pwa" : "web";
+
     const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
 
     /* ---------- CREATE ORDER ---------- */
@@ -314,6 +318,7 @@ export async function POST(req: Request) {
       email: email || null,
       phone: phone || null,
       currency,
+      platform,
       status: "pending",
       paymentStatus: "pending",
       topupStatus: "pending",
