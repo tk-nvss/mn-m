@@ -152,219 +152,205 @@ export default function MembershipsTab() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h2 className="text-xl font-[900] text-[var(--foreground)] uppercase tracking-tight">
-          Memberships 
-        </h2>
-        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+      <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-[var(--border)]/70">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse shrink-0" />
+          <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
+            Memberships
+          </h2>
+          {memberships.length > 0 && (
+            <span className="px-2 py-0.5 rounded-md bg-[var(--card)] border border-[var(--border)] text-[10px] font-bold text-[var(--foreground)] tabular-nums shadow-2xs">
+              {memberships.length} <span className="text-[9px] text-[var(--muted)] font-medium">Active</span>
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-1.5">
           <button
             onClick={() => fetchMemberships()}
-            className="w-10 h-10 shrink-0 rounded-xl bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 text-[var(--foreground)] flex items-center justify-center transition-colors"
+            disabled={loading}
+            className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-2xs disabled:opacity-50 shrink-0"
+            title="Refresh memberships"
           >
-            <RefreshCw size={16} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
+            <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
           </button>
           <button
             onClick={() => setShowGrantForm(!showGrantForm)}
-            className="flex-1 sm:flex-none h-10 px-4 rounded-xl bg-[var(--accent)] text-white text-xs font-bold shadow-lg shadow-[var(--accent)]/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase tracking-widest"
+            className="h-7 px-2.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1 shadow-2xs shrink-0 cursor-pointer"
           >
-            <Plus size={16} />
-            Add 
+            <Plus size={12} />
+            <span>{showGrantForm ? "Close" : "Add"}</span>
           </button>
         </div>
       </div>
 
       {/* Grant Membership Form */}
       {showGrantForm && (
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 md:p-8 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2.5 bg-[var(--accent)]/10 rounded-xl text-[var(--accent)] shrink-0">
-            <Crown size={20} />
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 sm:p-4 shadow-2xs space-y-3">
+          <div className="flex items-center gap-2 pb-2 border-b border-[var(--border)]/50">
+            <div className="p-1.5 bg-purple-500/10 rounded-lg text-purple-400 shrink-0">
+              <Crown size={14} />
+            </div>
+            <div>
+              <h3 className="text-xs font-bold text-[var(--foreground)] uppercase tracking-wider">Grant Access</h3>
+              <p className="text-[10px] text-[var(--muted)]">Elevate user privileges temporarily</p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-base font-[900] text-[var(--foreground)] uppercase tracking-widest leading-none">Grant Access</h3>
-            <p className="text-[11px] font-bold text-[var(--muted)] mt-1">Elevate user privileges temporarily</p>
-          </div>
-        </div>
-        
-        <form onSubmit={handleGrantMembership} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 items-end">
-          <div className="space-y-2 lg:col-span-5">
-            <label className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] pl-1">User ID / Email</label>
-            <div className="relative">
+          
+          <form onSubmit={handleGrantMembership} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 items-end">
+            <div className="space-y-1 lg:col-span-5">
+              <label className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">User ID / Email</label>
               <input
                 type="text"
                 value={newUserId}
                 onChange={e => setNewUserId(e.target.value)}
                 placeholder="Enter user identifier..."
-                className="w-full bg-[var(--background)]/50 border border-[var(--border)] rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent)]/10 transition-all placeholder:text-[var(--muted)]/50"
+                className="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--foreground)] font-bold focus:outline-none focus:border-purple-500 transition-all placeholder:text-[var(--muted)]/50 shadow-2xs"
                 required
               />
             </div>
-          </div>
 
-          <div className="space-y-2 lg:col-span-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] pl-1">Role Type</label>
-            <div className="relative">
+            <div className="space-y-1 lg:col-span-3">
+              <label className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Role Type</label>
               <select
                 value={newUserType}
                 onChange={e => setNewUserType(e.target.value)}
-                className="w-full bg-[var(--background)]/50 border border-[var(--border)] rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent)]/10 transition-all appearance-none cursor-pointer"
+                className="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--foreground)] font-bold focus:outline-none focus:border-purple-500 transition-all cursor-pointer shadow-2xs"
               >
                 <option value="member">🌟 Premium Member</option>
                 <option value="admin">🛡️ Administrator</option>
               </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--muted)]">
-                ▼
-              </div>
             </div>
-          </div>
 
-          <div className="space-y-2 lg:col-span-4">
-            <label className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)] pl-1">Duration / Expiry</label>
-            <div className="flex gap-2">
-              <div className="relative shrink-0 w-[100px]">
+            <div className="space-y-1 lg:col-span-4">
+              <label className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Duration</label>
+              <div className="flex gap-1.5">
                 <select
                   value={expiryType}
                   onChange={e => setExpiryType(e.target.value)}
-                  className="w-full bg-[var(--background)]/50 border border-[var(--border)] rounded-xl px-3 py-3.5 text-sm font-bold focus:outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent)]/10 transition-all appearance-none cursor-pointer"
+                  className="bg-[var(--background)] border border-[var(--border)] rounded-lg px-2 py-1.5 text-xs text-[var(--foreground)] font-bold focus:outline-none focus:border-purple-500 transition-all cursor-pointer shadow-2xs w-20"
                 >
                   <option value="days">Days</option>
                   <option value="date">Date</option>
                 </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--muted)] text-xs">
-                  ▼
-                </div>
-              </div>
-              
-              {expiryType === "days" ? (
-                <div className="relative flex-1">
+                
+                {expiryType === "days" ? (
                   <input
                     type="number"
                     min="1"
                     value={expiryDays}
                     onChange={e => setExpiryDays(e.target.value)}
                     placeholder="30"
-                    className="w-full bg-[var(--background)]/50 border border-[var(--border)] rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent)]/10 transition-all"
+                    className="flex-1 bg-[var(--background)] border border-[var(--border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--foreground)] font-bold focus:outline-none focus:border-purple-500 transition-all shadow-2xs"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-[var(--muted)] pointer-events-none">
-                    Days
-                  </span>
-                </div>
-              ) : (
-                <input
-                  type="datetime-local"
-                  value={expiryDate}
-                  onChange={e => setExpiryDate(e.target.value)}
-                  className="w-full flex-1 bg-[var(--background)]/50 border border-[var(--border)] rounded-xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent)]/10 transition-all [color-scheme:dark]"
-                />
-              )}
+                ) : (
+                  <input
+                    type="datetime-local"
+                    value={expiryDate}
+                    onChange={e => setExpiryDate(e.target.value)}
+                    className="flex-1 bg-[var(--background)] border border-[var(--border)] rounded-lg px-2 py-1.5 text-xs text-[var(--foreground)] font-bold focus:outline-none focus:border-purple-500 transition-all shadow-2xs [color-scheme:dark]"
+                  />
+                )}
+              </div>
             </div>
-          </div>
 
-          <div className="lg:col-span-12 flex justify-end mt-4 pt-4 border-t border-[var(--border)]/50">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-8 py-3.5 rounded-xl bg-[var(--accent)] text-white text-sm font-bold shadow-xl shadow-[var(--accent)]/30 hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 w-full sm:w-auto"
-            >
-              {isSubmitting ? (
-                <Loader2 size={18} className="animate-spin" />
-              ) : (
-                <>
-                  <Crown size={18} />
-                  Authorize Access
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
+            <div className="lg:col-span-12 flex justify-end pt-1">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="h-7 px-4 rounded-lg bg-purple-600 text-white text-[10px] font-bold uppercase tracking-wider hover:bg-purple-700 disabled:opacity-50 transition-all flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
+              >
+                {isSubmitting ? (
+                  <Loader2 size={12} className="animate-spin" />
+                ) : (
+                  <>
+                    <Crown size={12} />
+                    Authorize Access
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       )}
 
       {/* Active Memberships List */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden flex flex-col shadow-sm mt-8">
-        <div className="p-5 md:p-6 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between border-b border-[var(--border)] bg-gradient-to-b from-[var(--background)]/50 to-transparent">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-[var(--foreground)]/5 rounded-lg text-[var(--muted)]">
-              <Users size={18} />
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden flex flex-col shadow-2xs">
+        {/* Search Bar in Card Header */}
+        <div className="p-2.5 sm:px-3 sm:py-2.5 flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between border-b border-[var(--border)]/70">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-md bg-purple-500/10 text-purple-400 flex items-center justify-center">
+              <Users size={12} />
             </div>
             <div>
-              <h3 className="text-sm font-[900] text-[var(--foreground)] uppercase tracking-widest leading-none">
+              <h3 className="text-xs font-bold text-[var(--foreground)] uppercase tracking-wider">
                 Active Access
               </h3>
-              <p className="text-[11px] font-medium text-[var(--muted)] mt-1">
-                {memberships.length} elevated accounts
-              </p>
             </div>
           </div>
           
-          <div className="relative w-full sm:w-72 group">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors" />
+          <div className="relative w-full sm:w-60">
+            <Search size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
             <input
               type="text"
               placeholder="Search by name, email or ID..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[var(--background)]/50 border border-[var(--border)] rounded-xl pl-9 pr-4 py-2.5 text-xs font-bold focus:outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent)]/10 transition-all placeholder:text-[var(--muted)]/50"
+              className="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg pl-7 pr-2.5 py-1 text-xs text-[var(--foreground)] font-medium focus:outline-none focus:border-purple-500 transition-all placeholder:text-[var(--muted)]/50 shadow-2xs"
             />
           </div>
         </div>
 
-        <div className="border-t border-[var(--border)]">
-          <div className="flex flex-col divide-y divide-[var(--border)]">
+        <div>
+          <div className="flex flex-col divide-y divide-[var(--border)]/60">
             {loading ? (
-              <div className="py-16 text-center text-[var(--muted)]">
-                <Loader2 size={24} className="mx-auto animate-spin mb-3 text-[var(--accent)]" />
-                <p className="font-bold uppercase tracking-widest text-xs">Loading Directory</p>
+              <div className="py-10 text-center text-[var(--muted)] flex flex-col items-center gap-2">
+                <Loader2 size={16} className="animate-spin text-purple-500" />
+                <p className="font-bold text-xs">Loading Directory...</p>
               </div>
             ) : memberships.length === 0 ? (
-              <div className="py-16 text-center">
-                <div className="mx-auto w-12 h-12 rounded-full bg-[var(--foreground)]/5 flex items-center justify-center mb-3">
-                  <Users size={20} className="text-[var(--muted)]" />
-                </div>
-                <p className="font-bold uppercase tracking-widest text-[var(--foreground)] text-sm mb-1">No Privileged Users</p>
-                <p className="text-[var(--muted)] text-xs font-medium">Use the form above to grant access.</p>
+              <div className="py-10 text-center text-xs text-[var(--muted)]">
+                No privileged users found.
               </div>
             ) : (
               memberships.map((u) => (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
+                <div
                   key={u._id}
-                  className="group flex items-center justify-between gap-3 p-4 sm:px-6 hover:bg-[var(--foreground)]/[0.02] transition-colors"
+                  className="group flex items-center justify-between gap-3 p-2.5 sm:px-3.5 sm:py-2 hover:bg-[var(--foreground)]/[0.015] transition-colors"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
                     {u.avatar ? (
-                      <img src={u.avatar} alt="" className="w-10 h-10 rounded-full bg-[var(--foreground)]/[0.05] shrink-0" />
+                      <img src={u.avatar} alt="" className="w-8 h-8 rounded-full bg-[var(--foreground)]/[0.05] border border-[var(--border)]/50 shrink-0" />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] flex items-center justify-center font-black text-base shrink-0">
-                        {u.name?.charAt(0) || <Users size={16} />}
+                      <div className="w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center font-bold text-xs shrink-0">
+                        {u.name?.charAt(0) || <Users size={12} />}
                       </div>
                     )}
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <p className="text-[13px] font-bold text-[var(--foreground)] leading-none truncate">{u.name || "Unknown"}</p>
-                        <span className={`shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${getRoleClass(u.userType)}`}>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className="text-xs font-bold text-[var(--foreground)] truncate">{u.name || "Unknown"}</p>
+                        <span className={`shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[8.5px] font-bold uppercase tracking-wider ${getRoleClass(u.userType)}`}>
                           {u.userType}
                         </span>
                       </div>
-                      <p className="text-[10px] font-medium text-[var(--muted)] truncate mb-1">{u.email}</p>
-                      <div className="flex items-center gap-1 text-[10px] font-bold text-[var(--foreground)]">
-                        <Clock size={10} className="text-[var(--accent)]" />
-                        {getTimeRemaining(u.membershipExpiry)}
+                      <p className="text-[10px] text-[var(--muted)] truncate">{u.email}</p>
+                      <div className="flex items-center gap-1 text-[9px] text-[var(--muted)] font-medium mt-0.5">
+                        <Clock size={9} className="text-purple-400 shrink-0" />
+                        <span>{getTimeRemaining(u.membershipExpiry)}</span>
                       </div>
                     </div>
                   </div>
 
                   <button
                     onClick={() => handleRevoke(u.userId)}
-                    className="shrink-0 w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center active:scale-95 shadow-sm"
+                    className="shrink-0 w-7 h-7 rounded-lg bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--muted)] hover:text-rose-500 hover:border-rose-500/30 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
                     title="Revoke Access"
                   >
-                    <UserX size={14} />
+                    <UserX size={12} />
                   </button>
-                </motion.div>
+                </div>
               ))
             )}
           </div>

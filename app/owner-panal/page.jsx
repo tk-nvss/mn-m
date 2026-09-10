@@ -550,54 +550,25 @@ export default function AdminPanalPage() {
     <AuthGuard>
       <section className="min-h-screen bg-[var(--background)] px-2 sm:px-6 py-3">
         <div className="w-full max-w-[1600px] mx-auto">
-          {/* HEADER & BALANCE (COMPACT) */}
-          <div className="mb-3 flex items-center justify-between gap-3 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-3 md:p-4">
-            
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-xs md:text-sm font-black tracking-widest text-[var(--foreground)] truncate uppercase italic">
-                  Admin Panel
+          {/* HEADER (HIGHLIGHTED & CLEAN) */}
+          <header className="mb-2.5 flex items-center justify-between gap-2 pb-2.5 border-b border-[var(--border)]/70">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-gradient-to-r from-[var(--accent)]/15 via-[var(--accent)]/5 to-transparent border border-[var(--accent)]/25">
+                <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse shadow-sm shadow-[var(--accent)]/50" />
+                <h1 className="text-xs sm:text-sm font-black tracking-widest text-[var(--foreground)] uppercase">
+                  Admin Console
                 </h1>
-                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] shrink-0 animate-pulse" />
-              </div>
-              
-              {/* DUAL BALANCES (1Game & Bluebuff) */}
-              <div className="flex items-center gap-1.5 sm:gap-2.5 flex-wrap">
-                {/* 1Game */}
-                <div className={`flex items-center gap-1 sm:gap-1.5 px-2 py-1 rounded-xl border text-[10px] sm:text-xs font-bold transition-all ${providerBalances.activeProvider === '1game' ? 'bg-[var(--foreground)]/5 border-emerald-500/40 text-[var(--foreground)]' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--muted)]'}`}>
-                  <span className="text-[8px] md:text-[9px] uppercase tracking-wider text-[var(--muted)] font-black">1Game:</span>
-                  <span className="text-xs md:text-sm font-black text-[var(--foreground)] tabular-nums">
-                    {providerBalances.oneGame?.balance !== undefined ? `$${providerBalances.oneGame.balance.toFixed(2)}` : (balance !== null ? `$${balance}` : "---")}
-                  </span>
-                  {providerBalances.activeProvider === "1game" && (
-                    <span className="text-[7px] md:text-[8px] font-black text-emerald-400 uppercase tracking-widest border border-emerald-500/30 bg-emerald-500/10 px-1 py-0.2 rounded">
-                      Active
-                    </span>
-                  )}
-                </div>
-
-                {/* Bluebuff */}
-                <div className={`flex items-center gap-1 sm:gap-1.5 px-2 py-1 rounded-xl border text-[10px] sm:text-xs font-bold transition-all ${providerBalances.activeProvider === 'bluebuff' ? 'bg-[var(--foreground)]/5 border-cyan-500/40 text-[var(--foreground)]' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--muted)]'}`}>
-                  <span className="text-[8px] md:text-[9px] uppercase tracking-wider text-[var(--muted)] font-black">Bluebuff:</span>
-                  <span className="text-xs md:text-sm font-black text-[var(--foreground)] tabular-nums">
-                    {providerBalances.bluebuff?.balance !== undefined ? `$${providerBalances.bluebuff.balance.toFixed(2)}` : "---"}
-                  </span>
-                  {providerBalances.activeProvider === "bluebuff" && (
-                    <span className="text-[7px] md:text-[8px] font-black text-cyan-400 uppercase tracking-widest border border-cyan-500/30 bg-cyan-500/10 px-1 py-0.2 rounded">
-                      Active
-                    </span>
-                  )}
-                </div>
               </div>
             </div>
 
-            <button aria-label="button" 
+            <button aria-label="Open Admin Menu" 
               onClick={() => setIsSidebarOpen(true)}
-              className="p-2 rounded-xl bg-[var(--background)] border border-[var(--border)] hover:bg-[var(--foreground)]/5 hover:border-[var(--accent)]/30 transition-all group shrink-0"
+              className="px-2.5 py-1.5 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--foreground)]/[0.04] hover:border-[var(--accent)]/30 transition-all flex items-center gap-1.5 group shrink-0 shadow-2xs cursor-pointer"
             >
-              <FiMenu size={16} className="text-[var(--foreground)] group-active:scale-95 transition-transform" />
+              <FiMenu size={15} className="text-[var(--foreground)] group-active:scale-90 transition-transform" />
+              <span className="text-xs font-bold text-[var(--foreground)]">Menu</span>
             </button>
-          </div>
+          </header>
 
 
           {/* HAMBURGER SIDEBAR SLIDER MENU */}
@@ -711,16 +682,12 @@ export default function AdminPanalPage() {
               </div>
               
             </div>
-            
-            <div className="p-4 border-t border-[var(--border)] text-center text-[10px] font-bold text-[var(--muted)]/50 uppercase tracking-widest">
-              Blue Buff Admin Console
-            </div>
           </div>
 
 
 
-          {/* PANEL */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl sm:rounded-2xl p-2 sm:p-4 md:p-6">
+          {/* PANEL CONTENT (NO OUTER CARD) */}
+          <div className="w-full">
             {activeTab === "wallet" && <StatsTab />}
             {activeTab === "usdt" && <UsdtTab />}
             {activeTab === "redeem" && <RedeemCodesTab />}

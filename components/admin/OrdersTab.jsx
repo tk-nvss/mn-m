@@ -129,56 +129,63 @@ export default function OrdersTab() {
   };
 
   return (
-    <div className="space-y-6 pb-10">
-      {/* ================= HEADER ================= */}
-      <div className="flex items-center justify-between gap-3 mb-2">
-        <div>
-          <h2 className="text-lg font-black tracking-widest uppercase italic text-[var(--foreground)]">Orders</h2>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="px-2.5 py-1.5 rounded-full bg-[var(--foreground)]/[0.03] border border-[var(--border)] flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-            <span className="text-[9px] font-black tracking-widest text-[var(--muted)] uppercase">
-              {pagination.total} ORDERS
-            </span>
+    <div className="w-full space-y-3 pb-8">
+      {/* ================= HEADER & SEARCH BAR ================= */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-[var(--border)]/70">
+        <div className="flex items-center justify-between sm:justify-start gap-2.5">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]">
+              <ShoppingBag size={16} />
+            </div>
+            <div>
+              <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">Orders</h2>
+              <p className="text-[10px] text-[var(--muted)] font-medium">Customer Transactions & Fulfillment</p>
+            </div>
           </div>
-          <button aria-label="button"
-            onClick={() => { fetchOrdersList(); }}
-            className="p-1.5 rounded-full bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] active:scale-95 transition-all"
-          >
-            <RefreshCcw size={13} className={loading ? "animate-spin" : ""} />
-          </button>
+
+          <div className="flex items-center gap-1.5 sm:ml-2">
+            <span className="px-2 py-0.5 rounded-md bg-[var(--card)] border border-[var(--border)] text-[10px] font-bold text-[var(--foreground)] tabular-nums shadow-2xs">
+              {pagination.total} <span className="text-[9px] text-[var(--muted)] font-medium">Orders</span>
+            </span>
+            <button aria-label="Refresh Orders"
+              onClick={() => { fetchOrdersList(); }}
+              className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+            >
+              <RefreshCcw size={12} className={loading ? "animate-spin" : ""} />
+            </button>
+          </div>
         </div>
-      </div>
 
-
-      <div className="flex flex-row gap-2 mb-2">
-        <SearchInput
-          value={search}
-          onChange={(val) => {
-            setPage(1);
-            setSearch(val);
-          }}
-          placeholder="Search by Order ID, Email, Method..."
-          loading={loading}
-          className="flex-1"
-        />
-        <div className="flex gap-2">
-          <button aria-label="button"
+        {/* Search & Filter Trigger */}
+        <div className="flex items-center gap-2 max-w-md w-full sm:w-auto">
+          <SearchInput
+            value={search}
+            onChange={(val) => {
+              setPage(1);
+              setSearch(val);
+            }}
+            placeholder="Search by Order ID, Email, Method..."
+            loading={loading}
+            className="flex-1"
+          />
+          <button aria-label="Filter Orders"
             onClick={() => setShowFilters(true)}
-            className="h-9 w-9 rounded-2xl border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] flex items-center justify-center hover:bg-[var(--foreground)]/[0.05] transition-all outline-none"
+            className={`h-8 w-8 rounded-lg border flex items-center justify-center transition-all cursor-pointer shadow-2xs shrink-0 ${
+              filters.status || filters.gameSlug || filters.from || filters.to
+                ? "bg-[var(--accent)] text-white border-transparent"
+                : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
+            }`}
           >
-            <Filter size={14} className="text-[var(--accent)]" />
+            <Filter size={13} />
           </button>
           
           {(search || filters.status || filters.gameSlug || filters.from || filters.to) && (
-            <button aria-label="button"
+            <button aria-label="Clear Filters"
               onClick={() => {
                 setSearch("");
                 setFilters({ status: "", gameSlug: "", from: "", to: "" });
               }}
-              className="px-3 h-9 rounded-full text-rose-500 hover:bg-rose-500/10 text-[9px] font-black uppercase tracking-widest transition-all"
+              className="px-2.5 h-8 rounded-lg text-rose-500 hover:bg-rose-500/10 text-[10px] font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer"
             >
               Clear
             </button>
@@ -193,52 +200,55 @@ export default function OrdersTab() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="py-32 flex flex-col items-center justify-center space-y-4"
+            className="py-20 flex flex-col items-center justify-center space-y-3"
           >
-            <Loader2 className="animate-spin text-[var(--accent)]" size={32} />
-            <p className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-[0.2em]">Loading Orders...</p>
+            <Loader2 className="animate-spin text-[var(--accent)]" size={24} />
+            <p className="text-xs text-[var(--muted)] font-medium">Loading Orders...</p>
           </motion.div>
         ) : (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-3"
           >
             {/* DESKTOP TABLE */}
-            <div className="hidden lg:block rounded-[2rem] overflow-hidden border border-[var(--border)] bg-[var(--card)]">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-[var(--foreground)]/[0.03] border-b border-[var(--border)]">
-                  <tr className="text-[10px] uppercase font-bold tracking-widest text-[var(--muted)]">
-                    {["Game", "Time", "Item Details", "Method", "Price", "Status"].map((h) => (
-                      <th key={h} className="px-6 py-4">{h}</th>
-                    ))}
+            <div className="hidden lg:block rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--card)]">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[var(--foreground)]/[0.02] border-b border-[var(--border)]">
+                  <tr className="text-[11px] uppercase font-bold tracking-wider text-[var(--muted)]">
+                    <th className="px-4 py-2.5">Game</th>
+                    <th className="px-4 py-2.5">Time</th>
+                    <th className="px-4 py-2.5">Item Details</th>
+                    <th className="px-4 py-2.5">Method</th>
+                    <th className="px-4 py-2.5">Price</th>
+                    <th className="px-4 py-2.5">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--border)]">
+                <tbody className="divide-y divide-[var(--border)]/60">
                   {orders.map((o, idx) => {
                     return (
                       <motion.tr
                         key={o._id}
-                        initial={{ opacity: 0, x: -10 }}
+                        initial={{ opacity: 0, x: -6 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.03 }}
+                        transition={{ delay: idx * 0.015 }}
                         onClick={() => setSelectedOrder(o)}
-                        className="group hover:bg-[var(--foreground)]/[0.03] transition-colors cursor-pointer"
+                        className="group hover:bg-[var(--foreground)]/[0.015] transition-colors cursor-pointer"
                       >
-                        <td className="px-6 py-4">
+                        <td className="px-4 py-2.5">
                           <div className="flex flex-col">
-                            <span className="text-[var(--foreground)] font-bold uppercase text-xs">{o.gameSlug}</span>
-                            <span className="text-[10px] text-[var(--muted)] font-medium truncate max-w-[140px] lowercase">{o.email}</span>
+                            <span className="text-[var(--foreground)] font-bold text-xs uppercase">{o.gameSlug}</span>
+                            <span className="text-[10px] text-[var(--muted)] font-medium truncate max-w-[150px] lowercase">{o.email}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-4 py-2.5">
                           <div className="flex flex-col">
-                            <span className="text-[var(--foreground)] font-medium">{formatDate(o.createdAt)}</span>
+                            <span className="text-[var(--foreground)] font-medium text-xs">{formatDate(o.createdAt)}</span>
                             <span className="text-[10px] text-[var(--muted)]">{formatTime(o.createdAt)}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 max-w-xs">
-                          <span className="text-[var(--foreground)]/80 font-bold truncate block text-xs">{o.itemName}</span>
+                        <td className="px-4 py-2.5 max-w-xs">
+                          <span className="text-[var(--foreground)] font-bold truncate block text-xs">{o.itemName}</span>
                           <div className="flex items-center gap-1.5 mt-0.5">
                             <span className="text-[10px] text-[var(--muted)] font-mono uppercase tracking-tight truncate">
                               {o.playerId}{o.zoneId ? ` (${o.zoneId})` : ""} {o.playerName ? `• ${o.playerName}` : ""}
@@ -247,32 +257,32 @@ export default function OrdersTab() {
                               <button
                                 type="button"
                                 onClick={(e) => handleCopy(o.zoneId ? `${o.playerId} ${o.zoneId}` : o.playerId, `player-${o._id}`, e)}
-                                className="p-1 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0"
+                                className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0 cursor-pointer"
                                 title="Copy Player ID & Zone"
                               >
                                 {copiedKey === `player-${o._id}` ? (
                                   <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-0.5">
-                                    <Check size={11} className="text-emerald-500" />
-                                    <span className="text-[8px] uppercase tracking-wider font-extrabold">Copied</span>
+                                    <Check size={10} className="text-emerald-500" />
+                                    <span className="text-[8px] uppercase font-bold">Copied</span>
                                   </span>
                                 ) : (
-                                  <Copy size={11} />
+                                  <Copy size={10} />
                                 )}
                               </button>
                             )}
                           </div>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className="text-[10px] font-bold text-[var(--muted)] uppercase border border-[var(--border)] px-2 py-1 rounded-md bg-[var(--foreground)]/[0.02]">
+                        <td className="px-4 py-2.5">
+                          <span className="text-[10px] font-bold text-[var(--muted)] uppercase border border-[var(--border)] px-1.5 py-0.5 rounded bg-[var(--foreground)]/[0.02]">
                             {o.paymentMethod || "N/A"}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className="text-base font-black text-emerald-500 tabular-nums">
+                        <td className="px-4 py-2.5">
+                          <span className="text-sm font-bold text-emerald-500 tabular-nums">
                             {formatCurrency(o.price)}
                           </span>
                         </td>
-                        <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                        <td className="px-4 py-2.5" onClick={(e) => e.stopPropagation()}>
                           <StatusDropdown
                             value={o.status}
                             disabled={updating}
@@ -399,19 +409,19 @@ export default function OrdersTab() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-full max-w-lg bg-[var(--background)]/95 backdrop-blur-3xl border-l border-white/5 shadow-[-10px_0_30px_rgba(0,0,0,0.5)] z-[1110] flex flex-col"
+              className="fixed right-0 top-0 h-full w-full max-w-lg bg-[var(--background)] border-l border-[var(--border)] z-[1110] flex flex-col"
             >
-              <div className="p-5 md:p-6 border-b border-white/5 bg-gradient-to-b from-[var(--card)]/50 to-transparent">
-                <div className="flex items-start justify-between mb-5">
+              <div className="p-4 sm:p-5 border-b border-[var(--border)] bg-[var(--card)]/30">
+                <div className="flex items-start justify-between mb-3">
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <p className="text-[9px] font-mono font-black text-[var(--accent)] uppercase tracking-[0.2em] opacity-80 drop-shadow-[0_0_8px_rgba(var(--accent-rgb),0.5)]">
+                      <p className="text-[9px] font-mono font-black text-[var(--accent)] uppercase tracking-[0.2em] opacity-80">
                         #{selectedOrder.orderId.toUpperCase()}
                       </p>
                       <button
                         type="button"
                         onClick={(e) => handleCopy(selectedOrder.orderId, `drawer-oid-${selectedOrder._id}`, e)}
-                        className="p-1 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] transition-all shrink-0"
+                        className="p-1 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] transition-all shrink-0 cursor-pointer"
                         title="Copy Order ID"
                       >
                         {copiedKey === `drawer-oid-${selectedOrder._id}` ? (
@@ -423,20 +433,20 @@ export default function OrdersTab() {
                         )}
                       </button>
                     </div>
-                    <h3 className="text-xl font-black uppercase tracking-tight text-[var(--foreground)]">Order Details</h3>
+                    <h3 className="text-base sm:text-lg font-black uppercase tracking-tight text-[var(--foreground)]">Order Details</h3>
                   </div>
                   <button aria-label="button"
                     onClick={() => setSelectedOrder(null)}
-                    className="w-9 h-9 rounded-full bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--muted)]/40 hover:text-[var(--foreground)] hover:bg-red-500/20 transition-all"
+                    className="w-7 h-7 rounded-lg bg-[var(--foreground)]/[0.05] hover:bg-[var(--foreground)]/[0.1] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-all cursor-pointer"
                   >
-                    <X size={18} />
+                    <X size={14} />
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-br from-[var(--card)] to-[var(--background)] border border-[var(--border)] shadow-sm">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]">
                   <div>
                     <p className="text-[9px] font-bold text-[var(--muted)] uppercase tracking-widest mb-0.5">Settlement</p>
-                    <span className="text-2xl font-black text-emerald-500 tabular-nums leading-none">{formatCurrency(selectedOrder.price)}</span>
+                    <span className="text-xl sm:text-2xl font-black text-emerald-500 tabular-nums leading-none">{formatCurrency(selectedOrder.price)}</span>
                   </div>
                   <StatusDropdown
                     value={selectedOrder.status}
@@ -485,15 +495,6 @@ export default function OrdersTab() {
                     onCopy={(txt, e) => handleCopy(txt, `drawer-zone-${selectedOrder._id}`, e)}
                     isCopied={copiedKey === `drawer-zone-${selectedOrder._id}`}
                   />
-                  {selectedOrder.playerId && selectedOrder.zoneId && (
-                    <DrawerDetail
-                      label="Combo (ID + Zone)"
-                      value={`${selectedOrder.playerId} ${selectedOrder.zoneId}`}
-                      copyText={`${selectedOrder.playerId} ${selectedOrder.zoneId}`}
-                      onCopy={(txt, e) => handleCopy(txt, `drawer-combo-${selectedOrder._id}`, e)}
-                      isCopied={copiedKey === `drawer-combo-${selectedOrder._id}`}
-                    />
-                  )}
                 </DrawerSection>
 
                 <DrawerSection icon={<CreditCard size={14} />} title="Payment Info">
@@ -564,7 +565,7 @@ export default function OrdersTab() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-full max-w-md bg-[var(--background)] border-l border-[var(--border)] shadow-2xl z-[1110] flex flex-col"
+              className="fixed right-0 top-0 h-full w-full max-w-md bg-[var(--background)] border-l border-[var(--border)] z-[1110] flex flex-col"
             >
               <div className="p-6 border-b border-[var(--border)] flex justify-between items-center">
                 <h3 className="text-xl font-black uppercase tracking-tight text-[var(--foreground)]">Find Orders</h3>

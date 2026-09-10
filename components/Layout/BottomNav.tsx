@@ -51,13 +51,13 @@ export default function BottomNav() {
           title="Home"
         >
           {/* MT Logo */}
-          <div className="relative w-5 h-5 flex items-center justify-center">
+          <div className="relative w-5 h-5 flex items-center justify-center rounded-full overflow-hidden shrink-0 border border-white/10 bg-[#09090b]">
             <Image
               src="/pwa-icon.png"
               alt="Home"
-              width={22}
-              height={22}
-              className={`w-5 h-5 object-contain transition-transform duration-300 ${
+              width={20}
+              height={20}
+              className={`w-full h-full object-cover transition-transform duration-300 ${
                 isHomeActive ? "brightness-110" : ""
               }`}
               priority

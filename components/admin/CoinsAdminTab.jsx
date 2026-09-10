@@ -22,9 +22,11 @@ import {
   FiTrash2,
   FiAlertCircle,
   FiCheck,
+  FiEye,
 } from "react-icons/fi";
 import { Coins, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { StatusBadge, SearchInput, EmptyState, Pagination, LoadingSpinner } from "@/components/common";
+import { Icons } from "@/components/icons";
 import { formatCurrency, formatCoins, formatNumber, formatDate, formatDateTime } from "@/utils";
 
 const TASK_TYPES = ["url_visit", "yt_watch", "app_install", "wp_join", "custom"];
@@ -290,28 +292,24 @@ export default function CoinsAdminTab() {
 
 
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      {/* ── HEADER ── */}
+      <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-[var(--border)]/70">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
-            <FiStar className="text-amber-400" />
-          </div>
-          <div>
-            <h2 className="text-sm font-black uppercase tracking-wide">BBC Coins Manager</h2>
-            <p className="text-[9px] text-[var(--muted)]/50 font-bold uppercase tracking-wide">
-              Tasks & Claims Admin
-            </p>
-          </div>
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+          <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
+            BBC Coins Manager
+          </h2>
           {pendingCount > 0 && (
-            <span className="ml-2 px-2 py-0.5 rounded-full bg-rose-500 text-white text-[9px] font-black animate-pulse">
-              {pendingCount} pending
+            <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[9px] font-black animate-pulse">
+              {pendingCount}
             </span>
           )}
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto no-scrollbar">
           <button aria-label="button"
             onClick={() => { setView("users"); setPage(1); }}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wide border transition-all ${
+            className={`h-7 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer border ${
               view === "users" ? "bg-[var(--accent)]/15 border-[var(--accent)]/40 text-[var(--accent)]"
               : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30"
             }`}
@@ -320,7 +318,7 @@ export default function CoinsAdminTab() {
           </button>
           <button aria-label="button"
             onClick={() => { setView("claims"); setPage(1); }}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wide border transition-all ${
+            className={`h-7 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer border ${
               view === "claims" ? "bg-[var(--accent)]/15 border-[var(--accent)]/40 text-[var(--accent)]"
               : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30"
             }`}
@@ -329,7 +327,7 @@ export default function CoinsAdminTab() {
           </button>
           <button aria-label="button"
             onClick={() => { setView("history"); setPage(1); }}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wide border transition-all ${
+            className={`h-7 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer border ${
               view === "history" ? "bg-[var(--accent)]/15 border-[var(--accent)]/40 text-[var(--accent)]"
               : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30"
             }`}
@@ -338,7 +336,7 @@ export default function CoinsAdminTab() {
           </button>
           <button aria-label="button"
             onClick={() => { setView("tasks"); setPage(1); }}
-            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wide border transition-all ${
+            className={`h-7 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer border ${
               view === "tasks" ? "bg-[var(--accent)]/15 border-[var(--accent)]/40 text-[var(--accent)]"
               : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30"
             }`}
@@ -349,69 +347,69 @@ export default function CoinsAdminTab() {
       </div>
 
       {/* ── COIN STATS OVERVIEW ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
         {/* Total in Circulation */}
-        <div className="p-3 sm:p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/[0.04] flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">In Circulation</span>
+        <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xs hover:border-amber-500/30 transition-all flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-1">
+            <span>In Circulation</span>
             <div className="p-1 rounded-md bg-amber-500/10 text-amber-400">
-              <Coins size={12} />
+              <Coins size={11} />
             </div>
           </div>
-          <div className="mt-2">
-            <span className="text-base sm:text-lg font-black text-amber-400 tabular-nums">
-              {formatNumber(coinStats.totalAvailable)} <span className="text-[9px] font-bold">BBC</span>
-            </span>
-            <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">Active User Balances</p>
+          <div>
+            <div className="text-lg sm:text-xl font-black text-amber-400 tabular-nums tracking-tight my-0.5">
+              {formatNumber(coinStats.totalAvailable)} <span className="text-[10px] font-bold text-[var(--muted)]">BBC</span>
+            </div>
+            <div className="text-[10px] font-medium text-[var(--muted)] truncate">Active User Balances</div>
           </div>
         </div>
 
         {/* Total Distributed */}
-        <div className="p-3 sm:p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Total Distributed</span>
+        <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xs hover:border-emerald-500/30 transition-all flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-1">
+            <span>Distributed</span>
             <div className="p-1 rounded-md bg-emerald-500/10 text-emerald-400">
-              <ArrowUpRight size={12} />
+              <ArrowUpRight size={11} />
             </div>
           </div>
-          <div className="mt-2">
-            <span className="text-base sm:text-lg font-black text-emerald-400 tabular-nums">
-              {formatNumber(coinStats.totalEarned)} <span className="text-[9px] font-bold">BBC</span>
-            </span>
-            <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">All-time Claims & Tasks</p>
+          <div>
+            <div className="text-lg sm:text-xl font-black text-emerald-400 tabular-nums tracking-tight my-0.5">
+              {formatNumber(coinStats.totalEarned)} <span className="text-[10px] font-bold text-[var(--muted)]">BBC</span>
+            </div>
+            <div className="text-[10px] font-medium text-[var(--muted)] truncate">All-time Claims & Tasks</div>
           </div>
         </div>
 
         {/* Total Redeemed */}
-        <div className="p-3 sm:p-3.5 rounded-xl border border-purple-500/20 bg-purple-500/[0.04] flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Total Spent</span>
+        <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xs hover:border-purple-500/30 transition-all flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-1">
+            <span>Total Spent</span>
             <div className="p-1 rounded-md bg-purple-500/10 text-purple-400">
-              <ArrowDownRight size={12} />
+              <ArrowDownRight size={11} />
             </div>
           </div>
-          <div className="mt-2">
-            <span className="text-base sm:text-lg font-black text-purple-400 tabular-nums">
-              {formatNumber(coinStats.totalSpent)} <span className="text-[9px] font-bold">BBC</span>
-            </span>
-            <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">Used for Discounts</p>
+          <div>
+            <div className="text-lg sm:text-xl font-black text-purple-400 tabular-nums tracking-tight my-0.5">
+              {formatNumber(coinStats.totalSpent)} <span className="text-[10px] font-bold text-[var(--muted)]">BBC</span>
+            </div>
+            <div className="text-[10px] font-medium text-[var(--muted)] truncate">Used for Discounts</div>
           </div>
         </div>
 
         {/* Today's Activity */}
-        <div className="p-3 sm:p-3.5 rounded-xl border border-[var(--border)] bg-[var(--card)] flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Today's Flow</span>
-            <span className="text-[8px] font-black uppercase bg-[var(--foreground)]/[0.05] px-1.5 py-0.5 rounded text-[var(--muted)]">Today</span>
+        <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-1">
+            <span>Today's Flow</span>
+            <span className="text-[8.5px] font-bold uppercase bg-[var(--foreground)]/[0.05] px-1.5 py-0.2 rounded text-[var(--muted)]">Today</span>
           </div>
-          <div className="mt-2 flex items-baseline justify-between">
+          <div className="flex items-baseline justify-between pt-1">
             <div>
-              <span className="text-xs sm:text-sm font-black text-emerald-400 tabular-nums">+{formatNumber(coinStats.todayEarned)}</span>
-              <span className="text-[8px] text-[var(--muted)] block font-semibold">Earned</span>
+              <span className="text-sm sm:text-base font-black text-emerald-400 tabular-nums">+{formatNumber(coinStats.todayEarned)}</span>
+              <span className="text-[9px] text-[var(--muted)] block font-medium">Earned</span>
             </div>
             <div className="text-right">
-              <span className="text-xs sm:text-sm font-black text-rose-400 tabular-nums">-{formatNumber(coinStats.todaySpent)}</span>
-              <span className="text-[8px] text-[var(--muted)] block font-semibold">Spent</span>
+              <span className="text-sm sm:text-base font-black text-rose-400 tabular-nums">-{formatNumber(coinStats.todaySpent)}</span>
+              <span className="text-[9px] text-[var(--muted)] block font-medium">Spent</span>
             </div>
           </div>
         </div>
@@ -667,7 +665,7 @@ export default function CoinsAdminTab() {
             <div className="text-center py-10 flex justify-center"><LoadingSpinner size="lg" color="accent" /></div>
           ) : claims.length === 0 ? (
             <EmptyState
-              icon={Icons.list}
+              icon={FiList}
               title={`No ${claimStatus} claims`}
               description="User submitted task claims will appear here."
             />
@@ -697,7 +695,7 @@ export default function CoinsAdminTab() {
                       {claim.proofUrl && (
                         <a href={claim.proofUrl} target="_blank" rel="noopener noreferrer"
                           className="text-[8px] text-blue-400 underline flex items-center gap-0.5">
-                          <Icons.eye size={10} /> Proof
+                          <FiEye size={10} /> Proof
                         </a>
                       )}
                       {claim.rejectionReason && (
@@ -715,7 +713,7 @@ export default function CoinsAdminTab() {
                         disabled={actionLoading === claim.claimId}
                         className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500 text-white text-[10px] font-black uppercase disabled:opacity-50"
                       >
-                        {actionLoading === claim.claimId ? <LoadingSpinner size="xs" color="white" /> : <Icons.check size={12} />}
+                        {actionLoading === claim.claimId ? <LoadingSpinner size="xs" color="white" /> : <FiCheck size={12} />}
                         Approve
                       </motion.button>
                       <motion.button

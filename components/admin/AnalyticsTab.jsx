@@ -2,7 +2,8 @@
 
 // Analytics & Insights Tab
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { FiRefreshCw, FiCalendar, FiArrowRight } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiRefreshCw, FiCalendar, FiArrowRight, FiFilter, FiX } from "react-icons/fi";
 import { 
   ArrowUp, ArrowDown, Wallet, 
   Users, Smartphone, Trophy, Gamepad2, CreditCard, Clock, Crown, 
@@ -20,34 +21,6 @@ const PERIODS = [
   { id: "this_month", days: 30, key: "this_month", label: "This Month" },
   { id: "custom", days: 0, key: "custom", label: "Custom Range" },
 ];
-
-function PeriodToggle({ periodId, onSelect, onOpenCustom }) {
-  return (
-    <div className="flex flex-wrap items-center p-0.5 bg-[var(--foreground)]/[0.04] border border-[var(--border)]/80 rounded-lg gap-0.5">
-      {PERIODS.map((period) => (
-        <button
-          aria-label={period.label}
-          key={period.id}
-          onClick={() => {
-            if (period.id === "custom") {
-              onOpenCustom();
-            } else {
-              onSelect(period.id);
-            }
-          }}
-          className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider transition-all cursor-pointer flex items-center gap-1 ${
-            periodId === period.id
-              ? "bg-[var(--foreground)] text-[var(--background)] shadow-xs"
-              : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.04]"
-          }`}
-        >
-          {period.id === "custom" && <FiCalendar size={10} />}
-          <span>{period.label}</span>
-        </button>
-      ))}
-    </div>
-  );
-}
 
 function getPeriodValue(stats, periodKey) {
   if (!stats) return 0;
@@ -84,7 +57,7 @@ export default function AnalyticsTab({ onNavigate }) {
     startDate: "",
     endDate: ""
   });
-  const [showCustomModal, setShowCustomModal] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const [tempDates, setTempDates] = useState({ startDate: "", endDate: "" });
 
   const [loading, setLoading] = useState(false);
@@ -427,279 +400,244 @@ export default function AnalyticsTab({ onNavigate }) {
   return (
     <div className="space-y-4 animate-in fade-in duration-200">
       
-      {/* Top Header Bar with Extended Time Filters */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-[var(--border)]/70">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-sm sm:text-base font-bold tracking-tight text-[var(--foreground)]">
-              Sales & Growth Analytics
-            </h2>
-            <button
-              aria-label="Refresh Stats"
-              onClick={() => handleFullRefresh()}
-              disabled={loading}
-              className="p-1.5 rounded-md border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.04] transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
-            >
-              <FiRefreshCw size={12} className={loading ? "animate-spin" : ""} />
-            </button>
-          </div>
-          <p className="text-[11px] sm:text-xs text-[var(--muted)] font-normal mt-0.5">
-            Live sales, customers, app downloads, and store activity
-            {periodId === "custom" && customRange.startDate && customRange.endDate && (
-              <span className="ml-1 text-emerald-500 font-bold">
-                ({customRange.startDate} to {customRange.endDate})
-              </span>
-            )}
-          </p>
+      {/* Top Header & Filter Toolbar */}
+      <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[var(--border)]/70">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+          <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
+            Sales & Growth Analytics
+          </h2>
         </div>
 
-        <div className="flex items-center gap-2 self-start lg:self-auto flex-wrap">
-          <PeriodToggle
-            periodId={periodId}
-            onSelect={(id) => setPeriodId(id)}
-            onOpenCustom={() => {
+        {/* Right side: Filter & Refresh */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            onClick={() => {
               setTempDates(customRange.startDate ? customRange : {
                 startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
                 endDate: new Date().toISOString().slice(0, 10)
               });
-              setShowCustomModal(true);
+              setShowFilters(true);
             }}
-          />
+            aria-label="Filter timeframe"
+            className={`h-7 px-2.5 rounded-lg border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
+              periodId !== "today"
+                ? "bg-emerald-500 text-white border-emerald-500"
+                : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-emerald-500/30"
+            }`}
+          >
+            <FiCalendar size={11} />
+            <span>{selectedPeriod?.label || "Period"}</span>
+            {periodId !== "today" && (
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+            )}
+          </button>
+
+          {periodId !== "today" && (
+            <button
+              onClick={() => {
+                setPeriodId("today");
+                setCustomRange({ startDate: "", endDate: "" });
+                setTempDates({ startDate: "", endDate: "" });
+              }}
+              className="px-2 h-7 rounded-lg text-rose-500 hover:bg-rose-500/10 text-[10px] font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer"
+            >
+              Reset
+            </button>
+          )}
+
+          <button
+            aria-label="Refresh Stats"
+            onClick={() => handleFullRefresh()}
+            disabled={loading}
+            className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-2xs disabled:opacity-50 shrink-0"
+            title="Refresh stats"
+          >
+            <FiRefreshCw size={12} className={loading ? "animate-spin" : ""} />
+          </button>
         </div>
       </div>
 
-      {/* Custom Date Range Modal */}
-      {showCustomModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2500] flex items-center justify-center p-4">
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2">
-                <FiCalendar className="text-emerald-500" /> Choose Custom Date Range
-              </h3>
-              <button onClick={() => setShowCustomModal(false)} className="text-[var(--muted)] hover:text-[var(--foreground)] text-xs font-bold">✕</button>
-            </div>
-            <div className="space-y-3">
-              <div>
-                <label className="text-[10px] uppercase font-bold text-[var(--muted)] block mb-1">Start Date</label>
-                <input
-                  type="date"
-                  value={tempDates.startDate}
-                  onChange={(e) => setTempDates({ ...tempDates, startDate: e.target.value })}
-                  className="w-full px-3 py-2 text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-              <div>
-                <label className="text-[10px] uppercase font-bold text-[var(--muted)] block mb-1">End Date</label>
-                <input
-                  type="date"
-                  value={tempDates.endDate}
-                  onChange={(e) => setTempDates({ ...tempDates, endDate: e.target.value })}
-                  className="w-full px-3 py-2 text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-            </div>
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]/60">
-              <button
-                onClick={() => setShowCustomModal(false)}
-                className="px-3 py-1.5 rounded-lg border border-[var(--border)] text-xs font-bold text-[var(--muted)] hover:text-[var(--foreground)] cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  if (tempDates.startDate && tempDates.endDate) {
-                    setCustomRange(tempDates);
-                    setPeriodId("custom");
-                    setShowCustomModal(false);
-                  }
-                }}
-                disabled={!tempDates.startDate || !tempDates.endDate}
-                className="px-4 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-bold hover:bg-emerald-600 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
-              >
-                Apply Range
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Standalone Store Summary Strip (Mobile Responsive & Plain English) */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3 sm:p-3.5 rounded-xl border border-emerald-500/20 bg-gradient-to-r from-emerald-500/[0.05] via-blue-500/[0.03] to-purple-500/[0.05]">
-        <div className="flex items-start sm:items-center gap-2.5 min-w-0">
-          <div className="p-2 rounded-lg bg-emerald-500/15 text-emerald-500 border border-emerald-500/30 shrink-0 shadow-xs mt-0.5 sm:mt-0">
-            <Sparkles size={14} className="animate-pulse" />
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap mb-1">
-              <span className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
-                Store Summary
-              </span>
-              <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                successRate >= 80 
-                  ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" 
-                  : "bg-amber-500/10 text-amber-500 border-amber-500/20"
-              }`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${successRate >= 80 ? "bg-emerald-500" : "bg-amber-500"}`} />
-                {successRate}% Success Rate
-              </span>
-            </div>
-            <p className="text-xs sm:text-[12.5px] font-medium text-[var(--foreground)] leading-relaxed">
-              <strong className="text-emerald-500 font-bold">{formatCurrency(currentPeriodRevenue)}</strong> total sales across <strong className="font-bold">{currentPeriodOrders} orders</strong> ({successCount} successful{currentHealth.failed > 0 ? `, ${currentHealth.failed} failed` : ""}) • <strong className="text-blue-400 font-bold">{formatNumber(userStats.activeStats?.[periodKey] || 0)} active users</strong> • <strong className="text-amber-400 font-bold">{formatNumber(userStats.payingStats?.[periodKey] || 0)} buyers</strong> ({userStats.activeStats?.[periodKey] ? Math.round(((userStats.payingStats?.[periodKey] || 0) / userStats.activeStats[periodKey]) * 100) : 0}% converted) • Avg order <strong className="text-[var(--foreground)] font-bold">{formatCurrency(aovMetrics.aov || (currentPeriodOrders > 0 ? Math.round(currentPeriodRevenue / currentPeriodOrders) : 0))}</strong>
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0 self-start md:self-auto pt-1 md:pt-0">
-          <PercentBadge value={growthMetrics.revGrowth} label="growth" />
-          <span className="text-[10px] font-bold text-[var(--muted)] bg-[var(--foreground)]/[0.04] px-2.5 py-1 rounded-md border border-[var(--border)]">
-            {timeframeLabel}
+      {/* Compact Text Store Summary */}
+      <div className="p-2.5 sm:px-3 sm:py-2 rounded-xl border border-emerald-500/20 bg-gradient-to-r from-emerald-500/[0.04] via-[var(--card)] to-blue-500/[0.03] text-xs shadow-2xs space-y-1.5">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <span className="text-[10px] font-black uppercase tracking-wider text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+            Store Summary
           </span>
+
+          <div className="flex items-center gap-1.5 text-[10px]">
+            <PercentBadge value={growthMetrics.revGrowth} label="growth" />
+            <span className="font-bold text-[var(--muted)] bg-[var(--foreground)]/[0.04] px-1.5 py-0.5 rounded border border-[var(--border)]">
+              {timeframeLabel}
+            </span>
+          </div>
         </div>
+
+        <p className="text-xs font-medium text-[var(--foreground)] leading-relaxed">
+          <strong className="text-emerald-500 font-bold">{formatCurrency(currentPeriodRevenue)}</strong> total sales across <strong className="font-bold">{currentPeriodOrders} orders</strong> • <strong className="text-blue-400 font-bold">{formatNumber(userStats.activeStats?.[periodKey] || 0)} active users</strong> • <strong className="text-amber-400 font-bold">{formatNumber(userStats.payingStats?.[periodKey] || 0)} buyers</strong> • Avg order <strong className="text-[var(--foreground)] font-bold">{formatCurrency(aovMetrics.aov || (currentPeriodOrders > 0 ? Math.round(currentPeriodRevenue / currentPeriodOrders) : 0))}</strong>
+        </p>
       </div>
 
-      {/* 4 Clean Hero Cards (Mobile Responsive 1/2/4 Columns) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      {/* 4 Compact & Premium Hero Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
         
         {/* Card 1: Sales & Orders */}
-        <div className="p-3.5 sm:p-4 rounded-xl border border-[var(--border)] bg-[var(--card)]/60 flex flex-col justify-between shadow-xs hover:border-[var(--border)]/90 transition-all">
+        <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xs hover:border-emerald-500/30 transition-all flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between text-[11px] font-bold text-[var(--muted)] uppercase tracking-wider mb-1">
+            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-1">
               <span>Sales & Orders</span>
               <PercentBadge value={growthMetrics.revGrowth} />
             </div>
-            <div className="text-2xl sm:text-3xl font-black text-emerald-500 tabular-nums my-1">
+            <div className="text-xl sm:text-2xl font-black text-emerald-500 tabular-nums tracking-tight my-0.5">
               {formatCurrency(currentPeriodRevenue)}
             </div>
             <div className="flex flex-wrap items-center gap-1.5 text-xs font-bold text-[var(--foreground)] mt-1">
               <span>{currentPeriodOrders} orders</span>
               <span className="text-[10px] font-semibold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
-                {successCount} successful
+                {successCount} ok
               </span>
               {currentHealth.failed > 0 && (
                 <span className="text-[10px] font-semibold text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded border border-rose-500/20">
-                  {currentHealth.failed} failed
+                  {currentHealth.failed} fail
                 </span>
               )}
             </div>
           </div>
-          <div className="pt-2.5 mt-3 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
-            <span>Avg Order: <strong className="text-[var(--foreground)]">{formatCurrency(aovMetrics.aov || 0)}</strong></span>
-            <span>Total Paid: <strong className="text-[var(--foreground)]">{formatCurrency(getPeriodValue(txStats.volume, periodKey) || currentPeriodRevenue)}</strong></span>
+          <div className="pt-2 mt-2.5 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
+            <span>Avg: <strong className="text-[var(--foreground)] font-bold">{formatCurrency(aovMetrics.aov || 0)}</strong></span>
+            <span>Total: <strong className="text-[var(--foreground)] font-bold">{formatCurrency(getPeriodValue(txStats.volume, periodKey) || currentPeriodRevenue)}</strong></span>
           </div>
         </div>
 
-        {/* Card 2: App & Notifications */}
-        <div className="p-3.5 sm:p-4 rounded-xl border border-[var(--border)] bg-[var(--card)]/60 flex flex-col justify-between shadow-xs hover:border-[var(--border)]/90 transition-all">
+        {/* Card 2: App & Alerts */}
+        <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xs hover:border-purple-500/30 transition-all flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between text-[11px] font-bold text-[var(--muted)] uppercase tracking-wider mb-1">
+            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-1">
               <span>App & Alerts</span>
-              <span className="text-[10px] font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20 flex items-center gap-1">
-                <Bell size={10} /> {pwaStats.totalPushSubscribers || 0} Push
+              <span className="text-[9px] font-bold text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20 flex items-center gap-1">
+                <Bell size={9} /> {pwaStats.totalPushSubscribers || 0} Push
               </span>
             </div>
-            <div className="text-2xl sm:text-3xl font-black text-purple-400 tabular-nums my-1">
+            <div className="text-xl sm:text-2xl font-black text-purple-400 tabular-nums tracking-tight my-0.5">
               {formatNumber(pwaStats.totalInstalls || 0)} <span className="text-xs font-normal text-[var(--muted)]">Installs</span>
             </div>
             <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-[var(--foreground)] mt-1">
               <span className="text-[11px] text-purple-400 flex items-center gap-1 font-semibold">
-                <Smartphone size={12} /> {formatNumber(pwaStats.activeDevices || 0)} active users
+                <Smartphone size={11} /> {formatNumber(pwaStats.activeDevices || 0)} active
               </span>
               <span className="text-[10px] font-medium text-[var(--muted)]">
                 {platformStats.pwa.orders || 0} app orders
               </span>
             </div>
           </div>
-          <div className="pt-2.5 mt-3 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
-            <span>Push Subscribers: <strong className="text-purple-400">{pwaStats.totalPushSubscribers || 0}</strong></span>
-            <span>App Sales: <strong className="text-[var(--foreground)]">{formatCurrency(platformStats.pwa.revenue || 0)}</strong></span>
+          <div className="pt-2 mt-2.5 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
+            <span>Push: <strong className="text-purple-400 font-bold">{pwaStats.totalPushSubscribers || 0}</strong></span>
+            <span>Sales: <strong className="text-[var(--foreground)] font-bold">{formatCurrency(platformStats.pwa.revenue || 0)}</strong></span>
           </div>
         </div>
 
         {/* Card 3: Users & Customers */}
-        <div className="p-3.5 sm:p-4 rounded-xl border border-[var(--border)] bg-[var(--card)]/60 flex flex-col justify-between shadow-xs hover:border-[var(--border)]/90 transition-all">
+        <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xs hover:border-amber-500/30 transition-all flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between text-[11px] font-bold text-[var(--muted)] uppercase tracking-wider mb-1">
+            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-1">
               <span>Users & Buyers</span>
-              <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                {userStats.conversionStats?.[periodKey] || 0}% Conversion
+              <span className="text-[9px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+                {userStats.conversionStats?.[periodKey] || 0}% Conv
               </span>
             </div>
-            <div className="text-2xl sm:text-3xl font-black text-[var(--foreground)] tabular-nums my-1">
-              {formatNumber(userStats.total || 0)} <span className="text-xs font-bold text-[var(--muted)]">Users</span>
+            <div className="text-xl sm:text-2xl font-black text-[var(--foreground)] tabular-nums tracking-tight my-0.5">
+              {formatNumber(userStats.total || 0)} <span className="text-xs font-normal text-[var(--muted)]">Users</span>
             </div>
-            <div className="grid grid-cols-3 gap-1.5 mt-1 text-center">
-              <div className="p-1 rounded bg-[var(--foreground)]/[0.03] border border-[var(--border)]/60">
+            <div className="grid grid-cols-3 gap-1 mt-1 text-center">
+              <div className="p-1 rounded-md bg-[var(--foreground)]/[0.03] border border-[var(--border)]/50">
                 <span className="text-[8px] uppercase font-bold text-[var(--muted)] block">Active</span>
                 <span className="text-xs font-black text-emerald-500 tabular-nums">{formatNumber(userStats.activeStats?.[periodKey] || 0)}</span>
               </div>
-              <div className="p-1 rounded bg-[var(--foreground)]/[0.03] border border-[var(--border)]/60">
-                <span className="text-[8px] uppercase font-bold text-[var(--muted)] block">Signups</span>
+              <div className="p-1 rounded-md bg-[var(--foreground)]/[0.03] border border-[var(--border)]/50">
+                <span className="text-[8px] uppercase font-bold text-[var(--muted)] block">New</span>
                 <span className="text-xs font-black text-purple-400 tabular-nums">+{formatNumber(userStats.newStats?.[periodKey] || 0)}</span>
               </div>
-              <div className="p-1 rounded bg-[var(--foreground)]/[0.03] border border-[var(--border)]/60">
+              <div className="p-1 rounded-md bg-[var(--foreground)]/[0.03] border border-[var(--border)]/50">
                 <span className="text-[8px] uppercase font-bold text-[var(--muted)] block">Buyers</span>
                 <span className="text-xs font-black text-amber-400 tabular-nums">{formatNumber(userStats.payingStats?.[periodKey] || 0)}</span>
               </div>
             </div>
           </div>
-          <div className="pt-2.5 mt-3 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
-            <span>Total Paying Customers: <strong className="text-[var(--foreground)]">{userStats.payingStats?.allTime || 0}</strong></span>
+          <div className="pt-2 mt-2.5 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
+            <span>Paying Users: <strong className="text-[var(--foreground)] font-bold">{userStats.payingStats?.allTime || 0}</strong></span>
             <span className="text-amber-400/90 font-medium">{timeframeLabel}</span>
           </div>
         </div>
 
         {/* Card 4: User Wallets */}
-        <div className="p-3.5 sm:p-4 rounded-xl border border-[var(--border)] bg-[var(--card)]/60 flex flex-col justify-between shadow-xs hover:border-[var(--border)]/90 transition-all">
+        <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xs hover:border-emerald-500/30 transition-all flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between text-[11px] font-bold text-[var(--muted)] uppercase tracking-wider mb-1">
+            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-1">
               <span>Customer Wallets</span>
-              <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                {formatNumber(walletStats.activeWallets || 0)} With Money
+              <span className="text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                {formatNumber(walletStats.activeWallets || 0)} Funded
               </span>
             </div>
-            <div className="text-2xl sm:text-3xl font-black text-emerald-500 tabular-nums my-1">
+            <div className="text-xl sm:text-2xl font-black text-emerald-500 tabular-nums tracking-tight my-0.5">
               {formatCurrency(walletStats.totalBalance || 0)}
             </div>
             <div className="flex items-center justify-between text-xs font-bold text-[var(--foreground)] mt-1">
               <span className="text-[11px] text-emerald-500 flex items-center gap-1 font-bold">
-                <Wallet size={12} /> {formatNumber(walletStats.activeWallets || 0)} funded wallets
+                <Wallet size={11} /> {formatNumber(walletStats.activeWallets || 0)} funded wallets
               </span>
-              <span className="text-[10px] text-[var(--muted)] font-medium">Total in Wallets</span>
+              <span className="text-[10px] text-[var(--muted)] font-medium">In Wallets</span>
             </div>
           </div>
-          <div className="pt-2.5 mt-3 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
-            <span className="text-emerald-500 font-medium">+{formatCurrency(getPeriodValue(walletStats.deposits, periodKey))} Added</span>
-            <span className="text-rose-500 font-medium">-{formatCurrency(getPeriodValue(walletStats.usage, periodKey))} Spent</span>
+          <div className="pt-2 mt-2.5 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
+            <span className="text-emerald-500 font-bold">+{formatCurrency(getPeriodValue(walletStats.deposits, periodKey))}</span>
+            <span className="text-rose-500 font-bold">-{formatCurrency(getPeriodValue(walletStats.usage, periodKey))}</span>
           </div>
         </div>
 
       </div>
 
-      {/* Operational Mini-Badges Row (Clean Wrap for Mobile) */}
-      <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-xs text-[var(--muted)]">
-        <div className="flex flex-wrap items-center gap-3 sm:gap-5">
-          <button onClick={() => onNavigate && onNavigate("users")} className="flex items-center gap-1.5 hover:text-[var(--foreground)] transition-colors cursor-pointer">
-            <Crown size={12} className="text-amber-400" />
-            <span>Top Customers: <strong className="text-[var(--foreground)] font-bold">{topSpenders.length}</strong></span>
-          </button>
-          <button onClick={() => onNavigate && onNavigate("wallet")} className="flex items-center gap-1.5 hover:text-[var(--foreground)] transition-colors cursor-pointer">
-            <Wallet size={12} className="text-emerald-500" />
-            <span>User Wallets: <strong className="text-[var(--foreground)] font-bold">{formatCurrency(walletStats.totalBalance || 0)}</strong> ({walletStats.activeWallets || 0} active)</span>
-          </button>
-          <button onClick={() => onNavigate && onNavigate("coins")} className="flex items-center gap-1.5 hover:text-[var(--foreground)] transition-colors cursor-pointer">
-            <Coins size={12} className="text-amber-400" />
-            <span>Reward Coins: <strong className="text-[var(--foreground)] font-bold">{formatNumber(coinStats.totalAvailable || 0)}</strong> (+{formatNumber(coinStats.todayEarned || 0)} today)</span>
-          </button>
-          <button onClick={() => onNavigate && onNavigate("support-queries")} className="flex items-center gap-1.5 hover:text-[var(--foreground)] transition-colors cursor-pointer">
-            <MessageSquare size={12} className={supportStats.open > 0 ? "text-rose-500" : "text-emerald-500"} />
-            <span>Help Tickets: <strong className={supportStats.open > 0 ? "text-rose-500 font-bold" : "text-[var(--foreground)] font-bold"}>{supportStats.open} open</strong></span>
-          </button>
-        </div>
+      {/* Ultra-Compact Quick Stats Ribbon (Borderless & Flat) */}
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 text-[11px]">
+        <button
+          onClick={() => onNavigate && onNavigate("users")}
+          className="px-2 py-0.5 rounded-md hover:bg-[var(--foreground)]/[0.04] text-[var(--foreground)] transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
+        >
+          <Crown size={11} className="text-amber-400 shrink-0" />
+          <span className="text-[var(--muted)]">VIPs:</span>
+          <span className="font-bold">{topSpenders.length}</span>
+        </button>
 
-        <div className="flex items-center gap-1.5 text-[10px] text-[var(--muted)] font-mono">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Live updates</span>
-        </div>
+        <button
+          onClick={() => onNavigate && onNavigate("wallet")}
+          className="px-2 py-0.5 rounded-md hover:bg-[var(--foreground)]/[0.04] text-[var(--foreground)] transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
+        >
+          <Wallet size={11} className="text-emerald-500 shrink-0" />
+          <span className="text-[var(--muted)]">Wallets:</span>
+          <span className="font-bold">{formatCurrency(walletStats.totalBalance || 0)}</span>
+          <span className="text-[10px] text-[var(--muted)]">({walletStats.activeWallets || 0})</span>
+        </button>
+
+        <button
+          onClick={() => onNavigate && onNavigate("coins")}
+          className="px-2 py-0.5 rounded-md hover:bg-[var(--foreground)]/[0.04] text-[var(--foreground)] transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
+        >
+          <Coins size={11} className="text-amber-400 shrink-0" />
+          <span className="text-[var(--muted)]">Coins:</span>
+          <span className="font-bold">{formatNumber(coinStats.totalAvailable || 0)}</span>
+        </button>
+
+        <button
+          onClick={() => onNavigate && onNavigate("support-queries")}
+          className={`px-2 py-0.5 rounded-md transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+            supportStats.open > 0
+              ? "bg-rose-500/10 text-rose-500 font-bold"
+              : "hover:bg-[var(--foreground)]/[0.04] text-[var(--foreground)]"
+          }`}
+        >
+          <MessageSquare size={11} className={supportStats.open > 0 ? "text-rose-500 shrink-0" : "text-emerald-500 shrink-0"} />
+          <span className={supportStats.open > 0 ? "text-rose-400" : "text-[var(--muted)]"}>Tickets:</span>
+          <span className="font-bold">{supportStats.open}</span>
+        </button>
       </div>
 
       {/* Main Intelligence Grid */}
@@ -852,58 +790,58 @@ export default function AnalyticsTab({ onNavigate }) {
           </div>
 
           {/* Basket Economics & Retention */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/40 p-3.5 sm:p-4 flex flex-col justify-between">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 flex flex-col justify-between shadow-2xs">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-md border border-teal-500/20 bg-teal-500/10 text-teal-400">
-                    <Users size={14} />
+              <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
+                <div className="flex items-center gap-1.5">
+                  <div className="p-1 rounded-md bg-teal-500/10 text-teal-400">
+                    <Users size={12} />
                   </div>
-                  <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)]">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
                     Order Value & Loyalty
                   </h3>
                 </div>
-                <span className="text-[10px] font-bold text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20">
-                  Customer Habits
+                <span className="text-[9px] font-bold text-teal-400 bg-teal-500/10 px-1.5 py-0.5 rounded">
+                  Habits
                 </span>
               </div>
 
-              <div className="space-y-2 pt-1">
-                <div className="p-2.5 rounded-lg bg-[var(--foreground)]/[0.015] border border-[var(--border)]/70 flex items-center justify-between">
-                  <div>
-                    <span className="text-[9px] font-bold uppercase text-[var(--muted)] block">Average Order Value</span>
-                    <span className="text-base sm:text-lg font-bold text-emerald-500 tabular-nums">
+              <div className="divide-y divide-[var(--border)]/40">
+                <div className="py-1.5 flex items-center justify-between">
+                  <span className="text-[11px] text-[var(--muted)] font-medium">Average Order Value</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs sm:text-sm font-bold text-emerald-500 tabular-nums">
                       {formatCurrency(aovMetrics.aov || (currentPeriodOrders > 0 ? Math.round(currentPeriodRevenue / currentPeriodOrders) : 0))}
                     </span>
+                    <span className="text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-1 rounded">Avg</span>
                   </div>
-                  <span className="text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">Avg</span>
                 </div>
 
-                <div className="p-2.5 rounded-lg bg-[var(--foreground)]/[0.015] border border-[var(--border)]/70 flex items-center justify-between">
-                  <div>
-                    <span className="text-[9px] font-bold uppercase text-[var(--muted)] block">Avg Items Per Order</span>
-                    <span className="text-base sm:text-lg font-bold text-[var(--foreground)] tabular-nums">
-                      {aovMetrics.basketSize || "1.0"} <span className="text-xs font-normal text-[var(--muted)]">items</span>
+                <div className="py-1.5 flex items-center justify-between">
+                  <span className="text-[11px] text-[var(--muted)] font-medium">Avg Items Per Order</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs sm:text-sm font-bold text-[var(--foreground)] tabular-nums">
+                      {aovMetrics.basketSize || "1.0"} <span className="text-[10px] font-normal text-[var(--muted)]">items</span>
                     </span>
+                    <span className="text-[9px] font-bold text-teal-400 bg-teal-500/10 px-1 rounded">Per Order</span>
                   </div>
-                  <span className="text-[9px] font-bold text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded">Per Order</span>
                 </div>
 
-                <div className="p-2.5 rounded-lg bg-[var(--foreground)]/[0.015] border border-[var(--border)]/70 flex items-center justify-between">
-                  <div>
-                    <span className="text-[9px] font-bold uppercase text-[var(--muted)] block">Repeat Buyer Rate</span>
-                    <span className="text-base sm:text-lg font-bold text-emerald-500 tabular-nums">
+                <div className="py-1.5 flex items-center justify-between">
+                  <span className="text-[11px] text-[var(--muted)] font-medium">Repeat Buyer Rate</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs sm:text-sm font-bold text-emerald-500 tabular-nums">
                       {loyalty.repeatRate}% <span className="text-[10px] font-normal text-[var(--muted)]">repeat</span>
                     </span>
+                    <PercentBadge value={loyalty.repeatRate} label="repeat" />
                   </div>
-                  <PercentBadge value={loyalty.repeatRate} label="repeat" />
                 </div>
               </div>
             </div>
 
-            <div className="mt-2.5 pt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)] font-medium">
+            <div className="pt-2 mt-1 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
               <span>Unique Customers: <strong className="text-[var(--foreground)] font-bold">{aovMetrics.totalBuyers || 0}</strong></span>
-              <span>Period: {timeframeLabel}</span>
+              <span>{timeframeLabel}</span>
             </div>
           </div>
 
@@ -913,39 +851,36 @@ export default function AnalyticsTab({ onNavigate }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           
           {/* PWA vs Web Split */}
-          <div className="rounded-xl border border-purple-500/20 bg-purple-500/[0.02] p-3.5 sm:p-4 flex flex-col justify-between">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 flex flex-col justify-between shadow-2xs">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                    <Smartphone size={14} />
+              <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
+                <div className="flex items-center gap-1.5">
+                  <div className="p-1 rounded-md bg-purple-500/10 text-purple-400">
+                    <Smartphone size={12} />
                   </div>
-                  <div>
-                    <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)]">
-                      App vs Web Orders & Sales
-                    </h3>
-                    <p className="text-[10px] sm:text-xs text-[var(--muted)]">Comparison between mobile app and browser visitors</p>
-                  </div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
+                    App vs Web Orders & Sales
+                  </h3>
                 </div>
 
-                <span className="text-[10px] font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">
+                <span className="text-[9px] font-bold text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded">
                   {platformStats.pwa.revenueShare || 0}% App Share
                 </span>
               </div>
 
-              <div className="p-3 rounded-lg bg-[var(--card)] border border-[var(--border)]/80 space-y-2 mt-2">
+              <div className="space-y-2 pt-0.5">
                 <div className="flex justify-between items-center text-xs font-bold">
                   <span className="text-purple-400 flex items-center gap-1">
                     📱 Mobile App: {formatCurrency(platformStats.pwa.revenue || 0)} 
-                    <span className="text-[9px] font-bold bg-purple-500/15 px-1.5 py-0.2 rounded">({platformStats.pwa.revenueShare || 0}%)</span>
+                    <span className="text-[9px] font-bold bg-purple-500/15 px-1 py-0.2 rounded">({platformStats.pwa.revenueShare || 0}%)</span>
                   </span>
                   <span className="text-blue-400 flex items-center gap-1">
                     🌐 Website: {formatCurrency(platformStats.web.revenue || 0)} 
-                    <span className="text-[9px] font-bold bg-blue-500/15 px-1.5 py-0.2 rounded">({platformStats.web.revenueShare || 0}%)</span>
+                    <span className="text-[9px] font-bold bg-blue-500/15 px-1 py-0.2 rounded">({platformStats.web.revenueShare || 0}%)</span>
                   </span>
                 </div>
 
-                <div className="h-2 w-full bg-[var(--foreground)]/[0.06] rounded-full overflow-hidden flex p-0.5 gap-0.5">
+                <div className="h-1.5 w-full bg-[var(--foreground)]/[0.06] rounded-full overflow-hidden flex p-0.5 gap-0.5">
                   <div
                     className="h-full bg-purple-500 rounded-l-full transition-all duration-500"
                     style={{ width: `${Math.max(platformStats.pwa.revenueShare || 0, (platformStats.pwa.revenue || 0) > 0 ? 5 : 0)}%` }}
@@ -956,44 +891,41 @@ export default function AnalyticsTab({ onNavigate }) {
                   />
                 </div>
 
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 text-[9.5px] sm:text-[10px] text-[var(--muted)] font-mono pt-1">
-                  <span>📱 App: {platformStats.pwa.orders || 0} orders • {platformStats.pwa.successRate || 0}% success • Avg {formatCurrency(platformStats.pwa.aov || 0)}</span>
-                  <span>🌐 Web: {platformStats.web.orders || 0} orders • {platformStats.web.successRate || 0}% success • Avg {formatCurrency(platformStats.web.aov || 0)}</span>
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 text-[10px] text-[var(--muted)] pt-0.5">
+                  <span>📱 App: {platformStats.pwa.orders || 0} orders • {platformStats.pwa.successRate || 0}% ok • Avg {formatCurrency(platformStats.pwa.aov || 0)}</span>
+                  <span>🌐 Web: {platformStats.web.orders || 0} orders • {platformStats.web.successRate || 0}% ok • Avg {formatCurrency(platformStats.web.aov || 0)}</span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-2.5 pt-2 border-t border-[var(--border)]/50 flex flex-wrap items-center justify-between gap-1 text-[10px] text-[var(--muted)]">
-              <span>All-time App Orders: <strong className="text-[var(--foreground)] font-bold">{platformStats.allTime?.pwaOrders || 0}</strong></span>
-              <span>All-time Web Orders: <strong className="text-[var(--foreground)] font-bold">{platformStats.allTime?.webOrders || 0}</strong></span>
+            <div className="pt-2 mt-2 border-t border-[var(--border)]/50 flex flex-wrap items-center justify-between gap-1 text-[10px] text-[var(--muted)]">
+              <span>All-time App: <strong className="text-[var(--foreground)] font-bold">{platformStats.allTime?.pwaOrders || 0}</strong></span>
+              <span>All-time Web: <strong className="text-[var(--foreground)] font-bold">{platformStats.allTime?.webOrders || 0}</strong></span>
             </div>
           </div>
 
           {/* Peak Hours Heatmap (Mobile Responsive: 2 cols on xs, 3 cols on sm, 6 cols on md/lg) */}
           <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/40 p-3.5 sm:p-4 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-md border border-purple-500/20 bg-purple-500/10 text-purple-400">
-                    <Clock size={14} />
+              <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
+                <div className="flex items-center gap-1.5">
+                  <div className="p-1 rounded-md bg-purple-500/10 text-purple-400">
+                    <Clock size={12} />
                   </div>
-                  <div>
-                    <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)]">
-                      Busiest Shopping Hours
-                    </h3>
-                    <p className="text-[10px] sm:text-xs text-[var(--muted)]">When customers order the most</p>
-                  </div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
+                    Busiest Shopping Hours
+                  </h3>
                 </div>
-                <span className="text-[10px] font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">
+                <span className="text-[9px] font-bold text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded">
                   Peak: {peakSlot.name}
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pt-1">
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 pt-0.5">
                 {slotStats.map((slot, idx) => {
                   const isPeak = slot.count === maxSlotCount && maxSlotCount > 0;
                   return (
-                    <div key={idx} className="p-2 sm:p-2.5 rounded-lg bg-[var(--foreground)]/[0.015] border border-[var(--border)]/70 space-y-1.5">
+                    <div key={idx} className="p-1.5 rounded-lg bg-[var(--foreground)]/[0.02] border border-[var(--border)]/50 space-y-1">
                       <div className="flex justify-between items-center text-[10px]">
                         <span className="font-bold text-[var(--foreground)] truncate">{slot.name}</span>
                         {isPeak ? (
@@ -1002,7 +934,7 @@ export default function AnalyticsTab({ onNavigate }) {
                           <span className="text-[9px] text-[var(--muted)]">{slot.pct}%</span>
                         )}
                       </div>
-                      <div className="h-1.5 w-full bg-[var(--foreground)]/[0.05] rounded-full overflow-hidden">
+                      <div className="h-1 w-full bg-[var(--foreground)]/[0.05] rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all duration-300 ${
                             isPeak ? "bg-purple-500" : slot.pct > 0 ? "bg-blue-500" : "bg-[var(--foreground)]/[0.05]"
@@ -1011,7 +943,7 @@ export default function AnalyticsTab({ onNavigate }) {
                         />
                       </div>
                       <div className="flex justify-between text-[9px] text-[var(--muted)] font-mono">
-                        <span>{slot.label.split("–")[0]}</span>
+                        <span>{slot.label.split("–")[0].trim()}</span>
                         <span className="font-bold text-[var(--foreground)]">{slot.count} ord</span>
                       </div>
                     </div>
@@ -1020,10 +952,10 @@ export default function AnalyticsTab({ onNavigate }) {
               </div>
             </div>
 
-            <div className="mt-2.5 pt-2 border-t border-[var(--border)]/50 text-[10px] text-[var(--muted)] flex flex-wrap items-center justify-between gap-1">
+            <div className="pt-2 mt-2 border-t border-[var(--border)]/50 text-[10px] text-[var(--muted)] flex flex-wrap items-center justify-between gap-1">
               <span className="flex items-center gap-1">
                 <Sparkles size={11} className="text-amber-400 shrink-0" />
-                <span>Best time for promotions: <strong className="text-[var(--foreground)] font-bold">{peakSlot.label} ({peakSlot.name})</strong></span>
+                <span>Best time: <strong className="text-[var(--foreground)] font-bold">{peakSlot.label} ({peakSlot.name})</strong></span>
               </span>
               <span className="font-bold">{timeframeLabel}</span>
             </div>
@@ -1032,26 +964,26 @@ export default function AnalyticsTab({ onNavigate }) {
         </div>
 
         {/* Row 3: New vs Returning Buyers + Best Selling Products + Game Share + Gateways */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
           
           {/* New vs Returning Buyers Card */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/40 p-3.5 sm:p-4 flex flex-col justify-between">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 flex flex-col justify-between shadow-2xs">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-md border border-blue-500/20 bg-blue-500/10 text-blue-400">
-                    <UserCheck size={14} />
+              <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
+                <div className="flex items-center gap-1.5">
+                  <div className="p-1 rounded-md bg-blue-500/10 text-blue-400">
+                    <UserCheck size={12} />
                   </div>
-                  <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)]">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
                     Buyer Loyalty
                   </h3>
                 </div>
-                <span className="text-[10px] font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+                <span className="text-[9px] font-bold text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded">
                   {buyerSplit.repeatRate || 0}% Repeat
                 </span>
               </div>
 
-              <div className="p-2.5 rounded-lg bg-[var(--card)] border border-[var(--border)]/80 space-y-2 mt-1">
+              <div className="space-y-2 pt-0.5">
                 <div className="flex justify-between items-center text-[11px] font-bold">
                   <span className="text-emerald-400 flex items-center gap-1">
                     <UserPlus size={11} /> New: {formatCurrency(buyerSplit.newBuyers?.revenue || 0)}
@@ -1063,7 +995,7 @@ export default function AnalyticsTab({ onNavigate }) {
                   </span>
                 </div>
 
-                <div className="h-2 w-full bg-[var(--foreground)]/[0.06] rounded-full overflow-hidden flex p-0.5 gap-0.5">
+                <div className="h-1.5 w-full bg-[var(--foreground)]/[0.06] rounded-full overflow-hidden flex p-0.5 gap-0.5">
                   <div
                     className="h-full bg-emerald-500 rounded-l-full transition-all duration-500"
                     style={{ width: `${Math.max(buyerSplit.newBuyers?.sharePct || 0, (buyerSplit.newBuyers?.revenue || 0) > 0 ? 5 : 0)}%` }}
@@ -1075,53 +1007,53 @@ export default function AnalyticsTab({ onNavigate }) {
                 </div>
 
                 <div className="flex justify-between items-center text-[9px] text-[var(--muted)] font-mono pt-0.5">
-                  <span>{buyerSplit.newBuyers?.orders || 0} ord ({buyerSplit.newBuyers?.count || 0} users)</span>
+                  <span>{buyerSplit.newBuyers?.orders || 0} ord ({buyerSplit.newBuyers?.count || 0} new)</span>
                   <span>{buyerSplit.returningBuyers?.orders || 0} ord ({buyerSplit.returningBuyers?.count || 0} regulars)</span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-2.5 pt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)] font-medium">
+            <div className="pt-2 mt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
               <span>Total Unique Buyers: <strong className="text-[var(--foreground)] font-bold">{buyerSplit.totalBuyers || 0}</strong></span>
-              <span className="font-bold">{timeframeLabel}</span>
+              <span>{timeframeLabel}</span>
             </div>
           </div>
 
           {/* Top Packages */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/40 p-3.5 sm:p-4 flex flex-col justify-between">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 flex flex-col justify-between shadow-2xs">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-md border border-amber-500/20 bg-amber-500/10 text-amber-400">
-                    <Trophy size={14} />
+              <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
+                <div className="flex items-center gap-1.5">
+                  <div className="p-1 rounded-md bg-amber-500/10 text-amber-400">
+                    <Trophy size={12} />
                   </div>
-                  <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)]">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
                     Best-Selling
                   </h3>
                 </div>
-                <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                <span className="text-[9px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
                   {timeframeLabel}
                 </span>
               </div>
 
               {topProducts.length > 0 ? (
-                <div className="space-y-1.5 pt-1">
+                <div className="space-y-1 pt-0.5">
                   {topProducts.slice(0, 3).map((prod, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-[var(--foreground)]/[0.015] border border-[var(--border)]/70 hover:bg-[var(--foreground)]/[0.03] transition-all">
-                      <div className="flex items-center gap-2 min-w-0 flex-1 mr-1">
-                        <span className={`text-[10px] font-mono font-bold shrink-0 w-4 text-center py-0.5 rounded flex items-center justify-center ${
-                          idx === 0 ? "text-amber-400 bg-amber-500/10 border border-amber-500/20" : "text-[var(--muted)]"
+                    <div key={idx} className="flex items-center justify-between p-1.5 rounded-lg bg-[var(--foreground)]/[0.02] hover:bg-[var(--foreground)]/[0.04] transition-all">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1 mr-1">
+                        <span className={`text-[9px] font-mono font-bold shrink-0 w-3.5 text-center py-0.5 rounded flex items-center justify-center ${
+                          idx === 0 ? "text-amber-400 bg-amber-500/10" : "text-[var(--muted)]"
                         }`}>
-                          {idx === 0 ? <Crown size={10} className="text-amber-400" /> : `0${idx + 1}`}
+                          {idx === 0 ? <Crown size={9} className="text-amber-400" /> : `0${idx + 1}`}
                         </span>
                         <div className="flex flex-col min-w-0">
                           <span className="text-xs font-bold text-[var(--foreground)] truncate">{prod._id || "Unknown Item"}</span>
-                          <span className="text-[8.5px] text-[var(--muted)] uppercase font-medium">{prod.gameSlug || "Game"}</span>
+                          <span className="text-[8px] text-[var(--muted)] uppercase font-medium">{prod.gameSlug || "Game"}</span>
                         </div>
                       </div>
                       <div className="flex flex-col items-end shrink-0">
                         <span className="text-xs font-bold text-emerald-500 tabular-nums">{formatCurrency(prod.revenue)}</span>
-                        <span className="text-[8.5px] text-[var(--muted)]">{prod.count} sold</span>
+                        <span className="text-[8px] text-[var(--muted)]">{prod.count} sold</span>
                       </div>
                     </div>
                   ))}
@@ -1133,43 +1065,43 @@ export default function AnalyticsTab({ onNavigate }) {
               )}
             </div>
 
-            <div className="mt-2.5 pt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)] font-medium">
+            <div className="pt-2 mt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
               <span>Top: <strong className="text-[var(--foreground)] font-bold truncate max-w-[100px] inline-block align-bottom">{topItemName}</strong></span>
               <span>{topProducts.reduce((sum, p) => sum + (p.count || 0), 0)} sold</span>
             </div>
           </div>
 
           {/* Game Catalog Revenue Share */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/40 p-3.5 sm:p-4 flex flex-col justify-between">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 flex flex-col justify-between shadow-2xs">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-md border border-blue-500/20 bg-blue-500/10 text-blue-400">
-                    <Gamepad2 size={14} />
+              <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
+                <div className="flex items-center gap-1.5">
+                  <div className="p-1 rounded-md bg-blue-500/10 text-blue-400">
+                    <Gamepad2 size={12} />
                   </div>
-                  <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)]">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
                     Sales by Game
                   </h3>
                 </div>
-                <span className="text-[10px] font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+                <span className="text-[9px] font-bold text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded">
                   Game Share
                 </span>
               </div>
 
               {topGames.length > 0 ? (
-                <div className="space-y-2 pt-1">
+                <div className="space-y-1.5 pt-0.5">
                   {topGames.slice(0, 3).map((game, idx) => {
                     const sharePct = Math.round(((game.revenue || 0) / totalGamesRevenue) * 100);
                     return (
-                      <div key={idx} className="space-y-1">
+                      <div key={idx} className="space-y-0.5">
                         <div className="flex justify-between items-center text-xs">
-                          <span className="font-bold text-[var(--foreground)] uppercase text-[10.5px] truncate">{game._id}</span>
+                          <span className="font-bold text-[var(--foreground)] uppercase text-[10px] truncate">{game._id}</span>
                           <div className="flex items-center gap-1">
-                            <span className="font-bold text-emerald-500 tabular-nums">{formatCurrency(game.revenue)}</span>
+                            <span className="font-bold text-emerald-500 tabular-nums text-xs">{formatCurrency(game.revenue)}</span>
                             <span className="text-[9px] text-[var(--muted)] font-medium">({sharePct}%)</span>
                           </div>
                         </div>
-                        <div className="h-1.5 w-full bg-[var(--foreground)]/[0.05] rounded-full overflow-hidden">
+                        <div className="h-1 w-full bg-[var(--foreground)]/[0.05] rounded-full overflow-hidden">
                           <div
                             className="h-full bg-blue-500 rounded-full transition-all duration-500"
                             style={{ width: `${Math.max(sharePct, 4)}%` }}
@@ -1186,41 +1118,41 @@ export default function AnalyticsTab({ onNavigate }) {
               )}
             </div>
 
-            <div className="mt-2.5 pt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)] font-medium">
+            <div className="pt-2 mt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
               <span>Catalog Games: <strong className="text-[var(--foreground)] font-bold">{topGames.length}</strong></span>
               <span>{formatCurrency(totalGamesRevenue)} total</span>
             </div>
           </div>
 
           {/* Payment Gateways */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/40 p-3.5 sm:p-4 flex flex-col justify-between">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 flex flex-col justify-between shadow-2xs">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-md border border-emerald-500/20 bg-emerald-500/10 text-emerald-500">
-                    <CreditCard size={14} />
+              <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
+                <div className="flex items-center gap-1.5">
+                  <div className="p-1 rounded-md bg-emerald-500/10 text-emerald-500">
+                    <CreditCard size={12} />
                   </div>
-                  <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)]">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
                     Payment Gateways
                   </h3>
                 </div>
-                <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                <span className="text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded">
                   Methods
                 </span>
               </div>
 
               {paymentMethods.length > 0 ? (
-                <div className="grid grid-cols-2 gap-2 pt-1">
+                <div className="grid grid-cols-2 gap-1.5 pt-0.5">
                   {paymentMethods.map((pm, idx) => {
                     const share = Math.round(((pm.count || 0) / totalPaymentCount) * 100);
                     return (
-                      <div key={idx} className="p-2 rounded-lg bg-[var(--foreground)]/[0.015] border border-[var(--border)]/70 flex flex-col justify-between">
-                        <span className="text-[9.5px] font-bold uppercase tracking-wider text-[var(--foreground)] truncate mb-0.5">
+                      <div key={idx} className="p-1.5 rounded-lg bg-[var(--foreground)]/[0.02] border border-[var(--border)]/50 flex flex-col justify-between">
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--foreground)] truncate mb-0.5">
                           {pm._id || "UPI"}
                         </span>
                         <div className="flex items-baseline justify-between">
                           <span className="text-xs font-bold text-emerald-500">{share}%</span>
-                          <span className="text-[8.5px] text-[var(--muted)]">{pm.count} txns</span>
+                          <span className="text-[8px] text-[var(--muted)]">{pm.count} txns</span>
                         </div>
                       </div>
                     );
@@ -1233,7 +1165,7 @@ export default function AnalyticsTab({ onNavigate }) {
               )}
             </div>
 
-            <div className="mt-2.5 pt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)] font-medium">
+            <div className="pt-2 mt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
               <span>Methods Used: <strong className="text-[var(--foreground)] font-bold">{paymentMethods.length}</strong></span>
               <span>{totalPaymentCount} total txns</span>
             </div>
@@ -1242,46 +1174,43 @@ export default function AnalyticsTab({ onNavigate }) {
         </div>
 
         {/* Row 4: VIP Customers Leaderboard */}
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/40 p-3.5 sm:p-4 flex flex-col justify-between">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 flex flex-col justify-between shadow-2xs">
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-md border border-amber-500/20 bg-amber-500/10 text-amber-400">
-                  <Crown size={14} />
+            <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
+              <div className="flex items-center gap-1.5">
+                <div className="p-1 rounded-md bg-amber-500/10 text-amber-400">
+                  <Crown size={12} />
                 </div>
-                <div>
-                  <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)]">
-                    Top Spending Customers
-                  </h3>
-                  <p className="text-[10px] sm:text-xs text-[var(--muted)]">Customers who spent the most on your store</p>
-                </div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
+                  Top Customers
+                </h3>
               </div>
               <button
                 onClick={() => onNavigate && onNavigate("users")}
                 className="text-[10px] font-bold text-blue-400 hover:underline flex items-center gap-0.5 cursor-pointer"
               >
-                View Users <ChevronRight size={11} />
+                View All <ChevronRight size={10} />
               </button>
             </div>
 
             {topSpenders.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1.5 pt-0.5">
                 {topSpenders.slice(0, 4).map((spender, idx) => {
                   const maskedEmail = spender._id ? spender._id.replace(/(.{2})(.*)(?=@)/, (_, a, b) => a + "*".repeat(b.length)) : "User";
                   return (
-                    <div key={idx} className="flex items-center justify-between p-2.5 sm:p-3 rounded-lg bg-[var(--foreground)]/[0.015] border border-[var(--border)]/70 hover:bg-[var(--foreground)]/[0.03] transition-all">
-                      <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
-                        <span className={`text-[10px] font-mono font-bold shrink-0 w-5 text-center py-0.5 rounded flex items-center justify-center ${
+                    <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-[var(--foreground)]/[0.02] border border-[var(--border)]/50 hover:bg-[var(--foreground)]/[0.04] transition-all">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1 mr-1.5">
+                        <span className={`text-[9px] font-mono font-bold shrink-0 w-4 text-center py-0.5 rounded flex items-center justify-center ${
                           idx === 0 ? "text-amber-400 bg-amber-500/10 border border-amber-500/20" : "text-[var(--muted)]"
                         }`}>
-                          {idx === 0 ? <Crown size={11} className="text-amber-400" /> : `0${idx + 1}`}
+                          {idx === 0 ? <Crown size={9} className="text-amber-400" /> : `0${idx + 1}`}
                         </span>
                         <div className="flex flex-col min-w-0">
-                          <span className="text-xs sm:text-sm font-bold text-[var(--foreground)] truncate">{spender.playerName ? `${spender.playerName} (${maskedEmail})` : maskedEmail}</span>
-                          <span className="text-[9px] text-[var(--muted)] uppercase font-medium">{spender.ordersCount} orders • {spender.gameSlug || "Gaming"}</span>
+                          <span className="text-xs font-bold text-[var(--foreground)] truncate">{spender.playerName ? `${spender.playerName} (${maskedEmail})` : maskedEmail}</span>
+                          <span className="text-[8px] text-[var(--muted)] uppercase font-medium">{spender.ordersCount} orders • {spender.gameSlug || "Gaming"}</span>
                         </div>
                       </div>
-                      <span className="text-xs sm:text-sm font-bold text-amber-400 tabular-nums shrink-0">
+                      <span className="text-xs font-bold text-amber-400 tabular-nums shrink-0">
                         {formatCurrency(spender.totalSpent)}
                       </span>
                     </div>
@@ -1295,39 +1224,38 @@ export default function AnalyticsTab({ onNavigate }) {
             )}
           </div>
 
-          <div className="mt-2.5 pt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)] font-medium">
-            <span>Total Paying Customers: <strong className="text-[var(--foreground)] font-bold">{userStats.payingStats?.allTime || 0}</strong></span>
-            <span className="font-bold">{timeframeLabel}</span>
+          <div className="pt-2 mt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
+            <span>Paying: <strong className="text-[var(--foreground)] font-bold">{userStats.payingStats?.allTime || 0}</strong></span>
+            <span>{timeframeLabel}</span>
           </div>
         </div>
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/40 p-3.5 sm:p-4 flex flex-col justify-between">
+
+        {/* Live Store Activity Feed */}
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 flex flex-col justify-between shadow-2xs">
           <div>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-md border border-emerald-500/20 bg-emerald-500/10 text-emerald-500">
-                  <Activity size={14} />
+            <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
+              <div className="flex items-center gap-1.5">
+                <div className="p-1 rounded-md bg-emerald-500/10 text-emerald-500">
+                  <Activity size={12} />
                 </div>
-                <div>
-                  <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)] flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Live Store Activity Feed
-                  </h3>
-                  <p className="text-[10px] sm:text-xs text-[var(--muted)]">Recent orders, wallet deposits, signups, and app downloads</p>
-                </div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)] flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Live Activity
+                </h3>
               </div>
               
               <button
                 onClick={() => onNavigate && onNavigate("activity")}
-                className="px-3 py-1.5 rounded-lg bg-[var(--foreground)]/[0.04] hover:bg-[var(--foreground)]/[0.08] border border-[var(--border)] text-xs font-bold text-[var(--foreground)] transition-all flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
+                className="text-[10px] font-bold text-emerald-500 hover:underline flex items-center gap-0.5 cursor-pointer"
               >
-                <span>View Full Activity Log ({totalActivityCount})</span>
-                <ChevronRight size={12} />
+                <span>Full Log ({totalActivityCount})</span>
+                <ChevronRight size={10} />
               </button>
             </div>
 
             {recentActivity.length > 0 ? (
-              <div className="divide-y divide-[var(--border)]/40 pt-1">
-                {recentActivity.slice(0, 10).map((event) => {
+              <div className="divide-y divide-[var(--border)]/40 pt-0.5">
+                {recentActivity.slice(0, 5).map((event) => {
                   const isSuccess = event.status === "success";
                   const isFailed = event.status === "failed";
                   const timeAgo = (() => {
@@ -1340,23 +1268,23 @@ export default function AnalyticsTab({ onNavigate }) {
                   })();
 
                   return (
-                    <div key={event.id} className="py-2.5 flex items-center justify-between gap-2.5 hover:bg-[var(--foreground)]/[0.015] px-1 rounded-lg transition-colors">
-                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                        <span className={`p-1.5 rounded-lg shrink-0 ${
+                    <div key={event.id} className="py-2 flex items-center justify-between gap-2 hover:bg-[var(--foreground)]/[0.015] px-1 rounded-lg transition-colors">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <span className={`p-1 rounded-md shrink-0 ${
                           event.type === "order" ? "bg-emerald-500/10 text-emerald-500" :
                           event.type === "wallet" ? "bg-amber-500/10 text-amber-400" :
                           event.type === "user" ? "bg-purple-500/10 text-purple-400" :
                           event.type === "pwa" ? "bg-cyan-500/10 text-cyan-400" : "bg-blue-500/10 text-blue-400"
                         }`}>
-                          {event.type === "order" ? <Trophy size={12} /> :
-                           event.type === "wallet" ? <Wallet size={12} /> :
-                           event.type === "user" ? <Users size={12} /> :
-                           event.type === "pwa" ? <Smartphone size={12} /> : <MessageSquare size={12} />}
+                          {event.type === "order" ? <Trophy size={11} /> :
+                           event.type === "wallet" ? <Wallet size={11} /> :
+                           event.type === "user" ? <Users size={11} /> :
+                           event.type === "pwa" ? <Smartphone size={11} /> : <MessageSquare size={11} />}
                         </span>
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="text-xs font-bold text-[var(--foreground)] truncate">{event.title}</span>
-                            <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded border ${
+                            <span className={`text-[8.5px] font-bold px-1 py-0.2 rounded border ${
                               isSuccess ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" :
                               isFailed ? "bg-rose-500/10 text-rose-500 border-rose-500/20" :
                               "bg-amber-500/10 text-amber-500 border-amber-500/20"
@@ -1364,36 +1292,36 @@ export default function AnalyticsTab({ onNavigate }) {
                               {event.statusText || event.status}
                             </span>
                           </div>
-                          <p className="text-[10.5px] text-[var(--muted)] truncate mt-0.5">{event.subtitle}</p>
+                          <p className="text-[10px] text-[var(--muted)] truncate mt-0.5">{event.subtitle}</p>
                         </div>
                       </div>
 
                       <div className="flex flex-col items-end shrink-0">
                         {event.amount !== null && event.amount !== undefined && (
-                          <span className={`text-xs sm:text-sm font-black tabular-nums ${isFailed ? "text-rose-500" : "text-emerald-500"}`}>
+                          <span className={`text-xs sm:text-sm font-bold tabular-nums ${isFailed ? "text-rose-500" : "text-emerald-500"}`}>
                             {formatCurrency(event.amount)}
                           </span>
                         )}
-                        <span className="text-[9.5px] text-[var(--muted)] font-mono">{timeAgo}</span>
+                        <span className="text-[9px] text-[var(--muted)] font-mono">{timeAgo}</span>
                       </div>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <div className="py-8 text-center text-xs text-[var(--muted)] font-medium">
+              <div className="py-6 text-center text-xs text-[var(--muted)] font-medium">
                 No recent activity events recorded.
               </div>
             )}
           </div>
 
-          <div className="mt-2.5 pt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)] font-medium">
-            <span className="flex items-center gap-1 text-emerald-500">
+          <div className="pt-2 mt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
+            <span className="flex items-center gap-1 text-emerald-500 font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Live store webhook stream active
+              Live webhook stream active
             </span>
             <button onClick={() => onNavigate && onNavigate("activity")} className="text-blue-400 font-bold hover:underline flex items-center gap-0.5 cursor-pointer">
-              Open Full Activity Screen <ChevronRight size={11} />
+              Open Activity Screen <ChevronRight size={10} />
             </button>
           </div>
         </div>
@@ -1427,6 +1355,150 @@ export default function AnalyticsTab({ onNavigate }) {
           </button>
         </div>
       </div>
+
+      {/* ================= FILTER DRAWER / MODAL ================= */}
+      <AnimatePresence>
+        {showFilters && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowFilters(false)}
+              className="fixed inset-0 z-[1100] bg-black/70 backdrop-blur-xs"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 220 }}
+              className="fixed right-0 top-0 h-full w-full max-w-sm bg-[var(--card)] border-l border-[var(--border)] z-[1110] flex flex-col"
+            >
+              {/* Header */}
+              <div className="p-3.5 border-b border-[var(--border)] flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
+                    <FiCalendar size={13} />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
+                      Analytics Timeframe
+                    </h3>
+                    <p className="text-[10px] text-[var(--muted)]">Select period to analyze</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowFilters(false)}
+                  className="w-7 h-7 rounded-lg bg-[var(--foreground)]/[0.05] hover:bg-[var(--foreground)]/[0.1] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-all cursor-pointer"
+                >
+                  <FiX size={14} />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-5">
+                {/* PRESET PERIODS */}
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)]">
+                    Preset Timeframe
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                    {PERIODS.filter(p => p.id !== "custom").map((p) => {
+                      const active = periodId === p.id;
+                      return (
+                        <button
+                          key={p.id}
+                          onClick={() => {
+                            setPeriodId(p.id);
+                            setShowFilters(false);
+                          }}
+                          className={`p-2.5 rounded-lg text-xs font-bold text-center transition-all cursor-pointer border ${
+                            active
+                              ? "bg-emerald-500 text-white border-emerald-500 shadow-2xs"
+                              : "bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
+                          }`}
+                        >
+                          {p.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* CUSTOM DATE RANGE */}
+                <div className="space-y-3 pt-3 border-t border-[var(--border)]/60">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)]">
+                      Custom Date Range
+                    </label>
+                    {periodId === "custom" && (
+                      <span className="text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                        Active
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2.5">
+                    <div>
+                      <span className="text-[10px] text-[var(--muted)] font-medium block mb-1">Start Date</span>
+                      <input
+                        type="date"
+                        value={tempDates.startDate}
+                        onChange={(e) => setTempDates({ ...tempDates, startDate: e.target.value })}
+                        className="w-full px-2.5 py-1.5 text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:border-emerald-500 shadow-2xs"
+                      />
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-[var(--muted)] font-medium block mb-1">End Date</span>
+                      <input
+                        type="date"
+                        value={tempDates.endDate}
+                        onChange={(e) => setTempDates({ ...tempDates, endDate: e.target.value })}
+                        className="w-full px-2.5 py-1.5 text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:border-emerald-500 shadow-2xs"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      if (tempDates.startDate && tempDates.endDate) {
+                        setCustomRange(tempDates);
+                        setPeriodId("custom");
+                        setShowFilters(false);
+                      }
+                    }}
+                    disabled={!tempDates.startDate || !tempDates.endDate}
+                    className="w-full py-2 rounded-lg bg-emerald-500 text-white text-xs font-bold hover:bg-emerald-600 disabled:opacity-40 transition-all cursor-pointer text-center shadow-2xs"
+                  >
+                    Apply Custom Range
+                  </button>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="p-3 border-t border-[var(--border)] flex items-center justify-between gap-2 bg-[var(--foreground)]/[0.02]">
+                <button
+                  onClick={() => {
+                    setPeriodId("today");
+                    setCustomRange({ startDate: "", endDate: "" });
+                    setTempDates({ startDate: "", endDate: "" });
+                    setShowFilters(false);
+                  }}
+                  className="px-3 py-1.5 rounded-lg border border-[var(--border)] text-xs font-bold text-[var(--muted)] hover:text-[var(--foreground)] transition-all cursor-pointer hover:bg-[var(--foreground)]/[0.04]"
+                >
+                  Reset to Today
+                </button>
+                <button
+                  onClick={() => setShowFilters(false)}
+                  className="flex-1 py-1.5 rounded-lg bg-[var(--foreground)]/[0.06] hover:bg-[var(--foreground)]/[0.1] text-[var(--foreground)] text-xs font-bold transition-all cursor-pointer text-center"
+                >
+                  Done
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

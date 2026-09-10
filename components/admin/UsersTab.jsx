@@ -539,7 +539,7 @@ export default function UsersTab() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-full max-w-[360px] bg-[var(--background)] border-l border-[var(--border)] shadow-2xl z-[1110] flex flex-col"
+              className="fixed right-0 top-0 h-full w-full max-w-[360px] bg-[var(--background)] border-l border-[var(--border)] z-[1110] flex flex-col"
             >
               {/* Simple Premium Header - Compact */}
               <div className="p-5 border-b border-[var(--border)] bg-[var(--background)]">

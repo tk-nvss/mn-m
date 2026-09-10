@@ -313,26 +313,26 @@ export default function TransactionsTab() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-full max-w-lg bg-[var(--background)]/95 backdrop-blur-3xl border-l border-white/5 shadow-[-10px_0_30px_rgba(0,0,0,0.5)] z-[1002] flex flex-col"
+              className="fixed right-0 top-0 h-full w-full max-w-lg bg-[var(--background)] border-l border-[var(--border)] z-[1002] flex flex-col"
             >
-              <div className="p-5 md:p-6 border-b border-white/5 bg-gradient-to-b from-[var(--card)]/50 to-transparent">
-                <div className="flex items-start justify-between mb-5">
+              <div className="p-4 sm:p-5 border-b border-[var(--border)] bg-[var(--card)]/30">
+                <div className="flex items-start justify-between mb-3">
                   <div className="space-y-0.5">
-                    <p className="text-[9px] font-mono font-black text-[var(--accent)] uppercase tracking-[0.2em] opacity-80 mb-1 drop-shadow-[0_0_8px_rgba(var(--accent-rgb),0.5)]">#{selectedTx.orderId.toUpperCase()}</p>
-                    <h3 className="text-xl font-black uppercase tracking-tight text-[var(--foreground)]">Transaction Summary</h3>
+                    <p className="text-[9px] font-mono font-black text-[var(--accent)] uppercase tracking-[0.2em] opacity-80 mb-1">#{selectedTx.orderId.toUpperCase()}</p>
+                    <h3 className="text-base sm:text-lg font-black uppercase tracking-tight text-[var(--foreground)]">Transaction Summary</h3>
                   </div>
                   <button aria-label="button"
                     onClick={() => setSelectedTx(null)}
-                    className="w-9 h-9 rounded-full bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--muted)]/40 hover:text-[var(--foreground)] hover:bg-red-500/20 transition-all"
+                    className="w-7 h-7 rounded-lg bg-[var(--foreground)]/[0.05] hover:bg-[var(--foreground)]/[0.1] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-all cursor-pointer"
                   >
-                    <X size={18} />
+                    <X size={14} />
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-br from-[var(--card)] to-[var(--background)] border border-[var(--border)] shadow-sm">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]">
                   <div>
                     <p className="text-[9px] font-bold text-[var(--muted)]/50 uppercase tracking-widest mb-0.5">Settlement Amount</p>
-                    <span className="text-2xl font-black text-emerald-500 tabular-nums leading-none">₹{selectedTx.price}</span>
+                    <span className="text-xl sm:text-2xl font-black text-emerald-500 tabular-nums leading-none">₹{selectedTx.price}</span>
                   </div>
                   {(() => {
                     const meta = statusMeta[selectedTx.status] || statusMeta.pending;

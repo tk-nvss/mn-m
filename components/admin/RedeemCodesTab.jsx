@@ -107,117 +107,103 @@ export default function RedeemCodesTab() {
     const claimRate = summary.total > 0 ? Math.round(((summary.totalUsed || 0) / summary.total) * 100) : 0;
 
     return (
-        <div className="space-y-4 sm:space-y-6 md:space-y-8 animate-in fade-in duration-500">
+        <div className="space-y-3 sm:space-y-4 animate-in fade-in duration-300">
 
-            {/* ── STATS OVERVIEW ── */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {/* ── COMPACT HERO STATS ── */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
                 {/* Total Codes */}
-                <div className="p-3.5 rounded-xl border border-indigo-500/20 bg-indigo-500/[0.04] flex flex-col justify-between">
-                    <div className="flex items-center justify-between">
-                        <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Total Codes</span>
-                        <div className="p-1 rounded-md bg-indigo-500/10 text-indigo-400">
-                            <Ticket size={12} />
+                <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] flex items-center justify-between">
+                    <div>
+                        <span className="text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)]">Total Codes</span>
+                        <div className="text-sm sm:text-base font-black text-indigo-400 tabular-nums leading-tight mt-0.5">
+                            {formatNumber(summary.total || 0)}
                         </div>
                     </div>
-                    <div className="mt-2">
-                        <span className="text-base sm:text-lg font-black text-indigo-400 tabular-nums">
-                            {formatNumber(summary.total || 0)}
-                        </span>
-                        <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">Generated Vouchers</p>
+                    <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400">
+                        <Ticket size={13} />
                     </div>
                 </div>
 
                 {/* Available Codes */}
-                <div className="p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/[0.04] flex flex-col justify-between">
-                    <div className="flex items-center justify-between">
-                        <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Available</span>
-                        <div className="p-1 rounded-md bg-amber-500/10 text-amber-400">
-                            <Gift size={12} />
+                <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] flex items-center justify-between">
+                    <div>
+                        <span className="text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)]">Available</span>
+                        <div className="text-sm sm:text-base font-black text-amber-400 tabular-nums leading-tight mt-0.5">
+                            {formatNumber(availableCount)}
                         </div>
                     </div>
-                    <div className="mt-2">
-                        <span className="text-base sm:text-lg font-black text-amber-400 tabular-nums">
-                            {formatNumber(availableCount)}
-                        </span>
-                        <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">Ready to Claim</p>
+                    <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400">
+                        <Gift size={13} />
                     </div>
                 </div>
 
                 {/* Claimed Codes */}
-                <div className="p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] flex flex-col justify-between">
-                    <div className="flex items-center justify-between">
-                        <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Claimed</span>
-                        <div className="p-1 rounded-md bg-emerald-500/10 text-emerald-400">
-                            <CheckCircle2 size={12} />
+                <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] flex items-center justify-between">
+                    <div>
+                        <span className="text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)]">Claimed</span>
+                        <div className="text-sm sm:text-base font-black text-emerald-400 tabular-nums leading-tight mt-0.5">
+                            {formatNumber(summary.totalUsed || 0)}
                         </div>
                     </div>
-                    <div className="mt-2">
-                        <span className="text-base sm:text-lg font-black text-emerald-400 tabular-nums">
-                            {formatNumber(summary.totalUsed || 0)}
-                        </span>
-                        <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">Used by Players</p>
+                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
+                        <CheckCircle2 size={13} />
                     </div>
                 </div>
 
                 {/* Claim Rate */}
-                <div className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--card)] flex flex-col justify-between">
-                    <div className="flex items-center justify-between">
-                        <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">Claim Rate</span>
-                        <div className="p-1 rounded-md bg-[var(--foreground)]/[0.05] text-[var(--muted)]">
-                            <Percent size={12} />
+                <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] flex items-center justify-between">
+                    <div>
+                        <span className="text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)]">Claim Rate</span>
+                        <div className="text-sm sm:text-base font-black text-[var(--foreground)] tabular-nums leading-tight mt-0.5">
+                            {claimRate}%
                         </div>
                     </div>
-                    <div className="mt-2">
-                        <span className="text-base sm:text-lg font-black text-[var(--foreground)] tabular-nums">
-                            {claimRate}%
-                        </span>
-                        <p className="text-[8px] font-semibold text-[var(--muted)]/60 uppercase tracking-tight">Redemption Velocity</p>
+                    <div className="p-1.5 rounded-lg bg-[var(--foreground)]/[0.05] text-[var(--muted)]">
+                        <Percent size={13} />
                     </div>
                 </div>
             </div>
 
-            {/* GENERATOR CARD */}
-            <div className="p-3.5 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--foreground)]/[0.02] shadow-2xl shadow-black/5 relative overflow-hidden">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 relative z-10">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0 shadow-inner">
-                            <FiZap size={16} />
+            {/* COMPACT GENERATOR CARD */}
+            <div className="p-3 sm:p-3.5 rounded-xl border border-[var(--border)] bg-[var(--card)] relative">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <div className="flex items-center gap-2">
+                        <div className="w-6.5 h-6.5 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
+                            <FiZap size={13} />
                         </div>
                         <div>
-                            <h3 className="text-sm font-black uppercase tracking-widest text-[var(--foreground)] leading-tight mb-0.5">Generator</h3>
-                            <p className="text-[9px] font-bold text-[var(--muted)]/60 uppercase tracking-[0.15em] leading-none">Create vouchers</p>
+                            <h3 className="text-xs font-black uppercase tracking-wider text-[var(--foreground)] leading-none">Voucher Generator</h3>
+                            <p className="text-[8px] font-bold text-[var(--muted)] uppercase tracking-wider mt-0.5">Create vouchers</p>
                         </div>
                     </div>
 
-                    <div className="flex bg-[var(--foreground)]/[0.03] p-1 rounded-full border border-[var(--border)]/50 shadow-inner">
+                    <div className="flex bg-[var(--foreground)]/[0.04] p-0.5 rounded-lg border border-[var(--border)]">
                         <button aria-label="button"
                             onClick={() => setIsSeries(false)}
-                            className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 ${!isSeries ? 'bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20' : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]'}`}
+                            className={`px-2.5 py-1 rounded-md text-[8.5px] font-black uppercase tracking-wider transition-all cursor-pointer ${!isSeries ? 'bg-[var(--accent)] text-white' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
                         >
                             Unique
                         </button>
                         <button aria-label="button"
                             onClick={() => setIsSeries(true)}
-                            className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 ${isSeries ? 'bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20' : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]'}`}
+                            className={`px-2.5 py-1 rounded-md text-[8.5px] font-black uppercase tracking-wider transition-all cursor-pointer ${isSeries ? 'bg-[var(--accent)] text-white' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
                         >
                             Series
                         </button>
                     </div>
                 </div>
 
-                <form className="grid grid-cols-1 sm:grid-cols-4 gap-4 relative z-10" onSubmit={handleGenerate}>
-                    <div className="space-y-1.5">
-                        <label className="text-[8px] font-black uppercase text-[var(--muted)] ml-2.5 tracking-[0.1em]">Value (₹)</label>
-                        <div className="relative group">
-                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/50 group-focus-within:text-[var(--accent)] transition-colors font-black text-xs">
-                                ₹
-                            </div>
+                <form className="grid grid-cols-1 sm:grid-cols-4 gap-2.5" onSubmit={handleGenerate}>
+                    <div>
+                        <label className="text-[7.5px] font-black uppercase text-[var(--muted)] block mb-1">Value (₹)</label>
+                        <div className="relative">
+                            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)] font-black text-[11px]">₹</span>
                             <input
                                 type="number"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
                                 placeholder="500"
-                                className="w-full h-11 bg-[var(--foreground)]/[0.02] border border-[var(--border)] rounded-full pl-9 pr-4 text-xs focus:border-[var(--accent)] focus:bg-[var(--foreground)]/[0.05] outline-none transition-all font-black text-[var(--foreground)] placeholder:text-[var(--muted)]/30 hover:border-[var(--border)]/80"
+                                className="w-full h-8 bg-[var(--background)] border border-[var(--border)] rounded-lg pl-6 pr-2.5 text-[11px] focus:border-[var(--accent)] outline-none font-bold text-[var(--foreground)] placeholder:text-[var(--muted)]/40"
                                 required
                             />
                         </div>
@@ -225,52 +211,52 @@ export default function RedeemCodesTab() {
 
                     {isSeries ? (
                         <>
-                            <div className="space-y-1.5">
-                                <label className="text-[8px] font-black uppercase text-[var(--muted)] ml-2.5 tracking-[0.1em]">Code String</label>
-                                <div className="relative group">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/50 group-focus-within:text-[var(--accent)] transition-colors">
-                                        <FiType size={14} />
+                            <div>
+                                <label className="text-[7.5px] font-black uppercase text-[var(--muted)] block mb-1">Code String</label>
+                                <div className="relative">
+                                    <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]">
+                                        <FiType size={11} />
                                     </div>
                                     <input
                                         type="text"
                                         value={customCode}
                                         onChange={(e) => setCustomCode(e.target.value)}
                                         placeholder="BONUS"
-                                        className="w-full h-11 bg-[var(--foreground)]/[0.02] border border-[var(--border)] rounded-full pl-10 pr-4 text-xs focus:border-[var(--accent)] focus:bg-[var(--foreground)]/[0.05] outline-none transition-all font-black uppercase text-[var(--foreground)] placeholder:text-[var(--muted)]/30 hover:border-[var(--border)]/80"
+                                        className="w-full h-8 bg-[var(--background)] border border-[var(--border)] rounded-lg pl-7 pr-2.5 text-[11px] focus:border-[var(--accent)] outline-none font-bold uppercase text-[var(--foreground)] placeholder:text-[var(--muted)]/40"
                                         required={isSeries}
                                     />
                                 </div>
                             </div>
-                            <div className="space-y-1.5">
-                                <label className="text-[8px] font-black uppercase text-[var(--muted)] ml-2.5 tracking-[0.1em]">Max Uses</label>
-                                <div className="relative group">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/50 group-focus-within:text-[var(--accent)] transition-colors">
-                                        <FiHash size={14} />
+                            <div>
+                                <label className="text-[7.5px] font-black uppercase text-[var(--muted)] block mb-1">Max Uses</label>
+                                <div className="relative">
+                                    <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]">
+                                        <FiHash size={11} />
                                     </div>
                                     <input
                                         type="number"
                                         value={maxUses}
                                         onChange={(e) => setMaxUses(e.target.value)}
                                         placeholder="100"
-                                        className="w-full h-11 bg-[var(--foreground)]/[0.02] border border-[var(--border)] rounded-full pl-10 pr-4 text-xs focus:border-[var(--accent)] focus:bg-[var(--foreground)]/[0.05] outline-none transition-all font-black text-[var(--foreground)] placeholder:text-[var(--muted)]/30 hover:border-[var(--border)]/80"
+                                        className="w-full h-8 bg-[var(--background)] border border-[var(--border)] rounded-lg pl-7 pr-2.5 text-[11px] focus:border-[var(--accent)] outline-none font-bold text-[var(--foreground)] placeholder:text-[var(--muted)]/40"
                                         required={isSeries}
                                     />
                                 </div>
                             </div>
                         </>
                     ) : (
-                        <div className="space-y-1.5 col-span-1 sm:col-span-2">
-                            <label className="text-[8px] font-black uppercase text-[var(--muted)] ml-2.5 tracking-[0.1em]">Code Count</label>
-                            <div className="relative group">
-                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]/50 group-focus-within:text-[var(--accent)] transition-colors">
-                                    <FiHash size={14} />
+                        <div className="col-span-1 sm:col-span-2">
+                            <label className="text-[7.5px] font-black uppercase text-[var(--muted)] block mb-1">Code Count</label>
+                            <div className="relative">
+                                <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]">
+                                    <FiHash size={11} />
                                 </div>
                                 <input
                                     type="number"
                                     value={quantity}
                                     onChange={(e) => setQuantity(e.target.value)}
                                     placeholder="10"
-                                    className="w-full h-11 bg-[var(--foreground)]/[0.02] border border-[var(--border)] rounded-full pl-10 pr-4 text-xs focus:border-[var(--accent)] focus:bg-[var(--foreground)]/[0.05] outline-none transition-all font-black text-[var(--foreground)] placeholder:text-[var(--muted)]/30 hover:border-[var(--border)]/80"
+                                    className="w-full h-8 bg-[var(--background)] border border-[var(--border)] rounded-lg pl-7 pr-2.5 text-[11px] focus:border-[var(--accent)] outline-none font-bold text-[var(--foreground)] placeholder:text-[var(--muted)]/40"
                                     required={!isSeries}
                                 />
                             </div>
@@ -281,68 +267,68 @@ export default function RedeemCodesTab() {
                         <button aria-label="button"
                             type="submit"
                             disabled={isGenerating}
-                            className="w-full h-11 bg-[var(--accent)] text-white font-black uppercase text-[10px] tracking-[0.15em] rounded-full flex items-center justify-center gap-2 hover:bg-[var(--accent-hover)] transition-all shadow-lg shadow-[var(--accent)]/30 active:scale-95 disabled:opacity-50"
+                            className="w-full h-8 bg-[var(--accent)] text-white font-black uppercase text-[9px] tracking-wider rounded-lg flex items-center justify-center gap-1.5 hover:bg-[var(--accent-hover)] transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
                         >
-                            {isGenerating ? "Processing" : <><FiZap size={14} /> {isSeries ? "Create series" : "Generate unique"}</>}
+                            {isGenerating ? "Processing..." : <><FiZap size={11} /> {isSeries ? "Create Series" : "Generate Unique"}</>}
                         </button>
                     </div>
                 </form>
             </div>
 
             {/* RECENT CODES */}
-            <div className="space-y-4 pt-2">
+            <div className="space-y-2 pt-1">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted)]/40 flex items-center gap-2">
-                        <FiClock size={12} /> Recently Generated
+                    <h3 className="text-[9.5px] font-black uppercase tracking-wider text-[var(--muted)] flex items-center gap-1.5">
+                        <FiClock size={11} /> Recently Generated
                     </h3>
-                    <span className="text-[9px] font-bold text-[var(--muted)]/30 uppercase tabular-nums">{recentCodes.length} Records</span>
+                    <span className="text-[8.5px] font-bold text-[var(--muted)]/60 uppercase tabular-nums">{recentCodes.length} Records</span>
                 </div>
 
                 {/* DESKTOP TABLE */}
-                <div className="hidden lg:block rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden shadow-lg">
-                    <table className="w-full text-left text-[11px]">
-                        <thead className="bg-[var(--foreground)]/[0.02] border-b border-[var(--border)] text-[var(--muted)] font-black uppercase tracking-wider">
+                <div className="hidden lg:block rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden">
+                    <table className="w-full text-left text-[10.5px]">
+                        <thead className="bg-[var(--foreground)]/[0.02] border-b border-[var(--border)] text-[var(--muted)] font-black uppercase tracking-wider text-[8.5px]">
                             <tr>
-                                {["Redeem Code", "Configuration", "Value", "Activity", "Owner"].map((h) => (
-                                    <th key={h} className="px-6 py-4">{h}</th>
+                                {["Redeem Code", "Type", "Value", "Activity", "Owner"].map((h) => (
+                                    <th key={h} className="px-4 py-2.5">{h}</th>
                                 ))}
-                                <th className="px-6 py-4 text-right">Actions</th>
+                                <th className="px-4 py-2.5 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-[var(--border)]">
                             {loading ? (
-                                <tr><td colSpan={6} className="px-6 py-12 text-center text-[var(--muted)] font-bold uppercase tracking-widest opacity-20">Loading Codes</td></tr>
+                                <tr><td colSpan={6} className="px-4 py-8 text-center text-[var(--muted)] font-bold uppercase tracking-widest opacity-40 text-xs">Loading Codes...</td></tr>
                             ) : recentCodes.length === 0 ? (
-                                <tr><td colSpan={6} className="px-6 py-12 text-center text-[var(--muted)] font-bold uppercase tracking-widest opacity-20">No Records</td></tr>
+                                <tr><td colSpan={6} className="px-4 py-8 text-center text-[var(--muted)] font-bold uppercase tracking-widest opacity-40 text-xs">No Records Found</td></tr>
                             ) : recentCodes.map((code) => (
-                                <tr key={code._id} className="hover:bg-[var(--foreground)]/[0.01] transition-colors group">
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-mono font-black text-[var(--accent)] tracking-tighter uppercase">{code.code}</span>
+                                <tr key={code._id} className="hover:bg-[var(--foreground)]/[0.02] transition-colors group">
+                                    <td className="px-4 py-2.5">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="font-mono font-black text-[var(--accent)] tracking-tight uppercase text-xs">{code.code}</span>
                                             <CopyButton text={code.code} size="xs" variant="ghost" className="opacity-40 group-hover:opacity-100" />
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase border tracking-widest ${code.isSeries
+                                    <td className="px-4 py-2.5">
+                                        <span className={`px-1.5 py-0.2 rounded text-[7.5px] font-black uppercase border tracking-wider ${code.isSeries
                                             ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
                                             : "bg-blue-500/10 text-blue-400 border-blue-500/20"
                                             }`}>
                                             {code.isSeries ? "Series" : "Unique"}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className="font-black text-[var(--foreground)] tabular-nums">{formatCurrency(code.value)}</span>
+                                    <td className="px-4 py-2.5">
+                                        <span className="font-black text-[var(--foreground)] tabular-nums text-xs">{formatCurrency(code.value)}</span>
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-4 py-2.5">
                                         {code.isSeries ? (
-                                            <div className="flex items-center gap-3">
-                                                <div className="flex-1 min-w-[60px] h-1.5 bg-[var(--foreground)]/[0.05] rounded-full overflow-hidden">
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex-1 min-w-[50px] max-w-[80px] h-1.5 bg-[var(--foreground)]/[0.05] rounded-full overflow-hidden">
                                                     <div
-                                                        className="h-full bg-[var(--accent)] rounded-full shadow-[0_0_8px_rgba(var(--accent-rgb),0.3)] transition-all duration-1000"
+                                                        className="h-full bg-[var(--accent)] rounded-full transition-all duration-500"
                                                         style={{ width: `${Math.min(100, ((code.claimedBy?.length || 0) / code.maxUses) * 100)}%` }}
                                                     />
                                                 </div>
-                                                <span className="text-[9px] font-black tabular-nums text-[var(--muted)]/60">
+                                                <span className="text-[8.5px] font-black tabular-nums text-[var(--muted)]">
                                                     {code.claimedBy?.length || 0} / {code.maxUses}
                                                 </span>
                                             </div>
@@ -350,31 +336,32 @@ export default function RedeemCodesTab() {
                                             <StatusBadge status={code.status} size="xs" />
                                         )}
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-4 py-2.5">
                                         {code.isSeries ? (
-                                            <span className="text-[9px] font-bold text-[var(--muted)]/40 uppercase tracking-tighter italic">Multi-User</span>
+                                            <span className="text-[8.5px] font-bold text-[var(--muted)]/50 uppercase tracking-tight italic">Multi-User</span>
                                         ) : code.status === "used" && code.usedBy ? (
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-6 h-6 rounded-lg bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--muted)]">
-                                                    <FiUser size={12} />
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-5 h-5 rounded bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--muted)]">
+                                                    <FiUser size={10} />
                                                 </div>
                                                 <div className="flex flex-col min-w-0">
-                                                    <span className="text-[10px] font-bold text-[var(--foreground)] truncate uppercase leading-none mb-0.5">{code.usedBy.name}</span>
-                                                    <span className="text-[8px] text-[var(--muted)]/40 truncate tracking-tighter">{new Date(code.usedAt).toLocaleDateString()}</span>
+                                                    <span className="text-[9.5px] font-bold text-[var(--foreground)] truncate uppercase leading-none mb-0.5">{code.usedBy.name}</span>
+                                                    <span className="text-[7.5px] text-[var(--muted)]/60 truncate tracking-tight">{new Date(code.usedAt).toLocaleDateString()}</span>
                                                 </div>
                                             </div>
                                         ) : (
-                                            <span className="text-[9px] font-bold text-[var(--muted)]/20 uppercase tracking-[0.2em]">—</span>
+                                            <span className="text-[8.5px] font-bold text-[var(--muted)]/30 uppercase">—</span>
                                         )}
                                     </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <div className="flex items-center justify-end gap-1.5">
+                                    <td className="px-4 py-2.5 text-right">
+                                        <div className="flex items-center justify-end gap-1">
                                             {(code.status === "active" || code.isSeries) && (
                                                 <button aria-label="button"
                                                     onClick={() => handleExpire(code._id)}
-                                                    className="w-8 h-8 rounded-lg bg-rose-500/5 hover:bg-rose-500/10 text-rose-500/30 hover:text-rose-500 transition-all flex items-center justify-center group/btn"
+                                                    className="w-6.5 h-6.5 rounded-md bg-rose-500/5 hover:bg-rose-500/15 text-rose-500 transition-all flex items-center justify-center cursor-pointer"
+                                                    title="Expire Voucher"
                                                 >
-                                                    <FiTrash2 size={13} className="group-hover/btn:scale-110" />
+                                                    <FiTrash2 size={11} />
                                                 </button>
                                             )}
                                         </div>
@@ -386,52 +373,52 @@ export default function RedeemCodesTab() {
                 </div>
 
                 {/* MOBILE LIST */}
-                <div className="lg:hidden space-y-2.5">
+                <div className="lg:hidden space-y-2">
                     {recentCodes.map((code) => (
-                        <div key={code._id} className="p-3 sm:p-4 rounded-xl border border-[var(--border)] bg-[var(--card)] space-y-3">
+                        <div key={code._id} className="p-2.5 sm:p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] space-y-2">
                             <div className="flex justify-between items-start">
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/40">Redeem Code</span>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-sm font-black text-[var(--accent)] uppercase tracking-tighter">{code.code}</span>
-                                        <CopyButton text={code.code} size="sm" variant="ghost" />
+                                <div className="flex flex-col gap-0.5">
+                                    <span className="text-[7.5px] font-black uppercase tracking-wider text-[var(--muted)]">Redeem Code</span>
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="text-xs font-black text-[var(--accent)] uppercase tracking-tight">{code.code}</span>
+                                        <CopyButton text={code.code} size="xs" variant="ghost" />
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/40">Value</span>
-                                    <p className="text-base font-black text-[var(--foreground)] italic tracking-tighter">{formatCurrency(code.value)}</p>
+                                    <span className="text-[7.5px] font-black uppercase tracking-wider text-[var(--muted)]">Value</span>
+                                    <p className="text-xs font-black text-[var(--foreground)] tabular-nums">{formatCurrency(code.value)}</p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between py-2.5 border-y border-[var(--border)]/50 border-dashed">
-                                <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase border tracking-widest ${code.isSeries ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>
+                            <div className="flex items-center justify-between py-1.5 border-y border-[var(--border)]/50 border-dashed">
+                                <span className={`px-1.5 py-0.2 rounded text-[7.5px] font-black uppercase border tracking-wider ${code.isSeries ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>
                                     {code.isSeries ? 'Series' : 'Unique'}
                                 </span>
                                 
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2">
                                     {code.isSeries ? (
-                                        <span className="text-[10px] font-black text-[var(--muted)] uppercase tracking-tighter">
+                                        <span className="text-[8.5px] font-black text-[var(--muted)] uppercase tracking-tight">
                                             {code.claimedBy?.length || 0} / {code.maxUses} Uses
                                         </span>
                                     ) : (
                                         <StatusBadge status={code.status} size="xs" />
                                     )}
                                     {(code.status === 'active' || code.isSeries) && (
-                                        <button aria-label="button" onClick={() => handleExpire(code._id)} className="text-rose-500/40 hover:text-rose-500 transition-colors">
-                                            <FiTrash2 size={14} />
+                                        <button aria-label="button" onClick={() => handleExpire(code._id)} className="text-rose-500/60 hover:text-rose-500 transition-colors p-1 cursor-pointer">
+                                            <FiTrash2 size={12} />
                                         </button>
                                     )}
                                 </div>
                             </div>
 
                             {!code.isSeries && code.status === "used" && code.usedBy && (
-                                <div className="flex items-center gap-2 pt-1">
-                                    <div className="w-8 h-8 rounded-lg bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--muted)]">
-                                        <FiUser size={14} />
+                                <div className="flex items-center gap-1.5 pt-0.5">
+                                    <div className="w-5 h-5 rounded bg-[var(--foreground)]/[0.05] flex items-center justify-center text-[var(--muted)]">
+                                        <FiUser size={10} />
                                     </div>
                                     <div className="flex flex-col min-w-0">
-                                        <span className="text-[11px] font-black text-[var(--foreground)] uppercase truncate">{code.usedBy.name}</span>
-                                        <span className="text-[9px] text-[var(--muted)]/40 tracking-tighter">{new Date(code.usedAt).toLocaleString()}</span>
+                                        <span className="text-[9.5px] font-bold text-[var(--foreground)] uppercase truncate leading-none">{code.usedBy.name}</span>
+                                        <span className="text-[7.5px] text-[var(--muted)]/60 tracking-tight">{new Date(code.usedAt).toLocaleDateString()}</span>
                                     </div>
                                 </div>
                             )}
@@ -442,22 +429,22 @@ export default function RedeemCodesTab() {
 
             {/* PAGINATION */}
             {pagination.pages > 1 && (
-                <div className="flex items-center justify-between px-2 pt-2">
-                    <p className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-widest">
+                <div className="flex items-center justify-between px-1 pt-1">
+                    <p className="text-[9px] font-bold text-[var(--muted)] uppercase tracking-wider">
                         Page {pagination.currentPage} of {pagination.pages}
                     </p>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1.5">
                         <button aria-label="button"
                             onClick={() => setPage(prev => Math.max(1, prev - 1))}
                             disabled={page === 1 || loading}
-                            className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                            className="px-2.5 py-1 rounded-lg bg-[var(--foreground)]/5 border border-[var(--border)] text-[9px] font-bold uppercase tracking-wider hover:bg-[var(--foreground)]/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
                         >
                             Previous
                         </button>
                         <button aria-label="button"
                             onClick={() => setPage(prev => Math.min(pagination.pages, prev + 1))}
                             disabled={page === pagination.pages || loading}
-                            className="px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-widest hover:bg-blue-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                            className="px-2.5 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[9px] font-bold uppercase tracking-wider hover:bg-blue-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
                         >
                             Next
                         </button>

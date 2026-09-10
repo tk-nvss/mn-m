@@ -141,172 +141,150 @@ const SettingsTab = ({ onProviderChange, providerBalances }) => {
     const currentProvider = settings.topupProvider || "1game";
 
     return (
-        <div className="space-y-8 max-w-2xl">
-            {/* Header */}
-            <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center shadow-inner">
-                        <Icons.settings className="text-[var(--accent)] text-lg" />
+        <div className="max-w-2xl space-y-4">
+            {/* Header Strip */}
+            <div className="flex items-center justify-between gap-3 pb-3 border-b border-[var(--border)]/70">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]">
+                        <Icons.settings size={16} />
                     </div>
                     <div>
-                        <h2 className="text-sm font-black uppercase tracking-widest leading-tight text-[var(--foreground)]">Main Settings</h2>
-                        <p className="text-[9px] text-[var(--muted)]/50 font-bold uppercase tracking-[0.15em] leading-none mt-0.5">
-                            Website Status & API Providers
+                        <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">Main Settings</h2>
+                        <p className="text-[10px] text-[var(--muted)] font-medium">
+                            Store Controls & API Provider Routing
                         </p>
                     </div>
                 </div>
+
+                {message.text && (
+                    <div className={`hidden sm:flex items-center gap-2 text-[11px] font-bold px-3 py-1 rounded-lg ${
+                        message.type === "success" ? "text-emerald-500 bg-emerald-500/10 border border-emerald-500/20" : "text-rose-500 bg-rose-500/10 border border-rose-500/20"
+                    }`}>
+                        {message.type === "success" ? <Icons.checkCircle size={13} /> : <Icons.alertCircle size={13} />}
+                        <span>{message.text}</span>
+                    </div>
+                )}
             </div>
 
-            <div className="bg-[var(--card)]/40 border border-[var(--border)] rounded-[1.5rem] overflow-hidden flex flex-col divide-y divide-[var(--border)]/50 shadow-xl shadow-black/5">
+            {/* Mobile Alert Banner */}
+            {message.text && (
+                <div className={`sm:hidden flex items-center gap-2 text-[11px] font-bold px-3 py-2 rounded-lg ${
+                    message.type === "success" ? "text-emerald-500 bg-emerald-500/10 border border-emerald-500/20" : "text-rose-500 bg-rose-500/10 border border-rose-500/20"
+                }`}>
+                    {message.type === "success" ? <Icons.checkCircle size={13} /> : <Icons.alertCircle size={13} />}
+                    <span>{message.text}</span>
+                </div>
+            )}
+
+            {/* Settings List - Compact, Mobile Responsive & Full Width */}
+            <div className="divide-y divide-[var(--border)]/70">
                 
-                {/* PROVIDER SWITCHER */}
-                <div className="p-6 md:p-8 space-y-4 hover:bg-[var(--foreground)]/[0.02] transition-colors">
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
-                            <h3 className="text-xs font-black uppercase tracking-wide text-[var(--foreground)]">
-                                Primary Top-up Provider API
+                {/* 1. Primary Provider */}
+                <div className="py-3 sm:py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
+                                Primary Top-up Provider
                             </h3>
                         </div>
-                        <p className="text-[10px] text-[var(--muted)]/60 mt-1 leading-relaxed max-w-lg">
-                            Select which API service is used to fulfill game and diamonds orders in real-time.
+                        <p className="text-[11px] text-[var(--muted)] mt-0.5">
+                            Fulfills orders via <span className="font-semibold text-[var(--foreground)]">{currentProvider === "1game" ? "1Game (1gamestopup.com)" : "Bluebuff (api.bluebuff.in)"}</span>
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                        {/* 1Game API Option */}
+                    <div className="inline-flex items-center self-start sm:self-auto p-1 bg-[var(--card)] border border-[var(--border)] rounded-xl gap-1 shadow-2xs">
                         <button
                             type="button"
                             onClick={() => updateProvider("1game")}
                             disabled={saving}
-                            className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden group ${
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
                                 currentProvider === "1game"
-                                    ? "bg-emerald-500/10 border-emerald-500/50 shadow-lg shadow-emerald-500/5 ring-1 ring-emerald-500/30"
-                                    : "bg-[var(--foreground)]/[0.02] border-[var(--border)] hover:border-[var(--foreground)]/20"
+                                    ? "bg-emerald-500 text-white shadow-xs"
+                                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.04]"
                             }`}
                         >
-                            <div className="flex items-start justify-between gap-2 mb-2">
-                                <div>
-                                    <div className="text-xs font-black uppercase tracking-wider text-[var(--foreground)]">1Game API</div>
-                                    <div className="text-[9px] text-[var(--muted)] font-medium mt-0.5">1gamestopup.com</div>
-                                </div>
-                                <span className={`inline-flex items-center gap-1 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${
-                                    currentProvider === "1game"
-                                        ? "bg-emerald-500 text-black font-black"
-                                        : "bg-[var(--foreground)]/10 text-[var(--muted)]"
-                                }`}>
-                                    {currentProvider === "1game" ? "ACTIVE" : "SELECT"}
-                                </span>
-                            </div>
-
-                            <div className="pt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px]">
-                                <span className="text-[var(--muted)] font-bold uppercase tracking-wider">Live Balance:</span>
-                                <span className="font-black text-[var(--foreground)] tabular-nums">
-                                    {providerBalances?.oneGame?.balance !== undefined 
-                                        ? `$${providerBalances.oneGame.balance.toFixed(2)} USD` 
-                                        : "---"}
-                                </span>
-                            </div>
+                            <span>1Game</span>
+                            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded font-semibold ${
+                                currentProvider === "1game" ? "bg-black/20 text-white" : "bg-[var(--foreground)]/5 text-[var(--muted)]"
+                            }`}>
+                                {providerBalances?.oneGame?.balance !== undefined ? `$${providerBalances.oneGame.balance.toFixed(2)}` : "---"}
+                            </span>
                         </button>
 
-                        {/* Bluebuff API Option */}
                         <button
                             type="button"
                             onClick={() => updateProvider("bluebuff")}
                             disabled={saving}
-                            className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden group ${
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
                                 currentProvider === "bluebuff"
-                                    ? "bg-cyan-500/10 border-cyan-500/50 shadow-lg shadow-cyan-500/5 ring-1 ring-cyan-500/30"
-                                    : "bg-[var(--foreground)]/[0.02] border-[var(--border)] hover:border-[var(--foreground)]/20"
+                                    ? "bg-cyan-500 text-white shadow-xs"
+                                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.04]"
                             }`}
                         >
-                            <div className="flex items-start justify-between gap-2 mb-2">
-                                <div>
-                                    <div className="text-xs font-black uppercase tracking-wider text-[var(--foreground)]">Bluebuff API</div>
-                                    <div className="text-[9px] text-[var(--muted)] font-medium mt-0.5">api.bluebuff.in (v2.0)</div>
-                                </div>
-                                <span className={`inline-flex items-center gap-1 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${
-                                    currentProvider === "bluebuff"
-                                        ? "bg-cyan-400 text-black font-black"
-                                        : "bg-[var(--foreground)]/10 text-[var(--muted)]"
-                                }`}>
-                                    {currentProvider === "bluebuff" ? "ACTIVE" : "SELECT"}
-                                </span>
-                            </div>
-
-                            <div className="pt-2 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px]">
-                                <span className="text-[var(--muted)] font-bold uppercase tracking-wider">Live Balance:</span>
-                                <span className="font-black text-[var(--foreground)] tabular-nums">
-                                    {providerBalances?.bluebuff?.balance !== undefined 
-                                        ? `$${providerBalances.bluebuff.balance.toFixed(2)} USD` 
-                                        : "---"}
-                                </span>
-                            </div>
+                            <span>Bluebuff</span>
+                            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded font-semibold ${
+                                currentProvider === "bluebuff" ? "bg-black/20 text-white" : "bg-[var(--foreground)]/5 text-[var(--muted)]"
+                            }`}>
+                                {providerBalances?.bluebuff?.balance !== undefined ? `$${providerBalances.bluebuff.balance.toFixed(2)}` : "---"}
+                            </span>
                         </button>
                     </div>
                 </div>
 
-                {/* MAINTENANCE MODE */}
-                <div className="p-6 md:p-8 flex items-center justify-between gap-6 hover:bg-[var(--foreground)]/[0.02] transition-colors">
-                    <div>
-                        <h3 className="text-xs font-black uppercase tracking-wide text-[var(--foreground)]">Maintenance Mode</h3>
-                        <p className="text-[10px] text-[var(--muted)]/60 mt-1 leading-relaxed max-w-sm">
-                            When enabled, users will see a maintenance message and cannot access the site.
-                            You can still access the admin panel.
+                {/* 2. Maintenance Mode */}
+                <div className="py-3 sm:py-3.5 flex items-center justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Maintenance Mode</h3>
+                        <p className="text-[11px] text-[var(--muted)] mt-0.5">
+                            Show maintenance screen to visitors while keeping admin panel accessible
                         </p>
                     </div>
 
-                    <button aria-label="button"
+                    <button aria-label="Toggle Maintenance Mode"
                         onClick={toggleMaintenance}
                         disabled={saving}
                         className={`
-              relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-300 ease-in-out focus:outline-none 
-              ${settings.maintenanceMode ? "bg-[var(--accent)] shadow-lg shadow-[var(--accent)]/30" : "bg-[var(--foreground)]/10 hover:bg-[var(--foreground)]/20"}
-              ${saving ? "opacity-50 cursor-not-allowed" : ""}
-            `}
+                            relative inline-flex h-5.5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-200 ease-in-out focus:outline-none 
+                            ${settings.maintenanceMode ? "bg-amber-500" : "bg-[var(--foreground)]/15 hover:bg-[var(--foreground)]/25"}
+                            ${saving ? "opacity-50 cursor-not-allowed" : ""}
+                        `}
                     >
                         <span
                             className={`
-                pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-300 ease-in-out
-                ${settings.maintenanceMode ? "translate-x-5" : "translate-x-0"}
-              `}
+                                pointer-events-none inline-block h-4.5 w-4.5 transform rounded-full bg-white shadow ring-0 transition-transform duration-200 ease-in-out
+                                ${settings.maintenanceMode ? "translate-x-4.5" : "translate-x-0"}
+                            `}
                         />
                     </button>
                 </div>
 
-                {/* DISABLE TAKING ORDERS */}
-                <div className="p-6 md:p-8 flex items-center justify-between gap-6 hover:bg-[var(--foreground)]/[0.02] transition-colors">
-                    <div>
-                        <h3 className="text-xs font-black uppercase tracking-wide text-[var(--foreground)]">Disable Taking Orders</h3>
-                        <p className="text-[10px] text-[var(--muted)]/60 mt-1 leading-relaxed max-w-sm">
-                            When enabled, users will see a message saying "Taking new orders is temporarily paused. Please try again later." when they attempt to checkout.
+                {/* 3. Disable Taking Orders */}
+                <div className="py-3 sm:py-3.5 flex items-center justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Disable Taking Orders</h3>
+                        <p className="text-[11px] text-[var(--muted)] mt-0.5">
+                            Temporarily pause new checkout purchases while catalog remains browsable
                         </p>
                     </div>
 
-                    <button aria-label="button"
+                    <button aria-label="Toggle Order Taking"
                         onClick={toggleOrdersDisabled}
                         disabled={saving}
                         className={`
-              relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-300 ease-in-out focus:outline-none 
-              ${settings.ordersDisabled ? "bg-rose-500 shadow-lg shadow-rose-500/30" : "bg-[var(--foreground)]/10 hover:bg-[var(--foreground)]/20"}
-              ${saving ? "opacity-50 cursor-not-allowed" : ""}
-            `}
+                            relative inline-flex h-5.5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-200 ease-in-out focus:outline-none 
+                            ${settings.ordersDisabled ? "bg-rose-500" : "bg-[var(--foreground)]/15 hover:bg-[var(--foreground)]/25"}
+                            ${saving ? "opacity-50 cursor-not-allowed" : ""}
+                        `}
                     >
                         <span
                             className={`
-                pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-300 ease-in-out
-                ${settings.ordersDisabled ? "translate-x-5" : "translate-x-0"}
-              `}
+                                pointer-events-none inline-block h-4.5 w-4.5 transform rounded-full bg-white shadow ring-0 transition-transform duration-200 ease-in-out
+                                ${settings.ordersDisabled ? "translate-x-4.5" : "translate-x-0"}
+                            `}
                         />
                     </button>
                 </div>
-
-                {message.text && (
-                    <div className={`p-4 md:p-6 flex items-center gap-3 text-xs font-bold tracking-wide uppercase ${message.type === "success" ? "text-emerald-500 bg-emerald-500/10" : "text-rose-500 bg-rose-500/10"}`}>
-                        {message.type === "success" ? <Icons.checkCircle size={16} /> : <Icons.alertCircle size={16} />}
-                        {message.text}
-                    </div>
-                )}
             </div>
         </div>
     );

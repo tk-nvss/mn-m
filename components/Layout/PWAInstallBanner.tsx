@@ -301,7 +301,7 @@ export default function PWAInstallBanner() {
       <div id="pwa-card" role="dialog" aria-label={updateAvailable ? "Update app" : "Install app"}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           {/* App icon */}
-          <div style={{ position: "relative", flexShrink: 0, width: 28, height: 28, borderRadius: "50%", overflow: "hidden", border: "1px solid var(--border)", background: "var(--background)" }}>
+          <div style={{ position: "relative", flexShrink: 0, width: 28, height: 28, borderRadius: "50%", overflow: "hidden", border: "1px solid rgba(255,255,255,0.15)", background: "#09090b" }}>
             <Image src="/pwa-icon.png" alt="MLBB Topup" width={28} height={28} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
             {updateAvailable && (
               <span style={{ position: "absolute", top: 1, right: 1, width: 6, height: 6, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 4px #22c55e" }} />
@@ -370,7 +370,7 @@ export default function PWAInstallBanner() {
               <div style={{ padding:"10px 20px 0" }}>
                 {/* App row */}
                 <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:16 }}>
-                  <div style={{ width:52, height:52, borderRadius:13, overflow:"hidden", border:"1px solid var(--border)", background:"var(--background)", flexShrink:0 }}>
+                  <div style={{ width:52, height:52, borderRadius:13, overflow:"hidden", border:"1px solid rgba(255,255,255,0.15)", background:"#09090b", flexShrink:0 }}>
                     <Image src="/pwa-icon.png" alt="MLBB Topup" width={52} height={52} style={{ objectFit:"cover", width:"100%", height:"100%" }} />
                   </div>
                   <div>

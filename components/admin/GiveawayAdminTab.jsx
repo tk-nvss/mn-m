@@ -6,7 +6,7 @@ import {
   FiPlay, FiSquare, FiRefreshCw, FiDownload, FiGift, FiX, FiEdit2,
 } from "react-icons/fi";
 import { StatusBadge, EmptyState, LoadingSpinner } from "@/components/common";
-import { Icons } from "@/components/icons";
+import { Gift, Sparkles, CheckCircle2, UserCheck, Trash2 } from "lucide-react";
 
 const TASK_TYPES = [
   { value: "mlbb",      label: "MLBB Verify",  icon: "🎮" },
@@ -25,7 +25,7 @@ export default function GiveawayAdminTab() {
   const [giveaways, setGiveaways]   = useState([]);
   const [loading, setLoading]       = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-  const [editTarget, setEditTarget]  = useState(null); // giveaway being edited
+  const [editTarget, setEditTarget]  = useState(null);
   const [selected, setSelected]      = useState(null);
   const [entries, setEntries]       = useState([]);
   const [entriesLoading, setEntriesLoading] = useState(false);
@@ -66,7 +66,6 @@ export default function GiveawayAdminTab() {
 
   const createGiveaway = async () => {
     if (editTarget) {
-      // EDIT mode
       const res = await fetch("/api/admin/giveaway", {
         method: "PATCH", headers: authHeaders(), body: JSON.stringify({ id: editTarget._id, ...form }),
       });
@@ -78,7 +77,6 @@ export default function GiveawayAdminTab() {
         fetchGiveaways();
       }
     } else {
-      // CREATE mode
       const res = await fetch("/api/admin/giveaway", {
         method: "POST", headers: authHeaders(), body: JSON.stringify(form),
       });
@@ -199,191 +197,197 @@ export default function GiveawayAdminTab() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3 pb-8 animate-in fade-in duration-300">
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[var(--border)]/50">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between sm:justify-start gap-3">
-            <h2 className="text-sm font-bold tracking-tight text-[var(--foreground)] uppercase truncate">Giveaway Manager</h2>
-            <button aria-label="button" onClick={fetchGiveaways} className="p-1.5 shrink-0 rounded border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-all active:scale-95">
-              <FiRefreshCw size={12} className={loading ? "animate-spin" : ""} />
-            </button>
+      <div className="flex items-center justify-between gap-3 pb-2 border-b border-[var(--border)]">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <h2 className="text-xs font-black tracking-wider text-[var(--foreground)] uppercase">Giveaway Manager</h2>
+            <span className="px-1.5 py-0.2 rounded-md bg-[var(--foreground)]/5 border border-[var(--border)] text-[9px] font-bold text-[var(--muted)]">
+              {giveaways?.length || 0}
+            </span>
           </div>
-          <p className="text-[10px] text-[var(--muted)] mt-0.5 font-mono truncate">Create and manage giveaways, view entries, pick winners</p>
-        </div>
-        <div>
-          <button aria-label="button" onClick={() => { setEditTarget(null); setForm({ title: "", description: "", prize: "", prizeCount: 1, status: "draft", startDate: "", endDate: "", tasks: [], maxEntries: 0 }); setShowCreate(true); }} className="w-full sm:w-auto flex items-center justify-center gap-1.5 text-[10px] font-bold bg-[var(--foreground)] text-[var(--background)] px-3 py-1.5 rounded-md transition-all hover:opacity-90 active:scale-95">
-            <FiPlus size={12} /> New Giveaway
+          <button aria-label="button" onClick={fetchGiveaways} className="w-6.5 h-6.5 flex items-center justify-center rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 transition-all cursor-pointer">
+            <FiRefreshCw size={11} className={loading ? "animate-spin" : ""} />
           </button>
         </div>
+
+        <button aria-label="button"
+          onClick={() => {
+            setEditTarget(null);
+            setForm({ title: "", description: "", prize: "", prizeCount: 1, status: "draft", startDate: "", endDate: "", tasks: [], maxEntries: 0 });
+            setShowCreate(true);
+          }}
+          className="h-7 px-2.5 rounded-lg bg-[var(--accent)] text-white text-[9.5px] font-black uppercase tracking-wider flex items-center gap-1 hover:bg-[var(--accent-hover)] transition-all cursor-pointer shadow-sm active:scale-95"
+        >
+          <FiPlus size={12} /> New Giveaway
+        </button>
       </div>
 
       {/* Giveaways list */}
       {loading ? (
-        <div className="flex items-center justify-center py-16">
+        <div className="flex items-center justify-center py-12">
           <LoadingSpinner size="lg" color="accent" />
         </div>
       ) : !giveaways.length ? (
         <EmptyState
-          icon={Icons.gift}
+          icon={Gift}
           title="No Giveaways Yet"
           description="Create your first giveaway to engage players!"
         />
       ) : (
         <div className="space-y-2">
           {giveaways.map(g => (
-            <div key={g._id} className={`rounded-xl border bg-[var(--background)] hover:bg-[var(--foreground)]/[0.01] transition-all overflow-hidden ${selected?._id === g._id ? "border-[var(--foreground)]/30" : "border-[var(--border)]"}`}>
-              <div className="p-3 sm:p-4 flex items-start sm:items-center gap-3 sm:gap-4 flex-col sm:flex-row">
-                <div className="flex items-center gap-3 w-full sm:w-auto flex-1 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-[var(--foreground)]/[0.03] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] shrink-0">
-                    <Icons.gift size={14} />
+            <div key={g._id} className={`rounded-xl border bg-[var(--card)] transition-all overflow-hidden ${selected?._id === g._id ? "border-[var(--accent)]" : "border-[var(--border)]"}`}>
+              <div className="p-2.5 sm:p-3 flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className="w-7 h-7 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
+                    <Gift size={13} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                      <p className="text-xs font-bold text-[var(--foreground)] truncate">{g.title}</p>
-                      <StatusBadge status={g.status} size="sm" />
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <p className="text-xs font-black text-[var(--foreground)] truncate leading-tight">{g.title}</p>
+                      <StatusBadge status={g.status} size="xs" />
                     </div>
-                    <p className="text-[9px] text-[var(--muted)] font-mono truncate">{g.prize} · {g.entryCount || 0} entries · {g.prizeCount} winner{g.prizeCount > 1 ? "s" : ""}</p>
+                    <p className="text-[8.5px] text-[var(--muted)] font-mono mt-0.5 truncate">
+                      {g.prize} · {g.entryCount || 0} entries · {g.prizeCount} winner{g.prizeCount > 1 ? "s" : ""}
+                    </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 shrink-0 w-full sm:w-auto justify-end">
+
+                <div className="flex items-center gap-1 shrink-0">
                   {g.status === "draft" && (
-                    <button aria-label="button" onClick={() => updateStatus(g._id, "live")} className="flex items-center gap-1 text-[9px] font-bold text-emerald-500 hover:bg-emerald-500/5 border border-[var(--border)] hover:border-emerald-500/30 px-2 py-1 rounded transition-colors">
-                      <FiPlay size={10} /> Go Live
+                    <button aria-label="button" onClick={() => updateStatus(g._id, "live")} className="px-2 py-1 rounded-md text-[8.5px] font-black uppercase text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors flex items-center gap-1 cursor-pointer">
+                      <FiPlay size={9} /> Go Live
                     </button>
                   )}
                   {g.status === "live" && (
-                    <button aria-label="button" onClick={() => updateStatus(g._id, "ended")} className="flex items-center gap-1 text-[9px] font-bold text-rose-500 hover:bg-rose-500/5 border border-[var(--border)] hover:border-rose-500/30 px-2 py-1 rounded transition-colors">
-                      <FiSquare size={10} /> End
+                    <button aria-label="button" onClick={() => updateStatus(g._id, "ended")} className="px-2 py-1 rounded-md text-[8.5px] font-black uppercase text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-colors flex items-center gap-1 cursor-pointer">
+                      <FiSquare size={9} /> End
                     </button>
                   )}
                   <button aria-label="button"
                     onClick={() => openEdit(g)}
-                    className="flex items-center gap-1 text-[9px] font-bold text-[var(--muted)] hover:text-blue-400 hover:bg-blue-400/5 border border-[var(--border)] hover:border-blue-400/30 px-2 py-1 rounded transition-colors"
+                    className="w-6.5 h-6.5 rounded-md bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors flex items-center justify-center cursor-pointer"
+                    title="Edit Giveaway"
                   >
-                    <FiEdit2 size={10} /> Edit
+                    <FiEdit2 size={11} />
                   </button>
                   <button aria-label="button"
                     onClick={() => deleteGiveaway(g._id, g.title)}
-                    className="flex items-center gap-1 text-[9px] font-bold text-[var(--muted)] hover:text-rose-500 hover:bg-rose-500/5 border border-[var(--border)] hover:border-rose-500/30 px-2 py-1 rounded transition-colors"
+                    className="w-6.5 h-6.5 rounded-md bg-rose-500/5 hover:bg-rose-500/15 text-rose-500 transition-colors flex items-center justify-center cursor-pointer"
+                    title="Delete Giveaway"
                   >
-                    <FiTrash2 size={10} /> Delete
+                    <FiTrash2 size={11} />
                   </button>
                   <button aria-label="button"
                     onClick={() => setSelected(selected?._id === g._id ? null : g)}
-                    className={`flex items-center gap-1 text-[9px] font-bold border px-2 py-1 rounded transition-colors ${selected?._id === g._id ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]" : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] border-[var(--border)]"}`}
+                    className={`h-6.5 px-2 rounded-md text-[8.5px] font-black uppercase flex items-center gap-1 transition-colors cursor-pointer border ${selected?._id === g._id ? "bg-[var(--accent)] text-white border-[var(--accent)]" : "bg-[var(--foreground)]/5 text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--foreground)]/10"}`}
                   >
-                    <FiUsers size={10} /> Entries
-                    {selected?._id === g._id ? <FiChevronUp size={10} /> : <FiChevronDown size={10} />}
+                    <FiUsers size={10} />
+                    <span>Entries</span>
+                    {selected?._id === g._id ? <FiChevronUp size={9} /> : <FiChevronDown size={9} />}
                   </button>
                 </div>
               </div>
 
               {/* Entries panel */}
               {selected?._id === g._id && (
-                <div className="border-t border-[var(--border)] bg-[var(--card)]/30">
+                <div className="border-t border-[var(--border)] bg-[var(--background)]">
 
                   {/* Winners picked result */}
                   {pickResult && (
-                    <div className="mx-4 mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
-                      <p className="text-xs font-black text-yellow-400 uppercase tracking-widest mb-2">🏆 Winners Picked!</p>
+                    <div className="m-2.5 p-2.5 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                      <p className="text-[10px] font-black text-yellow-400 uppercase tracking-wider mb-1">🏆 Winners Picked!</p>
                       {pickResult.map((w, i) => (
-                        <p key={i} className="text-sm text-white font-bold">{w.name || w.userId} — MLBB: {w.mlbbId}</p>
+                        <p key={i} className="text-xs text-[var(--foreground)] font-bold">{w.name || w.userId} — MLBB: {w.mlbbId}</p>
                       ))}
                     </div>
                   )}
 
                   {/* Pick winner controls */}
                   {g.status !== "draft" && (
-                    <div className="px-4 py-3 flex items-center gap-3 flex-wrap border-b border-[var(--border)]">
-                      <div className="flex items-center gap-2">
-                        <label className="text-[11px] text-[var(--muted)] font-semibold">Winners to pick:</label>
+                    <div className="px-3 py-2 flex items-center gap-2.5 flex-wrap border-b border-[var(--border)] bg-[var(--card)]">
+                      <div className="flex items-center gap-1.5">
+                        <label className="text-[8.5px] text-[var(--muted)] font-black uppercase">Pick Winners:</label>
                         <input
                           type="number" min={1} max={entries.length || 1} value={winnerCount}
                           onChange={e => setWinnerCount(Number(e.target.value))}
-                          className="w-16 bg-[var(--background)] border border-[var(--border)] rounded-lg px-2 py-1 text-xs text-[var(--foreground)] outline-none focus:border-yellow-500/50"
+                          className="w-12 h-6 bg-[var(--background)] border border-[var(--border)] rounded px-1.5 text-[10px] font-bold text-[var(--foreground)] outline-none"
                         />
                       </div>
                       <button aria-label="button"
                         onClick={pickWinner}
                         disabled={picking || !entries.length}
-                        className="flex items-center gap-1.5 text-[11px] font-black bg-yellow-500 text-black px-3 py-1.5 rounded-lg disabled:opacity-40 transition-opacity hover:opacity-90"
+                        className="h-6 px-2.5 rounded bg-yellow-500 text-black text-[8.5px] font-black uppercase flex items-center gap-1 hover:bg-yellow-400 disabled:opacity-40 transition-opacity cursor-pointer"
                       >
-                        <FiAward size={12} /> {picking ? "Picking..." : "Pick Winner"}
+                        <FiAward size={10} /> {picking ? "Picking..." : "Roll Winner"}
                       </button>
-                      <button aria-label="button" onClick={exportCSV} className="ml-auto flex items-center gap-1.5 text-[11px] font-bold text-[var(--muted)] hover:text-[var(--accent)] transition-colors">
-                        <FiDownload size={12} /> Export CSV
+                      <button aria-label="button" onClick={exportCSV} className="ml-auto h-6 px-2 rounded border border-[var(--border)] bg-[var(--foreground)]/5 text-[8.5px] font-bold text-[var(--muted)] hover:text-[var(--foreground)] transition-colors flex items-center gap-1 cursor-pointer">
+                        <FiDownload size={10} /> Export CSV
                       </button>
                     </div>
                   )}
 
                   {/* Entries table */}
                   {entriesLoading ? (
-                    <div className="py-8 flex justify-center">
-                      <div className="w-6 h-6 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin" />
+                    <div className="py-6 flex justify-center">
+                      <div className="w-5 h-5 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin" />
                     </div>
                   ) : !entries.length ? (
-                    <p className="text-center text-[12px] text-[var(--muted)] py-8">No entries yet</p>
+                    <p className="text-center text-[10px] text-[var(--muted)] py-6">No entries recorded yet</p>
                   ) : (
                     <div className="overflow-x-auto">
-                      <table className="w-full text-[12px]">
-                        <thead>
-                          <tr className="border-b border-[var(--border)]">
-                            {["#", "Name", "Email", "Phone", "MLBB ID", "Server", "Tasks", "Date", ""].map(h => (
-                              <th key={h} className="px-4 py-2.5 text-left text-[10px] font-black uppercase tracking-widest text-[var(--muted)]">{h}</th>
+                      <table className="w-full text-[10.5px]">
+                        <thead className="bg-[var(--foreground)]/[0.02] border-b border-[var(--border)] text-[var(--muted)] font-black uppercase tracking-wider text-[8px]">
+                          <tr>
+                            {["#", "Player", "Phone", "MLBB Info", "Tasks", "Date", "Action"].map(h => (
+                              <th key={h} className="px-3 py-2 text-left">{h}</th>
                             ))}
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-[var(--border)]">
                           {entries.map((e, i) => (
-                            <tr key={e._id} className={e.isWinner ? "bg-yellow-500/5" : ""}>
-                              <td className="px-4 py-2.5 text-[var(--muted)]">{i + 1}</td>
-                              <td className="px-4 py-2.5 font-bold text-[var(--foreground)] whitespace-nowrap">
-                                {e.isWinner && <span className="mr-1">🏆</span>}{e.name || "—"}
+                            <tr key={e._id} className={`hover:bg-[var(--foreground)]/[0.02] transition-colors ${e.isWinner ? "bg-yellow-500/5" : ""}`}>
+                              <td className="px-3 py-2 text-[var(--muted)] text-[9px]">{i + 1}</td>
+                              <td className="px-3 py-2 font-bold text-[var(--foreground)] whitespace-nowrap">
+                                <div className="flex flex-col">
+                                  <span className="text-[10.5px] font-bold flex items-center gap-1">
+                                    {e.isWinner && <span>🏆</span>}
+                                    {e.name || "—"}
+                                  </span>
+                                  <span className="text-[8px] text-[var(--muted)] font-normal">{e.email || "—"}</span>
+                                </div>
                               </td>
-                              <td className="px-4 py-2.5 text-[var(--muted)]">{e.email || "—"}</td>
-                              <td className="px-4 py-2.5 text-[var(--muted)]">{e.phone || "—"}</td>
-                              <td className="px-4 py-2.5 font-mono text-[var(--foreground)]">{e.mlbbId}</td>
-                              <td className="px-4 py-2.5 text-[var(--muted)]">{e.mlbbServer}</td>
-                              <td className="px-4 py-2.5 text-[var(--muted)] align-top">
-                                <div className="font-medium mb-1">
+                              <td className="px-3 py-2 text-[var(--muted)] font-mono text-[9.5px]">{e.phone || "—"}</td>
+                              <td className="px-3 py-2 font-mono text-[var(--foreground)]">
+                                <span className="font-bold text-[10px] text-[var(--accent)]">{e.mlbbId}</span>
+                                <span className="text-[8.5px] text-[var(--muted)] ml-1">({e.mlbbServer})</span>
+                              </td>
+                              <td className="px-3 py-2 text-[var(--muted)] align-middle">
+                                <span className="px-1.5 py-0.2 rounded bg-[var(--foreground)]/5 border border-[var(--border)] text-[8px] font-bold text-[var(--foreground)]">
                                   {Object.keys(e.taskData || {}).length} / {g.tasks?.length || 0}
-                                </div>
-                                <div className="flex flex-col gap-1.5 max-w-[200px]">
-                                  {g.tasks?.map((t, idx) => {
-                                    const val = e.taskData?.[idx];
-                                    if (val && typeof val === 'string' && t.inputLabel) {
-                                      return (
-                                        <div key={idx} className="text-[9px] flex flex-col gap-0.5">
-                                          <span className="text-[8px] text-[var(--muted)] uppercase tracking-wider truncate" title={t.inputLabel}>{t.inputLabel}</span>
-                                          <span className="bg-[var(--foreground)]/[0.03] border border-[var(--border)] px-1.5 py-1 rounded text-[var(--foreground)] break-all">{val}</span>
-                                        </div>
-                                      );
-                                    }
-                                    return null;
-                                  })}
-                                </div>
+                                </span>
                               </td>
-                              <td className="px-4 py-2.5 text-[var(--muted)] whitespace-nowrap">
-                                {new Date(e.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                              <td className="px-3 py-2 text-[var(--muted)] whitespace-nowrap text-[8.5px]">
+                                {new Date(e.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
                               </td>
-                              <td className="px-4 py-2.5 flex items-center gap-2 justify-end">
-                                <button aria-label="button" onClick={() => toggleVerify(e._id, e.isVerified)} className={`text-[9px] font-black px-1.5 py-0.5 rounded transition-all border ${e.isVerified ? 'text-green-400 border-green-500/50 bg-green-500/10 hover:bg-green-500/20' : 'text-[var(--muted)] border-[var(--border)] bg-[var(--background)] hover:border-[var(--foreground)]/50'}`}>
-                                  {e.isVerified ? "VERIFIED" : "VERIFY"}
-                                </button>
-                                {e.isWinner ? (
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-[9px] font-black text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 px-1.5 py-0.5 rounded">WINNER</span>
-                                    <button aria-label="button" onClick={() => revertWinner(e.userId)} className="text-[9px] font-black text-red-400 hover:text-red-500 border border-[var(--border)] hover:border-red-500/50 bg-[var(--background)] px-1.5 py-0.5 rounded transition-all">
+                              <td className="px-3 py-2">
+                                <div className="flex items-center gap-1 justify-end">
+                                  <button aria-label="button" onClick={() => toggleVerify(e._id, e.isVerified)} className={`text-[7.5px] font-black px-1.5 py-0.5 rounded transition-all border cursor-pointer ${e.isVerified ? 'text-green-400 border-green-500/40 bg-green-500/10' : 'text-[var(--muted)] border-[var(--border)] bg-[var(--foreground)]/5 hover:text-[var(--foreground)]'}`}>
+                                    {e.isVerified ? "VERIFIED" : "VERIFY"}
+                                  </button>
+                                  {e.isWinner ? (
+                                    <button aria-label="button" onClick={() => revertWinner(e.userId)} className="text-[7.5px] font-black text-rose-400 hover:text-rose-500 border border-rose-500/30 bg-rose-500/10 px-1.5 py-0.5 rounded transition-all cursor-pointer">
                                       REVERT
                                     </button>
-                                  </div>
-                                ) : (
-                                  <button aria-label="button" onClick={() => manuallyPickWinner(e.userId)} className="text-[9px] font-black text-[var(--muted)] hover:text-yellow-400 border border-[var(--border)] hover:border-yellow-500/50 bg-[var(--background)] px-1.5 py-0.5 rounded transition-all">
-                                    MAKE WINNER
-                                  </button>
-                                )}
+                                  ) : (
+                                    <button aria-label="button" onClick={() => manuallyPickWinner(e.userId)} className="text-[7.5px] font-black text-[var(--muted)] hover:text-yellow-400 border border-[var(--border)] bg-[var(--card)] px-1.5 py-0.5 rounded transition-all cursor-pointer">
+                                      WINNER
+                                    </button>
+                                  )}
+                                </div>
                               </td>
                             </tr>
                           ))}
@@ -398,89 +402,97 @@ export default function GiveawayAdminTab() {
         </div>
       )}
 
-      {/* Create Giveaway Modal */}
+      {/* Create / Edit Giveaway Modal (Shadowless & Flat) */}
       {showCreate && (
         <>
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9998]" onClick={() => setShowCreate(false)} />
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-            <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)] sticky top-0 bg-[var(--card)]">
-                <h3 className="text-sm font-extrabold text-[var(--foreground)]">{editTarget ? "Edit Giveaway" : "Create Giveaway"}</h3>
-                <button aria-label="button" onClick={() => { setShowCreate(false); setEditTarget(null); }} className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"><FiX size={18} /></button>
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4">
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] sticky top-0 bg-[var(--background)] z-10">
+                <h3 className="text-xs font-black uppercase tracking-wider text-[var(--foreground)]">{editTarget ? "Edit Giveaway" : "Create Giveaway"}</h3>
+                <button aria-label="button" onClick={() => { setShowCreate(false); setEditTarget(null); }} className="w-6 h-6 rounded-md bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-colors cursor-pointer">
+                  <FiX size={12} />
+                </button>
               </div>
 
-              <div className="p-5 space-y-4">
-                <Field label="Title" value={form.title} onChange={v => setForm(f => ({ ...f, title: v }))} placeholder="e.g. Weekly Passes Giveaway" />
-                <Field label="Prize" value={form.prize} onChange={v => setForm(f => ({ ...f, prize: v }))} placeholder="e.g. 5 Weekly Passes" />
-                <Field label="Description" value={form.description} onChange={v => setForm(f => ({ ...f, description: v }))} placeholder="Optional details..." />
+              <div className="p-4 space-y-2.5">
+                <Field label="Title" value={form.title} onChange={v => setForm(f => ({ ...f, title: v }))} placeholder="e.g. Weekly Diamond Pass Giveaway" />
+                <Field label="Prize" value={form.prize} onChange={v => setForm(f => ({ ...f, prize: v }))} placeholder="e.g. 5 Weekly Diamond Passes" />
+                
+                <div>
+                  <label className="text-[8px] font-black uppercase text-[var(--muted)] block mb-1">Description</label>
+                  <textarea
+                    value={form.description}
+                    onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                    placeholder="Short description..."
+                    className="w-full h-12 bg-[var(--card)] border border-[var(--border)] rounded-lg p-2 text-[11px] text-[var(--foreground)] outline-none focus:border-[var(--accent)] resize-none placeholder:text-[var(--muted)]/40 font-medium"
+                  />
+                </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-[11px] font-bold text-[var(--muted)] uppercase tracking-wider">Winners</label>
+                    <label className="text-[8px] font-black uppercase text-[var(--muted)] block mb-1">Winners</label>
                     <input type="number" min={1} value={form.prizeCount} onChange={e => setForm(f => ({ ...f, prizeCount: Number(e.target.value) }))}
-                      className="mt-1 w-full bg-[var(--background)] border border-[var(--border)] rounded-xl px-3 py-2 text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)]/50" />
+                      className="w-full h-8 bg-[var(--card)] border border-[var(--border)] rounded-lg px-2.5 text-[11px] font-bold text-[var(--foreground)] outline-none focus:border-[var(--accent)]" />
                   </div>
                   <div>
-                    <label className="text-[11px] font-bold text-[var(--muted)] uppercase tracking-wider">Status</label>
+                    <label className="text-[8px] font-black uppercase text-[var(--muted)] block mb-1">Status</label>
                     <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                      className="mt-1 w-full bg-[var(--background)] border border-[var(--border)] rounded-xl px-3 py-2 text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)]/50">
+                      className="w-full h-8 bg-[var(--card)] border border-[var(--border)] rounded-lg px-2 text-[11px] font-bold text-[var(--foreground)] outline-none focus:border-[var(--accent)]">
                       <option value="draft">Draft</option>
                       <option value="live">Live</option>
                     </select>
                   </div>
                   <div className="col-span-2">
-                    <label className="text-[11px] font-bold text-[var(--muted)] uppercase tracking-wider">Max Entries (0 = Unlimited)</label>
+                    <label className="text-[8px] font-black uppercase text-[var(--muted)] block mb-1">Max Entries (0 = Unlimited)</label>
                     <input type="number" min={0} value={form.maxEntries} onChange={e => setForm(f => ({ ...f, maxEntries: Number(e.target.value) }))}
-                      className="mt-1 w-full bg-[var(--background)] border border-[var(--border)] rounded-xl px-3 py-2 text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)]/50" />
+                      className="w-full h-8 bg-[var(--card)] border border-[var(--border)] rounded-lg px-2.5 text-[11px] font-bold text-[var(--foreground)] outline-none focus:border-[var(--accent)]" />
                   </div>
                 </div>
 
                 {/* Tasks builder */}
-                <div className="space-y-2">
+                <div className="space-y-1.5 pt-1">
                   <div className="flex items-center justify-between">
-                    <label className="text-[11px] font-black text-[var(--muted)] uppercase tracking-wider">Tasks</label>
-                    <button aria-label="button" onClick={addTask} className="text-[11px] font-bold text-[var(--accent)] flex items-center gap-1 hover:opacity-80 transition-opacity">
-                      <FiPlus size={11} /> Add Task
+                    <label className="text-[8px] font-black uppercase text-[var(--muted)]">Required Tasks</label>
+                    <button aria-label="button" onClick={addTask} className="text-[8px] font-black text-[var(--accent)] uppercase flex items-center gap-0.5 hover:underline cursor-pointer">
+                      <FiPlus size={10} /> Add Task
                     </button>
                   </div>
 
                   {form.tasks.length === 0 && (
-                    <p className="text-[11px] text-[var(--muted)] py-3 text-center border border-dashed border-[var(--border)] rounded-xl">No tasks added yet</p>
+                    <p className="text-[9px] text-[var(--muted)] py-2 text-center border border-dashed border-[var(--border)] rounded-lg">No custom tasks added</p>
                   )}
 
                   {form.tasks.map((task, i) => (
-                    <div key={i} className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-3 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-black text-[var(--muted)]">#{i + 1}</span>
+                    <div key={i} className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-2 space-y-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[8.5px] font-black text-[var(--muted)]">#{i + 1}</span>
                         <select value={task.type} onChange={e => updateTask(i, "type", e.target.value)}
-                          className="flex-1 bg-[var(--card)] border border-[var(--border)] rounded-lg px-2 py-1.5 text-xs text-[var(--foreground)] outline-none">
+                          className="flex-1 h-6 bg-[var(--background)] border border-[var(--border)] rounded px-1.5 text-[9.5px] text-[var(--foreground)] outline-none">
                           {TASK_TYPES.map(t => <option key={t.value} value={t.value}>{t.icon} {t.label}</option>)}
                         </select>
-                        <label className="flex items-center gap-1 text-[11px] text-[var(--muted)] cursor-pointer">
+                        <label className="flex items-center gap-1 text-[8.5px] font-bold text-[var(--muted)] cursor-pointer">
                           <input type="checkbox" checked={task.required} onChange={e => updateTask(i, "required", e.target.checked)} className="accent-[var(--accent)]" />
-                          Required
+                          Req
                         </label>
-                        <button aria-label="button" onClick={() => removeTask(i)} className="text-[var(--muted)] hover:text-red-400 transition-colors">
-                          <FiTrash2 size={13} />
+                        <button aria-label="button" onClick={() => removeTask(i)} className="text-[var(--muted)] hover:text-red-400 p-0.5 cursor-pointer">
+                          <FiTrash2 size={11} />
                         </button>
                       </div>
                       <input value={task.label} onChange={e => updateTask(i, "label", e.target.value)}
-                        placeholder="Task label (e.g. Subscribe to our YouTube channel)"
-                        className="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-[var(--foreground)] placeholder-[var(--muted)]/50 outline-none focus:border-[var(--accent)]/40" />
+                        placeholder="Task label (e.g. Subscribe to channel)"
+                        className="w-full h-6 bg-[var(--background)] border border-[var(--border)] rounded px-2 text-[10px] text-[var(--foreground)] placeholder-[var(--muted)]/40 outline-none" />
                       <input value={task.link} onChange={e => updateTask(i, "link", e.target.value)}
                         placeholder="Link URL (optional)"
-                        className="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-[var(--foreground)] placeholder-[var(--muted)]/50 outline-none focus:border-[var(--accent)]/40" />
-                      <input value={task.inputLabel} onChange={e => updateTask(i, "inputLabel", e.target.value)}
-                        placeholder="Input placeholder (if user needs to enter something)"
-                        className="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-[var(--foreground)] placeholder-[var(--muted)]/50 outline-none focus:border-[var(--accent)]/40" />
+                        className="w-full h-6 bg-[var(--background)] border border-[var(--border)] rounded px-2 text-[10px] text-[var(--foreground)] placeholder-[var(--muted)]/40 outline-none font-mono" />
                     </div>
                   ))}
                 </div>
 
-                <div className="flex gap-3 pt-2">
-                  <button aria-label="button" onClick={() => { setShowCreate(false); setEditTarget(null); }} className="flex-1 py-2.5 rounded-xl border border-[var(--border)] text-sm font-bold text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Cancel</button>
+                <div className="flex gap-2 pt-2 border-t border-[var(--border)]">
+                  <button aria-label="button" onClick={() => { setShowCreate(false); setEditTarget(null); }} className="flex-1 h-8 rounded-lg border border-[var(--border)] text-[9px] font-black uppercase text-[var(--muted)] hover:text-[var(--foreground)] transition-colors cursor-pointer">Cancel</button>
                   <button aria-label="button" onClick={createGiveaway} disabled={!form.title || !form.prize}
-                    className="flex-1 py-2.5 rounded-xl bg-[var(--accent)] text-white text-sm font-black disabled:opacity-40 hover:opacity-90 transition-opacity">
+                    className="flex-1 h-8 rounded-lg bg-[var(--accent)] text-white text-[9px] font-black uppercase disabled:opacity-40 hover:bg-[var(--accent-hover)] transition-colors cursor-pointer">
                     {editTarget ? "Save Changes" : "Create Giveaway"}
                   </button>
                 </div>
@@ -496,9 +508,9 @@ export default function GiveawayAdminTab() {
 function Field({ label, value, onChange, placeholder }) {
   return (
     <div>
-      <label className="text-[11px] font-bold text-[var(--muted)] uppercase tracking-wider">{label}</label>
+      <label className="text-[8px] font-black uppercase text-[var(--muted)] block mb-1">{label}</label>
       <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className="mt-1 w-full bg-[var(--background)] border border-[var(--border)] rounded-xl px-3 py-2 text-sm text-[var(--foreground)] placeholder-[var(--muted)]/40 outline-none focus:border-[var(--accent)]/50 transition-colors" />
+        className="w-full h-8 bg-[var(--card)] border border-[var(--border)] rounded-lg px-2.5 text-[11px] font-bold text-[var(--foreground)] placeholder-[var(--muted)]/40 outline-none focus:border-[var(--accent)] transition-colors" />
     </div>
   );
 }
