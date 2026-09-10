@@ -22,6 +22,13 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
+// Listen for SKIP_WAITING message from client to instantly activate update
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 // ==========================================
 // ACTIVATE: Prune stale cache versions
 // ==========================================

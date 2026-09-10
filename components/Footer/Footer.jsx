@@ -127,22 +127,22 @@ export default function Footer() {
             </a>
           </div>
 
-          {/* LINKS GRID - COMPACT */}
-          <div className="md:col-span-5 grid grid-cols-2 gap-3">
+          {/* LINKS GRID - SIMPLE & CLEAN */}
+          <div className="md:col-span-5 grid grid-cols-2 gap-4">
             {FOOTER_LINKS.map((section) => (
-              <div key={section.title} className="space-y-2">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-[1.5px] bg-[var(--accent)] rounded-full" />
-                  <h3 className="text-[8.5px] font-black uppercase tracking-[0.25em] text-[var(--accent)] italic">
+              <div key={section.title} className="space-y-2.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-[2px] bg-[var(--muted)]/60 rounded-full" />
+                  <h3 className="text-xs font-semibold tracking-wider text-[var(--foreground)] uppercase">
                     {section.title}
                   </h3>
                 </div>
-                <ul className="space-y-0.5">
+                <ul className="space-y-1.5">
                   {section.links.map((link) => (
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className="py-1 text-[9.5px] sm:text-[10px] font-bold uppercase italic tracking-wider text-[var(--muted)] hover:text-[var(--accent)] transition-all leading-none block"
+                        className="text-xs font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:translate-x-0.5 transition-all block"
                       >
                         {link.label}
                       </Link>
@@ -153,10 +153,10 @@ export default function Footer() {
             ))}
           </div>
 
-          {/* CONNECT & ACTION BLOCK - COMPACT & SHADOW-FREE */}
+          {/* CONNECT & ACTION BLOCK - SIMPLE & CLEAN */}
           <div className="md:col-span-3 flex flex-row md:flex-col justify-between items-end md:justify-start md:items-end gap-3 md:gap-4">
             <div className="space-y-2 md:text-right">
-              <h3 className="text-[8.5px] font-black uppercase tracking-[0.25em] text-[var(--accent)] italic">
+              <h3 className="text-xs font-semibold tracking-wider text-[var(--foreground)] uppercase">
                 Connect
               </h3>
               <div className="flex items-center justify-start md:justify-end gap-1.5">
@@ -169,9 +169,9 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="w-7.5 h-7.5 rounded-lg bg-[var(--card)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/40 transition-colors"
+                    className="w-8 h-8 rounded-lg bg-[var(--card)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--muted)]/40 transition-colors"
                   >
-                    <Icon size={13} />
+                    <Icon size={14} />
                   </motion.a>
                 ))}
               </div>
@@ -179,10 +179,10 @@ export default function Footer() {
 
             <button aria-label="button"
               onClick={scrollToTop}
-              className="mt-auto group flex items-center gap-2 text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)] hover:text-[var(--accent)] transition-all italic cursor-pointer"
+              className="mt-auto group flex items-center gap-2 text-xs font-medium text-[var(--muted)] hover:text-[var(--foreground)] transition-all cursor-pointer"
             >
               Back to Top
-              <div className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] flex items-center justify-center group-hover:border-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-black transition-all">
+              <div className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] flex items-center justify-center group-hover:border-[var(--border)] group-hover:bg-[var(--card)] group-hover:text-[var(--foreground)] transition-all">
                 <FiChevronUp size={14} />
               </div>
             </button>
@@ -190,28 +190,28 @@ export default function Footer() {
         </div>
 
         {/* BOTTOM STRIP - COMPACT */}
-        <div className="pt-3 border-t border-[var(--border)] flex flex-col md:flex-row items-center justify-between gap-2 opacity-70">
+        <div className="pt-3 border-t border-[var(--border)] flex flex-col md:flex-row items-center justify-between gap-2 opacity-80">
           <div className="flex items-center gap-2 group/india cursor-default">
             <div className="flex gap-0.5">
               <div className="w-1 h-2.5 bg-[#FF9933] rounded-full" />
               <div className="w-1 h-2.5 bg-white rounded-full" />
               <div className="w-1 h-2.5 bg-[#138808] rounded-full" />
             </div>
-            <span className="text-[8px] font-black uppercase tracking-[0.15em] italic text-[var(--foreground)]">
+            <span className="text-[9px] font-semibold uppercase tracking-wider text-[var(--foreground)]">
               MADE IN <span className="text-[#92400e] dark:text-[#fdba74]">IND</span><span className="text-[var(--foreground)]">I</span><span className="text-[#166534] dark:text-[#86efac]">A</span> 🇮🇳
             </span>
           </div>
 
           <div className="text-center md:text-right opacity-75">
-            <span className="text-[7.5px] font-black uppercase tracking-[0.15em] italic">
+            <span className="text-[9px] font-semibold uppercase tracking-wider text-[var(--muted)]">
               © {new Date().getFullYear()} {PARENT_DOMAIN.toUpperCase()} • ALL RIGHTS RESERVED
             </span>
           </div>
         </div>
 
         {/* 3RD PARTY SERVICE LEGAL DISCLAIMER */}
-        <div className="mt-2 pt-2 border-t border-[var(--border)]/20 text-center opacity-50">
-          <p className="text-[7.5px] font-medium text-[var(--muted)] leading-relaxed max-w-4xl mx-auto">
+        <div className="mt-2 pt-2 border-t border-[var(--border)]/20 text-center opacity-60">
+          <p className="text-[9px] font-normal text-[var(--muted)] leading-relaxed max-w-4xl mx-auto">
             {SITE_DOMAIN} is an independent 3rd-party service operated by {PARENT_DOMAIN}. Mobile Legends: Bang Bang and Moonton are registered trademarks of Shanghai Moonton Technology Co., Ltd. We are not officially affiliated with or endorsed by Moonton Games.
           </p>
         </div>

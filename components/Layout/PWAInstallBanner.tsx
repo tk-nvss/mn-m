@@ -10,27 +10,25 @@ declare global {
 }
 
 export default function PWAInstallBanner() {
-  const [visible, setVisible]         = useState(false);
-  const [dismissed, setDismissed]     = useState(false);
-  const [showModal, setShowModal]     = useState(false);
-  const [isIos, setIsIos]             = useState(false);
-  const [isChromeIos, setIsChromeIos] = useState(false);
-  const [browserType, setBrowserType] = useState<"chrome"|"samsung"|"firefox"|"other">("other");
+  const [visible, setVisible]                 = useState(false);
+  const [dismissed, setDismissed]             = useState(false);
+  const [showModal, setShowModal]             = useState(false);
+  const [isIos, setIsIos]                     = useState(false);
+  const [isChromeIos, setIsChromeIos]         = useState(false);
+  const [isStandalone, setIsStandalone]       = useState(false);
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [waitingWorker, setWaitingWorker]     = useState<ServiceWorker | null>(null);
+  const [isUpdating, setIsUpdating]           = useState(false);
+  const [browserType, setBrowserType]         = useState<"chrome"|"samsung"|"firefox"|"other">("other");
 
   useEffect(() => {
-    // 1. Check if user dismissed it in the last 24 hours
-    const dismissedUntil = localStorage.getItem("pwa_dismissed_until");
-    if (dismissedUntil && Date.now() < parseInt(dismissedUntil, 10)) {
-      return;
-    }
-
-    const isStandalone =
+    const standalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       (navigator as { standalone?: boolean }).standalone === true;
+    setIsStandalone(standalone);
 
-    if (isStandalone) {
+    if (standalone) {
       fetch("/api/pwa/track", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event: "active" }) }).catch(() => {});
-      return;
     }
 
     const ua  = navigator.userAgent;
@@ -42,7 +40,58 @@ export default function PWAInstallBanner() {
     else if (/Chrome|Chromium|CriOS/i.test(ua)) setBrowserType("chrome");
     else                                         setBrowserType("other");
 
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+    // Service Worker Update Listener
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").then((reg) => {
+        // If there's already a waiting worker
+        if (reg.waiting && navigator.serviceWorker.controller) {
+          const updateDismissed = localStorage.getItem("pwa_update_dismissed_until");
+          if (!updateDismissed || Date.now() >= parseInt(updateDismissed, 10)) {
+            setWaitingWorker(reg.waiting);
+            setUpdateAvailable(true);
+            setVisible(true);
+          }
+        }
+
+        // Detect new worker update
+        reg.addEventListener("updatefound", () => {
+          const newWorker = reg.installing;
+          if (newWorker) {
+            newWorker.addEventListener("statechange", () => {
+              if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                setWaitingWorker(newWorker);
+                setUpdateAvailable(true);
+                setVisible(true);
+              }
+            });
+          }
+        });
+
+        // Periodic check every 15 minutes
+        const updateInterval = setInterval(() => {
+          reg.update().catch(() => {});
+        }, 15 * 60 * 1000);
+
+        return () => clearInterval(updateInterval);
+      }).catch(() => {});
+
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
+      });
+    }
+
+    // If not standalone, check if install prompt was dismissed
+    if (!standalone) {
+      const dismissedUntil = localStorage.getItem("pwa_dismissed_until");
+      if (!dismissedUntil || Date.now() >= parseInt(dismissedUntil, 10)) {
+        const timer = setTimeout(() => setVisible(true), 2000);
+        return () => clearTimeout(timer);
+      }
+    }
 
     const lateHandler = (e: Event) => { e.preventDefault(); window.__pwaPrompt = e as never; };
     window.addEventListener("beforeinstallprompt", lateHandler);
@@ -50,11 +99,9 @@ export default function PWAInstallBanner() {
     const handleShowModal = () => setShowModal(true);
     window.addEventListener("show-pwa-modal", handleShowModal);
 
-    const timer = setTimeout(() => setVisible(true), 2000); // 2 second delay
     return () => { 
       window.removeEventListener("beforeinstallprompt", lateHandler); 
       window.removeEventListener("show-pwa-modal", handleShowModal);
-      clearTimeout(timer); 
     };
   }, []);
 
@@ -73,13 +120,30 @@ export default function PWAInstallBanner() {
     }
   };
 
-  const handleDismiss = () => {
-    setVisible(false); setDismissed(true);
-    // Hide for 24 hours (1 day = 86400000 ms)
-    localStorage.setItem("pwa_dismissed_until", (Date.now() + 86400000).toString());
-    fetch("/api/pwa/track", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event: "dismissed" }) }).catch(() => {});
+  const handleUpdate = () => {
+    setIsUpdating(true);
+    if (waitingWorker) {
+      waitingWorker.postMessage({ type: "SKIP_WAITING" });
+    } else {
+      window.location.reload();
+    }
   };
 
+  const handleDismiss = () => {
+    setVisible(false);
+    setDismissed(true);
+    if (updateAvailable) {
+      // Hide update prompt for 1 hour
+      localStorage.setItem("pwa_update_dismissed_until", (Date.now() + 3600000).toString());
+    } else {
+      // Hide install prompt for 24 hours
+      localStorage.setItem("pwa_dismissed_until", (Date.now() + 86400000).toString());
+      fetch("/api/pwa/track", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event: "dismissed" }) }).catch(() => {});
+    }
+  };
+
+  // If already installed (standalone) and no update available, don't show install banner
+  if (isStandalone && !updateAvailable) return null;
   if (!visible || dismissed) return null;
 
   return (
@@ -90,6 +154,7 @@ export default function PWAInstallBanner() {
         @keyframes pwa-float { 0% {transform:translateY(0px)} 50% {transform:translateY(-4px)} 100% {transform:translateY(0px)} }
         @keyframes pwa-sheet-in { from{opacity:0;transform:translateY(100%)} to{opacity:1;transform:translateY(0)} }
         @keyframes pwa-back-in  { from{opacity:0} to{opacity:1} }
+        @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
         #pwa-card {
           position: fixed;
@@ -233,27 +298,59 @@ export default function PWAInstallBanner() {
       `}</style>
 
       {/* ── Floating card ── */}
-      <div id="pwa-card" role="dialog" aria-label="Install app">
+      <div id="pwa-card" role="dialog" aria-label={updateAvailable ? "Update app" : "Install app"}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           {/* App icon */}
-          <div style={{ flexShrink: 0, width: 28, height: 28, borderRadius: "50%", overflow: "hidden", border: "1px solid var(--border)", background: "var(--background)" }}>
+          <div style={{ position: "relative", flexShrink: 0, width: 28, height: 28, borderRadius: "50%", overflow: "hidden", border: "1px solid var(--border)", background: "var(--background)" }}>
             <Image src="/pwa-icon.png" alt="MLBB Topup" width={28} height={28} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+            {updateAvailable && (
+              <span style={{ position: "absolute", top: 1, right: 1, width: 6, height: 6, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 4px #22c55e" }} />
+            )}
           </div>
           {/* Text */}
           <div style={{ minWidth: 0, display: "flex", flexDirection: "column", paddingRight: "4px" }}>
             <p style={{ margin: 0, fontWeight: 800, fontSize: "11px", color: "var(--foreground)", lineHeight: 1.2, letterSpacing: "-0.01em" }}>MLBB Topup</p>
-            <p style={{ margin: "1px 0 0", fontSize: "9px", color: "var(--muted)", fontWeight: 600 }}>Install App</p>
+            <p style={{ margin: "1px 0 0", fontSize: "9px", color: updateAvailable ? "var(--accent)" : "var(--muted)", fontWeight: 600 }}>
+              {updateAvailable ? "New Update Ready" : "Install App"}
+            </p>
           </div>
         </div>
         
         <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          {/* Install */}
-          <button aria-label="button" className="pwa-install-btn" id="pwa-install-btn" onClick={handleInstall}>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            Install
-          </button>
+          {updateAvailable ? (
+            /* Update */
+            <button
+              aria-label="Update app"
+              className="pwa-install-btn"
+              id="pwa-update-btn"
+              onClick={handleUpdate}
+              disabled={isUpdating}
+              style={{ opacity: isUpdating ? 0.7 : 1 }}
+            >
+              <svg
+                width="11"
+                height="11"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ animation: isUpdating ? "spin 1s linear infinite" : undefined }}
+              >
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+              {isUpdating ? "Updating..." : "Update"}
+            </button>
+          ) : (
+            /* Install */
+            <button aria-label="button" className="pwa-install-btn" id="pwa-install-btn" onClick={handleInstall}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Install
+            </button>
+          )}
           {/* Close */}
           <button className="pwa-close-btn" onClick={handleDismiss} aria-label="Dismiss">✕</button>
         </div>
