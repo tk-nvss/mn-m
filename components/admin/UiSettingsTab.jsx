@@ -10,7 +10,10 @@ import {
   RefreshCcw, 
   CheckCircle2, 
   AlertCircle,
-  Loader2
+  Loader2,
+  Smartphone,
+  Save,
+  ExternalLink
 } from "lucide-react";
 
 const UiSettingsTab = () => {
@@ -21,7 +24,12 @@ const UiSettingsTab = () => {
     showCustomWebBanner: false,
     showGamesWebBanner: false,
     showGiveawayBanner: true,
+    showPwaInstallBanner: true,
+    showPlayStoreBanner: true,
   });
+  const [playStoreUrlInput, setPlayStoreUrlInput] = useState("https://play.google.com/store/apps/details?id=in.bluebuff.games");
+  const [playStoreAppNameInput, setPlayStoreAppNameInput] = useState("Bluebuff Games");
+  const [savingUrl, setSavingUrl] = useState(false);
   const [loading, setLoading] = useState(true);
   const [savingKey, setSavingKey] = useState(null);
   const [message, setMessage] = useState({ type: "", text: "" });
@@ -40,11 +48,45 @@ const UiSettingsTab = () => {
       const data = await res.json();
       if (data.success) {
         setSettings(data.data);
+        if (data.data.playStoreUrl) setPlayStoreUrlInput(data.data.playStoreUrl);
+        if (data.data.playStoreAppName) setPlayStoreAppNameInput(data.data.playStoreAppName);
       }
     } catch (err) {
       console.error("Failed to fetch settings", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSavePlayStoreDetails = async () => {
+    try {
+      setSavingUrl(true);
+      setMessage({ type: "", text: "" });
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/admin/settings", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          playStoreUrl: playStoreUrlInput.trim(),
+          playStoreAppName: playStoreAppNameInput.trim(),
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setSettings(data.data);
+        setMessage({ type: "success", text: "Play Store details updated successfully." });
+      } else {
+        setMessage({ type: "error", text: data.message || "Failed to update Play Store details" });
+      }
+    } catch (err) {
+      console.error("Failed to update Play Store details", err);
+      setMessage({ type: "error", text: "Something went wrong" });
+    } finally {
+      setSavingUrl(false);
     }
   };
 
@@ -80,6 +122,8 @@ const UiSettingsTab = () => {
   };
 
   const formatTitle = (key) => {
+    if (key === "showPwaInstallBanner") return "MLBB Topup (PWA Floating Banner)";
+    if (key === "showPlayStoreBanner") return "Bluebuff Games (Play Store Floating Banner)";
     return key.replace(/^show/, "").replace(/([A-Z])/g, " $1").trim();
   };
 
@@ -131,6 +175,16 @@ const UiSettingsTab = () => {
         "showFlashSale",
         "showHomeQuickActions",
         "showEventsSection"
+      ]
+    },
+    {
+      title: "App Install Banners",
+      subtitle: "Floating install prompts for PWA and Google Play Store",
+      icon: <Smartphone size={15} className="text-sky-400" />,
+      accent: "#0ea5e9",
+      keys: [
+        "showPwaInstallBanner",
+        "showPlayStoreBanner"
       ]
     },
     {
@@ -205,26 +259,68 @@ const UiSettingsTab = () => {
                 const isSaving = savingKey === key;
 
                 return (
-                  <div 
-                    key={key} 
-                    className="px-3.5 sm:px-4 py-2.5 flex items-center justify-between gap-3 hover:bg-[var(--foreground)]/[0.01] transition-colors"
-                  >
-                    <span className="text-xs font-bold text-[var(--foreground)] truncate">
-                      {formatTitle(key)}
-                    </span>
-
-                    <button 
-                      aria-label={`Toggle ${formatTitle(key)}`}
-                      onClick={() => toggleBanner(key)}
-                      disabled={isSaving}
-                      className={`relative w-8 h-4 rounded-full transition-colors outline-none flex items-center px-0.5 shrink-0 ${
-                        isEnabled ? "bg-[var(--accent)]" : "bg-[var(--border)]"
-                      } ${isSaving ? "opacity-50 cursor-not-allowed" : ""}`}
+                  <div key={key} className="flex flex-col">
+                    <div 
+                      className="px-3.5 sm:px-4 py-2.5 flex items-center justify-between gap-3 hover:bg-[var(--foreground)]/[0.01] transition-colors"
                     >
-                      <div className={`w-3 h-3 bg-white rounded-full transition-all shadow-sm ${
-                        isEnabled ? "translate-x-4" : "translate-x-0"
-                      }`} />
-                    </button>
+                      <span className="text-xs font-bold text-[var(--foreground)] truncate">
+                        {formatTitle(key)}
+                      </span>
+
+                      <button 
+                        aria-label={`Toggle ${formatTitle(key)}`}
+                        onClick={() => toggleBanner(key)}
+                        disabled={isSaving}
+                        className={`relative w-8 h-4 rounded-full transition-colors outline-none flex items-center px-0.5 shrink-0 ${
+                          isEnabled ? "bg-[var(--accent)]" : "bg-[var(--border)]"
+                        } ${isSaving ? "opacity-50 cursor-not-allowed" : ""}`}
+                      >
+                        <div className={`w-3 h-3 bg-white rounded-full transition-all shadow-sm ${
+                          isEnabled ? "translate-x-4" : "translate-x-0"
+                        }`} />
+                      </button>
+                    </div>
+
+                    {key === "showPlayStoreBanner" && isEnabled && (
+                      <div className="px-3.5 sm:px-4 py-2.5 bg-[var(--foreground)]/[0.02] border-t border-[var(--border)] space-y-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <div className="flex-1">
+                            <label className="text-[9px] font-bold text-[var(--muted)] uppercase tracking-wider block mb-1">
+                              App Name
+                            </label>
+                            <input
+                              type="text"
+                              value={playStoreAppNameInput}
+                              onChange={(e) => setPlayStoreAppNameInput(e.target.value)}
+                              placeholder="Bluebuff Games"
+                              className="w-full text-xs px-2.5 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] focus:outline-none focus:border-[var(--accent)]"
+                            />
+                          </div>
+                          <div className="flex-[2]">
+                            <label className="text-[9px] font-bold text-[var(--muted)] uppercase tracking-wider block mb-1">
+                              Google Play URL
+                            </label>
+                            <div className="flex gap-1.5">
+                              <input
+                                type="url"
+                                value={playStoreUrlInput}
+                                onChange={(e) => setPlayStoreUrlInput(e.target.value)}
+                                placeholder="https://play.google.com/store/apps/details?id=in.bluebuff.games"
+                                className="flex-1 text-xs px-2.5 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] focus:outline-none focus:border-[var(--accent)]"
+                              />
+                              <button
+                                onClick={handleSavePlayStoreDetails}
+                                disabled={savingUrl}
+                                className="px-3 py-1.5 bg-[var(--accent)] text-black text-xs font-bold rounded-lg hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all shrink-0 flex items-center gap-1"
+                              >
+                                {savingUrl ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
+                                Save
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}

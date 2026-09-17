@@ -487,25 +487,32 @@ function BuyFlowContent() {
                   {/* PAYMENT METHOD SELECTION */}
                   <div
                     onClick={() => setPaymentMethod("upi")}
-                    className={`p-3.5 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between group
+                    className={`p-3.5 rounded-xl border-2 transition-all cursor-pointer flex flex-col gap-2.5 group
                       ${paymentMethod === "upi" ? "bg-[var(--background)] border-[var(--accent)] shadow-sm" : "bg-[var(--background)]/50 border-[var(--border)] hover:border-[var(--accent)]/30"}
                     `}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors
-                        ${paymentMethod === "upi" ? "bg-[var(--accent)] text-white" : "bg-[var(--background)] text-[var(--muted)]"}
-                      `}>
-                        <Icons.smartphone className="text-base" />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors
+                          ${paymentMethod === "upi" ? "bg-[var(--accent)] text-white" : "bg-[var(--background)] text-[var(--muted)]"}
+                        `}>
+                          <Icons.smartphone className="text-base" />
+                        </div>
+                        <div>
+                          <h4 className="font-black text-[var(--foreground)] uppercase tracking-tight text-xs sm:text-sm">UPI Gateway</h4>
+                          <p className="text-[8.5px] font-bold text-[var(--muted)] uppercase tracking-wider">PhonePe, Paytm, Other UPI Apps</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-black text-[var(--foreground)] uppercase tracking-tight text-xs sm:text-sm">UPI Gateway</h4>
-                        <p className="text-[8.5px] font-bold text-[var(--muted)] uppercase tracking-wider">GPay, PhonePe, Paytm</p>
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all
+                        ${paymentMethod === "upi" ? "bg-[var(--accent)] border-[var(--accent)] text-white" : "border-[var(--border)]"}
+                      `}>
+                        {paymentMethod === "upi" && <Icons.check className="text-[9px] stroke-[3]" />}
                       </div>
                     </div>
-                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all
-                      ${paymentMethod === "upi" ? "bg-[var(--accent)] border-[var(--accent)] text-white" : "border-[var(--border)]"}
-                    `}>
-                      {paymentMethod === "upi" && <Icons.check className="text-[9px] stroke-[3]" />}
+
+                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/25 text-[10px] sm:text-[10.5px] font-bold text-amber-400">
+                      <span className="shrink-0 text-xs">⚠️</span>
+                      <span>Avoid <strong>GPay</strong> for payment. Please try payment in a different app (PhonePe, Paytm, etc.).</span>
                     </div>
                   </div>
 

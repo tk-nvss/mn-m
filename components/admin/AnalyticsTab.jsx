@@ -1268,13 +1268,13 @@ export default function AnalyticsTab({ onNavigate }) {
                   })();
 
                   return (
-                    <div key={event.id} className="py-2 flex items-center justify-between gap-2 hover:bg-[var(--foreground)]/[0.015] px-1 rounded-lg transition-colors">
+                    <div key={event.id} className="py-2 flex items-center justify-between gap-2 hover:bg-[var(--foreground)]/[0.015] px-1 rounded-xl transition-colors">
                       <div className="flex items-center gap-2 min-w-0 flex-1">
-                        <span className={`p-1 rounded-md shrink-0 ${
-                          event.type === "order" ? "bg-emerald-500/10 text-emerald-500" :
-                          event.type === "wallet" ? "bg-amber-500/10 text-amber-400" :
-                          event.type === "user" ? "bg-purple-500/10 text-purple-400" :
-                          event.type === "pwa" ? "bg-cyan-500/10 text-cyan-400" : "bg-blue-500/10 text-blue-400"
+                        <span className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${
+                          event.type === "order" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
+                          event.type === "wallet" ? "bg-amber-500/10 text-amber-400 border-amber-500/20" :
+                          event.type === "user" ? "bg-purple-500/10 text-purple-400 border-purple-500/20" :
+                          event.type === "pwa" ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" : "bg-blue-500/10 text-blue-400 border-blue-500/20"
                         }`}>
                           {event.type === "order" ? <Trophy size={11} /> :
                            event.type === "wallet" ? <Wallet size={11} /> :
@@ -1283,22 +1283,22 @@ export default function AnalyticsTab({ onNavigate }) {
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="text-xs font-bold text-[var(--foreground)] truncate">{event.title}</span>
-                            <span className={`text-[8.5px] font-bold px-1 py-0.2 rounded border ${
-                              isSuccess ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" :
-                              isFailed ? "bg-rose-500/10 text-rose-500 border-rose-500/20" :
-                              "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                            <span className="text-xs font-bold text-[var(--foreground)] truncate tracking-tight">{event.title}</span>
+                            <span className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded border ${
+                              isSuccess ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
+                              isFailed ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
+                              "bg-amber-500/10 text-amber-400 border-amber-500/20"
                             }`}>
                               {event.statusText || event.status}
                             </span>
                           </div>
-                          <p className="text-[10px] text-[var(--muted)] truncate mt-0.5">{event.subtitle}</p>
+                          <p className="text-[10px] text-[var(--muted)] font-mono truncate mt-0.5">{event.subtitle}</p>
                         </div>
                       </div>
 
                       <div className="flex flex-col items-end shrink-0">
                         {event.amount !== null && event.amount !== undefined && (
-                          <span className={`text-xs sm:text-sm font-bold tabular-nums ${isFailed ? "text-rose-500" : "text-emerald-500"}`}>
+                          <span className={`text-xs font-black tabular-nums tracking-tight ${isFailed ? "text-rose-400" : "text-emerald-400"}`}>
                             {formatCurrency(event.amount)}
                           </span>
                         )}

@@ -28,6 +28,11 @@ export const getAppSettings = unstable_cache(
                     showHomeQuickActions: true,
                     showEventsSection: true,
                     showBottomNav: true,
+                    showPwaInstallBanner: true,
+                    showPlayStoreBanner: true,
+                    playStoreUrl: "https://play.google.com/store/apps/details?id=in.bluebuff.games",
+                    playStoreAppName: "Bluebuff Games",
+                    playStoreAppSubtext: "Google Play App",
                 };
             }
             return {
@@ -50,6 +55,11 @@ export const getAppSettings = unstable_cache(
                 showHomeQuickActions: settings.showHomeQuickActions !== false,
                 showEventsSection: settings.showEventsSection !== false,
                 showBottomNav: settings.showBottomNav !== false,
+                showPwaInstallBanner: settings.showPwaInstallBanner !== false,
+                showPlayStoreBanner: settings.showPlayStoreBanner !== false,
+                playStoreUrl: settings.playStoreUrl || "https://play.google.com/store/apps/details?id=in.bluebuff.games",
+                playStoreAppName: settings.playStoreAppName || "Bluebuff Games",
+                playStoreAppSubtext: settings.playStoreAppSubtext || "Google Play App",
             };
         } catch (error) {
             console.error("Error fetching app settings:", error);
@@ -73,6 +83,11 @@ export const getAppSettings = unstable_cache(
                 showHomeQuickActions: true,
                 showEventsSection: true,
                 showBottomNav: true,
+                showPwaInstallBanner: true,
+                showPlayStoreBanner: true,
+                playStoreUrl: "https://play.google.com/store/apps/details?id=in.bluebuff.games",
+                playStoreAppName: "Bluebuff Games",
+                playStoreAppSubtext: "Google Play App",
             };
         }
     },

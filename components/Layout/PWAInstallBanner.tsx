@@ -9,17 +9,33 @@ declare global {
   }
 }
 
-export default function PWAInstallBanner() {
-  const [visible, setVisible]                 = useState(false);
-  const [dismissed, setDismissed]             = useState(false);
-  const [showModal, setShowModal]             = useState(false);
-  const [isIos, setIsIos]                     = useState(false);
-  const [isChromeIos, setIsChromeIos]         = useState(false);
-  const [isStandalone, setIsStandalone]       = useState(false);
-  const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [waitingWorker, setWaitingWorker]     = useState<ServiceWorker | null>(null);
-  const [isUpdating, setIsUpdating]           = useState(false);
-  const [browserType, setBrowserType]         = useState<"chrome"|"samsung"|"firefox"|"other">("other");
+interface PWAInstallBannerProps {
+  showPwa?: boolean;
+  showPlayStore?: boolean;
+  playStoreUrl?: string;
+  playStoreAppName?: string;
+  playStoreAppSubtext?: string;
+}
+
+export default function PWAInstallBanner({
+  showPwa = true,
+  showPlayStore = true,
+  playStoreUrl = "https://play.google.com/store/apps/details?id=in.bluebuff.games",
+  playStoreAppName = "Bluebuff Games",
+  playStoreAppSubtext = "Google Play App",
+}: PWAInstallBannerProps) {
+  const [visible, setVisible]                         = useState(false);
+  const [dismissed, setDismissed]                     = useState(false);
+  const [playStoreVisible, setPlayStoreVisible]       = useState(false);
+  const [playStoreDismissed, setPlayStoreDismissed]   = useState(false);
+  const [showModal, setShowModal]                     = useState(false);
+  const [isIos, setIsIos]                             = useState(false);
+  const [isChromeIos, setIsChromeIos]                 = useState(false);
+  const [isStandalone, setIsStandalone]               = useState(false);
+  const [updateAvailable, setUpdateAvailable]         = useState(false);
+  const [waitingWorker, setWaitingWorker]             = useState<ServiceWorker | null>(null);
+  const [isUpdating, setIsUpdating]                   = useState(false);
+  const [browserType, setBrowserType]                 = useState<"chrome"|"samsung"|"firefox"|"other">("other");
 
   useEffect(() => {
     const standalone =
@@ -84,12 +100,21 @@ export default function PWAInstallBanner() {
       });
     }
 
-    // If not standalone, check if install prompt was dismissed
-    if (!standalone) {
+    // PWA banner display timing check
+    let pwaTimer: NodeJS.Timeout | null = null;
+    if (showPwa && !standalone) {
       const dismissedUntil = localStorage.getItem("pwa_dismissed_until");
       if (!dismissedUntil || Date.now() >= parseInt(dismissedUntil, 10)) {
-        const timer = setTimeout(() => setVisible(true), 2000);
-        return () => clearTimeout(timer);
+        pwaTimer = setTimeout(() => setVisible(true), 2000);
+      }
+    }
+
+    // Play Store banner display timing check
+    let psTimer: NodeJS.Timeout | null = null;
+    if (showPlayStore) {
+      const psDismissedUntil = localStorage.getItem("playstore_dismissed_until");
+      if (!psDismissedUntil || Date.now() >= parseInt(psDismissedUntil, 10)) {
+        psTimer = setTimeout(() => setPlayStoreVisible(true), 2000);
       }
     }
 
@@ -100,10 +125,12 @@ export default function PWAInstallBanner() {
     window.addEventListener("show-pwa-modal", handleShowModal);
 
     return () => { 
+      if (pwaTimer) clearTimeout(pwaTimer);
+      if (psTimer) clearTimeout(psTimer);
       window.removeEventListener("beforeinstallprompt", lateHandler); 
       window.removeEventListener("show-pwa-modal", handleShowModal);
     };
-  }, []);
+  }, [showPwa, showPlayStore]);
 
   const handleInstall = async () => {
     const prompt = window.__pwaPrompt;
@@ -142,9 +169,33 @@ export default function PWAInstallBanner() {
     }
   };
 
-  // If already installed (standalone) and no update available, don't show install banner
-  if (isStandalone && !updateAvailable) return null;
-  if (!visible || dismissed) return null;
+  const handleDismissPlayStore = () => {
+    setPlayStoreVisible(false);
+    setPlayStoreDismissed(true);
+    localStorage.setItem("playstore_dismissed_until", (Date.now() + 86400000).toString());
+    try {
+      fetch("/api/pwa/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ event: "playstore_dismissed" })
+      }).catch(() => {});
+    } catch { /* silent */ }
+  };
+
+  const handlePlayStoreClick = () => {
+    try {
+      fetch("/api/pwa/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ event: "playstore_clicked" })
+      }).catch(() => {});
+    } catch { /* silent */ }
+  };
+
+  const isPwaActive = showPwa && visible && !dismissed && (!isStandalone || updateAvailable);
+  const isPlayStoreActive = showPlayStore && playStoreVisible && !playStoreDismissed;
+
+  if (!isPwaActive && !isPlayStoreActive && !showModal) return null;
 
   return (
     <>
@@ -156,11 +207,28 @@ export default function PWAInstallBanner() {
         @keyframes pwa-back-in  { from{opacity:0} to{opacity:1} }
         @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
-        #pwa-card {
+        #pwa-banners-container {
           position: fixed;
           bottom: 24px;
           right: 24px;
           z-index: 99999;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 8px;
+          pointer-events: none;
+        }
+        @media(max-width:767px){ 
+          #pwa-banners-container {
+            bottom: 62px;
+            right: 12px;
+            left: auto;
+            max-width: fit-content;
+          } 
+        }
+
+        .pwa-floating-pill {
+          pointer-events: auto;
           animation: pwa-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
           border-radius: 9999px;
           padding: 5px 6px 5px 8px;
@@ -172,14 +240,6 @@ export default function PWAInstallBanner() {
           display: flex;
           align-items: center;
           gap: 8px;
-        }
-        @media(max-width:767px){ 
-          #pwa-card {
-            bottom: 62px;
-            right: 12px;
-            left: auto;
-            max-width: fit-content;
-          } 
         }
 
         .pwa-install-btn {
@@ -297,63 +357,129 @@ export default function PWAInstallBanner() {
         .pwa-ok-btn:hover { opacity: 0.9; }
       `}</style>
 
-      {/* ── Floating card ── */}
-      <div id="pwa-card" role="dialog" aria-label={updateAvailable ? "Update app" : "Install app"}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          {/* App icon */}
-          <div style={{ position: "relative", flexShrink: 0, width: 28, height: 28, borderRadius: "50%", overflow: "hidden", border: "1px solid rgba(255,255,255,0.15)", background: "#09090b" }}>
-            <Image src="/pwa-icon.png" alt="MLBB Topup" width={28} height={28} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
-            {updateAvailable && (
-              <span style={{ position: "absolute", top: 1, right: 1, width: 6, height: 6, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 4px #22c55e" }} />
-            )}
-          </div>
-          {/* Text */}
-          <div style={{ minWidth: 0, display: "flex", flexDirection: "column", paddingRight: "4px" }}>
-            <p style={{ margin: 0, fontWeight: 800, fontSize: "11px", color: "var(--foreground)", lineHeight: 1.2, letterSpacing: "-0.01em" }}>MLBB Topup</p>
-            <p style={{ margin: "1px 0 0", fontSize: "9px", color: updateAvailable ? "var(--accent)" : "var(--muted)", fontWeight: 600 }}>
-              {updateAvailable ? "New Update Ready" : "Install App"}
-            </p>
-          </div>
-        </div>
-        
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          {updateAvailable ? (
-            /* Update */
-            <button
-              aria-label="Update app"
-              className="pwa-install-btn"
-              id="pwa-update-btn"
-              onClick={handleUpdate}
-              disabled={isUpdating}
-              style={{ opacity: isUpdating ? 0.7 : 1 }}
-            >
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ animation: isUpdating ? "spin 1s linear infinite" : undefined }}
+      {/* ── Floating cards container ── */}
+      <div id="pwa-banners-container">
+        {/* ── Google Play Store Floating Card ── */}
+        {isPlayStoreActive && (
+          <div id="playstore-card" className="pwa-floating-pill" role="dialog" aria-label={`Install ${playStoreAppName} on Google Play`}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              {/* App icon + Playstore badge */}
+              <div style={{ position: "relative", flexShrink: 0, width: 28, height: 28 }}>
+                <div style={{ width: 28, height: 28, borderRadius: "50%", overflow: "hidden", border: "1px solid rgba(255,255,255,0.15)", background: "#09090b" }}>
+                  <Image src="/bluebuff-app-icon.png" alt={playStoreAppName} width={28} height={28} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+                </div>
+                {/* Play Store badge icon */}
+                <div
+                  title="Google Play"
+                  style={{
+                    position: "absolute",
+                    bottom: -2,
+                    right: -2,
+                    width: 13,
+                    height: 13,
+                    borderRadius: "50%",
+                    background: "#18181b",
+                    border: "1.5px solid var(--card)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.5)"
+                  }}
+                >
+                  <GooglePlayTriangleIcon size={8} />
+                </div>
+              </div>
+
+              {/* Text */}
+              <div style={{ minWidth: 0, display: "flex", flexDirection: "column", paddingRight: "4px" }}>
+                <p style={{ margin: 0, fontWeight: 800, fontSize: "11px", color: "var(--foreground)", lineHeight: 1.2, letterSpacing: "-0.01em" }}>
+                  {playStoreAppName}
+                </p>
+                <p style={{ margin: "1px 0 0", fontSize: "9px", color: "var(--muted)", fontWeight: 600 }}>
+                  {playStoreAppSubtext || "Google Play App"}
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+              <a
+                href={playStoreUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Install ${playStoreAppName} on Google Play`}
+                className="pwa-install-btn"
+                id="playstore-install-btn"
+                onClick={handlePlayStoreClick}
+                style={{ textDecoration: "none" }}
               >
-                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-              </svg>
-              {isUpdating ? "Updating..." : "Update"}
-            </button>
-          ) : (
-            /* Install */
-            <button aria-label="button" className="pwa-install-btn" id="pwa-install-btn" onClick={handleInstall}>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-              Install
-            </button>
-          )}
-          {/* Close */}
-          <button className="pwa-close-btn" onClick={handleDismiss} aria-label="Dismiss">✕</button>
-        </div>
+                <GooglePlayTriangleIcon size={10} />
+                Install
+              </a>
+              <button className="pwa-close-btn" onClick={handleDismissPlayStore} aria-label="Dismiss Play Store prompt">✕</button>
+            </div>
+          </div>
+        )}
+
+        {/* ── MLBB Topup PWA Floating Card ── */}
+        {isPwaActive && (
+          <div id="pwa-card" className="pwa-floating-pill" role="dialog" aria-label={updateAvailable ? "Update app" : "Install app"}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              {/* App icon */}
+              <div style={{ position: "relative", flexShrink: 0, width: 28, height: 28, borderRadius: "50%", overflow: "hidden", border: "1px solid rgba(255,255,255,0.15)", background: "#09090b" }}>
+                <Image src="/pwa-icon.png" alt="MLBB Topup" width={28} height={28} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+                {updateAvailable && (
+                  <span style={{ position: "absolute", top: 1, right: 1, width: 6, height: 6, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 4px #22c55e" }} />
+                )}
+              </div>
+              {/* Text */}
+              <div style={{ minWidth: 0, display: "flex", flexDirection: "column", paddingRight: "4px" }}>
+                <p style={{ margin: 0, fontWeight: 800, fontSize: "11px", color: "var(--foreground)", lineHeight: 1.2, letterSpacing: "-0.01em" }}>MLBB Topup</p>
+                <p style={{ margin: "1px 0 0", fontSize: "9px", color: updateAvailable ? "var(--accent)" : "var(--muted)", fontWeight: 600 }}>
+                  {updateAvailable ? "New Update Ready" : "Install App"}
+                </p>
+              </div>
+            </div>
+            
+            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+              {updateAvailable ? (
+                /* Update */
+                <button
+                  aria-label="Update app"
+                  className="pwa-install-btn"
+                  id="pwa-update-btn"
+                  onClick={handleUpdate}
+                  disabled={isUpdating}
+                  style={{ opacity: isUpdating ? 0.7 : 1 }}
+                >
+                  <svg
+                    width="11"
+                    height="11"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{ animation: isUpdating ? "spin 1s linear infinite" : undefined }}
+                  >
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                  </svg>
+                  {isUpdating ? "Updating..." : "Update"}
+                </button>
+              ) : (
+                /* Install */
+                <button aria-label="button" className="pwa-install-btn" id="pwa-install-btn" onClick={handleInstall}>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  Install
+                </button>
+              )}
+              {/* Close */}
+              <button className="pwa-close-btn" onClick={handleDismiss} aria-label="Dismiss">✕</button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── Install guide modal ── */}
@@ -434,5 +560,16 @@ function Step({ n, icon, text }: { n: number; icon: string; text: React.ReactNod
         <p style={{ margin:0, fontSize:13, color:"var(--foreground)", lineHeight:1.5 }}>{text}</p>
       </div>
     </div>
+  );
+}
+
+function GooglePlayTriangleIcon({ size = 10 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 512 512" fill="none" style={{ flexShrink: 0 }}>
+      <path fill="#00d3ff" d="M32.5 16.5C24.4 20.8 19 29.5 19 40.5v431c0 11 5.4 19.7 13.5 24l246.6-239.5L32.5 16.5z"/>
+      <path fill="#00e676" d="M372.4 186.2l-93.3 69.8L32.5 16.5c4.7-2.5 10.3-3.7 16.5-3.5 8.8.3 18.2 4.4 26 8.8l297.4 164.4z"/>
+      <path fill="#ff3d00" d="M372.4 325.8L75 490.2c-7.8 4.4-17.2 8.5-26 8.8-6.2.2-11.8-1-16.5-3.5l246.6-239.5 93.3 69.8z"/>
+      <path fill="#ffcc00" d="M461.3 235.5l-88.9-49.3-33.3 33.8 33.3 33.8 88.9-49.3c15.6-8.7 15.6-23 0-29z"/>
+    </svg>
   );
 }

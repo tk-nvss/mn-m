@@ -208,8 +208,12 @@ export default function ReviewAndPaymentStep({
                   <span className="font-bold text-sm">Pay with UPI</span>
                   {paymentMethod === "upi" && <Icons.check className="text-[var(--accent)]" />}
                 </div>
-                <div className="flex items-end gap-2">
-                  <span className="text-xs text-[var(--muted)] font-medium">Fast &amp; Easy</span>
+                <div className="flex items-end justify-between gap-2">
+                  <span className="text-xs text-[var(--muted)] font-medium">PhonePe, Paytm & others</span>
+                </div>
+                <div className="mt-2 flex items-center gap-1.5 px-2 py-1 rounded-lg bg-amber-500/10 border border-amber-500/25 text-[10px] font-bold text-amber-400">
+                  <span className="shrink-0 text-xs">⚠️</span>
+                  <span>Avoid <strong>GPay</strong>. Try payment in a different app.</span>
                 </div>
               </button>
             </div>

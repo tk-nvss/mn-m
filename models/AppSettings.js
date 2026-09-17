@@ -32,6 +32,20 @@ const AppSettingsSchema = new mongoose.Schema(
         showHomeQuickActions: { type: Boolean, default: true },
         showEventsSection: { type: Boolean, default: true },
         showBottomNav: { type: Boolean, default: true },
+        showPwaInstallBanner: { type: Boolean, default: true },
+        showPlayStoreBanner: { type: Boolean, default: true },
+        playStoreUrl: { 
+            type: String, 
+            default: "https://play.google.com/store/apps/details?id=in.bluebuff.games" 
+        },
+        playStoreAppName: { 
+            type: String, 
+            default: "Bluebuff Games" 
+        },
+        playStoreAppSubtext: { 
+            type: String, 
+            default: "Google Play App" 
+        },
         // We can add more settings here in the future
     },
     { timestamps: true }

@@ -233,7 +233,13 @@ export default async function RootLayout({
 
           <Footer />
           {settings.showBottomNav !== false && <BottomNav />}
-          <PWAInstallBanner />
+          <PWAInstallBanner 
+            showPwa={settings.showPwaInstallBanner}
+            showPlayStore={settings.showPlayStoreBanner}
+            playStoreUrl={settings.playStoreUrl}
+            playStoreAppName={settings.playStoreAppName}
+            playStoreAppSubtext={settings.playStoreAppSubtext}
+          />
           <NotificationPrompt />
       </body>
     </html>

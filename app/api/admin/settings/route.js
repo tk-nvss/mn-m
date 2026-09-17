@@ -102,6 +102,11 @@ export async function PATCH(req) {
         if (typeof body.showFlashSale === "boolean") settings.showFlashSale = body.showFlashSale;
         if (typeof body.showHomeQuickActions === "boolean") settings.showHomeQuickActions = body.showHomeQuickActions;
         if (typeof body.showBottomNav === "boolean") settings.showBottomNav = body.showBottomNav;
+        if (typeof body.showPwaInstallBanner === "boolean") settings.showPwaInstallBanner = body.showPwaInstallBanner;
+        if (typeof body.showPlayStoreBanner === "boolean") settings.showPlayStoreBanner = body.showPlayStoreBanner;
+        if (typeof body.playStoreUrl === "string") settings.playStoreUrl = body.playStoreUrl;
+        if (typeof body.playStoreAppName === "string") settings.playStoreAppName = body.playStoreAppName;
+        if (typeof body.playStoreAppSubtext === "string") settings.playStoreAppSubtext = body.playStoreAppSubtext;
 
         if (topupProvider && ["1game", "bluebuff"].includes(topupProvider)) {
             settings.topupProvider = topupProvider;
