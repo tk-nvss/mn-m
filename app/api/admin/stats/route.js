@@ -53,12 +53,19 @@ export async function GET(req) {
                     }
                 }
             ]),
-            // Transaction Aggregates grouped by time facets
+            // Transaction Aggregates grouped by time facets (filtered to startOfMonth)
             WalletTransaction.aggregate([
+                {
+                    $match: {
+                        status: "success",
+                        type: { $in: ["credit", "debit"] },
+                        createdAt: { $gte: startOfMonth }
+                    }
+                },
                 {
                     $facet: {
                         "deposits": [
-                            { $match: { type: "credit", status: "success" } },
+                            { $match: { type: "credit" } },
                             {
                                 $group: {
                                     _id: null,
@@ -69,7 +76,7 @@ export async function GET(req) {
                             }
                         ],
                         "usage": [
-                            { $match: { type: "debit", status: "success" } },
+                            { $match: { type: "debit" } },
                             {
                                 $group: {
                                     _id: null,

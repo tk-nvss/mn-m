@@ -60,6 +60,7 @@ OrderSchema.index({ createdAt: -1 });
 OrderSchema.index({ status: 1, createdAt: -1 });
 OrderSchema.index({ paymentStatus: 1, createdAt: -1 });
 OrderSchema.index({ topupStatus: 1, createdAt: -1 });
+OrderSchema.index({ status: 1, paymentStatus: 1, createdAt: -1 });
 OrderSchema.index({ platform: 1, createdAt: -1 });
 OrderSchema.index({ platform: 1, status: 1, createdAt: -1 });
 OrderSchema.index({ email: 1, status: 1, createdAt: -1 });

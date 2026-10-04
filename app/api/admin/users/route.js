@@ -31,8 +31,16 @@ export async function GET(req) {
 
     /* ================= QUERY ================= */
     /* ================= SINGLE OPTIMIZED AGGREGATION ================= */
-    const [statsResult, totalUsers, payingUsersFacet] = await Promise.all([
+    const [statsResult, totalUsers, allTimePayingUsers, payingUsersFacet] = await Promise.all([
       User.aggregate([
+        {
+          $match: {
+            $or: [
+              { lastLogin: { $gte: last30d } },
+              { createdAt: { $gte: last30d } }
+            ]
+          }
+        },
         {
           $facet: {
             "active": [
@@ -59,13 +67,14 @@ export async function GET(req) {
         }
       ]),
       User.countDocuments({}),
+      Order.distinct("email", { status: "success", email: { $exists: true, $ne: "" } }),
       Order.aggregate([
         {
-          $match: { status: "success", email: { $exists: true, $ne: "" } }
+          $match: { status: "success", email: { $exists: true, $ne: "" }, createdAt: { $gte: last30d } }
         },
         {
           $facet: {
-            "allTime": [
+            "month": [
               { $group: { _id: { $toLower: "$email" } } },
               { $count: "count" }
             ],
@@ -78,11 +87,6 @@ export async function GET(req) {
               { $match: { createdAt: { $gte: last7d } } },
               { $group: { _id: { $toLower: "$email" } } },
               { $count: "count" }
-            ],
-            "month": [
-              { $match: { createdAt: { $gte: last30d } } },
-              { $group: { _id: { $toLower: "$email" } } },
-              { $count: "count" }
             ]
           }
         }
@@ -92,7 +96,7 @@ export async function GET(req) {
     const stats = statsResult[0];
     const payingFacet = payingUsersFacet[0] || {};
     const payingStats = {
-      allTime: payingFacet.allTime?.[0]?.count || 0,
+      allTime: Array.isArray(allTimePayingUsers) ? allTimePayingUsers.length : 0,
       day: payingFacet.day?.[0]?.count || 0,
       week: payingFacet.week?.[0]?.count || 0,
       month: payingFacet.month?.[0]?.count || 0,

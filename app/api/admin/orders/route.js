@@ -91,9 +91,16 @@ export async function GET(req) {
       $lte: periodEndDate
     };
 
+    const earliestDate = periodStartDate < last30d ? periodStartDate : last30d;
+
     /* ================= SINGLE OPTIMIZED AGGREGATION ================= */
-    const [statsResult, totalOrders, repeatCustomerStats, periodBuyersAgg] = await Promise.all([
+    const [statsResult, totalOrders, allTimePlatformList, repeatCustomerStats, periodBuyersAgg] = await Promise.all([
       Order.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: earliestDate, $lte: periodEndDate }
+          }
+        },
         {
           $facet: {
             "selectedPeriod": [
@@ -233,21 +240,21 @@ export async function GET(req) {
                   pendingOrders: { $sum: { $cond: [{ $in: ["$status", ["pending", "PENDING", "processing"]] }, 1, 0] } },
                 }
               }
-            ],
-            "allTimePlatform": [
-              {
-                $group: {
-                  _id: { $toLower: { $ifNull: ["$platform", "web"] } },
-                  totalOrders: { $sum: 1 },
-                  revenue: { $sum: { $cond: [{ $eq: ["$status", "success"] }, "$price", 0] } },
-                  successOrders: { $sum: { $cond: [{ $eq: ["$status", "success"] }, 1, 0] } },
-                }
-              }
             ]
           }
         }
       ]),
       Order.countDocuments({}),
+      Order.aggregate([
+        {
+          $group: {
+            _id: { $toLower: { $ifNull: ["$platform", "web"] } },
+            totalOrders: { $sum: 1 },
+            revenue: { $sum: { $cond: [{ $eq: ["$status", "success"] }, "$price", 0] } },
+            successOrders: { $sum: { $cond: [{ $eq: ["$status", "success"] }, 1, 0] } },
+          }
+        }
+      ]),
       Order.aggregate([
         { $match: { email: { $exists: true, $ne: "" }, status: "success", createdAt: periodDateMatch } },
         { $group: { _id: { $toLower: "$email" }, orderCount: { $sum: 1 } } },
@@ -398,9 +405,8 @@ export async function GET(req) {
     const pwaEntry = platformList.find(p => p._id === "pwa") || { totalOrders: 0, revenue: 0, successOrders: 0, failedOrders: 0, pendingOrders: 0 };
     const webEntry = platformList.find(p => p._id === "web") || { totalOrders: 0, revenue: 0, successOrders: 0, failedOrders: 0, pendingOrders: 0 };
 
-    const allTimePlatformList = stats.allTimePlatform || [];
-    const allTimePwa = allTimePlatformList.find(p => p._id === "pwa") || { totalOrders: 0, revenue: 0, successOrders: 0 };
-    const allTimeWeb = allTimePlatformList.find(p => p._id === "web") || { totalOrders: 0, revenue: 0, successOrders: 0 };
+    const allTimePwa = (allTimePlatformList || []).find(p => p._id === "pwa") || { totalOrders: 0, revenue: 0, successOrders: 0 };
+    const allTimeWeb = (allTimePlatformList || []).find(p => p._id === "web") || { totalOrders: 0, revenue: 0, successOrders: 0 };
 
     const totalPeriodPlatformRevenue = (pwaEntry.revenue || 0) + (webEntry.revenue || 0);
     const totalPeriodPlatformOrders = (pwaEntry.totalOrders || 0) + (webEntry.totalOrders || 0);
