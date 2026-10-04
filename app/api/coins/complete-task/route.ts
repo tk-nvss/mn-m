@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import CoinTask from "@/models/CoinTask";
 import CoinTaskClaim from "@/models/CoinTaskClaim";
 import { verifyHmac } from "@/lib/hmac";
+import { generateTxId } from "@/utils/formatters";
 
 export async function POST(req: Request) {
   try {
@@ -106,7 +107,7 @@ export async function POST(req: Request) {
     }
 
     // Create a PENDING claim — awaits admin approval
-    const claimId = `CLAIM${Date.now()}${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+    const claimId = generateTxId("CLAIM");
     await CoinTaskClaim.create({
       claimId,
       userId,

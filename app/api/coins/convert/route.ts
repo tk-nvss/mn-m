@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import CoinTransaction from "@/models/CoinTransaction";
 import WalletTransaction from "@/models/WalletTransaction";
 import { verifyHmac } from "@/lib/hmac";
+import { createCoinTx } from "@/lib/coinService";
+import { generateTxId } from "@/utils/formatters";
 
 // Configuration: how many coins = ₹1
 const COINS_PER_RUPEE = 100;
@@ -100,14 +101,11 @@ export async function POST(req: Request) {
       });
     }
 
-    const refId = `CONVERT${Date.now()}${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+    const refId = generateTxId("CONVERT");
 
     // Log coin spend transaction
-    const coinTxId = `COINTX${Date.now()}${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-    await CoinTransaction.create({
-      transactionId: coinTxId,
-      userId: user.userId,
-      userObjectId: user._id,
+    await createCoinTx({
+      user,
       type: "spend",
       coins: coinsToConvert,
       balanceBefore: coinBalanceBefore,
@@ -119,7 +117,7 @@ export async function POST(req: Request) {
     });
 
     // Log wallet credit transaction
-    const walletTxId = `WALLET${Date.now()}${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+    const walletTxId = generateTxId("WALLET");
     await WalletTransaction.create({
       transactionId: walletTxId,
       userId: user.userId,

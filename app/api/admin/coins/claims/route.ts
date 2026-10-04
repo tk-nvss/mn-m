@@ -4,7 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import CoinTask from "@/models/CoinTask";
 import CoinTaskClaim from "@/models/CoinTaskClaim";
-import CoinTransaction from "@/models/CoinTransaction";
+import { createCoinTx } from "@/lib/coinService";
 
 // ── Auth Helper ──────────────────────────────────────────────────────────────
 async function requireAdmin(req: Request) {
@@ -158,11 +158,8 @@ export async function POST(req: Request) {
     );
 
     // Log coin transaction
-    const txId = `TASK${Date.now()}${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-    await CoinTransaction.create({
-      transactionId: txId,
-      userId: claim.userId,
-      userObjectId: user._id,
+    await createCoinTx({
+      user,
       type: "earn",
       coins: claim.coins,
       balanceBefore,

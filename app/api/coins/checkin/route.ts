@@ -2,9 +2,8 @@ import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import CoinTransaction from "@/models/CoinTransaction";
 import { verifyHmac } from "@/lib/hmac";
-import { generateTxId } from "@/utils/formatters";
+import { createCoinTx } from "@/lib/coinService";
 
 /**
  * 7-Day Streak Reward Table
@@ -118,11 +117,8 @@ export async function POST(req: Request) {
     }
 
     // ── Log transaction ──────────────────────────────────────────────────
-    const transactionId = generateTxId("CHECKIN");
-    await CoinTransaction.create({
-      transactionId,
-      userId: user.userId,
-      userObjectId: user._id,
+    await createCoinTx({
+      user,
       type: "earn",
       coins: coinsToAward,
       balanceBefore,

@@ -2,10 +2,9 @@ import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import CoinTransaction from "@/models/CoinTransaction";
 import { ADS_CONFIG } from "@/lib/adsConfig";
 import { verifyHmac } from "@/lib/hmac";
-import { generateTxId } from "@/utils/formatters";
+import { createCoinTx } from "@/lib/coinService";
 
 export async function POST(req: Request) {
   try {
@@ -86,11 +85,8 @@ export async function POST(req: Request) {
     const balanceBefore = balanceAfter - rewardCoins;
 
     // Log transaction
-    const transactionId = generateTxId("AD");
-    await CoinTransaction.create({
-      transactionId,
-      userId: user.userId,
-      userObjectId: user._id,
+    await createCoinTx({
+      user,
       type: "earn",
       coins: rewardCoins,
       balanceBefore,
