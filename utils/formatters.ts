@@ -286,3 +286,16 @@ export function formatRelativeTime(input: DateInput, fallback = "--"): string {
   const diffInYears = Math.floor(diffInDays / 365);
   return `${diffInYears}y ago`;
 }
+
+// ==========================================
+// 🆔 TRANSACTION ID GENERATOR
+// ==========================================
+
+/**
+ * Standardized transaction ID generator across the application.
+ * Format: {PREFIX}{Timestamp}{5-char Random Alphanumeric Uppercase}
+ * Example: generateTxId("CHECKIN") -> "CHECKIN1728000000000A1B2C"
+ */
+export const generateTxId = (prefix: string = ""): string =>
+  `${prefix}${Date.now()}${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+

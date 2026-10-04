@@ -5,6 +5,7 @@ import User from "@/models/User";
 import CoinTransaction from "@/models/CoinTransaction";
 import { ADS_CONFIG } from "@/lib/adsConfig";
 import { verifyHmac } from "@/lib/hmac";
+import { generateTxId } from "@/utils/formatters";
 
 export async function POST(req: Request) {
   try {
@@ -85,7 +86,7 @@ export async function POST(req: Request) {
     const balanceBefore = balanceAfter - rewardCoins;
 
     // Log transaction
-    const transactionId = `AD${Date.now()}${Math.random().toString(36).substring(2, 5).toUpperCase()}`;
+    const transactionId = generateTxId("AD");
     await CoinTransaction.create({
       transactionId,
       userId: user.userId,

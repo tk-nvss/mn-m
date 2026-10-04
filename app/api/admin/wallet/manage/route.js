@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import WalletTransaction from "@/models/WalletTransaction";
 import jwt from "jsonwebtoken";
+import { generateTxId } from "@/utils/formatters";
 
 export async function POST(req) {
     try {
@@ -69,7 +70,7 @@ export async function POST(req) {
 
         /* ================= CREATE TRANSACTION ================= */
         await WalletTransaction.create({
-            transactionId: `ADM_TXN_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+            transactionId: generateTxId("ADM_TXN_"),
             userId: user.userId,
             userObjectId: user._id,
             type: action === "add" ? "credit" : "debit",

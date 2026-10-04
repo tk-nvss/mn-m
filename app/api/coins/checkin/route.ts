@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import CoinTransaction from "@/models/CoinTransaction";
 import { verifyHmac } from "@/lib/hmac";
+import { generateTxId } from "@/utils/formatters";
 
 /**
  * 7-Day Streak Reward Table
@@ -117,7 +118,7 @@ export async function POST(req: Request) {
     }
 
     // ── Log transaction ──────────────────────────────────────────────────
-    const transactionId = `CHECKIN${Date.now()}${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+    const transactionId = generateTxId("CHECKIN");
     await CoinTransaction.create({
       transactionId,
       userId: user.userId,

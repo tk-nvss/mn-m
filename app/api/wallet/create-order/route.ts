@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import WalletTransaction from "@/models/WalletTransaction";
+import { generateTxId } from "@/utils/formatters";
 
 export async function POST(req: Request) {
   try {
@@ -96,7 +97,7 @@ export async function POST(req: Request) {
     }
 
     // ============ CREATE ORDER ============
-    const orderId = "WALLET" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 7).toUpperCase();
+    const orderId = generateTxId("WALLET");
 
     const formData = new URLSearchParams();
     // Use email instead of phone for payment gateway
