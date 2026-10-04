@@ -13,7 +13,12 @@ export async function GET(req) {
       return Response.json({ message: "Unauthorized" }, { status: 401 });
 
     const token = auth.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (jwtErr) {
+      return Response.json({ message: "Invalid or expired token" }, { status: 401 });
+    }
 
     if (decoded.userType !== "owner")
       return Response.json({ message: "Forbidden" }, { status: 403 });
