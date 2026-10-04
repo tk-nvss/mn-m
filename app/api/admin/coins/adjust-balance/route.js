@@ -1,7 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import CoinTransaction from "@/models/CoinTransaction";
 import jwt from "jsonwebtoken";
+import { createCoinTx } from "@/lib/coinService";
 
 export async function POST(req) {
     try {
@@ -52,26 +52,28 @@ export async function POST(req) {
         const currentBalance = user.coins || 0;
         const updateAmount = action === "add" ? numAmount : -numAmount;
 
-        // Prevent negative balance if removing
-        if (action === "remove" && currentBalance < numAmount) {
-            return Response.json(
-                { success: false, message: "Insufficient coins to remove" },
-                { status: 400 }
-            );
+        /* ================= UPDATE COINS ATOMICALLY ================= */
+        const queryFilter = { _id: user._id };
+        if (action === "remove") {
+            queryFilter.coins = { $gte: numAmount };
         }
 
-        /* ================= UPDATE COINS ================= */
         const updatedUser = await User.findOneAndUpdate(
-            { _id: user._id },
+            queryFilter,
             { $inc: { coins: updateAmount } },
             { new: true }
         );
 
+        if (!updatedUser) {
+            return Response.json(
+                { success: false, message: "Insufficient coins to remove (concurrent modification)" },
+                { status: 400 }
+            );
+        }
+
         /* ================= CREATE TRANSACTION ================= */
-        await CoinTransaction.create({
-            transactionId: `ADM_COIN_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
-            userId: user.userId,
-            userObjectId: user._id,
+        await createCoinTx({
+            user,
             type: action === "add" ? "earn" : "spend",
             coins: numAmount,
             balanceBefore: currentBalance,

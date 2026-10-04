@@ -53,20 +53,24 @@ export async function POST(req) {
         const currentBalance = user.wallet || 0;
         const updateAmount = action === "add" ? numAmount : -numAmount;
 
-        // Prevent negative balance if removing
-        if (action === "remove" && currentBalance < numAmount) {
-            return Response.json(
-                { success: false, message: "Insufficient balance to remove" },
-                { status: 400 }
-            );
+        /* ================= UPDATE WALLET ATOMICALLY ================= */
+        const queryFilter = { _id: user._id };
+        if (action === "remove") {
+            queryFilter.wallet = { $gte: numAmount };
         }
 
-        /* ================= UPDATE WALLET ================= */
         const updatedUser = await User.findOneAndUpdate(
-            { _id: user._id },
+            queryFilter,
             { $inc: { wallet: updateAmount } },
             { new: true }
         );
+
+        if (!updatedUser) {
+            return Response.json(
+                { success: false, message: "Insufficient balance to remove (concurrent modification)" },
+                { status: 400 }
+            );
+        }
 
         /* ================= CREATE TRANSACTION ================= */
         await WalletTransaction.create({

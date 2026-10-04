@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import CoinTransaction from "@/models/CoinTransaction";
 import { verifyHmac } from "@/lib/hmac";
+import { createCoinTx } from "@/lib/coinService";
 
 export async function POST(req: Request) {
   try {
@@ -100,11 +100,16 @@ export async function POST(req: Request) {
 
     // ── Atomic DB update ─────────────────────────────────────────────────
     try {
+      const updateFilter: any = { 
+        _id: userId,
+        lastGameSpin: user.lastGameSpin // Fails if another concurrent request updated it
+      };
+      if (actualOutcome < 0) {
+        updateFilter.coins = { $gte: Math.abs(actualOutcome) };
+      }
+
       const updatedUser = await User.findOneAndUpdate(
-        { 
-          _id: userId,
-          lastGameSpin: user.lastGameSpin // Fails if another concurrent request updated it
-        },
+        updateFilter,
         {
           $inc: { coins: actualOutcome },
           $set: { lastGameSpin: now },
@@ -113,7 +118,7 @@ export async function POST(req: Request) {
       );
       
       if (!updatedUser) {
-         return NextResponse.json({ success: false, message: "Concurrent request detected. Please wait before spinning again." }, { status: 429 });
+         return NextResponse.json({ success: false, message: "Concurrent request detected or insufficient coins." }, { status: 429 });
       }
     } catch (dbErr) {
       console.error("[api/coins/game/spin] DB Update Error:", dbErr);
@@ -123,11 +128,8 @@ export async function POST(req: Request) {
     if (actualOutcome !== 0) {
       try {
         // ── Log transaction ──────────────────────────────────────────────────
-        const transactionId = `GAME${Date.now()}${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-        await CoinTransaction.create({
-          transactionId,
-          userId: user.userId,
-          userObjectId: user._id,
+        await createCoinTx({
+          user,
           type: actualOutcome > 0 ? "earn" : "spend",
           coins: Math.abs(actualOutcome),
           balanceBefore,
@@ -138,8 +140,6 @@ export async function POST(req: Request) {
         });
       } catch (txErr) {
         console.error("[api/coins/game/spin] Transaction Log Error:", txErr);
-        // We don't throw here to avoid failing the whole request if only logging fails, 
-        // but since coins were already updated, it's better to log.
       }
     }
 
