@@ -22,16 +22,9 @@ export async function GET(req) {
     // 🔎 Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // 👤 Update activity and fetch user
+    // 👤 Read user efficiently without unconditional write
     const ip = req.headers.get("x-forwarded-for") || "unknown";
-    const user = await User.findByIdAndUpdate(
-      decoded.userId,
-      {
-        lastLogin: new Date(),
-        lastLoginIp: ip
-      },
-      { new: true }
-    ).select("-password -__v");
+    const user = await User.findById(decoded.userId).select("-password -__v");
 
     if (!user) {
       return NextResponse.json(
@@ -50,12 +43,26 @@ export async function GET(req) {
     }
 
     // Check membership expiry
+    let needsSave = false;
     if ((user.userType === "member" || user.userType === "admin") && user.membershipExpiry) {
       if (new Date() > new Date(user.membershipExpiry)) {
         user.userType = "user";
         user.membershipExpiry = null;
-        await user.save();
+        needsSave = true;
       }
+    }
+
+    // Throttle lastLogin update: only update if older than 5 minutes (or never set)
+    const now = new Date();
+    const FIVE_MINUTES_MS = 5 * 60 * 1000;
+    if (!user.lastLogin || (now.getTime() - new Date(user.lastLogin).getTime() > FIVE_MINUTES_MS)) {
+      user.lastLogin = now;
+      user.lastLoginIp = ip;
+      needsSave = true;
+    }
+
+    if (needsSave) {
+      await user.save();
     }
 
     return NextResponse.json({
