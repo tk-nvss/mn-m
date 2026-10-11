@@ -3,115 +3,152 @@
 import { motion } from "framer-motion";
 import { Icons } from "@/components/icons";
 
+import { FaWhatsapp } from "react-icons/fa";
+import Link from "next/link";
+
 const INSTAGRAM_URL = "https://www.instagram.com/mlbbtopup.in";
 const TWITTER_URL = "https://x.com/tk_dev_";
-const MAPS_EMBED_URL = "https://www.google.com/maps?q=Bhubaneswar,Odisha&output=embed";
+const MAPS_EMBED_URL = "https://www.google.com/maps?q=Bengaluru,Karnataka,India&output=embed";
 
 const SOCIAL_LINKS = [
-  { icon: Icons.instagram, link: INSTAGRAM_URL, label: "INSTAGRAM" },
-  { icon: Icons.twitter, link: TWITTER_URL, label: "TWITTER" },
+  { icon: Icons.instagram, link: INSTAGRAM_URL, label: "Instagram" },
+  { icon: Icons.twitter, link: TWITTER_URL, label: "Twitter" },
 ];
 
 export default function ContactPage() {
+  const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@bluebuff.in";
+  const whatsappNumber = process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP || "";
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hello,%20I%20need%20help%20with%20my%20order`;
+
   return (
-    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] selection:bg-[var(--accent)]/30 pb-32 transition-colors duration-300 px-6">
+    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pb-24 pt-20 sm:pt-24 px-4 sm:px-6 relative overflow-hidden">
+      <div className="max-w-3xl mx-auto space-y-6 relative z-10">
 
-      <div className="max-w-4xl mx-auto pt-16 md:pt-24 relative z-10">
-
-        {/* HEADER - SIMPLER */}
+        {/* HEADER */}
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
+          transition={{ duration: 0.4 }}
+          className="space-y-1.5"
         >
-          <h1 className="text-4xl md:text-6xl font-[900] italic tracking-tighter uppercase leading-none mb-2">
-            CONTACT <span className="text-[var(--accent)]">SUPPORT</span>
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 text-[9px] font-black uppercase tracking-widest">
+            <Icons.mail size={11} />
+            <span>Support</span>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[var(--foreground)]">
+            Contact <span className="text-[var(--accent)]">Support</span>
           </h1>
-          <p className="text-[var(--muted)] text-[10px] font-black uppercase tracking-[0.3em] opacity-40 italic">
-            Get In Touch
+
+          <p className="text-xs text-[var(--muted)] leading-relaxed">
+            Need help with a recharge or have a query? Reach out directly and our team will assist you.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-          {/* Info Side */}
-          <div className="space-y-4">
-            {/* Email Card */}
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="p-8 rounded-3xl bg-[var(--card)]/40 border border-[var(--border)] group hover:border-[var(--accent)]/30 transition-all"
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-[var(--background)] border border-[var(--border)] flex items-center justify-center text-[var(--accent)]/60 group-hover:text-[var(--accent)] group-hover:bg-[var(--accent)]/10 transition-colors">
-                  <Icons.mail size={16} />
-                </div>
-                <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted)] opacity-60">Direct Email</h2>
-              </div>
-              <div className="flex items-center gap-3">
-                <Icons.mail className="text-xl text-[#0ea5e9]" />
-                <a
-                  href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_EMAIL}`}
-                  className="inline-flex items-center gap-2 text-xl md:text-2xl font-[900] italic uppercase tracking-tighter text-[var(--foreground)] hover:text-[#38bdf8] transition-colors break-all"
-                >
-                  {process.env.NEXT_PUBLIC_SUPPORT_EMAIL}
-                </a>
-              </div>
-            </motion.div>
-
-            {/* Social Bar */}
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-              className="p-8 rounded-3xl bg-[var(--card)]/40 border border-[var(--border)] group hover:border-[var(--accent)]/30 transition-all"
-            >
-              <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted)] opacity-60 mb-6">Find Us On</h2>
-              <div className="flex flex-wrap gap-3">
-                {SOCIAL_LINKS.map((social, i) => (
-                  <a
-                    key={i}
-                    href={social.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-[var(--background)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/40 transition-all group/link"
-                  >
-                    <social.icon size={14} />
-                    <span className="text-[9px] font-black uppercase tracking-widest italic">{social.label}</span>
-                  </a>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Map Side - Cleaner */}
+        {/* DIRECT ACTION CARDS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* WhatsApp Card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="rounded-[32px] overflow-hidden border border-[var(--border)] relative bg-[var(--card)] min-h-[300px]"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="p-4 rounded-2xl bg-[var(--card)]/40 border border-[var(--border)] flex flex-col justify-between gap-3 group hover:border-emerald-500/40 transition-all"
           >
-            <iframe
-              title="Bhubaneswar Location"
-              src={MAPS_EMBED_URL}
-              width="100%"
-              height="100%"
-              style={{ border: 0, filter: 'grayscale(1) contrast(1.2) opacity(0.5)' }}
-              allowFullScreen
-              loading="lazy"
-            />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                <FaWhatsapp size={20} />
+              </div>
+              <div>
+                <span className="text-[9px] font-black uppercase tracking-wider text-emerald-500 block">Instant Chat</span>
+                <h3 className="text-sm font-bold text-[var(--foreground)]">WhatsApp Support</h3>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-[var(--muted)] leading-snug">
+              Fastest response for payment status and order issues.
+            </p>
+
+            <Link
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 !text-white text-xs font-black uppercase tracking-wider transition-all active:scale-95 shadow-sm"
+            >
+              <FaWhatsapp size={14} className="text-white" />
+              <span>Chat Now</span>
+            </Link>
+          </motion.div>
+
+          {/* Email Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="p-4 rounded-2xl bg-[var(--card)]/40 border border-[var(--border)] flex flex-col justify-between gap-3 group hover:border-[var(--accent)]/40 transition-all"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 flex items-center justify-center shrink-0">
+                <Icons.mail size={18} />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[9px] font-black uppercase tracking-wider text-[var(--accent)] block">Email Support</span>
+                <h3 className="text-sm font-bold text-[var(--foreground)] truncate">Direct Email</h3>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-[var(--muted)] leading-snug break-all">
+              {supportEmail}
+            </p>
+
+            <a
+              href={`mailto:${supportEmail}`}
+              className="inline-flex items-center justify-center gap-2 w-full py-2 rounded-xl bg-[var(--foreground)] text-[var(--background)] text-xs font-black uppercase tracking-wider transition-all hover:opacity-90 active:scale-95"
+            >
+              <Icons.mail size={14} />
+              <span>Send Email</span>
+            </a>
           </motion.div>
         </div>
 
-        {/* Status Note */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mt-12 flex items-center justify-center gap-3 text-[var(--muted)] opacity-30"
-        >
-          <Icons.info size={14} />
-          <span className="text-[9px] font-black uppercase tracking-[0.3em] italic">We usually reply within 24 hours</span>
-        </motion.div>
+        {/* SOCIALS & LOCATION ROW */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Socials */}
+          <div className="p-4 rounded-2xl bg-[var(--card)]/40 border border-[var(--border)] space-y-3 flex flex-col justify-center">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Social Channels</h4>
+            <div className="flex flex-col gap-2">
+              {SOCIAL_LINKS.map((s, idx) => (
+                <a
+                  key={idx}
+                  href={s.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--foreground)]/5 border border-[var(--border)] text-xs font-semibold text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 transition-all"
+                >
+                  <s.icon size={13} />
+                  <span>{s.label}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Location Map */}
+          <div className="sm:col-span-2 rounded-2xl overflow-hidden border border-[var(--border)] bg-[var(--card)]/30 h-36 relative">
+            <iframe
+              title="Bangalore Location"
+              src={MAPS_EMBED_URL}
+              width="100%"
+              height="100%"
+              style={{ border: 0, filter: 'grayscale(1) opacity(0.55)' }}
+              allowFullScreen
+              loading="lazy"
+            />
+          </div>
+        </div>
+
+        {/* FOOTER NOTE */}
+        <div className="text-center text-[10px] text-[var(--muted)]/60 font-semibold uppercase tracking-widest pt-2">
+          Responses typically take under 10 minutes during operating hours
+        </div>
 
       </div>
     </main>
