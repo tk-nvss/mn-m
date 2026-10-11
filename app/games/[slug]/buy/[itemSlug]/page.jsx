@@ -28,12 +28,13 @@ function BuyFlowContent() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [showMorePacks, setShowMorePacks] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
 
   const [userEmail, setUserEmail] = useState("");
   const [userPhone, setUserPhone] = useState("");
-  const { walletBalance, setWalletBalance, user } = useAuthStore();
+  const { walletBalance, setWalletBalance, user, token } = useAuthStore();
 
   /* ================= GAME & ITEMS STATE ================= */
   const [game, setGame] = useState(null);
@@ -45,14 +46,25 @@ function BuyFlowContent() {
   const fallbackName = params.get("name");
   const fallbackImage = params.get("image");
 
-  /* ================= LOAD USER DATA ================= */
+  /* ================= LOAD USER DATA & WALLET ================= */
   useEffect(() => {
     window.scrollTo(0, 0);
     if (user) {
       setUserEmail(user.email || "");
       setUserPhone(user.phone || "");
     }
-  }, [user]);
+
+    // Always fetch latest wallet balance if logged in
+    if (token) {
+      api.get("/api/auth/me")
+        .then(({ data }) => {
+          if (data?.success && typeof data?.user?.wallet === "number") {
+            setWalletBalance(data.user.wallet);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [user, token, setWalletBalance]);
 
   /* ================= FETCH GAME & ITEMS ================= */
   useEffect(() => {
@@ -262,360 +274,350 @@ function BuyFlowContent() {
         <div className="max-w-5xl mx-auto">
 
           {/* BACK BUTTON */}
-          <button aria-label="button"
+          <button aria-label="Back"
             onClick={() => router.back()}
-            className="flex items-center gap-1 text-[var(--accent)] font-black uppercase tracking-widest text-[8.5px] mb-1.5 hover:opacity-70 transition-opacity"
+            className="flex items-center gap-1.5 text-xs font-bold text-[var(--accent)] hover:opacity-80 transition-opacity mb-2 uppercase tracking-wider"
           >
             <Icons.arrowLeft className="text-xs" /> Back
           </button>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 items-start">
-
-            {/* LEFT COLUMN: ITEM HERO & MORE PACKS */}
-            <div className="lg:col-span-5 space-y-2.5 lg:sticky lg:top-4">
-
-              {/* HERO CARD */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-2.5 sm:p-3 shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-20 h-20 bg-[var(--accent)]/5 rounded-full blur-[30px] -z-0" />
-
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between gap-3 text-left">
-                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
-                      <div className="relative w-11 h-11 sm:w-12 sm:h-12 shrink-0">
-                        <div className="absolute inset-0 bg-[var(--accent)]/10 rounded-lg blur-md group-hover:bg-[var(--accent)]/20 transition-all duration-300" />
-                        <img
-                          src={item?.itemImageId?.image || fallbackImage || ""}
-                          alt={item?.itemName || fallbackName}
-                          className="relative z-10 w-full h-full object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-[var(--accent)]/10 rounded-full mb-0.5">
-                          <div className="w-1 h-1 rounded-full bg-[var(--accent)] animate-pulse" />
-                          <span className="text-[7px] font-black text-[var(--accent)] uppercase tracking-widest leading-none">Instant Delivery</span>
-                        </div>
-
-                        <h1 className="text-xs sm:text-sm font-black text-[var(--foreground)] leading-tight uppercase truncate">
-                          {item?.itemName || fallbackName}
-                        </h1>
-                      </div>
-                    </div>
-
-                    {/* Price on Right */}
-                    <div className="shrink-0 text-right pl-2">
-                      <span className="text-base sm:text-lg font-[1000] text-[var(--accent)] tracking-tight">
-                        ₹{item?.sellingPrice || 0}
-                      </span>
-                    </div>
-                  </div>
+          {/* HERO PRODUCT INFO (FLAT & CLEAN, NO CARD CONTAINER) */}
+          <div className="pb-5 mb-5 border-b border-[var(--border)]">
+            <div className="flex items-center justify-between gap-3 text-left">
+              <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                <div className="relative w-14 h-14 shrink-0 rounded-2xl bg-[var(--card)] p-2 flex items-center justify-center">
+                  <img
+                    src={item?.itemImageId?.image || fallbackImage || ""}
+                    alt={item?.itemName || fallbackName}
+                    className="w-full h-full object-contain"
+                  />
                 </div>
-
-                {/* BACKGROUND DECOR */}
-                <div className="absolute bottom-1 right-2 opacity-[0.03]">
-                  <Icons.shoppingBag className="text-3xl text-[var(--foreground)]" />
+                <div className="min-w-0">
+                  <div className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-500 mb-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Instant Delivery</span>
+                  </div>
+                  <h1 className="text-base sm:text-lg font-black text-[var(--foreground)] uppercase tracking-tight truncate">
+                    {item?.itemName || fallbackName}
+                  </h1>
                 </div>
               </div>
 
-              {/* MORE PACKS */}
-              {otherItems.length > 0 && (
-                <div className="space-y-2 px-0.5">
-                  <div className="flex items-center gap-1.5">
-                    <Icons.shoppingBag className="text-[var(--accent)] text-sm" />
-                    <h2 className="text-[9px] font-black uppercase tracking-widest text-[var(--foreground)]">More packs you may like</h2>
-                  </div>
+              <div className="shrink-0 text-right">
+                <span className="text-2xl sm:text-3xl font-black text-[var(--accent)] tracking-tight">
+                  ₹{item?.sellingPrice || 0}
+                </span>
+              </div>
+            </div>
 
-                  <div className="flex lg:grid lg:grid-cols-3 items-center gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 scrollbar-hide no-scrollbar">
+            {/* MORE PACKS (COLLAPSIBLE SECTION) */}
+            {otherItems.length > 0 && (
+              <div className="mt-4 pt-3 border-t border-[var(--border)]/40">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <Icons.shoppingBag className="text-[var(--accent)] text-xs" />
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--muted)]">More packs you may like</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowMorePacks(!showMorePacks)}
+                    className="text-[10px] font-bold text-[var(--accent)] uppercase tracking-wider hover:opacity-75"
+                  >
+                    {showMorePacks ? "Hide" : "Show"}
+                  </button>
+                </div>
+                {showMorePacks && (
+                  <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide no-scrollbar pb-1 animate-in fade-in">
                     {otherItems.map((oi) => {
                       const isActive = oi.itemSlug === itemSlug;
                       return (
-                        <button aria-label="button"
+                        <button
                           key={oi._id}
+                          aria-label={oi.itemName}
                           onClick={() => router.push(`/games/${slug}/buy/${oi.itemSlug}`)}
                           className={`
-                            p-2.5 rounded-xl transition-all text-left group min-w-[105px] lg:min-w-0 shrink-0 border relative
+                            py-2 px-3 rounded-xl shrink-0 transition-all flex items-center gap-2.5
                             ${isActive
-                              ? "bg-[var(--accent)]/10 border-[var(--accent)] shadow-sm"
-                              : "bg-[var(--card)] border-[var(--border)] hover:border-[var(--accent)]/30"}
+                              ? "bg-[var(--accent)] text-white shadow-sm"
+                              : "bg-[var(--card)] hover:bg-[var(--card)]/80 text-[var(--foreground)]"}
                           `}
                         >
-                          {isActive && (
-                            <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-[var(--accent)] text-white rounded-full flex items-center justify-center shadow-sm">
-                              <Icons.check size={8} strokeWidth={3} />
-                            </div>
-                          )}
-                          <p className={`text-[8.5px] font-black uppercase tracking-wider mb-0.5 truncate ${isActive ? "text-[var(--accent)]" : "text-[var(--muted)] group-hover:text-[var(--foreground)]"}`}>
+                          <span className={`text-xs font-bold uppercase truncate max-w-[120px] ${isActive ? "text-white" : "text-[var(--foreground)]"}`}>
                             {oi.itemName}
-                          </p>
-                          <p className="text-xs font-black text-[var(--foreground)]">₹{oi.sellingPrice}</p>
+                          </span>
+                          <span className={`text-xs font-black ${isActive ? "text-white/95" : "text-[var(--accent)]"}`}>
+                            ₹{oi.sellingPrice}
+                          </span>
                         </button>
                       );
                     })}
                   </div>
-                </div>
-              )}
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* 1. PLAYER INFO (OPEN CLEAN SECTION) */}
+          <div className="pb-6 mb-6 border-b border-[var(--border)]">
+            <div className="flex items-center gap-2 mb-3.5">
+              <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
+              <h2 className="text-sm font-bold text-[var(--foreground)] tracking-tight">
+                1. Player Info
+              </h2>
             </div>
 
-            {/* RIGHT COLUMN: FORM & PAYMENT */}
-            <div className="lg:col-span-7 space-y-5">
-
-              {/* 1. PLAYER INFO CARD */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-6 shadow-sm">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-1 h-4 bg-[var(--accent)] rounded-full" />
-                  <h2 className="text-base sm:text-lg font-black text-[var(--foreground)] uppercase tracking-tight italic">1. Player Info</h2>
+            <div className="space-y-2.5">
+              <div className={`grid gap-2 ${gameWithOptions?.inputFieldTwo ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
+                <div className="relative">
+                  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] pointer-events-none">
+                    <Icons.user className="text-base" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder={fieldOneLabel}
+                    value={playerId}
+                    onChange={(e) => {
+                      setPlayerId(e.target.value);
+                      if (verifiedAccount) setVerifiedAccount(null);
+                    }}
+                    className="w-full bg-[var(--card)] border-none focus:ring-1.5 focus:ring-[var(--accent)]/30 rounded-xl py-2 pl-11 pr-3 font-semibold text-[var(--foreground)] outline-none transition-all placeholder:text-[var(--muted)] text-xs sm:text-sm h-10"
+                  />
                 </div>
 
-                <div className="space-y-4">
-                  {/* INPUTS */}
-                  <div className={`grid gap-3 ${gameWithOptions?.inputFieldTwo ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
-                    <div className="relative group">
-                      <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors">
-                        <Icons.user className="text-base" />
-                      </div>
+                {gameWithOptions?.inputFieldTwo && (
+                  <div className="relative">
+                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] z-10 pointer-events-none">
+                      <Icons.globe className="text-base" />
+                    </div>
+                    {gameWithOptions?.inputFieldTwoOptions?.length > 0 ? (
+                      <select
+                        value={zoneId}
+                        onChange={(e) => {
+                          setZoneId(e.target.value);
+                          if (verifiedAccount) setVerifiedAccount(null);
+                        }}
+                        className="w-full bg-[var(--card)] border-none focus:ring-1.5 focus:ring-[var(--accent)]/30 rounded-xl py-2 pl-11 pr-7 font-semibold text-[var(--foreground)] outline-none transition-all appearance-none cursor-pointer text-xs sm:text-sm h-10"
+                      >
+                        <option value="">{fieldTwoLabel}</option>
+                        {gameWithOptions.inputFieldTwoOptions.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
+                    ) : (
                       <input
                         type="text"
-                        placeholder={fieldOneLabel}
-                        value={playerId}
-                        onChange={(e) => setPlayerId(e.target.value)}
-                        className="w-full bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/10 rounded-xl py-2.5 pl-10 pr-3 font-bold text-[var(--foreground)] outline-none transition-all placeholder:text-[var(--muted)] text-xs sm:text-sm"
+                        placeholder={fieldTwoLabel}
+                        value={zoneId}
+                        onChange={(e) => {
+                          setZoneId(e.target.value);
+                          if (verifiedAccount) setVerifiedAccount(null);
+                        }}
+                        className="w-full bg-[var(--card)] border-none focus:ring-1.5 focus:ring-[var(--accent)]/30 rounded-xl py-2 pl-11 pr-3 font-semibold text-[var(--foreground)] outline-none transition-all placeholder:text-[var(--muted)] text-xs sm:text-sm h-10"
                       />
-                    </div>
-
-                    {gameWithOptions?.inputFieldTwo && (
-                      <div className="relative group">
-                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within:text-[var(--accent)] transition-colors z-10 pointer-events-none">
-                          <Icons.globe className="text-base" />
-                        </div>
-                        {gameWithOptions?.inputFieldTwoOptions?.length > 0 ? (
-                          <select
-                            value={zoneId}
-                            onChange={(e) => setZoneId(e.target.value)}
-                            className="w-full bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/10 rounded-xl py-2.5 pl-10 pr-3 font-bold text-[var(--foreground)] outline-none transition-all appearance-none cursor-pointer text-xs sm:text-sm"
-                          >
-                            <option value="">{fieldTwoLabel}</option>
-                            {gameWithOptions.inputFieldTwoOptions.map(opt => (
-                              <option key={opt.value} value={opt.value}>{opt.label}</option>
-                            ))}
-                          </select>
-                        ) : (
-                          <input
-                            type="text"
-                            placeholder={fieldTwoLabel}
-                            value={zoneId}
-                            onChange={(e) => setZoneId(e.target.value)}
-                            className="w-full bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/10 rounded-xl py-2.5 pl-10 pr-3 font-bold text-[var(--foreground)] outline-none transition-all placeholder:text-[var(--muted)] text-xs sm:text-sm"
-                          />
-                        )}
-                      </div>
                     )}
                   </div>
-
-                  {/* CHECK ACCOUNT BUTTON */}
-                  <div className="space-y-3">
-                    <button aria-label="button"
-                      onClick={handleValidate}
-                      disabled={loading || !playerId}
-                      className="w-full py-3 bg-[var(--accent)] text-white font-black uppercase tracking-widest text-[11px] rounded-xl hover:shadow-[0_4px_15px_rgba(var(--accent-rgb),0.3)] disabled:opacity-50 disabled:grayscale transition-all flex items-center justify-center gap-2"
-                    >
-                      {loading ? <LoadingSpinner size="xs" color="current" /> : <><Icons.search className="text-sm" /> Check Name</>}
-                    </button>
-
-                    {/* ERROR MESSAGE */}
-                    {error && (
-                      <div className="flex items-center gap-2 text-red-500 text-[11px] font-bold px-2">
-                        <Icons.info /> {error}
-                      </div>
-                    )}
-
-                    {/* VERIFIED DISPLAY */}
-                    {verifiedAccount && (
-                      <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-3 flex items-center justify-between animate-in fade-in slide-in-from-top-2">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center">
-                            <Icons.check className="text-base" />
-                          </div>
-                          <div>
-                            <p className="text-[9px] font-black text-green-500 uppercase tracking-widest leading-none mb-0.5">Account Verified</p>
-                            <p className="text-base font-black text-[var(--foreground)] leading-tight uppercase italic">{verifiedAccount.userName}</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* RECENT PLAYERS */}
-                  <div className="pt-3 border-t border-[var(--border)]">
-                    <div className="flex items-center justify-between mb-3 px-0.5">
-                      <div className="flex items-center gap-1.5">
-                        <Icons.userCheck className="text-[var(--accent)] text-base" />
-                        <h3 className="text-[9.5px] font-black text-[var(--muted)] uppercase tracking-widest">Recent Players</h3>
-                      </div>
-                      <button aria-label="button"
-                        onClick={() => setShowSuggestions(!showSuggestions)}
-                        className="text-[9px] font-black text-[var(--accent)] uppercase tracking-widest hover:opacity-70 transition-opacity"
-                      >
-                        {showSuggestions ? "Hide" : "Show"}
-                      </button>
-                    </div>
-
-                    {/* Integrated Recent List */}
-                    {showSuggestions && (
-                      <div className="space-y-1.5 animate-in fade-in slide-in-from-top-1">
-                        <RecentVerifiedPlayers
-                          limit={3}
-                          onSelect={(p) => {
-                            setPlayerId(p.playerId);
-                            setZoneId(p.zoneId);
-                            setVerifiedAccount(null);
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
+                )}
               </div>
 
-              {/* 2. PAYMENT CARD */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-6 shadow-sm">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-1 h-4 bg-[var(--accent)]/30 rounded-full" />
-                  <h2 className="text-base sm:text-lg font-black text-[var(--foreground)] uppercase tracking-tight italic opacity-60">2. Payment</h2>
-                </div>
+              {/* CHECK NAME BUTTON */}
+              <button
+                aria-label="Check Name"
+                onClick={handleValidate}
+                disabled={loading || !playerId}
+                className="w-full py-3 bg-[var(--accent)] text-white font-bold tracking-wide text-xs uppercase rounded-xl shadow-sm hover:opacity-95 active:scale-98 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <LoadingSpinner size="xs" color="current" />
+                ) : (
+                  <>
+                    <Icons.search className="text-xs" />
+                    <span>Check Name</span>
+                  </>
+                )}
+              </button>
 
-                <div className="space-y-3">
-                  {/* PAYMENT METHOD SELECTION */}
-                  <div
-                    onClick={() => setPaymentMethod("upi")}
-                    className={`p-3.5 rounded-xl border-2 transition-all cursor-pointer flex flex-col gap-2.5 group
-                      ${paymentMethod === "upi" ? "bg-[var(--background)] border-[var(--accent)] shadow-sm" : "bg-[var(--background)]/50 border-[var(--border)] hover:border-[var(--accent)]/30"}
-                    `}
+              {/* ERROR MESSAGE */}
+              {error && (
+                <div className="flex items-center gap-1.5 text-rose-500 text-xs font-semibold px-1">
+                  <Icons.info className="text-xs shrink-0" /> <span>{error}</span>
+                </div>
+              )}
+
+              {/* VERIFIED DISPLAY */}
+              {verifiedAccount && (
+                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 flex items-center justify-between animate-in fade-in">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 bg-emerald-500 text-white rounded-full flex items-center justify-center">
+                      <Icons.check className="text-xs stroke-[3]" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider leading-none mb-0.5">Account Verified</p>
+                      <p className="text-xs sm:text-sm font-bold text-[var(--foreground)] leading-tight">{verifiedAccount.userName}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* RECENT PLAYERS */}
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <Icons.userCheck className="text-[var(--accent)] text-xs" />
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">Recent Players</span>
+                  </div>
+                  <button
+                    aria-label={showSuggestions ? "Hide recent players" : "Show recent players"}
+                    onClick={() => setShowSuggestions(!showSuggestions)}
+                    className="text-[10px] font-bold text-[var(--accent)] uppercase tracking-wider hover:opacity-75"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors
-                          ${paymentMethod === "upi" ? "bg-[var(--accent)] text-white" : "bg-[var(--background)] text-[var(--muted)]"}
-                        `}>
-                          <Icons.smartphone className="text-base" />
-                        </div>
-                        <div>
-                          <h4 className="font-black text-[var(--foreground)] uppercase tracking-tight text-xs sm:text-sm">UPI Gateway</h4>
-                          <p className="text-[8.5px] font-bold text-[var(--muted)] uppercase tracking-wider">PhonePe, Paytm, Other UPI Apps</p>
-                        </div>
-                      </div>
-                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all
-                        ${paymentMethod === "upi" ? "bg-[var(--accent)] border-[var(--accent)] text-white" : "border-[var(--border)]"}
-                      `}>
-                        {paymentMethod === "upi" && <Icons.check className="text-[9px] stroke-[3]" />}
-                      </div>
-                    </div>
+                    {showSuggestions ? "Hide" : "Show"}
+                  </button>
+                </div>
 
-                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/25 text-[10px] sm:text-[10.5px] font-bold text-amber-400">
-                      <span className="shrink-0 text-xs">⚠️</span>
-                      <span>Avoid <strong>GPay</strong> for payment. Please try payment in a different app (PhonePe, Paytm, etc.).</span>
+                {showSuggestions && (
+                  <div className="space-y-1.5 animate-in fade-in">
+                    <RecentVerifiedPlayers
+                      limit={3}
+                      onSelect={(p) => {
+                        setPlayerId(p.playerId);
+                        setZoneId(p.zoneId);
+                        setVerifiedAccount(null);
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 2. PAYMENT (OPEN CLEAN SECTION) */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
+              <h2 className="text-sm font-bold text-[var(--foreground)] tracking-tight">
+                2. Payment
+              </h2>
+            </div>
+
+            <div className="space-y-2.5">
+              {/* UPI SELECTION TILE */}
+              <div
+                onClick={() => setPaymentMethod("upi")}
+                className={`p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col gap-2.5
+                  ${paymentMethod === "upi" ? "bg-[var(--accent)]/5 border-[var(--accent)]" : "bg-[var(--card)]/50 border-transparent hover:border-[var(--accent)]/30"}
+                `}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center
+                      ${paymentMethod === "upi" ? "bg-[var(--accent)] text-white" : "bg-[var(--background)] text-[var(--muted)]"}
+                    `}>
+                      <Icons.smartphone className="text-sm" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-[var(--foreground)] text-xs sm:text-sm">UPI Gateway</h4>
+                      <p className="text-[10px] text-[var(--muted)]">PhonePe, Paytm, Other UPI Apps</p>
                     </div>
                   </div>
-
-                  {walletBalance > 0 && (
-                    <div
-                      onClick={() => setPaymentMethod("wallet")}
-                      className={`p-3.5 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between group
-                        ${paymentMethod === "wallet" ? "bg-[var(--background)] border-[var(--accent)] shadow-sm" : "bg-[var(--background)]/50 border-[var(--border)] hover:border-[var(--accent)]/30"}
-                      `}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors
-                          ${paymentMethod === "wallet" ? "bg-[var(--accent)] text-white" : "bg-[var(--background)] text-[var(--muted)]"}
-                        `}>
-                          <Icons.creditCard className="text-lg" />
-                        </div>
-                        <div>
-                          <h4 className="font-black text-[var(--foreground)] uppercase tracking-tight text-xs sm:text-sm">My Wallet</h4>
-                          <p className="text-[8.5px] font-bold text-[var(--muted)] uppercase tracking-wider">Balance: ₹{walletBalance}</p>
-                        </div>
-                      </div>
-                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all
-                        ${paymentMethod === "wallet" ? "bg-[var(--accent)] border-[var(--accent)] text-white" : "border-[var(--border)]"}
-                      `}>
-                        {paymentMethod === "wallet" && <Icons.check className="text-[9px] stroke-[3]" />}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* FINAL CHECKOUT SUMMARY */}
-                  <div className="pt-4 mt-2">
-                    {verifiedAccount && (
-                      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-3 mb-3 space-y-1.5 shadow-sm animate-in fade-in slide-in-from-bottom-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-[8.5px] font-black text-[var(--muted)] uppercase tracking-widest">Selected Item</span>
-                          <span className="text-[10px] font-black text-[var(--foreground)] uppercase italic truncate ml-4">{item?.itemName}</span>
-                        </div>
-                        <div className="flex justify-between items-center border-t border-[var(--border)] opacity-50 pt-1.5">
-                          <span className="text-[8.5px] font-black text-[var(--muted)] uppercase tracking-widest">Player ID</span>
-                          <span className="text-[10px] font-black text-[var(--foreground)] tracking-tight">{verifiedAccount.playerId}</span>
-                        </div>
-                        {verifiedAccount.zoneId && (
-                          <div className="flex justify-between items-center border-t border-[var(--border)] opacity-50 pt-1.5">
-                            <span className="text-[8.5px] font-black text-[var(--muted)] uppercase tracking-widest">Server / Zone</span>
-                            <span className="text-[10px] font-black text-[var(--foreground)] tracking-tight">{verifiedAccount.zoneId}</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between mb-4 px-1">
-                      <span className="text-[9.5px] font-black text-[var(--muted)] uppercase tracking-widest">Total Amount</span>
-                      <span className="text-2xl font-black text-[var(--foreground)] tracking-tight italic">₹{item?.sellingPrice || 0}</span>
-                    </div>
-
-                    <button aria-label="button"
-                      onClick={handleProceed}
-                      disabled={isProcessing || !verifiedAccount}
-                      className={`w-full py-3.5 rounded-xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2
-                        ${isProcessing || !verifiedAccount
-                          ? "bg-slate-100 text-slate-300 cursor-not-allowed"
-                          : "bg-[var(--accent)] text-white hover:shadow-[0_8px_20px_rgba(var(--accent-rgb),0.3)]"}
-                      `}
-                    >
-                      {isProcessing ? (
-                        <>
-                          <LoadingSpinner size="xs" color="current" />
-                          Processing
-                        </>
-                      ) : (
-                        <>
-                          Confirm & Pay
-                          <Icons.arrowRight className="text-base" />
-                        </>
-                      )}
-                    </button>
-
-                    {!verifiedAccount && (
-                      <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4 animate-pulse">
-                        Please verify account to proceed
-                      </p>
-                    )}
-
-                    {/* Manual WhatsApp Purchase Support */}
-                    <div className="mt-4 pt-3 border-t border-[var(--border)]">
-                      <a
-                        href={`https://wa.me/${process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP || ""}?text=${encodeURIComponent(
-                          `Hi, I am facing difficulty recharging ${item?.itemName ? `${item.itemName} (₹${item?.sellingPrice})` : "my order"}${verifiedAccount?.playerId ? ` for Player ID: ${verifiedAccount.playerId}` : ""}. Please help me with manual purchase.`
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/25 text-[#25D366] transition-all"
-                      >
-                        <FaWhatsapp className="text-base shrink-0 group-hover:scale-110 transition-transform" />
-                        <span className="text-[11px] font-bold text-center leading-tight">
-                          Facing difficulty to recharge? <span className="underline font-black">Contact us on WhatsApp</span> for manual purchase
-                        </span>
-                      </a>
-                    </div>
+                  <div className={`w-4 h-4 rounded-full border flex items-center justify-center
+                    ${paymentMethod === "upi" ? "bg-[var(--accent)] border-[var(--accent)] text-white" : "border-[var(--border)]"}
+                  `}>
+                    {paymentMethod === "upi" && <Icons.check className="text-[8px] stroke-[3]" />}
                   </div>
+                </div>
+
+                {/* GPAY WARNING NOTICE (SINGLE LINE) */}
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[10.5px] font-semibold text-amber-500 whitespace-nowrap overflow-hidden text-ellipsis">
+                  <span className="shrink-0 text-xs">⚠️</span>
+                  <span className="truncate">Avoid <strong>GPay</strong>. Pay via PhonePe, Paytm or other UPI apps.</span>
                 </div>
               </div>
 
+              {/* WALLET SELECTION TILE */}
+              <div
+                onClick={() => setPaymentMethod("wallet")}
+                className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between
+                  ${paymentMethod === "wallet" ? "bg-[var(--accent)]/5 border-[var(--accent)]" : "bg-[var(--card)]/50 border-transparent hover:border-[var(--accent)]/30"}
+                `}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center
+                    ${paymentMethod === "wallet" ? "bg-[var(--accent)] text-white" : "bg-[var(--background)] text-[var(--muted)]"}
+                  `}>
+                    <Icons.creditCard className="text-sm" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-[var(--foreground)] text-xs sm:text-sm">My Wallet</h4>
+                    <p className="text-[10px] text-[var(--muted)]">
+                      Available Balance: <strong className={walletBalance >= (item?.sellingPrice || 0) ? "text-emerald-500" : "text-[var(--foreground)]"}>₹{walletBalance || 0}</strong>
+                      {walletBalance < (item?.sellingPrice || 0) && (
+                        <span className="text-amber-500 ml-1.5 font-medium">(Low Balance)</span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className={`w-4 h-4 rounded-full border flex items-center justify-center
+                  ${paymentMethod === "wallet" ? "bg-[var(--accent)] border-[var(--accent)] text-white" : "border-[var(--border)]"}
+                `}>
+                  {paymentMethod === "wallet" && <Icons.check className="text-[8px] stroke-[3]" />}
+                </div>
+              </div>
+
+              {/* TOTAL & CONFIRM BUTTON */}
+              <div className="pt-2 space-y-2.5">
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-xs font-semibold text-[var(--muted)]">Total Amount</span>
+                  <span className="text-2xl font-black text-[var(--foreground)] tracking-tight">₹{item?.sellingPrice || 0}</span>
+                </div>
+
+                <button
+                  aria-label="Confirm & Pay"
+                  onClick={handleProceed}
+                  disabled={isProcessing || !verifiedAccount || (paymentMethod === "wallet" && walletBalance < (item?.sellingPrice || 0))}
+                  className={`w-full py-3.5 rounded-xl font-bold uppercase tracking-wider text-xs transition-all flex items-center justify-center gap-2
+                    ${isProcessing || !verifiedAccount || (paymentMethod === "wallet" && walletBalance < (item?.sellingPrice || 0))
+                      ? "bg-[var(--muted)]/20 text-[var(--muted)] cursor-not-allowed"
+                      : "bg-[var(--accent)] text-white hover:opacity-95 shadow-md active:scale-98"}
+                  `}
+                >
+                  {isProcessing ? (
+                    <>
+                      <LoadingSpinner size="xs" color="current" />
+                      <span>Processing...</span>
+                    </>
+                  ) : paymentMethod === "wallet" && walletBalance < (item?.sellingPrice || 0) ? (
+                    <span>Insufficient Wallet Balance</span>
+                  ) : (
+                    <>
+                      <span>Confirm & Pay</span>
+                      <Icons.arrowRight className="text-xs" />
+                    </>
+                  )}
+                </button>
+
+                {!verifiedAccount && (
+                  <p className="text-center text-[11px] font-medium text-[var(--muted)]">
+                    Please verify your player account above to proceed
+                  </p>
+                )}
+
+                {/* WHATSAPP RECHARGE ASSISTANCE BANNER (COMPACT) */}
+                <div className="pt-1.5">
+                  <a
+                    href={`https://wa.me/${process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP || ""}?text=${encodeURIComponent(
+                      `Hi, I am facing difficulty recharging ${item?.itemName ? `${item.itemName} (₹${item?.sellingPrice})` : "my order"}${verifiedAccount?.playerId ? ` for Player ID: ${verifiedAccount.playerId}` : ""}. Please help me with manual purchase.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 transition-colors"
+                  >
+                    <FaWhatsapp className="text-sm shrink-0" />
+                    <span className="text-[11px] font-semibold text-center leading-tight">
+                      Facing difficulty to recharge? <span className="underline font-bold">Contact us on WhatsApp</span>
+                    </span>
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -47,25 +47,25 @@ export default function RecentVerifiedPlayers({
               onClick={() => onSelect(p)}
               className="
                 w-full text-left
-                rounded-2xl border border-[var(--border)]
-                bg-[var(--card)] hover:bg-[var(--background)] hover:border-[var(--accent)]/30
-                hover:shadow-sm transition-all duration-300
-                p-3 px-4 group flex items-center justify-between gap-3
+                rounded-xl
+                bg-[var(--card)] hover:bg-[var(--card)]/70
+                transition-all duration-200
+                p-2.5 sm:p-3 group flex items-center justify-between gap-3
               "
             >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-[var(--background)] flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:bg-[var(--accent)]/10 transition-all">
-                  <FiUser size={18} />
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-lg bg-[var(--background)] flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--accent)] transition-all shrink-0">
+                  <FiUser size={15} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[13px] font-[1000] uppercase tracking-tight italic truncate text-[var(--foreground)] group-hover:text-[var(--accent)] transition-colors leading-none mb-1">
+                  <p className="text-xs font-black uppercase tracking-tight italic truncate text-[var(--foreground)] group-hover:text-[var(--accent)] transition-colors leading-none mb-1">
                     {p.username || "Unknown Player"}
                   </p>
-                  <div className="flex items-center gap-1.5 text-[9px] font-black text-[var(--muted)] uppercase tracking-widest">
+                  <div className="flex items-center gap-1.5 text-[8.5px] font-bold text-[var(--muted)] uppercase tracking-wider">
                     <span>{p.playerId}</span>
                     {p.zoneId && (
                       <>
-                        <span className="opacity-30">/</span>
+                        <span className="opacity-40">|</span>
                         <span>{p.zoneId}</span>
                       </>
                     )}
@@ -73,14 +73,14 @@ export default function RecentVerifiedPlayers({
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="px-2.5 py-1 bg-[var(--background)] rounded-full flex items-center gap-1.5 border border-[var(--border)]">
-                  <FiGlobe className="text-[10px] text-[var(--muted)]" />
-                  <span className="text-[10px] font-black text-[var(--foreground)] uppercase tracking-widest opacity-70">
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="px-2 py-0.5 bg-[var(--background)] rounded-md flex items-center gap-1 border border-[var(--border)]">
+                  <FiGlobe className="text-[9px] text-[var(--accent)]" />
+                  <span className="text-[9px] font-black text-[var(--foreground)] uppercase tracking-wider opacity-80">
                     {formatRegion(p.region)}
                   </span>
                 </div>
-                <FiChevronRight className="text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:translate-x-0.5 transition-all" />
+                <FiChevronRight className="text-xs text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:translate-x-0.5 transition-transform" />
               </div>
             </motion.button>
           ))}
