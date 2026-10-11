@@ -272,8 +272,7 @@ export default function WalletTab({
     <div className="max-w-2xl mx-auto space-y-6">
       {/* TACTICAL BALANCE MODULE */}
       <div className="relative group overflow-hidden">
-        <div className="absolute -inset-1 bg-gradient-to-r from-[var(--accent)]/30 to-transparent blur-3xl opacity-20 pointer-events-none" />
-        <div className="relative p-5 sm:p-6 rounded-2xl bg-[var(--card)] border border-[var(--border)] flex items-center justify-between overflow-hidden shadow-sm">
+        <div className="relative p-5 sm:p-6 rounded-2xl bg-[var(--card)] border border-[var(--border)] flex items-center justify-between overflow-hidden">
           <div className="absolute right-[-20px] top-[-20px] text-[var(--accent)]/5 rotate-12">
             <FiZap size={120} />
           </div>
@@ -292,7 +291,7 @@ export default function WalletTab({
             </div>
           </div>
 
-          <div className="relative z-10 w-10 sm:w-12 h-10 sm:h-12 rounded-xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] border border-[var(--accent)]/20 shadow-[0_0_15px_var(--accent)]/10">
+          <div className="relative z-10 w-10 sm:w-12 h-10 sm:h-12 rounded-xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] border border-[var(--accent)]/20">
             <FiDollarSign size={24} />
           </div>
         </div>
@@ -302,7 +301,7 @@ export default function WalletTab({
       {!showAddFunds ? (
         <button aria-label="button"
           onClick={() => setShowAddFunds(true)}
-          className="w-full p-3.5 sm:p-4 rounded-xl bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 font-black uppercase tracking-[0.2em] italic text-xs shadow-[0_10px_30px_-10px_rgba(var(--accent-rgb),0.2)] hover:bg-[var(--accent)]/15 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+          className="w-full p-3.5 sm:p-4 rounded-xl bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 font-black uppercase tracking-[0.2em] italic text-xs hover:bg-[var(--accent)]/15 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
         >
           <FiPlusCircle size={18} /> ADD FUNDS TO WALLET
         </button>

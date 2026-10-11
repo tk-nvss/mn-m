@@ -48,10 +48,8 @@ export default function GiveawayBanner() {
         >
           <div className="relative z-10 flex items-center gap-3 sm:gap-4 min-w-0">
             {/* Icon */}
-            <div className="flex items-center ml-1 shrink-0">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center border border-[var(--accent)]/30 z-30 transition-transform group-hover:scale-105 bg-[var(--accent)]/15 text-[var(--accent)]">
-                <FiGift size={16} className="sm:w-4 sm:h-4" />
-              </div>
+            <div className="flex items-center ml-1 shrink-0 text-[var(--accent)] transition-transform group-hover:scale-110">
+              <FiGift size={18} className="sm:w-5 sm:h-5" />
             </div>
             
             {/* Text Content */}

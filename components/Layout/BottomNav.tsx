@@ -15,6 +15,29 @@ export default function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      // Show when scrolling up or at the very top of page
+      if (currentScrollY <= 20) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY && currentScrollY - lastScrollY > 6) {
+        // Scrolling down
+        setIsVisible(false);
+      } else if (currentScrollY < lastScrollY && lastScrollY - currentScrollY > 6) {
+        // Scrolling up
+        setIsVisible(true);
+      }
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const handleSheetState = (e: any) => {
@@ -45,7 +68,9 @@ export default function BottomNav() {
   ];
 
   return (
-    <div className="md:hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-[100] pointer-events-none w-auto max-w-[96%] flex justify-center px-1">
+    <div className={`md:hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-[100] pointer-events-none w-auto max-w-[96%] flex justify-center px-1 transition-all duration-300 ease-in-out ${
+      isVisible ? "translate-y-0 opacity-100" : "translate-y-16 opacity-0 pointer-events-none"
+    }`}>
       {/* Floating Pill Container - Uses Dynamic Theme Variables */}
       <div className="pointer-events-auto relative flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 rounded-full bg-[var(--card)]/90 backdrop-blur-2xl border border-[var(--border)] text-[var(--foreground)]">
         

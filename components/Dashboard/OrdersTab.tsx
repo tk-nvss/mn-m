@@ -48,16 +48,16 @@ export default function OrdersTab() {
   return (
     <div className="space-y-6">
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] border border-[var(--accent)]/20">
-            <Icons.shoppingBag size={14} />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="text-[var(--accent)] flex items-center justify-center shrink-0">
+            <Icons.shoppingBag size={18} />
           </div>
-          <div className="flex items-center gap-3">
-            <h3 className="text-xl font-[900] uppercase italic tracking-tighter text-[var(--foreground)] leading-none mt-1">Your Orders</h3>
-            <div className="px-2 py-0.5 rounded border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--accent)] text-[8px] font-black uppercase tracking-widest mt-1">
+          <div className="flex items-center gap-2">
+            <h3 className="text-base sm:text-lg font-bold text-[var(--foreground)] tracking-tight">Your Orders</h3>
+            <span className="px-2 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-[9px] font-bold uppercase tracking-wider">
               {loading ? "..." : `${totalCount} Order${totalCount !== 1 ? 's' : ''}`}
-            </div>
+            </span>
           </div>
         </div>
 
