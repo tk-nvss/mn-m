@@ -203,10 +203,8 @@ const UiSettingsTab = () => {
     <div className="space-y-5 pb-8 max-w-full overflow-x-hidden">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
-            <Layout size={16} />
-          </div>
+        <div className="flex items-center gap-2">
+          <Layout size={16} className="text-purple-400 shrink-0" />
           <div className="flex items-center gap-1.5">
             <h2 className="text-sm font-black uppercase tracking-wider leading-tight text-[var(--foreground)]">UI & Display Settings</h2>
             <InfoTooltip
@@ -220,10 +218,10 @@ const UiSettingsTab = () => {
         <button 
           aria-label="button"
           onClick={fetchSettings}
-          className="p-1.5 rounded-md border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-all active:scale-95 ml-auto"
+          className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] transition-all active:scale-95 ml-auto cursor-pointer"
           title="Refresh settings"
         >
-          <RefreshCcw size={12} className={loading ? "animate-spin" : ""} />
+          <RefreshCcw size={13} className={loading ? "animate-spin" : ""} />
         </button>
       </div>
 
@@ -244,8 +242,8 @@ const UiSettingsTab = () => {
           <div key={sec.title} className="relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]/30">
             <div className="absolute inset-x-0 top-0 h-[2px]" style={{ background: sec.accent }} />
             
-            <div className="px-3.5 sm:px-4 py-3 border-b border-[var(--border)] flex items-center gap-2.5">
-              <div className="p-1.5 rounded-lg bg-[var(--foreground)]/[0.03] border border-[var(--border)]/50 shrink-0">
+            <div className="px-3.5 sm:px-4 py-2.5 border-b border-[var(--border)] flex items-center gap-2">
+              <div className="shrink-0">
                 {sec.icon}
               </div>
               <div className="min-w-0">

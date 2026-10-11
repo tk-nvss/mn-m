@@ -58,17 +58,15 @@ export default function ApiKeysTab() {
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                    <div className="px-2.5 py-1 rounded-lg bg-[var(--card)] border border-[var(--border)] flex items-center gap-1.5 shadow-2xs">
-                        <Key size={11} className="text-[var(--accent)]" />
-                        <span className="text-xs font-bold text-[var(--foreground)] tabular-nums">
-                            {keys.length} <span className="text-[9px] text-[var(--muted)] font-medium">Keys</span>
-                        </span>
+                    <div className="flex items-center gap-1 text-[var(--muted)] text-xs font-bold tabular-nums">
+                        <Key size={13} className="text-[var(--accent)]" />
+                        <span>{keys.length}</span>
                     </div>
                     <button aria-label="Refresh API Keys"
                         onClick={fetchKeys}
-                        className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+                        className="text-[var(--muted)] hover:text-[var(--foreground)] active:scale-95 transition-all p-1 flex items-center justify-center cursor-pointer"
                     >
-                        <RefreshCcw size={12} className={loading ? "animate-spin" : ""} />
+                        <RefreshCcw size={13} className={loading ? "animate-spin" : ""} />
                     </button>
                 </div>
             </div>
