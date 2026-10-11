@@ -185,13 +185,11 @@ export default function SupportQueriesTab() {
   return (
     <div className="space-y-4 pb-6 max-w-full overflow-x-hidden">
       {/* ================= HEADER ================= */}
-      <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
-        <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center shrink-0">
-                <MessageSquare size={15} />
-            </div>
+      <div className="flex items-center justify-between flex-wrap gap-3 pb-2 border-b border-[var(--border)]/70">
+        <div className="flex items-center gap-2">
+            <MessageSquare size={16} className="text-cyan-400 shrink-0" />
             <div className="flex items-center gap-1.5">
-                <h2 className="text-sm font-black uppercase tracking-wider leading-tight text-[var(--foreground)]">Support</h2>
+                <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">Support</h2>
                 <InfoTooltip
                     content="Customer Support Queries & Tickets"
                     position="bottom"
@@ -200,35 +198,52 @@ export default function SupportQueriesTab() {
             </div>
         </div>
 
-        <div className="flex items-center gap-2 ml-auto">
-          <div className="flex bg-[var(--card)]/60 px-2.5 py-1 rounded-md border border-[var(--border)]">
-            <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">
-              <span className="text-[var(--foreground)] mr-1">{pagination.total}</span> Total
-            </span>
+        <div className="flex items-center gap-2 ml-auto shrink-0">
+          <div className="flex items-center gap-1 text-[var(--muted)] text-xs font-bold tabular-nums">
+            <span>{pagination.total}</span>
+            <span className="text-[9px] uppercase font-semibold">Total</span>
           </div>
           <button aria-label="button"
             onClick={() => { fetchQueriesStats(); fetchQueriesList(); }}
-            className="p-1.5 rounded-md border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-all active:scale-95"
+            className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] transition-all active:scale-95 cursor-pointer"
             title="Refresh queries"
           >
-            <RefreshCcw size={12} className={loading ? "animate-spin" : ""} />
+            <RefreshCcw size={13} className={loading ? "animate-spin" : ""} />
           </button>
         </div>
       </div>
 
-      {/* ================= STATS GRID ================= */}
-      <div className="grid grid-cols-2 gap-2 sm:gap-3">
-        <InsightCard
-          label="Pending"
-          value={stats.open}
-          color="amber"
-          pulse={stats.open > 0}
-        />
-        <InsightCard
-          label="Today"
-          value={stats.today}
-          color="purple"
-        />
+      {/* ================= COMBINED 1-ROW STATS ================= */}
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-2 sm:p-2.5 shadow-2xs">
+        <div className="grid grid-cols-2 divide-x divide-[var(--border)]/70">
+          <div className="px-3 flex items-center justify-between">
+            <div>
+              <p className="text-[8px] sm:text-[9px] font-extrabold uppercase tracking-wider text-[var(--muted)] truncate leading-tight">
+                Pending
+              </p>
+              <span className="text-xs sm:text-sm font-black tabular-nums text-amber-400 leading-none mt-0.5 inline-block">
+                {stats.open}
+              </span>
+            </div>
+            {stats.open > 0 && (
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+              </span>
+            )}
+          </div>
+
+          <div className="px-3 flex items-center justify-between">
+            <div>
+              <p className="text-[8px] sm:text-[9px] font-extrabold uppercase tracking-wider text-[var(--muted)] truncate leading-tight">
+                Today
+              </p>
+              <span className="text-xs sm:text-sm font-black tabular-nums text-purple-400 leading-none mt-0.5 inline-block">
+                {stats.today}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* ================= SEARCH & FILTER ================= */}

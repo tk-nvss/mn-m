@@ -422,13 +422,12 @@ export default function PromotionalTab() {
   return (
     <div className="space-y-6 pb-10">
       {/* ================= PREMIUM DASHBOARD HEADER ================= */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg sm:text-xl font-black tracking-tight text-[var(--foreground)] flex items-center gap-2 whitespace-nowrap">
-              <div className="w-8 h-8 rounded-xl bg-[var(--accent)] flex items-center justify-center text-white shadow-md shadow-[var(--accent)]/20 shrink-0">
-                <Send size={16} />
-              </div>
+      {/* ================= PREMIUM DASHBOARD HEADER ================= */}
+      <div className="space-y-3 sm:space-y-4">
+        <div className="flex items-center justify-between gap-3 pb-2 border-b border-[var(--border)]/70">
+          <div className="flex items-center gap-2">
+            <Send size={16} className="text-[var(--accent)] shrink-0" />
+            <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
               Promo mail
             </h2>
           </div>
@@ -439,37 +438,71 @@ export default function PromotionalTab() {
                  fetchStats();
                  fetchUsers();
                }}
-               className="p-1.5 shrink-0 rounded border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-all active:scale-95"
+               className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] transition-all active:scale-95 cursor-pointer"
                title="Refresh stats"
             >
-              <RefreshCcw size={12} className={loading ? "animate-spin" : ""} />
+              <RefreshCcw size={13} className={loading ? "animate-spin" : ""} />
             </button>
           </div>
         </div>
 
-        {/* STATS TILES */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
-          <StatTile 
-            icon={<Send size={18} />} 
-            label="Mails Today" 
-            value={stats.todayEmails.toLocaleString()} 
-            sub="Active Campaign"
-            color="emerald"
-          />
-          <StatTile 
-            icon={<Globe size={18} />} 
-            label="External" 
-            value={manualEmails.length.toLocaleString()} 
-            sub="Manual Added"
-            color="blue"
-          />
-          <StatTile 
-            icon={<Users size={18} />} 
-            label="Database" 
-            value={totalRecords.toLocaleString()} 
-            sub="Total Contacts"
-            color="indigo"
-          />
+        {/* COMBINED 1-ROW STATS BAR */}
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-2 sm:p-2.5 shadow-2xs">
+          <div className="grid grid-cols-3 divide-x divide-[var(--border)]/70">
+            {/* Mails Today */}
+            <div className="px-2 sm:px-3 text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+              <div className="min-w-0">
+                <span className="text-[7.5px] sm:text-[8.5px] uppercase tracking-wider font-extrabold text-[var(--muted)] truncate block">
+                  Mails Today
+                </span>
+                <div className="flex items-baseline gap-1 mt-0.5 justify-center sm:justify-start">
+                  <span className="text-xs sm:text-sm font-black text-emerald-400 tabular-nums leading-none">
+                    {stats.todayEmails.toLocaleString()}
+                  </span>
+                  <span className="text-[7.5px] font-bold text-[var(--muted)] hidden md:inline truncate">
+                    Campaign
+                  </span>
+                </div>
+              </div>
+              <Send size={14} className="text-emerald-400/80 hidden sm:block shrink-0" />
+            </div>
+
+            {/* External */}
+            <div className="px-2 sm:px-3 text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+              <div className="min-w-0">
+                <span className="text-[7.5px] sm:text-[8.5px] uppercase tracking-wider font-extrabold text-[var(--muted)] truncate block">
+                  External
+                </span>
+                <div className="flex items-baseline gap-1 mt-0.5 justify-center sm:justify-start">
+                  <span className="text-xs sm:text-sm font-black text-blue-400 tabular-nums leading-none">
+                    {manualEmails.length.toLocaleString()}
+                  </span>
+                  <span className="text-[7.5px] font-bold text-[var(--muted)] hidden md:inline truncate">
+                    Manual
+                  </span>
+                </div>
+              </div>
+              <Globe size={14} className="text-blue-400/80 hidden sm:block shrink-0" />
+            </div>
+
+            {/* Database */}
+            <div className="px-2 sm:px-3 text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+              <div className="min-w-0">
+                <span className="text-[7.5px] sm:text-[8.5px] uppercase tracking-wider font-extrabold text-[var(--muted)] truncate block">
+                  Database
+                </span>
+                <div className="flex items-baseline gap-1 mt-0.5 justify-center sm:justify-start">
+                  <span className="text-xs sm:text-sm font-black text-indigo-400 tabular-nums leading-none">
+                    {totalRecords.toLocaleString()}
+                  </span>
+                  <span className="text-[7.5px] font-bold text-[var(--muted)] hidden md:inline truncate">
+                    Contacts
+                  </span>
+                </div>
+              </div>
+              <Users size={14} className="text-indigo-400/80 hidden sm:block shrink-0" />
+            </div>
+          </div>
         </div>
       </div>
 

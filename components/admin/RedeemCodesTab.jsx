@@ -109,91 +109,84 @@ export default function RedeemCodesTab() {
     return (
         <div className="space-y-3 sm:space-y-4 animate-in fade-in duration-300">
 
-            {/* ── COMPACT HERO STATS ── */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-                {/* Total Codes */}
-                <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] flex items-center justify-between">
-                    <div>
-                        <span className="text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)]">Total Codes</span>
-                        <div className="text-sm sm:text-base font-black text-indigo-400 tabular-nums leading-tight mt-0.5">
-                            {formatNumber(summary.total || 0)}
+            {/* ── UNIFIED 1-ROW STATS BAR ── */}
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-2 sm:p-2.5 shadow-2xs">
+                <div className="grid grid-cols-4 divide-x divide-[var(--border)]/70">
+                    {/* Total Codes */}
+                    <div className="px-1.5 sm:px-3 text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                        <div className="min-w-0">
+                            <span className="text-[7.5px] sm:text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)] truncate block">Total</span>
+                            <div className="text-xs sm:text-sm font-black text-indigo-400 tabular-nums leading-tight">
+                                {formatNumber(summary.total || 0)}
+                            </div>
                         </div>
+                        <Ticket size={14} className="text-indigo-400/80 hidden sm:block shrink-0" />
                     </div>
-                    <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400">
-                        <Ticket size={13} />
-                    </div>
-                </div>
 
-                {/* Available Codes */}
-                <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] flex items-center justify-between">
-                    <div>
-                        <span className="text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)]">Available</span>
-                        <div className="text-sm sm:text-base font-black text-amber-400 tabular-nums leading-tight mt-0.5">
-                            {formatNumber(availableCount)}
+                    {/* Available Codes */}
+                    <div className="px-1.5 sm:px-3 text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                        <div className="min-w-0">
+                            <span className="text-[7.5px] sm:text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)] truncate block">Available</span>
+                            <div className="text-xs sm:text-sm font-black text-amber-400 tabular-nums leading-tight">
+                                {formatNumber(availableCount)}
+                            </div>
                         </div>
+                        <Gift size={14} className="text-amber-400/80 hidden sm:block shrink-0" />
                     </div>
-                    <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400">
-                        <Gift size={13} />
-                    </div>
-                </div>
 
-                {/* Claimed Codes */}
-                <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] flex items-center justify-between">
-                    <div>
-                        <span className="text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)]">Claimed</span>
-                        <div className="text-sm sm:text-base font-black text-emerald-400 tabular-nums leading-tight mt-0.5">
-                            {formatNumber(summary.totalUsed || 0)}
+                    {/* Claimed Codes */}
+                    <div className="px-1.5 sm:px-3 text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                        <div className="min-w-0">
+                            <span className="text-[7.5px] sm:text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)] truncate block">Claimed</span>
+                            <div className="text-xs sm:text-sm font-black text-emerald-400 tabular-nums leading-tight">
+                                {formatNumber(summary.totalUsed || 0)}
+                            </div>
                         </div>
+                        <CheckCircle2 size={14} className="text-emerald-400/80 hidden sm:block shrink-0" />
                     </div>
-                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
-                        <CheckCircle2 size={13} />
-                    </div>
-                </div>
 
-                {/* Claim Rate */}
-                <div className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] flex items-center justify-between">
-                    <div>
-                        <span className="text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)]">Claim Rate</span>
-                        <div className="text-sm sm:text-base font-black text-[var(--foreground)] tabular-nums leading-tight mt-0.5">
-                            {claimRate}%
+                    {/* Claim Rate */}
+                    <div className="px-1.5 sm:px-3 text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                        <div className="min-w-0">
+                            <span className="text-[7.5px] sm:text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)] truncate block">Rate</span>
+                            <div className="text-xs sm:text-sm font-black text-[var(--foreground)] tabular-nums leading-tight">
+                                {claimRate}%
+                            </div>
                         </div>
-                    </div>
-                    <div className="p-1.5 rounded-lg bg-[var(--foreground)]/[0.05] text-[var(--muted)]">
-                        <Percent size={13} />
+                        <Percent size={14} className="text-[var(--muted)]/60 hidden sm:block shrink-0" />
                     </div>
                 </div>
             </div>
 
-            {/* COMPACT GENERATOR CARD */}
-            <div className="p-3 sm:p-3.5 rounded-xl border border-[var(--border)] bg-[var(--card)] relative">
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+            {/* COMPACT GENERATOR TOOLBAR */}
+            <div className="py-1 space-y-2.5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                        <div className="w-6.5 h-6.5 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
-                            <FiZap size={13} />
-                        </div>
-                        <div>
-                            <h3 className="text-xs font-black uppercase tracking-wider text-[var(--foreground)] leading-none">Voucher Generator</h3>
-                            <p className="text-[8px] font-bold text-[var(--muted)] uppercase tracking-wider mt-0.5">Create vouchers</p>
-                        </div>
+                        <FiZap size={14} className="text-[var(--accent)] shrink-0" />
+                        <h3 className="text-xs font-black uppercase tracking-wider text-[var(--foreground)] leading-none">
+                            Voucher Generator
+                        </h3>
                     </div>
 
                     <div className="flex bg-[var(--foreground)]/[0.04] p-0.5 rounded-lg border border-[var(--border)]">
                         <button aria-label="button"
+                            type="button"
                             onClick={() => setIsSeries(false)}
-                            className={`px-2.5 py-1 rounded-md text-[8.5px] font-black uppercase tracking-wider transition-all cursor-pointer ${!isSeries ? 'bg-[var(--accent)] text-white' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
+                            className={`px-2.5 py-1 rounded-md text-[8.5px] font-black uppercase tracking-wider transition-all cursor-pointer ${!isSeries ? 'bg-[var(--accent)] text-white shadow-2xs' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
                         >
                             Unique
                         </button>
                         <button aria-label="button"
+                            type="button"
                             onClick={() => setIsSeries(true)}
-                            className={`px-2.5 py-1 rounded-md text-[8.5px] font-black uppercase tracking-wider transition-all cursor-pointer ${isSeries ? 'bg-[var(--accent)] text-white' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
+                            className={`px-2.5 py-1 rounded-md text-[8.5px] font-black uppercase tracking-wider transition-all cursor-pointer ${isSeries ? 'bg-[var(--accent)] text-white shadow-2xs' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
                         >
                             Series
                         </button>
                     </div>
                 </div>
 
-                <form className="grid grid-cols-1 sm:grid-cols-4 gap-2.5" onSubmit={handleGenerate}>
+                <form className="grid grid-cols-1 sm:grid-cols-4 gap-2" onSubmit={handleGenerate}>
                     <div>
                         <label className="text-[7.5px] font-black uppercase text-[var(--muted)] block mb-1">Value (₹)</label>
                         <div className="relative">
@@ -203,7 +196,7 @@ export default function RedeemCodesTab() {
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
                                 placeholder="500"
-                                className="w-full h-8 bg-[var(--background)] border border-[var(--border)] rounded-lg pl-6 pr-2.5 text-[11px] focus:border-[var(--accent)] outline-none font-bold text-[var(--foreground)] placeholder:text-[var(--muted)]/40"
+                                className="w-full h-8.5 bg-[var(--card)] border border-[var(--border)] rounded-xl pl-6 pr-2.5 text-[11px] focus:border-[var(--accent)] outline-none font-bold text-[var(--foreground)] placeholder:text-[var(--muted)]/40 shadow-2xs"
                                 required
                             />
                         </div>
@@ -222,7 +215,7 @@ export default function RedeemCodesTab() {
                                         value={customCode}
                                         onChange={(e) => setCustomCode(e.target.value)}
                                         placeholder="BONUS"
-                                        className="w-full h-8 bg-[var(--background)] border border-[var(--border)] rounded-lg pl-7 pr-2.5 text-[11px] focus:border-[var(--accent)] outline-none font-bold uppercase text-[var(--foreground)] placeholder:text-[var(--muted)]/40"
+                                        className="w-full h-8.5 bg-[var(--card)] border border-[var(--border)] rounded-xl pl-7 pr-2.5 text-[11px] focus:border-[var(--accent)] outline-none font-bold uppercase text-[var(--foreground)] placeholder:text-[var(--muted)]/40 shadow-2xs"
                                         required={isSeries}
                                     />
                                 </div>
@@ -238,7 +231,7 @@ export default function RedeemCodesTab() {
                                         value={maxUses}
                                         onChange={(e) => setMaxUses(e.target.value)}
                                         placeholder="100"
-                                        className="w-full h-8 bg-[var(--background)] border border-[var(--border)] rounded-lg pl-7 pr-2.5 text-[11px] focus:border-[var(--accent)] outline-none font-bold text-[var(--foreground)] placeholder:text-[var(--muted)]/40"
+                                        className="w-full h-8.5 bg-[var(--card)] border border-[var(--border)] rounded-xl pl-7 pr-2.5 text-[11px] focus:border-[var(--accent)] outline-none font-bold text-[var(--foreground)] placeholder:text-[var(--muted)]/40 shadow-2xs"
                                         required={isSeries}
                                     />
                                 </div>
@@ -256,7 +249,7 @@ export default function RedeemCodesTab() {
                                     value={quantity}
                                     onChange={(e) => setQuantity(e.target.value)}
                                     placeholder="10"
-                                    className="w-full h-8 bg-[var(--background)] border border-[var(--border)] rounded-lg pl-7 pr-2.5 text-[11px] focus:border-[var(--accent)] outline-none font-bold text-[var(--foreground)] placeholder:text-[var(--muted)]/40"
+                                    className="w-full h-8.5 bg-[var(--card)] border border-[var(--border)] rounded-xl pl-7 pr-2.5 text-[11px] focus:border-[var(--accent)] outline-none font-bold text-[var(--foreground)] placeholder:text-[var(--muted)]/40 shadow-2xs"
                                     required={!isSeries}
                                 />
                             </div>
@@ -267,7 +260,7 @@ export default function RedeemCodesTab() {
                         <button aria-label="button"
                             type="submit"
                             disabled={isGenerating}
-                            className="w-full h-8 bg-[var(--accent)] text-white font-black uppercase text-[9px] tracking-wider rounded-lg flex items-center justify-center gap-1.5 hover:bg-[var(--accent-hover)] transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                            className="w-full h-8.5 bg-[var(--accent)] text-white font-black uppercase text-[9.5px] tracking-wider rounded-xl flex items-center justify-center gap-1.5 hover:opacity-90 transition-all active:scale-95 disabled:opacity-50 cursor-pointer shadow-2xs"
                         >
                             {isGenerating ? "Processing..." : <><FiZap size={11} /> {isSeries ? "Create Series" : "Generate Unique"}</>}
                         </button>
