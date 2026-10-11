@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   FiStar, FiCalendar, FiCheckCircle, FiArrowRight, FiCheck,
@@ -316,6 +317,27 @@ export default function CoinsTab() {
   const [rewards, setRewards] = useState([2, 3, 5, 7, 10, 12, 15]);
   const [nextReward, setNextReward] = useState(2);
 
+  // Bottom sheet modal drawer states
+  const [showConvertSheet, setShowConvertSheet] = useState(false);
+  const [showHistorySheet, setShowHistorySheet] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Prevent background scroll when either bottom sheet is open
+  useEffect(() => {
+    if (showConvertSheet || showHistorySheet) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showConvertSheet, showHistorySheet]);
+
   // Dynamic ad channel rewards tracking
   const [adRewardTimes, setAdRewardTimes] = useState<Record<string, string | null>>({});
 
@@ -523,9 +545,7 @@ export default function CoinsTab() {
         className="group relative flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-purple-500/10 border border-amber-500/25 hover:border-amber-500/40 transition-all shadow-xs overflow-hidden"
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-7 h-7 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center shrink-0">
-            <FiGift size={13} />
-          </div>
+          <FiGift size={16} className="text-amber-500 shrink-0" />
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-[11px] font-black text-amber-500 hover:underline flex items-center gap-1">
@@ -544,112 +564,107 @@ export default function CoinsTab() {
         <FiArrowRight size={13} className="text-amber-500 shrink-0 group-hover:translate-x-0.5 transition-transform" />
       </a>
 
-      {/* ── BALANCE CARD ─────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--card)] p-4 sm:p-5 shadow-xs">
-        <div className="relative flex items-center justify-between gap-3">
-          {/* Left: Balance */}
-          <div className="flex flex-col gap-1">
-            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-amber-500/20 bg-amber-500/10 w-fit">
-              <FiStar className="text-amber-500 fill-amber-500/30" size={10} />
-              <span className="text-[8.5px] font-black uppercase tracking-wider text-amber-500">BBC Balance</span>
+      {/* ── UNIFIED HERO DASHBOARD (CLEAN & BORDERLESS) ───────────────── */}
+      <div className="relative py-2 sm:py-3">
+        <div className="flex flex-col gap-3.5">
+          {/* Top row: Balance on left, Stats on right */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col gap-1">
+              <div className="inline-flex items-center gap-1.5 w-fit">
+                <FiStar className="text-amber-500 fill-amber-500/40" size={11} />
+                <span className="text-[10px] font-black uppercase tracking-wider text-amber-500">BBC Coins</span>
+              </div>
+              <div className="flex items-baseline gap-2 relative">
+                <span className="text-3xl sm:text-4xl font-black text-[var(--foreground)] tracking-tight tabular-nums leading-none">
+                  {coins || 0}
+                </span>
+                <span className="text-xs font-black uppercase text-amber-500 tracking-wider">BBC</span>
+                <AnimatePresence>
+                  {lastResult && (
+                    <motion.div
+                      key={lastResult.id}
+                      initial={{ opacity: 0, y: 10, scale: 0.5 }}
+                      animate={{ opacity: 1, y: -20, scale: 1.1 }}
+                      exit={{ opacity: 0, y: -35, scale: 0.8 }}
+                      className={`absolute -right-2 top-0 font-black text-xs pointer-events-none ${
+                        lastResult.amount > 0 ? "text-emerald-400" : "text-rose-500"
+                      }`}
+                    >
+                      {lastResult.amount > 0 ? `+${lastResult.amount}` : lastResult.amount}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+              <p className="text-[10px] text-[var(--muted)] font-mono">
+                ≈ {formatCurrency((coins || 0) / 100)}
+              </p>
             </div>
-            <div className="flex items-baseline gap-2 relative">
-              <span className="text-3xl sm:text-4xl font-black text-[var(--foreground)] tracking-tight tabular-nums leading-none">
-                {coins || 0}
-              </span>
-              <span className="text-xs font-black uppercase text-amber-500 tracking-wider">BBC</span>
-              <AnimatePresence>
-                {lastResult && (
-                  <motion.div
-                    key={lastResult.id}
-                    initial={{ opacity: 0, y: 10, scale: 0.5 }}
-                    animate={{ opacity: 1, y: -20, scale: 1.1 }}
-                    exit={{ opacity: 0, y: -35, scale: 0.8 }}
-                    className={`absolute -right-2 top-0 font-black text-xs pointer-events-none ${
-                      lastResult.amount > 0 ? "text-emerald-400" : "text-rose-500"
-                    }`}
-                  >
-                    {lastResult.amount > 0 ? `+${lastResult.amount}` : lastResult.amount}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+
+            {/* Streak & Next Reward: Flat stat pills */}
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="flex flex-col items-center justify-center px-2.5 py-1.5 rounded-xl bg-[var(--foreground)]/[0.04]">
+                <div className="flex items-center gap-1 text-[var(--foreground)] font-black text-sm tabular-nums leading-none">
+                  <FiZap size={12} className="text-amber-500 fill-amber-500/40" />
+                  <span>{streak}</span>
+                </div>
+                <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--muted)] mt-1">Streak</span>
+              </div>
+
+              <div className="flex flex-col items-center justify-center px-2.5 py-1.5 rounded-xl bg-amber-500/[0.08]">
+                <div className="flex items-center gap-0.5 text-amber-500 font-black text-sm tabular-nums leading-none">
+                  <span>+{nextReward}</span>
+                </div>
+                <span className="text-[8px] font-bold uppercase tracking-wider text-amber-500/90 mt-1">Next</span>
+              </div>
             </div>
-            <p className="text-[10px] text-[var(--muted)] font-mono">
-              ≈ {formatCurrency((coins || 0) / 100)} INR
-            </p>
           </div>
 
-          {/* Right: Streak & Next Reward Badges */}
-          <div className="flex gap-1.5 shrink-0">
-            {/* Streak */}
-            <div className="flex flex-col items-center justify-center min-w-[54px] sm:min-w-[60px] px-2 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--background)]">
-              <div className="flex items-center gap-0.5 text-amber-500 font-black text-sm sm:text-base tabular-nums leading-none">
-                <FiZap size={12} className="text-amber-500 fill-amber-500/20" />
-                <span>{streak}</span>
-              </div>
-              <span className="text-[7.5px] font-bold uppercase tracking-wider text-[var(--muted)] mt-1">Streak</span>
-            </div>
-
-            {/* Next reward */}
-            <div className="flex flex-col items-center justify-center min-w-[54px] sm:min-w-[60px] px-2 py-1.5 rounded-xl border border-amber-500/25 bg-amber-500/5">
-              <div className="flex items-center gap-0.5 text-amber-500 font-black text-sm sm:text-base tabular-nums leading-none">
-                <span>+{nextReward}</span>
-              </div>
-              <span className="text-[7.5px] font-bold uppercase tracking-wider text-amber-500/80 mt-1">Next</span>
-            </div>
+          {/* Integrated Actions Toolbar (Convert, History) */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              aria-label="Convert BBC Coins"
+              onClick={() => setShowConvertSheet(true)}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer bg-[var(--foreground)]/[0.04] text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.08] active:scale-[0.98]"
+            >
+              <FiTrendingUp size={12} className="text-emerald-500" />
+              <span>Convert</span>
+            </button>
+            <button
+              type="button"
+              aria-label="Transaction History"
+              onClick={() => setShowHistorySheet(true)}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer bg-[var(--foreground)]/[0.04] text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.08] active:scale-[0.98]"
+            >
+              <FiList size={12} className="text-blue-500" />
+              <span>History</span>
+            </button>
           </div>
         </div>
       </div>
 
       {/* ── CONTENT AREA ──────────────────────────────────────────────── */}
       {!loading && (
-        <div className="space-y-2.5">
-
-          {/* Convert + History Quick Action Row */}
-          <div className="grid grid-cols-2 gap-2">
-            <button aria-label="Convert BBC Coins"
-              onClick={() => setActiveTab(activeTab === "convert" ? "checkin" : "convert")}
-              className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl border transition-all text-[11px] font-bold tracking-wide cursor-pointer active:scale-[0.98] ${
-                activeTab === "convert"
-                ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)] shadow-sm font-black"
-                : "bg-[var(--card)]/70 border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border)]"
-              }`}
-            >
-              <FiTrendingUp size={13} className={activeTab === "convert" ? "text-[var(--background)]" : "text-emerald-400"} />
-              <span>Convert</span>
-            </button>
-            <button aria-label="Transaction History"
-              onClick={() => setActiveTab(activeTab === "history" ? "checkin" : "history")}
-              className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl border transition-all text-[11px] font-bold tracking-wide cursor-pointer active:scale-[0.98] ${
-                activeTab === "history"
-                ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)] shadow-sm font-black"
-                : "bg-[var(--card)]/70 border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border)]"
-              }`}
-            >
-              <FiList size={13} className={activeTab === "history" ? "text-[var(--background)]" : "text-blue-400"} />
-              <span>History</span>
-            </button>
-          </div>
-
+        <div className="space-y-3">
           {/* Tab bar (Segmented Pill) */}
-          <div className="grid grid-cols-3 gap-1 bg-[var(--card)]/90 backdrop-blur-md p-1 rounded-2xl border border-[var(--border)] shadow-xs">
+          <div className="grid grid-cols-3 gap-1 bg-[var(--foreground)]/[0.03] p-1 rounded-xl">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.key;
               return (
                 <button aria-label={tab.label}
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`relative flex items-center justify-center gap-2 py-2.5 rounded-xl text-[11px] font-bold tracking-wide transition-all cursor-pointer ${
+                  className={`relative flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold tracking-tight transition-all cursor-pointer ${
                     isActive
-                    ? "bg-[var(--foreground)] text-[var(--background)] shadow-xs font-black"
+                    ? "bg-[var(--card)] text-[var(--foreground)] shadow-xs font-black"
                     : "text-[var(--muted)] hover:text-[var(--foreground)]"
                   }`}
                 >
-                  <span className={isActive ? "text-[var(--background)]" : "opacity-70"}>{tab.icon}</span>
+                  <span className={isActive ? "text-[var(--accent)]" : "opacity-75"}>{tab.icon}</span>
                   <span>{tab.label}</span>
                   {tab.key === "tasks" && incompleteTasks.length > 0 && (
                     <span className={`w-4 h-4 rounded-full text-[8px] font-black flex items-center justify-center ${
-                      isActive ? "bg-[var(--background)] text-[var(--foreground)]" : "bg-blue-500 text-white"
+                      isActive ? "bg-[var(--accent)] text-white" : "bg-blue-500 text-white"
                     }`}>
                       {incompleteTasks.length}
                     </span>
@@ -661,124 +676,16 @@ export default function CoinsTab() {
 
           {/* ── ALL TAB CONTENT ──────────────────────────────────────────────── */}
           <AnimatePresence mode="wait">
-            {/* ══ CONVERT ══ */}
-            {activeTab === "convert" && (
-              <motion.div key="convert" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                className="rounded-3xl border border-[var(--border)] bg-[var(--card)] p-4 sm:p-5 space-y-3.5 shadow-sm"
-              >
-                <div className="flex items-center justify-between">
-                  <p className="text-[11px] font-black uppercase tracking-wider text-[var(--foreground)]">Convert to Wallet</p>
-                  <span className="text-[9px] text-[var(--muted)] font-bold uppercase">Rate: 100 BBC = ₹1</span>
-                </div>
-
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none">
-                    <FiStar className="text-amber-500" size={14} />
-                  </div>
-                  <input
-                    type="number"
-                    value={convertCoins}
-                    onChange={(e) => setConvertCoins(e.target.value)}
-                    placeholder="Enter coins (min 100)"
-                    className="w-full pl-10 pr-4 h-12 bg-[var(--background)] border border-[var(--border)] rounded-2xl text-sm font-bold outline-none focus:border-[var(--foreground)]/40 transition-colors placeholder:text-[var(--muted)]/50"
-                  />
-                </div>
-
-                <AnimatePresence>
-                  {convertPreview && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="flex items-center justify-between px-3.5 py-2.5 bg-[var(--background)] border border-[var(--border)] rounded-2xl"
-                    >
-                      <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-wider">You'll receive</span>
-                      <span className="text-emerald-500 font-black text-sm">₹{convertPreview}</span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                <motion.button
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleConvert}
-                  disabled={converting || !convertCoins || parseInt(convertCoins) < 100 || parseInt(convertCoins) > coins}
-                  className="w-full h-12 rounded-2xl bg-[var(--foreground)] text-[var(--background)] text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-90 shadow-sm cursor-pointer"
-                >
-                  {converting ? <FiRefreshCw className="animate-spin" /> : <><FiArrowRight size={14} /> Add to Wallet</>}
-                </motion.button>
-
-                <div className="flex items-center gap-2 px-3 py-2 bg-[var(--background)]/60 border border-[var(--border)] rounded-xl">
-                  <FiLock className="text-[var(--muted)]/60" size={12} />
-                  <p className="text-[9px] font-bold uppercase tracking-wider text-[var(--muted)]">Min 100 BBC · Instant Wallet Credit</p>
-                </div>
-              </motion.div>
-            )}
-
-            {/* ══ HISTORY ══ */}
-            {activeTab === "history" && (
-              <motion.div key="history" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                className="rounded-3xl border border-[var(--border)] bg-[var(--card)] p-4 sm:p-5 shadow-sm"
-              >
-                <div className="flex items-center gap-2 mb-4">
-                  <FiList className="text-[var(--muted)] text-sm" />
-                  <p className="text-[11px] font-black uppercase tracking-wider">Coin History</p>
-                  <button aria-label="Refresh history" onClick={fetchData} className="ml-auto p-1.5 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors rounded-lg">
-                    <FiRefreshCw className="text-xs" />
-                  </button>
-                </div>
-
-                {history.length === 0 ? (
-                  <EmptyState
-                    icon={Icons.list}
-                    title="No Transactions Yet"
-                    description="Complete tasks or check in daily to earn BBC Coins!"
-                    size="sm"
-                  />
-                ) : (
-                  <div className="space-y-2">
-                    {history.map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between py-2.5 border-b border-[var(--border)]/30 last:border-0">
-                        <div className="flex items-center gap-2.5">
-                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${item.type === "earn" ? "bg-amber-500/10 text-amber-500" : "bg-rose-500/10 text-rose-500"
-                            }`}>
-                            <FiStar size={12} />
-                          </div>
-                          <div>
-                            <p className="text-[11px] font-bold truncate max-w-[200px]">{item.description}</p>
-                            <p className="text-[8px] text-[var(--muted)] font-mono">
-                              {formatDate(item.createdAt, { style: "short" })}
-                            </p>
-                          </div>
-                        </div>
-                        <span className={`font-black text-xs ${item.type === "earn" ? "text-amber-500" : "text-rose-500"}`}>
-                          {item.type === "earn" ? "+" : "-"}{formatCoins(item.coins)}
-                        </span>
-                      </div>
-                    ))}
-
-                    <Pagination
-                      page={historyPage}
-                      totalPages={historyPages}
-                      onPageChange={setHistoryPage}
-                      size="sm"
-                      hideOnSinglePage
-                    />
-                  </div>
-                )}
-              </motion.div>
-            )}
 
             {/* ══ CHECK-IN ══ */}
             {activeTab === "checkin" && (
               <motion.div key="checkin" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                className="rounded-3xl border border-[var(--border)] bg-[var(--card)] p-4 sm:p-5 space-y-4 shadow-sm"
+                className="py-2 space-y-4"
               >
                 {/* Header */}
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-                      <FiCalendar className="text-amber-500" size={17} />
-                    </div>
+                  <div className="flex items-center gap-2.5">
+                    <FiCalendar className="text-amber-500 shrink-0" size={18} />
                     <div>
                       <p className="text-xs font-black uppercase tracking-wider text-[var(--foreground)]">Daily Check-in</p>
                       <p className="text-[10px] text-[var(--muted)] font-bold tracking-tight mt-0.5">
@@ -806,14 +713,14 @@ export default function CoinsTab() {
                     return (
                       <div
                         key={day}
-                        className={`flex flex-col items-center justify-between py-2 px-1 rounded-2xl border transition-all min-h-[64px] ${
+                        className={`flex flex-col items-center justify-between py-2.5 px-1 rounded-xl border transition-all min-h-[66px] ${
                           isToday
                             ? "bg-amber-500/10 border-amber-500/40 text-amber-500"
                             : isCompleted
                             ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500"
                             : isCurrent && !checkedInToday
-                            ? "bg-[var(--card)] border-amber-500/50 ring-1 ring-amber-500/30"
-                            : "bg-[var(--background)]/40 border-[var(--border)] text-[var(--muted)]"
+                            ? "bg-[var(--card)] border-amber-500/60 ring-1 ring-amber-500/40 shadow-2xs"
+                            : "bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--muted)]"
                         }`}
                       >
                         <span className="text-[8px] font-black uppercase tracking-tight text-[var(--muted)]">{DAY_LABELS[i]}</span>
@@ -830,7 +737,7 @@ export default function CoinsTab() {
                           )}
                         </div>
 
-                        <span className="text-[7px] font-bold text-[var(--muted)]/50 uppercase">
+                        <span className="text-[7.5px] font-bold text-[var(--muted)]/60 uppercase">
                           {day === 7 ? "🎉" : "BBC"}
                         </span>
                       </div>
@@ -840,14 +747,14 @@ export default function CoinsTab() {
 
                 {/* CTA Action Button */}
                 <motion.button
-                  whileHover={{ scale: checkedInToday ? 1 : 1.01 }}
+                  whileHover={{ scale: checkedInToday ? 1 : 1.005 }}
                   whileTap={{ scale: checkedInToday ? 1 : 0.98 }}
                   onClick={handleCheckin}
                   disabled={checkedInToday || checkinLoading}
-                  className={`w-full py-3 rounded-2xl text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  className={`w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs ${
                     checkedInToday
                     ? "bg-emerald-500/10 border border-emerald-500/25 text-emerald-500 cursor-default"
-                    : "bg-amber-400 text-slate-950 hover:bg-amber-300 shadow-sm shadow-amber-400/25 active:scale-[0.98]"
+                    : "bg-[var(--accent)] hover:opacity-95 text-white shadow-2xs active:scale-[0.98]"
                   }`}
                 >
                   {checkinLoading ? (
@@ -1001,9 +908,194 @@ export default function CoinsTab() {
 
         </div>
       )}
-      {/* Adsterra Banner */}
       {/* Adsterra Banners */}
       <NativeBanner />
+
+      {/* ══ CONVERT TO WALLET BOTTOM SHEET ══ */}
+      {mounted && typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {showConvertSheet && (
+            <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setShowConvertSheet(false)}
+                className="fixed inset-0 bg-black/60 backdrop-blur-xs cursor-pointer z-[9999]"
+              />
+
+              <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 28, stiffness: 300 }}
+                className="relative w-full sm:max-w-md bg-[var(--card)] border-t sm:border border-[var(--border)] rounded-t-3xl sm:rounded-2xl shadow-2xl p-5 pb-8 sm:pb-5 z-[10000] max-h-[85vh] overflow-y-auto"
+              >
+                {/* Drag handle */}
+                <div className="w-10 h-1 bg-[var(--border)] rounded-full mx-auto mb-3" />
+
+                {/* Header */}
+                <div className="flex items-center justify-between pb-3 mb-4 border-b border-[var(--border)]/60">
+                  <div className="flex items-center gap-2">
+                    <FiTrendingUp className="text-emerald-500" size={16} />
+                    <span className="text-sm font-bold tracking-tight text-[var(--foreground)]">Convert to Wallet</span>
+                  </div>
+                  <button
+                    type="button"
+                    aria-label="Close"
+                    onClick={() => setShowConvertSheet(false)}
+                    className="w-7 h-7 flex items-center justify-center rounded-full text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors cursor-pointer"
+                  >
+                    <Icons.x size={16} />
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-[var(--muted)] font-medium">Conversion Rate</span>
+                    <span className="font-bold text-[var(--foreground)]">100 BBC = ₹1</span>
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none">
+                      <FiStar className="text-amber-500" size={14} />
+                    </div>
+                    <input
+                      type="number"
+                      value={convertCoins}
+                      onChange={(e) => setConvertCoins(e.target.value)}
+                      placeholder="Enter coins (min 100)"
+                      className="w-full pl-10 pr-4 h-12 bg-[var(--background)] border border-[var(--border)] rounded-xl text-sm font-bold outline-none focus:border-[var(--accent)] transition-colors placeholder:text-[var(--muted)]/50"
+                    />
+                  </div>
+
+                  {convertPreview && (
+                    <div className="flex items-center justify-between px-3.5 py-2.5 bg-[var(--foreground)]/[0.02] border border-[var(--border)] rounded-xl">
+                      <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-wider">You'll receive</span>
+                      <span className="text-emerald-500 font-black text-sm">₹{convertPreview}</span>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await handleConvert();
+                      setShowConvertSheet(false);
+                    }}
+                    disabled={converting || !convertCoins || parseInt(convertCoins) < 100 || parseInt(convertCoins) > coins}
+                    className="w-full py-3 rounded-xl bg-[var(--accent)] hover:opacity-95 text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-xs cursor-pointer"
+                  >
+                    {converting ? <FiRefreshCw className="animate-spin" /> : <><FiArrowRight size={14} /> Add to Wallet</>}
+                  </button>
+
+                  <div className="flex items-center gap-2 px-3 py-2 bg-[var(--foreground)]/[0.02] border border-[var(--border)]/60 rounded-xl">
+                    <FiLock className="text-[var(--muted)]/60 shrink-0" size={12} />
+                    <p className="text-[9px] font-bold text-[var(--muted)] uppercase tracking-wider">Min 100 BBC · Instant Wallet Credit</p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+
+      {/* ══ COIN HISTORY BOTTOM SHEET ══ */}
+      {mounted && typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {showHistorySheet && (
+            <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setShowHistorySheet(false)}
+                className="fixed inset-0 bg-black/60 backdrop-blur-xs cursor-pointer z-[9999]"
+              />
+
+              <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 28, stiffness: 300 }}
+                className="relative w-full sm:max-w-md bg-[var(--card)] border-t sm:border border-[var(--border)] rounded-t-3xl sm:rounded-2xl shadow-2xl p-5 pb-8 sm:pb-5 z-[10000] max-h-[85vh] overflow-y-auto"
+              >
+                {/* Drag handle */}
+                <div className="w-10 h-1 bg-[var(--border)] rounded-full mx-auto mb-3" />
+
+                {/* Header */}
+                <div className="flex items-center justify-between pb-3 mb-4 border-b border-[var(--border)]/60">
+                  <div className="flex items-center gap-2">
+                    <FiList className="text-blue-500" size={16} />
+                    <span className="text-sm font-bold tracking-tight text-[var(--foreground)]">Coin History</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      aria-label="Refresh history"
+                      onClick={fetchData}
+                      className="p-1.5 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors rounded-lg cursor-pointer"
+                    >
+                      <FiRefreshCw size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Close"
+                      onClick={() => setShowHistorySheet(false)}
+                      className="w-7 h-7 flex items-center justify-center rounded-full text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors cursor-pointer"
+                    >
+                      <Icons.x size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                {history.length === 0 ? (
+                  <EmptyState
+                    icon={Icons.list}
+                    title="No Transactions Yet"
+                    description="Complete tasks or check in daily to earn BBC Coins!"
+                    size="sm"
+                  />
+                ) : (
+                  <div className="space-y-2">
+                    {history.map((item, idx) => (
+                      <div key={idx} className="flex items-center justify-between py-2.5 border-b border-[var(--border)]/30 last:border-0">
+                        <div className="flex items-center gap-2.5">
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                            item.type === "earn" ? "bg-amber-500/10 text-amber-500" : "bg-rose-500/10 text-rose-500"
+                          }`}>
+                            <FiStar size={12} />
+                          </div>
+                          <div>
+                            <p className="text-[11px] font-bold truncate max-w-[200px]">{item.description}</p>
+                            <p className="text-[8px] text-[var(--muted)] font-mono">
+                              {formatDate(item.createdAt, { style: "short" })}
+                            </p>
+                          </div>
+                        </div>
+                        <span className={`font-black text-xs ${item.type === "earn" ? "text-amber-500" : "text-rose-500"}`}>
+                          {item.type === "earn" ? "+" : "-"}{formatCoins(item.coins)}
+                        </span>
+                      </div>
+                    ))}
+
+                    <Pagination
+                      page={historyPage}
+                      totalPages={historyPages}
+                      onPageChange={setHistoryPage}
+                      size="sm"
+                      hideOnSinglePage
+                    />
+                  </div>
+                )}
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
     </div>
   );

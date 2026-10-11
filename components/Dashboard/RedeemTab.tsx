@@ -62,10 +62,6 @@ export default function RedeemTab({ setWalletBalance }: RedeemTabProps) {
             >
                 {/* Title block */}
                 <div>
-                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-[var(--border)] bg-[var(--card)]/40 mb-2">
-                        <Icons.gift size={9} className="text-[var(--muted)]" />
-                        <span className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)]">Redeem</span>
-                    </div>
                     <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[var(--foreground)] leading-none">
                         Enter<br />
                         <span className="text-[var(--accent)]">Your Code</span>
