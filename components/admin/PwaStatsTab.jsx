@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import {
   FiSmartphone, FiMonitor, FiTablet,
@@ -8,9 +8,10 @@ import {
   FiXCircle, FiUser, FiExternalLink,
   FiBell, FiSend, FiCheckCircle, FiAlertCircle,
   FiImage, FiTag, FiChevronDown, FiChevronUp,
-  FiShoppingCart
+  FiShoppingCart, FiCalendar, FiCheck
 } from "react-icons/fi";
 import { LoadingSpinner } from "@/components/common";
+import InfoTooltip from "@/components/common/InfoTooltip";
 import { formatNumber, formatPercent, formatDateTime, formatCurrency } from "@/utils";
 
 const PRESET_IMAGES = [
@@ -25,6 +26,19 @@ export default function PwaStatsTab() {
   const [data, setData]       = useState(null);
   const [loading, setLoading] = useState(true);
   const [days, setDays]       = useState(7);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const filterRef = useRef(null);
+
+  // Close filter dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (filterRef.current && !filterRef.current.contains(event.target)) {
+        setIsFilterOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Push broadcast state
   const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
@@ -121,33 +135,82 @@ export default function PwaStatsTab() {
 
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[var(--border)]/50">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between sm:justify-start gap-3">
-            <h2 className="text-sm font-bold tracking-tight text-[var(--foreground)] uppercase truncate">PWA & Push Notifications Panel</h2>
-            <button aria-label="button"
-              onClick={() => fetchStats(days)}
-              className="p-1.5 shrink-0 rounded border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.02] transition-all active:scale-95"
-            >
-              <FiRefreshCw size={12} />
-            </button>
-          </div>
-          <p className="text-[10px] text-[var(--muted)] mt-0.5 font-mono truncate">Real-time install, active devices & push subscriber metrics</p>
-        </div>
         <div className="flex items-center gap-2">
-          {/* Day toggle */}
-          <div className="flex p-0.5 bg-[var(--border)]/50 border border-[var(--border)] rounded-md gap-0.5">
-            {[1, 7, 30].map((d) => (
-              <button aria-label="button"
-                key={d}
-                onClick={() => setDays(d)}
-                className={`px-3 py-1 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all ${
-                  days === d
-                    ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
+          <h2 className="text-sm font-bold tracking-tight text-[var(--foreground)] uppercase truncate">
+            PWA & Push Notifications
+          </h2>
+          <InfoTooltip
+            content="Real-time install, active devices & push subscriber metrics"
+            position="bottom"
+            iconClassName="text-[var(--muted)] hover:text-emerald-400 transition-colors"
+          />
+        </div>
+
+        <div className="flex items-center gap-1.5 self-end sm:self-auto">
+          {/* Timeframe Filter Dropdown */}
+          <div className="relative inline-flex items-center" ref={filterRef}>
+            <button
+              type="button"
+              onClick={() => setIsFilterOpen((prev) => !prev)}
+              className={`h-8 px-3 rounded-xl border text-[11px] font-semibold tracking-tight transition-all flex items-center gap-1.5 cursor-pointer shrink-0 shadow-2xs ${
+                isFilterOpen
+                  ? "bg-[var(--card)] border-[var(--accent)] text-[var(--foreground)] ring-1 ring-[var(--accent)]/30"
+                  : "bg-[var(--card)]/80 border-[var(--border)] text-[var(--foreground)] hover:border-[var(--accent)]/40 hover:bg-[var(--card)]"
+              }`}
+              title="Change timeframe"
+            >
+              <FiCalendar size={13} className="text-[var(--accent)]" />
+              <span>
+                {days === 1 ? "Today (1D)" : days === 7 ? "7 Days" : "30 Days"}
+              </span>
+              <FiChevronDown
+                size={12}
+                className={`text-[var(--muted)] transition-transform duration-200 ${
+                  isFilterOpen ? "rotate-180" : ""
                 }`}
-              >{d}D</button>
-            ))}
+              />
+            </button>
+
+            {isFilterOpen && (
+              <div className="absolute right-0 top-full mt-1.5 z-50 w-36 py-1 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-xl backdrop-blur-xl animate-in fade-in zoom-in-95 duration-150">
+                <div className="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">
+                  Select Timeframe
+                </div>
+                {[
+                  { id: 1, label: "Today (1D)" },
+                  { id: 7, label: "Last 7 Days" },
+                  { id: 30, label: "Last 30 Days" },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      setDays(item.id);
+                      setIsFilterOpen(false);
+                    }}
+                    className={`w-full px-2.5 py-1.5 text-left text-xs font-medium flex items-center justify-between transition-colors cursor-pointer ${
+                      days === item.id
+                        ? "bg-[var(--accent)]/15 text-[var(--accent)] font-semibold"
+                        : "text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05]"
+                    }`}
+                  >
+                    <span>{item.label}</span>
+                    {days === item.id && <FiCheck size={12} className="text-[var(--accent)]" />}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+
+          <button
+            aria-label="Refresh"
+            type="button"
+            onClick={() => fetchStats(days)}
+            className="w-8 h-8 rounded-xl border border-[var(--border)] bg-[var(--card)]/80 text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/40 transition-all flex items-center justify-center cursor-pointer active:scale-95 shadow-2xs"
+            title="Refresh statistics"
+          >
+            <FiRefreshCw size={12} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
+          </button>
         </div>
       </div>
 

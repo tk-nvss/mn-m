@@ -26,7 +26,7 @@ import {
   ExternalLink
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
-import { StatusBadge, SearchInput, EmptyState, Pagination } from "@/components/common";
+import { StatusBadge, SearchInput, EmptyState, Pagination, InfoTooltip } from "@/components/common";
 import { formatCurrency, formatDate, formatTime, formatDateTime } from "@/utils";
 
 export default function OrdersTab() {
@@ -134,12 +134,16 @@ export default function OrdersTab() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-[var(--border)]/70">
         <div className="flex items-center justify-between sm:justify-start gap-2.5">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]">
+            <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
               <ShoppingBag size={16} />
             </div>
-            <div>
+            <div className="flex items-center gap-1.5">
               <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">Orders</h2>
-              <p className="text-[10px] text-[var(--muted)] font-medium">Customer Transactions & Fulfillment</p>
+              <InfoTooltip
+                content="Customer Transactions & Fulfillment"
+                position="bottom"
+                iconClassName="text-[var(--muted)] hover:text-[var(--accent)] transition-colors"
+              />
             </div>
           </div>
 

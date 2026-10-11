@@ -33,7 +33,7 @@ import {
   FiChevronDown,
 } from "react-icons/fi";
 import { GiTrophy, GiSwords } from "react-icons/gi";
-import { LoadingSpinner } from "@/components/common";
+import { LoadingSpinner, InfoTooltip } from "@/components/common";
 
 const GAMES = ["mlbb", "freefire", "codm", "honorkings", "other"];
 const STATUSES = ["upcoming", "open", "ongoing", "closed", "ended"];
@@ -575,19 +575,19 @@ export default function TournamentsAdminTab() {
       {/* ── Header Bar ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-3.5">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
             <GiTrophy size={16} />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-black uppercase tracking-tight text-[var(--foreground)]">
-                Tournaments Console
-              </h2>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            </div>
-            <p className="text-[10px] text-[var(--muted)] font-medium">
-              Manage custom scrims, match rooms, participant brackets & prizes
-            </p>
+          <div className="flex items-center gap-1.5">
+            <h2 className="text-sm font-black uppercase tracking-tight text-[var(--foreground)]">
+              Tournaments Console
+            </h2>
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <InfoTooltip
+              content="Manage custom scrims, match rooms, participant brackets & prizes"
+              position="bottom"
+              iconClassName="text-[var(--muted)] hover:text-amber-400 transition-colors"
+            />
           </div>
         </div>
 

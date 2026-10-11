@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Icons } from "@/components/icons";
-import { LoadingSpinner } from "@/components/common";
+import { LoadingSpinner, InfoTooltip } from "@/components/common";
 
 const SettingsTab = ({ onProviderChange, providerBalances }) => {
     const [settings, setSettings] = useState({ maintenanceMode: false, topupProvider: "1game" });
@@ -145,14 +145,16 @@ const SettingsTab = ({ onProviderChange, providerBalances }) => {
             {/* Header Strip */}
             <div className="flex items-center justify-between gap-3 pb-3 border-b border-[var(--border)]/70">
                 <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]">
+                    <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
                         <Icons.settings size={16} />
                     </div>
-                    <div>
+                    <div className="flex items-center gap-1.5">
                         <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">Main Settings</h2>
-                        <p className="text-[10px] text-[var(--muted)] font-medium">
-                            Store Controls & API Provider Routing
-                        </p>
+                        <InfoTooltip
+                            content="Store Controls & API Provider Routing"
+                            position="bottom"
+                            iconClassName="text-[var(--muted)] hover:text-[var(--accent)] transition-colors"
+                        />
                     </div>
                 </div>
 

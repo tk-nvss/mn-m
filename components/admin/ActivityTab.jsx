@@ -224,7 +224,7 @@ export default function ActivityTab({ onNavigate }) {
   return (
     <div className="w-full space-y-3 pb-8 max-w-7xl mx-auto">
       {/* ── Header Bar ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-3.5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1 py-1">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
             <FiZap size={15} />
@@ -242,7 +242,7 @@ export default function ActivityTab({ onNavigate }) {
           </div>
         </div>
 
-        {/* Search & Refresh */}
+        {/* Search, Filter Toggle & Refresh */}
         <div className="flex items-center gap-1.5 w-full sm:w-auto">
           <div className="relative flex-1 sm:w-64">
             <FiSearch size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
@@ -254,7 +254,7 @@ export default function ActivityTab({ onNavigate }) {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full h-7.5 pl-7 pr-7 text-[10px] bg-[var(--background)] border border-[var(--border)] rounded-xl focus:outline-none focus:border-[var(--accent)] text-[var(--foreground)] placeholder-[var(--muted)]/60"
+              className="w-full h-8 pl-7 pr-7 text-[10px] bg-[var(--card)]/60 border border-[var(--border)] rounded-xl focus:outline-none focus:border-[var(--accent)] text-[var(--foreground)] placeholder-[var(--muted)]/60"
             />
             {search && (
               <button
@@ -262,18 +262,38 @@ export default function ActivityTab({ onNavigate }) {
                   setSearch("");
                   setPage(1);
                 }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)] cursor-pointer"
               >
                 <FiX size={11} />
               </button>
             )}
           </div>
 
+          {/* Date / Filter Toggle Button showing active selection */}
+          <button
+            type="button"
+            onClick={() => setShowFilters((prev) => !prev)}
+            className={`h-8 px-3 rounded-xl border text-[11px] font-semibold tracking-tight transition-all flex items-center gap-1.5 cursor-pointer shrink-0 shadow-2xs ${
+              showFilters || isFilterActive
+                ? "bg-[var(--card)] border-[var(--accent)] text-[var(--foreground)] ring-1 ring-[var(--accent)]/30"
+                : "bg-[var(--card)]/80 border-[var(--border)] text-[var(--foreground)] hover:border-[var(--accent)]/40 hover:bg-[var(--card)]"
+            }`}
+            title="Change timeframe or filter"
+          >
+            <FiCalendar size={13} className="text-[var(--accent)]" />
+            <span>
+              {TIME_RANGES.find((t) => t.id === timeRange)?.label || "Today"}
+            </span>
+            {type !== "all" && (
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse ml-0.5" />
+            )}
+          </button>
+
           <button
             type="button"
             onClick={() => fetchActivity()}
             disabled={loading}
-            className="w-7.5 h-7.5 rounded-xl bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/40 transition-all flex items-center justify-center cursor-pointer disabled:opacity-50 shrink-0"
+            className="w-8 h-8 rounded-xl bg-[var(--card)]/60 border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/40 transition-all flex items-center justify-center cursor-pointer disabled:opacity-50 shrink-0"
             title="Refresh feed"
           >
             <FiRefreshCw size={12} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
@@ -281,72 +301,92 @@ export default function ActivityTab({ onNavigate }) {
         </div>
       </div>
 
-      {/* ── Type Filter Chips & Time Range Pills ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        {/* Activity Types Chips */}
-        <div className="flex items-center gap-1 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden py-0.5">
-          {FILTER_TYPES.map((f) => {
-            const Icon = f.icon;
-            const active = type === f.id;
-            return (
-              <button
-                key={f.id}
-                type="button"
-                onClick={() => {
-                  setType(f.id);
-                  setPage(1);
-                }}
-                className={`h-7 px-2.5 rounded-xl text-[9.5px] font-black uppercase tracking-wider flex items-center gap-1.5 border transition-all cursor-pointer whitespace-nowrap ${
-                  active
-                    ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]"
-                    : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
-                }`}
-              >
-                <Icon size={11} className={active ? "text-[var(--background)]" : "text-[var(--muted)]"} />
-                <span>{f.label}</span>
-              </button>
-            );
-          })}
-        </div>
+      {/* ── Collapsible Filters Drawer ── */}
+      <AnimatePresence>
+        {showFilters && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="bg-[var(--card)]/80 border border-[var(--border)] rounded-2xl p-3 space-y-3 backdrop-blur-md">
+              {/* Type Filter Chips */}
+              <div className="space-y-1.5">
+                <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">
+                  Event Category:
+                </span>
+                <div className="flex items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden py-0.5">
+                  {FILTER_TYPES.map((f) => {
+                    const Icon = f.icon;
+                    const active = type === f.id;
+                    return (
+                      <button
+                        key={f.id}
+                        type="button"
+                        onClick={() => {
+                          setType(f.id);
+                          setPage(1);
+                        }}
+                        className={`h-7 px-2.5 rounded-xl text-[9.5px] font-black uppercase tracking-wider flex items-center gap-1.5 border transition-all cursor-pointer whitespace-nowrap ${
+                          active
+                            ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)] shadow-xs"
+                            : "bg-[var(--background)]/60 border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
+                        }`}
+                      >
+                        <Icon size={11} className={active ? "text-[var(--background)]" : "text-[var(--muted)]"} />
+                        <span>{f.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
-        {/* Time Range Pills */}
-        <div className="flex items-center gap-1 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden shrink-0">
-          <span className="text-[8px] font-black uppercase tracking-wider text-[var(--muted)] mr-1 shrink-0">
-            Time:
-          </span>
-          {TIME_RANGES.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => {
-                setTimeRange(t.id);
-                setPage(1);
-              }}
-              className={`px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-                timeRange === t.id
-                  ? "bg-[var(--accent)] text-white"
-                  : "bg-[var(--foreground)]/5 text-[var(--muted)] hover:text-[var(--foreground)] border border-[var(--border)]/50"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-          {isFilterActive && (
-            <button
-              type="button"
-              onClick={() => {
-                setType("all");
-                setTimeRange("today");
-                setSearch("");
-                setPage(1);
-              }}
-              className="text-[8.5px] font-black text-rose-400 uppercase tracking-wider hover:underline ml-1 cursor-pointer"
-            >
-              Reset
-            </button>
-          )}
-        </div>
-      </div>
+              {/* Time Range Pills & Reset */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-[var(--border)]/50">
+                <div className="flex items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                  <span className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)] mr-1 shrink-0">
+                    Timeframe:
+                  </span>
+                  {TIME_RANGES.map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => {
+                        setTimeRange(t.id);
+                        setPage(1);
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
+                        timeRange === t.id
+                          ? "bg-[var(--accent)] text-white shadow-xs"
+                          : "bg-[var(--background)]/80 text-[var(--muted)] hover:text-[var(--foreground)] border border-[var(--border)]/70"
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+
+                {isFilterActive && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setType("all");
+                      setTimeRange("today");
+                      setSearch("");
+                      setPage(1);
+                    }}
+                    className="text-[9px] font-black text-rose-400 hover:text-rose-300 uppercase tracking-wider transition-colors cursor-pointer self-end sm:self-auto"
+                  >
+                    Reset Filters
+                  </button>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Activity List Stream (Flat, High Density) ── */}
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden">

@@ -15,6 +15,7 @@ import {
   Save,
   ExternalLink
 } from "lucide-react";
+import { InfoTooltip } from "@/components/common";
 
 const UiSettingsTab = () => {
   const [settings, setSettings] = useState({ 
@@ -203,14 +204,16 @@ const UiSettingsTab = () => {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
             <Layout size={16} />
           </div>
-          <div>
+          <div className="flex items-center gap-1.5">
             <h2 className="text-sm font-black uppercase tracking-wider leading-tight text-[var(--foreground)]">UI & Display Settings</h2>
-            <p className="text-[9px] text-[var(--muted)] font-mono leading-none mt-0.5">
-              Control website banners, popups, and layout modules
-            </p>
+            <InfoTooltip
+              content="Control website banners, popups, and layout modules"
+              position="bottom"
+              iconClassName="text-[var(--muted)] hover:text-purple-400 transition-colors"
+            />
           </div>
         </div>
 

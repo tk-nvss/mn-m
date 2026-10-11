@@ -11,6 +11,7 @@ import {
   Sparkles, MessageSquare, BarChart3, Coins, Bell, ChevronRight,
   UserPlus, UserCheck, Zap, Activity
 } from "lucide-react";
+import { InfoTooltip } from "@/components/common";
 import { formatCurrency, formatNumber } from "@/utils";
 
 const PERIODS = [
@@ -407,6 +408,11 @@ export default function AnalyticsTab({ onNavigate }) {
           <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
             Sales & Growth Analytics
           </h2>
+          <InfoTooltip
+            content="Real-time revenue, customer acquisition, cohort metrics & store performance"
+            position="bottom"
+            iconClassName="text-[var(--muted)] hover:text-emerald-400 transition-colors"
+          />
         </div>
 
         {/* Right side: Filter & Refresh */}

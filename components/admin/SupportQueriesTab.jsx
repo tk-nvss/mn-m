@@ -13,7 +13,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { Icons } from "@/components/icons";
-import { StatusBadge, SearchInput, EmptyState, Pagination, LoadingSpinner } from "@/components/common";
+import { StatusBadge, SearchInput, EmptyState, Pagination, LoadingSpinner, InfoTooltip } from "@/components/common";
 import { formatDate, formatTime, formatDateTime, formatRelativeTime } from "@/utils";
 
 export default function SupportQueriesTab() {
@@ -187,14 +187,16 @@ export default function SupportQueriesTab() {
       {/* ================= HEADER ================= */}
       <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
         <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center shrink-0">
                 <MessageSquare size={15} />
             </div>
-            <div>
+            <div className="flex items-center gap-1.5">
                 <h2 className="text-sm font-black uppercase tracking-wider leading-tight text-[var(--foreground)]">Support</h2>
-                <p className="text-[9px] text-[var(--muted)] font-mono leading-none mt-0.5">
-                    Customer Queries
-                </p>
+                <InfoTooltip
+                    content="Customer Support Queries & Tickets"
+                    position="bottom"
+                    iconClassName="text-[var(--muted)] hover:text-cyan-400 transition-colors"
+                />
             </div>
         </div>
 
