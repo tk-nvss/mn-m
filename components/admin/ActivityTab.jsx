@@ -22,6 +22,7 @@ import {
   FiArrowUpRight,
 } from "react-icons/fi";
 import { formatCurrency } from "@/utils";
+import InfoTooltip from "@/components/common/InfoTooltip";
 
 const FILTER_TYPES = [
   { id: "all", label: "All Activity", icon: FiZap },
@@ -225,19 +226,19 @@ export default function ActivityTab({ onNavigate }) {
       {/* ── Header Bar ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-3.5">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
             <FiZap size={15} />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-black uppercase tracking-tight text-[var(--foreground)]">
-                Live Activity Feed
-              </h2>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            </div>
-            <p className="text-[10px] text-[var(--muted)] font-medium">
-              Real-time audit stream for orders, deposits, signups & support
-            </p>
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm font-black uppercase tracking-tight text-[var(--foreground)]">
+              Live Activity Feed
+            </h2>
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <InfoTooltip
+              content="Real-time audit stream for orders, deposits, signups & support"
+              position="bottom"
+              iconClassName="text-[var(--muted)] hover:text-emerald-400 transition-colors"
+            />
           </div>
         </div>
 

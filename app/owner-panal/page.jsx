@@ -499,66 +499,78 @@ export default function AdminPanalPage() {
   if (pinPrompt) {
     const isComplete = pinDigits.every((d) => d !== "");
     return (
-      <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-md text-white p-4">
+      <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/85 backdrop-blur-xl text-white p-4">
+        {/* Ambient background glow behind the card */}
+        <div className="absolute w-72 h-72 rounded-full bg-sky-500/10 blur-[100px] pointer-events-none" />
+
         <form
           onSubmit={handlePinSubmit}
-          className="w-full max-w-sm bg-neutral-900 border border-neutral-800 p-6 sm:p-8 rounded-2xl shadow-xl flex flex-col items-center gap-5"
+          className="relative w-full max-w-[390px] bg-gradient-to-b from-neutral-900/95 via-neutral-900/90 to-neutral-950/95 border border-white/10 p-7 sm:p-9 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),0_0_1px_1px_rgba(255,255,255,0.06)] backdrop-blur-2xl flex flex-col items-center gap-6 overflow-hidden"
         >
-          {/* Key Icon */}
-          <div className="w-12 h-12 rounded-xl bg-neutral-800/80 border border-neutral-700/50 flex items-center justify-center text-[var(--accent)]">
-            <Icons.key size={22} />
+          {/* Subtle top light edge */}
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-400/50 to-transparent pointer-events-none" />
+
+          {/* Key Icon Container with Soft Radial Aura */}
+          <div className="relative group">
+            <div className="absolute -inset-2 rounded-2xl bg-sky-500/20 blur-lg opacity-75 group-hover:opacity-100 transition-opacity" />
+            <div className="relative w-14 h-14 rounded-2xl bg-neutral-950 border border-white/10 shadow-inner flex items-center justify-center text-sky-400">
+              <Icons.key size={24} className="stroke-[2.2] drop-shadow-[0_0_8px_rgba(56,189,248,0.5)]" />
+            </div>
           </div>
 
-          {/* Simple Text */}
-          <div className="text-center space-y-1">
-            <h2 className="text-lg sm:text-xl font-bold text-white">
+          {/* Header Typography */}
+          <div className="text-center space-y-1.5">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
               Admin Security PIN
             </h2>
-            <p className="text-xs text-neutral-400">
-              Enter your 6-digit PIN to continue
+            <p className="text-xs sm:text-[13px] text-neutral-400 font-normal leading-relaxed">
+              Enter your authorized 6-digit access code
             </p>
           </div>
 
-          {/* Error Message */}
+          {/* Error Banner */}
           {pinError && (
-            <div className="w-full py-2 px-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center font-medium animate-in fade-in slide-in-from-top-1">
+            <div className="w-full py-2.5 px-3.5 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-xs text-center font-medium shadow-[0_0_20px_rgba(239,68,68,0.15)] animate-in fade-in zoom-in-95 duration-200">
               {pinError}
             </div>
           )}
 
           {/* 6 Digit Inputs */}
-          <div className="space-y-3 w-full">
-            <div className="flex items-center justify-center gap-2" onPaste={handlePinPaste}>
-              {pinDigits.map((digit, idx) => (
-                <input
-                  key={idx}
-                  ref={(el) => (pinInputRefs.current[idx] = el)}
-                  type={showPin ? "text" : "password"}
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  autoComplete="one-time-code"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleDigitChange(idx, e.target.value)}
-                  onKeyDown={(e) => handleDigitKeyDown(idx, e)}
-                  autoFocus={idx === 0}
-                  className={`w-10 h-12 sm:w-11 sm:h-12 text-center text-lg font-bold rounded-xl bg-neutral-950 border transition-all outline-none ${
-                    pinError
-                      ? "border-red-500/60 text-red-400 focus:border-red-500"
-                      : digit
-                      ? "border-[var(--accent)] text-[var(--accent)]"
-                      : "border-neutral-800 text-white focus:border-[var(--accent)]"
-                  }`}
-                />
-              ))}
+          <div className="space-y-4 w-full">
+            <div className="flex items-center justify-center gap-2.5 sm:gap-3" onPaste={handlePinPaste}>
+              {pinDigits.map((digit, idx) => {
+                const isFilled = Boolean(digit);
+                return (
+                  <input
+                    key={idx}
+                    ref={(el) => (pinInputRefs.current[idx] = el)}
+                    type={showPin ? "text" : "password"}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    autoComplete="one-time-code"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleDigitChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleDigitKeyDown(idx, e)}
+                    autoFocus={idx === 0}
+                    className={`w-11 h-14 sm:w-12 sm:h-14 text-center text-xl font-bold rounded-2xl transition-all duration-200 outline-none select-none ${
+                      pinError
+                        ? "bg-red-950/20 border-2 border-red-500/60 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)]"
+                        : isFilled
+                        ? "bg-neutral-900 border-2 border-sky-400/80 text-sky-400 shadow-[0_0_16px_rgba(56,189,248,0.25)] scale-[1.02]"
+                        : "bg-neutral-950/70 border border-white/10 text-white hover:border-white/20 focus:border-sky-400/70 focus:bg-neutral-900/90 focus:shadow-[0_0_15px_rgba(56,189,248,0.2)]"
+                    }`}
+                  />
+                );
+              })}
             </div>
 
-            {/* Toggle & Clear */}
-            <div className="flex items-center justify-between text-xs text-neutral-400 px-1">
+            {/* Quick Actions (Show/Hide & Clear) */}
+            <div className="flex items-center justify-between text-xs text-neutral-400 px-1 pt-1">
               <button
                 type="button"
                 onClick={() => setShowPin(!showPin)}
-                className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 text-neutral-400 hover:text-white transition-colors cursor-pointer select-none font-medium"
               >
                 {showPin ? <Icons.eyeOff size={14} /> : <Icons.eye size={14} />}
                 <span>{showPin ? "Hide PIN" : "Show PIN"}</span>
@@ -572,28 +584,28 @@ export default function AdminPanalPage() {
                     setPinError("");
                     pinInputRefs.current[0]?.focus();
                   }}
-                  className="hover:text-red-400 transition-colors cursor-pointer"
+                  className="text-neutral-400 hover:text-red-400 transition-colors cursor-pointer select-none font-medium"
                 >
-                  Clear
+                  Clear all
                 </button>
               )}
             </div>
           </div>
 
-          {/* Unlock Button */}
+          {/* Action Button */}
           <button
-            aria-label="button"
+            aria-label="Unlock Admin Panel"
             type="submit"
             disabled={!isComplete || verifyingPin}
-            className="w-full py-3 rounded-xl bg-[var(--accent)] text-black font-bold text-sm hover:opacity-90 active:scale-[0.99] disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-300 hover:to-blue-400 text-neutral-950 font-bold text-sm tracking-wide shadow-[0_4px_25px_rgba(56,189,248,0.35)] active:scale-[0.98] disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center justify-center gap-2 cursor-pointer mt-1"
           >
             {verifyingPin ? (
               <>
-                <span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />
-                <span>Verifying...</span>
+                <span className="w-4 h-4 border-2 border-neutral-950/40 border-t-neutral-950 rounded-full animate-spin" />
+                <span>Verifying credentials...</span>
               </>
             ) : (
-              "Unlock"
+              "Unlock Console"
             )}
           </button>
         </form>
