@@ -513,28 +513,59 @@ export default function CoinsTab() {
   const completedTasks = tasks.filter(t => t.status === "completed");
 
   return (
-    <div className="max-w-3xl mx-auto space-y-1.5 pb-16 px-2 pt-0.5">
+    <div className="max-w-3xl mx-auto space-y-2 pb-16 px-2 pt-0.5">
+
+      {/* ── TOP PROMO BANNER ────────────────────────────────────────── */}
+      <a
+        href="https://games.bluebuff.in"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group relative flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-purple-500/10 border border-amber-500/25 hover:border-amber-500/40 transition-all shadow-xs overflow-hidden"
+      >
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-7 h-7 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center shrink-0">
+            <FiGift size={13} />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-[11px] font-black text-amber-500 hover:underline flex items-center gap-1">
+                games.bluebuff.in
+                <FiExternalLink size={10} />
+              </span>
+              <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-500">
+                Play & Earn
+              </span>
+            </div>
+            <p className="text-[9.5px] text-[var(--muted)] font-medium truncate mt-0.5">
+              Play and earn UC, Diamonds & more for popular games!
+            </p>
+          </div>
+        </div>
+        <FiArrowRight size={13} className="text-amber-500 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+      </a>
 
       {/* ── BALANCE CARD ─────────────────────────────────────────────── */}
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 mb-0.5">
-        <div className="flex items-center justify-between gap-4">
-
+      <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--card)] p-4 sm:p-5 shadow-xs">
+        <div className="relative flex items-center justify-between gap-3">
           {/* Left: Balance */}
           <div className="flex flex-col gap-1">
-            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-amber-500/25 bg-amber-500/8 w-fit">
-              <FiStar className="text-amber-500" size={8} />
-              <span className="text-[8px] font-black uppercase tracking-widest text-amber-500">BBC Coins</span>
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-amber-500/20 bg-amber-500/10 w-fit">
+              <FiStar className="text-amber-500 fill-amber-500/30" size={10} />
+              <span className="text-[8.5px] font-black uppercase tracking-wider text-amber-500">BBC Balance</span>
             </div>
-            <div className="flex items-end gap-2 relative">
-              <span className="text-5xl font-black text-amber-500 tabular-nums leading-none">{coins || 0}</span>
+            <div className="flex items-baseline gap-2 relative">
+              <span className="text-3xl sm:text-4xl font-black text-[var(--foreground)] tracking-tight tabular-nums leading-none">
+                {coins || 0}
+              </span>
+              <span className="text-xs font-black uppercase text-amber-500 tracking-wider">BBC</span>
               <AnimatePresence>
                 {lastResult && (
                   <motion.div
                     key={lastResult.id}
                     initial={{ opacity: 0, y: 10, scale: 0.5 }}
-                    animate={{ opacity: 1, y: -25, scale: 1.2 }}
-                    exit={{ opacity: 0, y: -40, scale: 0.8 }}
-                    className={`absolute -right-2 top-0 font-black text-lg pointer-events-none ${
+                    animate={{ opacity: 1, y: -20, scale: 1.1 }}
+                    exit={{ opacity: 0, y: -35, scale: 0.8 }}
+                    className={`absolute -right-2 top-0 font-black text-xs pointer-events-none ${
                       lastResult.amount > 0 ? "text-emerald-400" : "text-rose-500"
                     }`}
                   >
@@ -542,81 +573,90 @@ export default function CoinsTab() {
                   </motion.div>
                 )}
               </AnimatePresence>
-              <span className="text-[9px] text-[var(--muted)]/50 font-mono mb-1.5">≈ ₹{((coins || 0) / 100).toFixed(2)}</span>
             </div>
+            <p className="text-[10px] text-[var(--muted)] font-mono">
+              ≈ {formatCurrency((coins || 0) / 100)} INR
+            </p>
           </div>
 
-          {/* Right: Stats */}
-          <div className="flex gap-2">
-            <div className="flex flex-col items-center justify-center w-[60px] h-[60px] rounded-xl border border-[var(--border)] bg-[var(--background)] gap-0.5">
-              <div className="flex items-center gap-1">
-                <span className="text-sm">🔥</span>
-                <span className="text-sm font-black text-[var(--foreground)] tabular-nums">{streak}</span>
+          {/* Right: Streak & Next Reward Badges */}
+          <div className="flex gap-1.5 shrink-0">
+            {/* Streak */}
+            <div className="flex flex-col items-center justify-center min-w-[54px] sm:min-w-[60px] px-2 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--background)]">
+              <div className="flex items-center gap-0.5 text-amber-500 font-black text-sm sm:text-base tabular-nums leading-none">
+                <FiZap size={12} className="text-amber-500 fill-amber-500/20" />
+                <span>{streak}</span>
               </div>
-              <span className="text-[7px] font-bold uppercase tracking-widest text-[var(--muted)]/50">Streak</span>
+              <span className="text-[7.5px] font-bold uppercase tracking-wider text-[var(--muted)] mt-1">Streak</span>
             </div>
-            <div className="flex flex-col items-center justify-center w-[60px] h-[60px] rounded-xl border border-amber-500/30 bg-amber-500/5 gap-0.5">
-              <span className="text-sm font-black text-amber-500">+{nextReward}</span>
-              <span className="text-[7px] font-bold uppercase tracking-widest text-[var(--muted)]/50">Next</span>
+
+            {/* Next reward */}
+            <div className="flex flex-col items-center justify-center min-w-[54px] sm:min-w-[60px] px-2 py-1.5 rounded-xl border border-amber-500/25 bg-amber-500/5">
+              <div className="flex items-center gap-0.5 text-amber-500 font-black text-sm sm:text-base tabular-nums leading-none">
+                <span>+{nextReward}</span>
+              </div>
+              <span className="text-[7.5px] font-bold uppercase tracking-wider text-amber-500/80 mt-1">Next</span>
             </div>
           </div>
-
         </div>
       </div>
 
       {/* ── CONTENT AREA ──────────────────────────────────────────────── */}
       {!loading && (
-        <div className="space-y-2">
+        <div className="space-y-2.5">
 
-          {/* Convert + History */}
+          {/* Convert + History Quick Action Row */}
           <div className="grid grid-cols-2 gap-2">
-            <button aria-label="button"
+            <button aria-label="Convert BBC Coins"
               onClick={() => setActiveTab(activeTab === "convert" ? "checkin" : "convert")}
-              className={`flex items-center justify-center gap-2 py-2.5 rounded-2xl border transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer ${
+              className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl border transition-all text-[11px] font-bold tracking-wide cursor-pointer active:scale-[0.98] ${
                 activeTab === "convert"
-                ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]"
-                : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--foreground)]/30"
+                ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)] shadow-sm font-black"
+                : "bg-[var(--card)]/70 border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border)]"
               }`}
             >
-              <FiTrendingUp size={13} />
-              Convert
+              <FiTrendingUp size={13} className={activeTab === "convert" ? "text-[var(--background)]" : "text-emerald-400"} />
+              <span>Convert</span>
             </button>
-            <button aria-label="button"
+            <button aria-label="Transaction History"
               onClick={() => setActiveTab(activeTab === "history" ? "checkin" : "history")}
-              className={`flex items-center justify-center gap-2 py-2.5 rounded-2xl border transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer ${
+              className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl border transition-all text-[11px] font-bold tracking-wide cursor-pointer active:scale-[0.98] ${
                 activeTab === "history"
-                ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]"
-                : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--foreground)]/30"
+                ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)] shadow-sm font-black"
+                : "bg-[var(--card)]/70 border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border)]"
               }`}
             >
-              <FiList size={13} />
-              History
+              <FiList size={13} className={activeTab === "history" ? "text-[var(--background)]" : "text-blue-400"} />
+              <span>History</span>
             </button>
           </div>
 
-          {/* Tab bar */}
-          <div className="grid grid-cols-3 gap-1 bg-[var(--card)] p-1 rounded-2xl border border-[var(--border)]">
-            {TABS.map((tab) => (
-              <button aria-label="button"
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`relative flex flex-col items-center gap-1 py-2 rounded-xl text-[9px] font-black uppercase tracking-wide transition-all cursor-pointer ${
-                  activeTab === tab.key
-                  ? "bg-[var(--foreground)] text-[var(--background)]"
-                  : "text-[var(--muted)] hover:text-[var(--foreground)]"
-                }`}
-              >
-                {tab.icon}
-                <span>{tab.label}</span>
-                {tab.key === "tasks" && incompleteTasks.length > 0 && (
-                  <span className={`absolute -top-1 -right-1 w-4 h-4 rounded-full text-[7px] font-black flex items-center justify-center ${
-                    activeTab === "tasks" ? "bg-[var(--background)] text-[var(--foreground)]" : "bg-[var(--foreground)] text-[var(--background)]"
-                  }`}>
-                    {incompleteTasks.length}
-                  </span>
-                )}
-              </button>
-            ))}
+          {/* Tab bar (Segmented Pill) */}
+          <div className="grid grid-cols-3 gap-1 bg-[var(--card)]/90 backdrop-blur-md p-1 rounded-2xl border border-[var(--border)] shadow-xs">
+            {TABS.map((tab) => {
+              const isActive = activeTab === tab.key;
+              return (
+                <button aria-label={tab.label}
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`relative flex items-center justify-center gap-2 py-2.5 rounded-xl text-[11px] font-bold tracking-wide transition-all cursor-pointer ${
+                    isActive
+                    ? "bg-[var(--foreground)] text-[var(--background)] shadow-xs font-black"
+                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                  }`}
+                >
+                  <span className={isActive ? "text-[var(--background)]" : "opacity-70"}>{tab.icon}</span>
+                  <span>{tab.label}</span>
+                  {tab.key === "tasks" && incompleteTasks.length > 0 && (
+                    <span className={`w-4 h-4 rounded-full text-[8px] font-black flex items-center justify-center ${
+                      isActive ? "bg-[var(--background)] text-[var(--foreground)]" : "bg-blue-500 text-white"
+                    }`}>
+                      {incompleteTasks.length}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           {/* ── ALL TAB CONTENT ──────────────────────────────────────────────── */}
@@ -624,20 +664,23 @@ export default function CoinsTab() {
             {/* ══ CONVERT ══ */}
             {activeTab === "convert" && (
               <motion.div key="convert" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 space-y-3"
+                className="rounded-3xl border border-[var(--border)] bg-[var(--card)] p-4 sm:p-5 space-y-3.5 shadow-sm"
               >
-                <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)]">Convert to Wallet</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-[11px] font-black uppercase tracking-wider text-[var(--foreground)]">Convert to Wallet</p>
+                  <span className="text-[9px] text-[var(--muted)] font-bold uppercase">Rate: 100 BBC = ₹1</span>
+                </div>
 
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                    <FiStar className="text-amber-500" size={12} />
+                  <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none">
+                    <FiStar className="text-amber-500" size={14} />
                   </div>
                   <input
                     type="number"
                     value={convertCoins}
                     onChange={(e) => setConvertCoins(e.target.value)}
                     placeholder="Enter coins (min 100)"
-                    className="w-full pl-9 pr-4 h-11 bg-[var(--background)] border border-[var(--border)] rounded-xl text-sm font-bold outline-none focus:border-[var(--foreground)]/30 transition-colors placeholder:text-[var(--muted)]/40"
+                    className="w-full pl-10 pr-4 h-12 bg-[var(--background)] border border-[var(--border)] rounded-2xl text-sm font-bold outline-none focus:border-[var(--foreground)]/40 transition-colors placeholder:text-[var(--muted)]/50"
                   />
                 </div>
 
@@ -647,9 +690,9 @@ export default function CoinsTab() {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="flex items-center justify-between px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-xl"
+                      className="flex items-center justify-between px-3.5 py-2.5 bg-[var(--background)] border border-[var(--border)] rounded-2xl"
                     >
-                      <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-widest">You'll receive</span>
+                      <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-wider">You'll receive</span>
                       <span className="text-emerald-500 font-black text-sm">₹{convertPreview}</span>
                     </motion.div>
                   )}
@@ -659,21 +702,14 @@ export default function CoinsTab() {
                   whileTap={{ scale: 0.98 }}
                   onClick={handleConvert}
                   disabled={converting || !convertCoins || parseInt(convertCoins) < 100 || parseInt(convertCoins) > coins}
-                  className="w-full h-11 rounded-xl bg-[var(--foreground)] text-[var(--background)] text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-90"
+                  className="w-full h-12 rounded-2xl bg-[var(--foreground)] text-[var(--background)] text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-90 shadow-sm cursor-pointer"
                 >
-                  {converting ? <FiRefreshCw className="animate-spin" /> : <><FiArrowRight size={13} /> Add to Wallet</>}
+                  {converting ? <FiRefreshCw className="animate-spin" /> : <><FiArrowRight size={14} /> Add to Wallet</>}
                 </motion.button>
 
-                <div className="flex items-center gap-2 px-3 py-2 border border-[var(--border)] rounded-xl">
-                  <FiLock className="text-[var(--muted)]/40" size={11} />
-                  <p className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted)]/40">Min 100 BBC · Instant transfer</p>
-                </div>
-
-                <div className="flex items-start gap-2 px-3 py-2.5 border border-[var(--border)]/50 border-dashed rounded-xl">
-                  <FiZap className="text-[var(--muted)]/40 shrink-0 mt-0.5" size={11} />
-                  <p className="text-[8px] font-bold text-[var(--muted)]/40 uppercase tracking-wide leading-relaxed">
-                    Crypto withdrawal & DEX listing coming soon. Hold your coins.
-                  </p>
+                <div className="flex items-center gap-2 px-3 py-2 bg-[var(--background)]/60 border border-[var(--border)] rounded-xl">
+                  <FiLock className="text-[var(--muted)]/60" size={12} />
+                  <p className="text-[9px] font-bold uppercase tracking-wider text-[var(--muted)]">Min 100 BBC · Instant Wallet Credit</p>
                 </div>
               </motion.div>
             )}
@@ -681,12 +717,12 @@ export default function CoinsTab() {
             {/* ══ HISTORY ══ */}
             {activeTab === "history" && (
               <motion.div key="history" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 p-3 sm:p-4"
+                className="rounded-3xl border border-[var(--border)] bg-[var(--card)] p-4 sm:p-5 shadow-sm"
               >
                 <div className="flex items-center gap-2 mb-4">
                   <FiList className="text-[var(--muted)] text-sm" />
-                  <p className="text-[11px] font-black uppercase tracking-wide">Coin History</p>
-                  <button aria-label="button" onClick={fetchData} className="ml-auto text-[var(--muted)]/40 hover:text-[var(--muted)] transition-colors">
+                  <p className="text-[11px] font-black uppercase tracking-wider">Coin History</p>
+                  <button aria-label="Refresh history" onClick={fetchData} className="ml-auto p-1.5 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors rounded-lg">
                     <FiRefreshCw className="text-xs" />
                   </button>
                 </div>
@@ -703,18 +739,18 @@ export default function CoinsTab() {
                     {history.map((item, idx) => (
                       <div key={idx} className="flex items-center justify-between py-2.5 border-b border-[var(--border)]/30 last:border-0">
                         <div className="flex items-center gap-2.5">
-                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${item.type === "earn" ? "bg-amber-500/10" : "bg-rose-500/10"
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${item.type === "earn" ? "bg-amber-500/10 text-amber-500" : "bg-rose-500/10 text-rose-500"
                             }`}>
-                            <FiStar className={`text-[10px] ${item.type === "earn" ? "text-amber-400" : "text-rose-400"}`} />
+                            <FiStar size={12} />
                           </div>
                           <div>
-                            <p className="text-[10px] font-black truncate max-w-[200px]">{item.description}</p>
-                            <p className="text-[8px] text-[var(--muted)]/40 font-mono">
+                            <p className="text-[11px] font-bold truncate max-w-[200px]">{item.description}</p>
+                            <p className="text-[8px] text-[var(--muted)] font-mono">
                               {formatDate(item.createdAt, { style: "short" })}
                             </p>
                           </div>
                         </div>
-                        <span className={`font-black text-[11px] ${item.type === "earn" ? "text-amber-400" : "text-rose-400"}`}>
+                        <span className={`font-black text-xs ${item.type === "earn" ? "text-amber-500" : "text-rose-500"}`}>
                           {item.type === "earn" ? "+" : "-"}{formatCoins(item.coins)}
                         </span>
                       </div>
@@ -735,78 +771,91 @@ export default function CoinsTab() {
             {/* ══ CHECK-IN ══ */}
             {activeTab === "checkin" && (
               <motion.div key="checkin" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 space-y-4"
+                className="rounded-3xl border border-[var(--border)] bg-[var(--card)] p-4 sm:p-5 space-y-4 shadow-sm"
               >
                 {/* Header */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                      <FiCalendar className="text-blue-400" size={15} />
+                    <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                      <FiCalendar className="text-amber-500" size={17} />
                     </div>
                     <div>
-                      <p className="text-xs font-black uppercase tracking-widest text-[var(--foreground)]">Daily Check-in</p>
-                      <p className="text-[9px] text-[var(--muted)]/60 font-bold uppercase tracking-wider mt-0.5">
-                        {checkedInToday ? `Day ${streak} complete ✓` : `Next: +${nextReward} BBC`}
+                      <p className="text-xs font-black uppercase tracking-wider text-[var(--foreground)]">Daily Check-in</p>
+                      <p className="text-[10px] text-[var(--muted)] font-bold tracking-tight mt-0.5">
+                        {checkedInToday ? `Day ${streak} claimed today ✓` : `Claim your Day ${streak + 1} bonus`}
                       </p>
                     </div>
                   </div>
                   {streak > 0 && (
-                    <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/25 px-3 py-1.5 rounded-xl">
-                      <span className="text-sm">🔥</span>
-                      <span className="text-amber-400 font-black text-sm">{streak}</span>
-                      <span className="text-amber-400/60 font-bold text-[9px] uppercase">/7</span>
+                    <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/25 px-2.5 py-1 rounded-xl">
+                      <FiZap size={12} className="text-amber-500 fill-amber-500/30" />
+                      <span className="text-amber-500 font-black text-xs">{streak}</span>
+                      <span className="text-amber-500/60 font-bold text-[9px] uppercase">/7</span>
                     </div>
                   )}
                 </div>
 
-                {/* 7-day grid */}
-                <div className="grid grid-cols-7 gap-1">
+                {/* 7-day visual tracker cards */}
+                <div className="grid grid-cols-7 gap-1 sm:gap-1.5 pt-1">
                   {rewards.map((reward, i) => {
                     const day = i + 1;
                     const isCompleted = day <= (checkedInToday ? streak : streak);
                     const isToday = day === streak && checkedInToday;
                     const isCurrent = day === (checkedInToday ? streak : streak + 1);
+
                     return (
-                      <div key={day} className={`flex flex-col items-center gap-1.5 py-2 px-1 rounded-xl border transition-all ${
-                        isToday ? "bg-amber-500/20 border-amber-500/50 shadow-lg shadow-amber-500/10"
-                        : isCompleted ? "bg-emerald-500/10 border-emerald-500/25"
-                          : isCurrent && !checkedInToday ? "bg-blue-500/10 border-blue-500/30 ring-1 ring-blue-500/30 shadow-sm"
-                            : "bg-[var(--background)]/50 border-[var(--border)]/50"
-                        }`}>
-                        <span className="text-[7px] font-black uppercase text-[var(--muted)]/50">{DAY_LABELS[i]}</span>
-                        <span className={`text-[9px] font-black ${
-                          isToday || isCompleted ? "text-amber-400" : isCurrent ? "text-blue-400" : "text-[var(--muted)]/30"
-                          }`}>
-                          {isToday || isCompleted ? "✓" : reward}
+                      <div
+                        key={day}
+                        className={`flex flex-col items-center justify-between py-2 px-1 rounded-2xl border transition-all min-h-[64px] ${
+                          isToday
+                            ? "bg-amber-500/10 border-amber-500/40 text-amber-500"
+                            : isCompleted
+                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500"
+                            : isCurrent && !checkedInToday
+                            ? "bg-[var(--card)] border-amber-500/50 ring-1 ring-amber-500/30"
+                            : "bg-[var(--background)]/40 border-[var(--border)] text-[var(--muted)]"
+                        }`}
+                      >
+                        <span className="text-[8px] font-black uppercase tracking-tight text-[var(--muted)]">{DAY_LABELS[i]}</span>
+                        
+                        <div className="flex items-center justify-center my-0.5">
+                          {isCompleted ? (
+                            <FiCheck className="text-emerald-500 text-xs stroke-[3]" />
+                          ) : (
+                            <span className={`text-[11px] font-black tabular-nums ${
+                              isCurrent ? "text-amber-500 font-black" : "text-[var(--foreground)]"
+                            }`}>
+                              +{reward}
+                            </span>
+                          )}
+                        </div>
+
+                        <span className="text-[7px] font-bold text-[var(--muted)]/50 uppercase">
+                          {day === 7 ? "🎉" : "BBC"}
                         </span>
-                        {day === 7 && <span className="text-[8px]">🎉</span>}
                       </div>
                     );
                   })}
                 </div>
 
-                {/* Reward labels */}
-                <div className="flex gap-1 text-[7px] font-bold text-center text-[var(--muted)]/40 tracking-wide">
-                  {rewards.map((r, i) => <div key={i} className="flex-1">{r} BBC</div>)}
-                </div>
-
+                {/* CTA Action Button */}
                 <motion.button
-                  whileHover={{ scale: checkedInToday ? 1 : 1.02 }}
-                  whileTap={{ scale: checkedInToday ? 1 : 0.97 }}
+                  whileHover={{ scale: checkedInToday ? 1 : 1.01 }}
+                  whileTap={{ scale: checkedInToday ? 1 : 0.98 }}
                   onClick={handleCheckin}
                   disabled={checkedInToday || checkinLoading}
-                  className={`w-full py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${
+                  className={`w-full py-3 rounded-2xl text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${
                     checkedInToday
-                    ? "bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 cursor-default"
-                    : "bg-amber-400 text-black hover:bg-amber-300 shadow-lg shadow-amber-500/25 active:scale-[0.98]"
-                    }`}
+                    ? "bg-emerald-500/10 border border-emerald-500/25 text-emerald-500 cursor-default"
+                    : "bg-amber-400 text-slate-950 hover:bg-amber-300 shadow-sm shadow-amber-400/25 active:scale-[0.98]"
+                  }`}
                 >
                   {checkinLoading ? (
                     <FiRefreshCw className="animate-spin text-sm" />
                   ) : checkedInToday ? (
-                    <><FiCheckCircle /> Checked In — Day {streak}</>
+                    <><FiCheckCircle size={14} /> Checked In — Day {streak}</>
                   ) : (
-                    <><FiCalendar /> Check In (+{nextReward} BBC)</>
+                    <><FiCalendar size={14} /> Check In (+{nextReward} BBC)</>
                   )}
                 </motion.button>
               </motion.div>

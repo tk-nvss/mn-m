@@ -35,7 +35,7 @@ const HEADER_CONFIG = {
 
   userMenu: {
     common: [
-      { label: "Events Calendar", href: "/events", icon: <FiCalendar size={20} />, desc: "Tournaments & Schedule", colorClass: "text-blue-400", isHighlight: true },
+      { label: "Events Calendar", href: "#", icon: <FiCalendar size={20} />, desc: "Tournaments & Schedule", colorClass: "text-blue-400", isHighlight: true, comingSoon: true },
       { label: "My Orders", href: "/dashboard/orders", icon: <FiShoppingBag size={20} />, desc: "Track your top-ups", colorClass: "text-cyan-400" },
       { label: "My Wallet", href: "/dashboard/wallet", icon: <FiLayers size={20} />, desc: "Balance & Recharge", colorClass: "text-pink-400" },
       { label: "Earn BBC", href: "/dashboard/coins", icon: <FiZap size={18} />, desc: "FREE Tasks, Check-in & Games", colorClass: "text-yellow-400" },
@@ -421,17 +421,40 @@ export default function Header() {
                           {/* Main Row: Highlighted Events Calendar + Orders & Wallet */}
                           <div className="flex flex-col gap-1.5 mb-1.5">
                             {HEADER_CONFIG.userMenu.common.slice(0, 3).map((item) => {
-                              const isEventHighlight = item.isHighlight || item.label === "Events Calendar";
+                              const isEventCalendar = item.label === "Events Calendar";
+                              const isEventHighlight = item.isHighlight || isEventCalendar;
+
+                              if (isEventCalendar) {
+                                return (
+                                  <div
+                                    key={item.label}
+                                    className="relative flex items-center justify-between p-2.5 rounded-2xl shadow-sm transition-all overflow-hidden bg-blue-500/[0.05] border border-blue-500/20 opacity-80 cursor-not-allowed select-none"
+                                    title="Coming Soon"
+                                  >
+                                    <div className="flex items-center gap-3 min-w-0 flex-1 relative z-10">
+                                      <div className={`shrink-0 ${item.colorClass || "text-blue-400"}`}>
+                                        {item.icon}
+                                      </div>
+                                      <div className="min-w-0">
+                                        <p className="text-[11px] font-black uppercase tracking-widest text-[var(--foreground)] truncate leading-none mb-1 flex items-center gap-1.5">
+                                          {item.label}
+                                          <span className="px-1.5 py-0.5 text-[7px] font-black uppercase tracking-wider rounded bg-amber-500/20 text-amber-500 border border-amber-500/30">
+                                            Coming Soon
+                                          </span>
+                                        </p>
+                                        <p className="text-[9px] text-[var(--muted)] font-bold uppercase tracking-widest truncate leading-none">{item.desc}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              }
+
                               return (
                                 <Link 
                                   key={item.label} 
                                   href={item.href} 
                                   onClick={() => setUserMenuOpen(false)} 
-                                  className={`relative flex items-center justify-between p-2.5 rounded-2xl shadow-sm transition-all group overflow-hidden ${
-                                    isEventHighlight
-                                      ? "bg-blue-500/[0.08] border border-blue-500/35 hover:border-blue-500/60 hover:bg-blue-500/[0.12] shadow-blue-500/10"
-                                      : "bg-[var(--card)] border border-transparent hover:border-[var(--accent)]/30 hover:shadow-md"
-                                  }`}
+                                  className="relative flex items-center justify-between p-2.5 rounded-2xl shadow-sm transition-all group overflow-hidden bg-[var(--card)] border border-transparent hover:border-[var(--accent)]/30 hover:shadow-md"
                                 >
                                   <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                   <div className="flex items-center gap-3 min-w-0 flex-1 relative z-10">
@@ -439,11 +462,6 @@ export default function Header() {
                                     <div className="min-w-0">
                                       <p className="text-[11px] font-black uppercase tracking-widest text-[var(--foreground)] truncate leading-none mb-1 flex items-center gap-1.5">
                                         {item.label}
-                                        {isEventHighlight && (
-                                          <span className="px-1.5 py-0.2 text-[7px] font-black uppercase tracking-wider rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                                            New
-                                          </span>
-                                        )}
                                       </p>
                                       <p className="text-[9px] text-[var(--muted)] font-bold uppercase tracking-widest truncate leading-none">{item.desc}</p>
                                     </div>
