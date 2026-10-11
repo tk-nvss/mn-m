@@ -78,18 +78,18 @@ export default function BlogListing({ initialGame = "all" }) {
   }, [search, selectedType, selectedGame]);
 
   return (
-    <main className="min-h-screen bg-[var(--background)] relative pb-32 transition-colors duration-300 px-6">
+    <main className="min-h-screen bg-[var(--background)] relative pb-20 transition-colors duration-300 px-3 sm:px-6">
 
-      <div className="max-w-6xl mx-auto pt-8 md:pt-12 relative z-10">
+      <div className="max-w-6xl mx-auto pt-3 sm:pt-6 relative z-10">
 
         <motion.header
-          className="mb-10"
+          className="mb-4 sm:mb-6"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-[1px] bg-[var(--accent)]" />
-            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.4em] text-[var(--accent)] italic">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-6 h-[1.5px] bg-[var(--accent)]" />
+            <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.3em] text-[var(--accent)] italic">
                 <Link href="/blog" className="hover:opacity-60 transition-opacity whitespace-nowrap">News & Blogs</Link>
                 {initialGame !== "all" && (
                     <>
@@ -99,8 +99,8 @@ export default function BlogListing({ initialGame = "all" }) {
                 )}
             </div>
           </div>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative">
-            <h2 className="text-2xl md:text-5xl font-[1000] italic tracking-tighter uppercase leading-none">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 relative">
+            <h2 className="text-xl sm:text-3xl font-[1000] italic tracking-tighter uppercase leading-none">
               {initialGame === "all" ? "Latest" : initialGame} <span className="text-[var(--accent)]">News</span>
             </h2>
             
@@ -190,7 +190,7 @@ export default function BlogListing({ initialGame = "all" }) {
         </motion.header>
 
         {/* 📄 BLOG GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3.5">
           {loading ? (
             <div className="col-span-1 md:col-span-2 lg:col-span-3 flex justify-center py-20">
               <LoadingSpinner size="lg" color="accent" />

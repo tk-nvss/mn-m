@@ -24,8 +24,8 @@ export default function BottomNav() {
     return () => window.removeEventListener("app-sheet-toggle" as any, handleSheetState);
   }, []);
 
-  // Hide BottomNav on admin, auth pages, inside game detail pages, or when sheet/modal is open
-  const hideOnRoutes = ["/admin", "/owner-panal", "/login", "/register"];
+  // Hide BottomNav on admin, auth pages, blog, inside game detail pages, or when sheet/modal is open
+  const hideOnRoutes = ["/admin", "/owner-panal", "/login", "/register", "/blog"];
   if (
     sheetOpen ||
     pathname?.startsWith("/games/") ||

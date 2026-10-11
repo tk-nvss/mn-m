@@ -5,11 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { Icons } from "@/components/icons";
 import { CopyButton } from "@/components/common";
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { BLOGS_DATA } from "@/lib/blogData";
 import Script from "next/script";
 import NativeBanner from "@/components/Ads/NativeBanner";
+import { FaWhatsapp, FaXTwitter } from "react-icons/fa6";
+import { FiCopy, FiCheck } from "react-icons/fi";
 
 const SITE_URL = "https://mlbbtopup.in";
 
@@ -50,6 +52,7 @@ export default function BlogPostLayout({
   dateModified,
 }: BlogPostLayoutProps) {
   const pathname = usePathname();
+  const [copied, setCopied] = useState(false);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -82,8 +85,8 @@ export default function BlogPostLayout({
       return { article, score };
     });
 
-    // Sort by score descending and take top 6
-    return scored.sort((a, b) => b.score - a.score).slice(0, 6).map(s => s.article);
+    // Sort by score descending and take top 3
+    return scored.sort((a, b) => b.score - a.score).slice(0, 3).map(s => s.article);
   }, [pathname, game]);
 
   const canonicalUrl = `${SITE_URL}${pathname}`;
@@ -395,47 +398,48 @@ export default function BlogPostLayout({
         </section>
 
         {/* SHARE SECTION */}
-        <footer className="max-w-xl mx-auto mt-10 p-5 rounded-[1.5rem] bg-[var(--card)] border border-[var(--border)] flex flex-col items-center gap-4 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-30" />
-          <div className="text-center">
-            <h2 className="text-lg font-black italic uppercase tracking-tight">Liked this?</h2>
-            <p className="text-[10px] text-[var(--muted)] opacity-60">Send it to your squad!</p>
+        <footer className="max-w-md mx-auto mt-8 p-3.5 sm:p-4 rounded-2xl bg-[var(--card)]/40 border border-[var(--border)] flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+          <div>
+            <h3 className="text-xs sm:text-sm font-black uppercase tracking-tight text-[var(--foreground)]">Share with your squad</h3>
+            <p className="text-[10px] text-[var(--muted)]">Send this guide to teammates</p>
           </div>
-          <div className="flex gap-3">
-            {(
-              [
-                {
-                  label: "Twitter / X",
-                  href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(canonicalUrl)}&text=${encodeURIComponent(title)}`,
-                },
-                {
-                  label: "WhatsApp",
-                  href: `https://api.whatsapp.com/send?text=${encodeURIComponent(title + " " + canonicalUrl)}`,
-                },
-                { label: "Copy Link", href: null },
-              ] as const
-            ).map(({ label, href }, i) => (
-              <button
-                key={i}
-                className="group flex flex-col items-center gap-1.5"
-                aria-label={label}
-                onClick={() => {
-                  if (label === "Copy Link") {
-                    navigator.clipboard.writeText(canonicalUrl);
-                    alert("Link copied!");
-                  } else if (href) {
-                    window.open(href, "_blank", "noopener,noreferrer");
-                  }
-                }}
-              >
-                <div className="w-10 h-10 rounded-lg bg-[var(--background)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:border-[var(--accent)]/50 transition-all shadow-sm">
-                  <Icons.share size={16} />
-                </div>
-                <span className="text-[6px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">
-                  {label}
-                </span>
-              </button>
-            ))}
+
+          <div className="flex items-center gap-2">
+            <a
+              href={`https://api.whatsapp.com/send?text=${encodeURIComponent(title + " " + canonicalUrl)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Share on WhatsApp"
+              className="w-9 h-9 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+              title="Share on WhatsApp"
+            >
+              <FaWhatsapp size={16} />
+            </a>
+
+            <a
+              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(canonicalUrl)}&text=${encodeURIComponent(title)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Share on X"
+              className="w-9 h-9 rounded-xl bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 text-[var(--foreground)] border border-[var(--border)] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+              title="Share on X (Twitter)"
+            >
+              <FaXTwitter size={15} />
+            </a>
+
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(canonicalUrl);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              aria-label="Copy Link"
+              className="h-9 px-3 rounded-xl bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 text-[var(--accent)] border border-[var(--accent)]/20 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              title="Copy Link"
+            >
+              {copied ? <FiCheck size={13} className="text-emerald-500" /> : <FiCopy size={13} />}
+              <span>{copied ? "Copied!" : "Copy"}</span>
+            </button>
           </div>
         </footer>
       </article>
