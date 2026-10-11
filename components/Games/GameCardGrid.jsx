@@ -111,15 +111,15 @@ export default function GameCardGrid({ game, isOutOfStock, index = 0 }) {
 
         {/* CONTENT */}
         <div className="p-2 sm:p-2.5 relative flex-1 flex flex-col justify-center">
-          <div className="flex items-center justify-between gap-1.5">
+          <div className="flex items-start justify-between gap-1">
             <h3
-              className={`text-[10px] sm:text-xs font-black uppercase tracking-tight leading-tight flex-1
+              className={`text-[10px] sm:text-xs font-black uppercase tracking-tight leading-snug flex-1 line-clamp-2
               ${disabled ? "text-[var(--muted)]" : "text-[var(--foreground)]"}`}
             >
               {game.gameName}
             </h3>
             {!disabled && (
-              <FiChevronRight className="text-[var(--muted)] shrink-0" size={12} />
+              <FiChevronRight className="text-[var(--muted)] shrink-0 mt-0.5" size={12} />
             )}
           </div>
         </div>
