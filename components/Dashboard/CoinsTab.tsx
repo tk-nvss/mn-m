@@ -13,10 +13,6 @@ import { Icons } from "@/components/icons";
 import { Pagination, EmptyState, LoadingSpinner } from "@/components/common";
 import { formatCoins, formatCurrency, formatNumber, formatDate, formatDateTime } from "@/utils";
 import Link from "next/link";
-import RouletteGame from "./RouletteGame";
-import TreasureGame from "./TreasureGame";
-import CoinFlipGame from "./CoinFlipGame";
-import SlotMachineGame from "./SlotMachineGame";
 import NativeBanner from "@/components/Ads/NativeBanner";
 import CustomBanner1 from "@/components/Ads/CustomBanner1";
 import CustomBanner2 from "@/components/Ads/CustomBanner2";
@@ -299,12 +295,11 @@ function TaskCard({ task, onClaim, pendingClaims, isUnlocked, isWatchingAd, adTi
 }
 
 // ══════════════════════════════════ MAIN COMPONENT ════════════════════════════
-type TabKey = "checkin" | "tasks" | "watch" | "convert" | "history" | "games";
+type TabKey = "checkin" | "tasks" | "watch" | "convert" | "history";
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
   { key: "checkin", label: "Check-in", icon: <FiCalendar size={13} /> },
   { key: "watch", label: "Ads", icon: <FiPlay size={13} /> },
-  { key: "games", label: "Games", icon: <FiTarget size={13} /> },
   { key: "tasks", label: "Tasks", icon: <FiZap size={13} /> },
 ];
 
@@ -312,7 +307,6 @@ const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default function CoinsTab() {
   const [activeTab, setActiveTab] = useState<TabKey>("checkin");
-  const [activeGame, setActiveGame] = useState<string | null>(null);
   const [lastResult, setLastResult] = useState<{ amount: number; id: number } | null>(null);
   const [coins, setCoins] = useState(0);
   const [historyLimit] = useState(10);
@@ -577,8 +571,8 @@ export default function CoinsTab() {
           {/* Convert + History */}
           <div className="grid grid-cols-2 gap-2">
             <button aria-label="button"
-              onClick={() => { setActiveTab(activeTab === "convert" ? "checkin" : "convert"); setActiveGame(null); }}
-              className={`flex items-center justify-center gap-2 py-2.5 rounded-2xl border transition-all text-[10px] font-black uppercase tracking-widest ${
+              onClick={() => setActiveTab(activeTab === "convert" ? "checkin" : "convert")}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-2xl border transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer ${
                 activeTab === "convert"
                 ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]"
                 : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--foreground)]/30"
@@ -588,8 +582,8 @@ export default function CoinsTab() {
               Convert
             </button>
             <button aria-label="button"
-              onClick={() => { setActiveTab(activeTab === "history" ? "checkin" : "history"); setActiveGame(null); }}
-              className={`flex items-center justify-center gap-2 py-2.5 rounded-2xl border transition-all text-[10px] font-black uppercase tracking-widest ${
+              onClick={() => setActiveTab(activeTab === "history" ? "checkin" : "history")}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-2xl border transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer ${
                 activeTab === "history"
                 ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]"
                 : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--foreground)]/30"
@@ -601,12 +595,12 @@ export default function CoinsTab() {
           </div>
 
           {/* Tab bar */}
-          <div className="grid grid-cols-4 gap-1 bg-[var(--card)] p-1 rounded-2xl border border-[var(--border)]">
+          <div className="grid grid-cols-3 gap-1 bg-[var(--card)] p-1 rounded-2xl border border-[var(--border)]">
             {TABS.map((tab) => (
               <button aria-label="button"
                 key={tab.key}
-                onClick={() => { setActiveTab(tab.key); setActiveGame(null); }}
-                className={`relative flex flex-col items-center gap-1 py-2 rounded-xl text-[9px] font-black uppercase tracking-wide transition-all ${
+                onClick={() => setActiveTab(tab.key)}
+                className={`relative flex flex-col items-center gap-1 py-2 rounded-xl text-[9px] font-black uppercase tracking-wide transition-all cursor-pointer ${
                   activeTab === tab.key
                   ? "bg-[var(--foreground)] text-[var(--background)]"
                   : "text-[var(--muted)] hover:text-[var(--foreground)]"
@@ -733,163 +727,6 @@ export default function CoinsTab() {
                       size="sm"
                       hideOnSinglePage
                     />
-                  </div>
-                )}
-              </motion.div>
-            )}
-
-            {/* ══ GAMES ══ */}
-            {activeTab === "games" && (
-              <motion.div key="games" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                {activeGame === null ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {/* Lucky Spin */}
-                    <button aria-label="button" 
-                      onClick={() => setActiveGame("roulette")}
-                      className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 p-5 transition-all hover:border-amber-500/40 hover:shadow-2xl hover:shadow-amber-500/10 text-left hover:-translate-y-1"
-                    >
-                      <div className="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/10 blur-[40px] rounded-full group-hover:bg-amber-500/20 transition-all" />
-                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
-                        <FiTarget size={56} className="text-amber-500" />
-                      </div>
-                      <div className="relative z-10 flex flex-col h-full justify-between gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
-                          <FiTarget className="text-amber-500 text-xl" />
-                        </div>
-                        <div className="space-y-1">
-                          <h4 className="text-[13px] font-black uppercase tracking-wider text-amber-500/90 italic">Lucky Spin</h4>
-                          <p className="text-[10px] text-[var(--muted)]/70 font-bold uppercase tracking-tight">Spin & Win up to 1 BBC</p>
-                        </div>
-                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
-                          <span className="text-[8px] font-black uppercase tracking-widest text-amber-500">Play Now</span>
-                          <FiArrowRight className="text-[10px] text-amber-500" />
-                        </div>
-                      </div>
-                    </button>
-
-                    {/* Treasure Pick */}
-                    <button aria-label="button" 
-                      onClick={() => setActiveGame("treasure")}
-                      className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 p-5 transition-all hover:border-blue-500/40 hover:shadow-2xl hover:shadow-blue-500/10 text-left hover:-translate-y-1"
-                    >
-                      <div className="absolute -right-4 -top-4 w-24 h-24 bg-blue-500/10 blur-[40px] rounded-full group-hover:bg-blue-500/20 transition-all" />
-                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
-                        <FiBox size={56} className="text-blue-500" />
-                      </div>
-                      <div className="relative z-10 flex flex-col h-full justify-between gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
-                          <FiBox className="text-blue-500 text-xl" />
-                        </div>
-                        <div className="space-y-1">
-                          <h4 className="text-[13px] font-black uppercase tracking-wider text-blue-500/90 italic">Treasure Pick</h4>
-                          <p className="text-[10px] text-[var(--muted)]/70 font-bold uppercase tracking-tight">Pick a chest to find 1 BBC</p>
-                        </div>
-                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
-                          <span className="text-[8px] font-black uppercase tracking-widest text-blue-500">Open Now</span>
-                          <FiArrowRight className="text-[10px] text-blue-500" />
-                        </div>
-                      </div>
-                    </button>
-
-                    {/* Coin Flip - High Stakes */}
-                    <button aria-label="button" 
-                      onClick={() => setActiveGame("coinflip")}
-                      className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 p-5 transition-all hover:border-rose-500/40 hover:shadow-2xl hover:shadow-rose-500/10 text-left hover:-translate-y-1"
-                    >
-                      <div className="absolute -right-4 -top-4 w-24 h-24 bg-rose-500/10 blur-[40px] rounded-full group-hover:bg-rose-500/20 transition-all" />
-                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
-                        <FiZap size={56} className="text-rose-500" />
-                      </div>
-                      <div className="relative z-10 flex flex-col h-full justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
-                            <FiZap className="text-rose-500 text-xl" />
-                          </div>
-                          <span className="px-2 py-0.5 rounded text-[7px] font-black uppercase bg-rose-500/10 text-rose-500 border border-rose-500/20 animate-pulse">High Stakes</span>
-                        </div>
-                        <div className="space-y-1">
-                          <h4 className="text-[13px] font-black uppercase tracking-wider text-rose-500/90 italic">Coin Flip</h4>
-                          <p className="text-[10px] text-[var(--muted)]/70 font-bold uppercase tracking-tight">Heads or Tails? +/- 2 BBC</p>
-                        </div>
-                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
-                          <span className="text-[8px] font-black uppercase tracking-widest text-rose-500">Flip Now</span>
-                          <FiArrowRight className="text-[10px] text-rose-500" />
-                        </div>
-                      </div>
-                    </button>
-
-
-                    {/* Mega Slots */}
-                    <button aria-label="button" 
-                      onClick={() => setActiveGame("slot")}
-                      className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 p-5 transition-all hover:border-purple-500/40 hover:shadow-2xl hover:shadow-purple-500/10 text-left hover:-translate-y-1"
-                    >
-                      <div className="absolute -right-4 -top-4 w-24 h-24 bg-purple-500/10 blur-[40px] rounded-full group-hover:bg-purple-500/20 transition-all" />
-                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
-                        <FiStar size={56} className="text-purple-500" />
-                      </div>
-                      <div className="relative z-10 flex flex-col h-full justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
-                            <FiStar className="text-purple-500 text-xl" />
-                          </div>
-                          <span className="px-2 py-0.5 rounded text-[7px] font-black uppercase bg-purple-500/10 text-purple-500 border border-purple-500/20">Hot</span>
-                        </div>
-                        <div className="space-y-1">
-                          <h4 className="text-[13px] font-black uppercase tracking-wider text-purple-500/90 italic">Mega Slots</h4>
-                          <p className="text-[10px] text-[var(--muted)]/70 font-bold uppercase tracking-tight">Match 3 to win up to 5 BBC</p>
-                        </div>
-                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
-                          <span className="text-[8px] font-black uppercase tracking-widest text-purple-500">Spin Now</span>
-                          <FiArrowRight className="text-[10px] text-purple-500" />
-                        </div>
-                      </div>
-                    </button>
-
-                    {/* Placeholder for future games */}
-                    <div className="rounded-2xl border border-[var(--border)] border-dashed bg-[var(--card)]/20 p-4 flex flex-col items-center justify-center gap-2 opacity-40">
-                      <FiLock className="text-[var(--muted)]" />
-                      <p className="text-[9px] font-black uppercase tracking-widest">More Games Coming Soon</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <button aria-label="button" 
-                        onClick={() => setActiveGame(null)}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[9px] font-black uppercase tracking-widest text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-                      >
-                        <FiChevronLeft /> Back to Games
-                      </button>
-                    </div>
-                    {activeGame === "roulette" && (
-                      <RouletteGame 
-                        coins={coins} 
-                        onWin={(win, balance) => updateCoins(balance, win)} 
-                        showToast={showToast} 
-                      />
-                    )}
-                    {activeGame === "treasure" && (
-                      <TreasureGame 
-                        coins={coins} 
-                        onWin={(win, balance) => updateCoins(balance, win)} 
-                        showToast={showToast} 
-                      />
-                    )}
-                    {activeGame === "coinflip" && (
-                      <CoinFlipGame 
-                        coins={coins} 
-                        onWin={(win, balance) => updateCoins(balance, win)} 
-                        showToast={showToast} 
-                      />
-                    )}
-                    {activeGame === "slot" && (
-                      <SlotMachineGame 
-                        coins={coins} 
-                        onWin={(win, balance) => updateCoins(balance, win)} 
-                        showToast={showToast} 
-                      />
-                    )}
                   </div>
                 )}
               </motion.div>
