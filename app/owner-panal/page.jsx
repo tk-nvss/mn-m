@@ -173,6 +173,8 @@ export default function AdminPanalPage() {
   const [pinPrompt, setPinPrompt] = useState(true);
   const [pinDigits, setPinDigits] = useState(["", "", "", "", "", ""]);
   const [showPin, setShowPin] = useState(false);
+  const [pinError, setPinError] = useState("");
+  const [verifyingPin, setVerifyingPin] = useState(false);
   const pinInputRefs = useRef([]);
 
   const SECRET_KEY = "bb_admin_secure_key_99";
@@ -195,7 +197,9 @@ export default function AdminPanalPage() {
   };
 
   const handleDigitChange = (index, value) => {
-    const cleanVal = value.replace(/[^0-9]/g, "");
+    if (pinError) setPinError("");
+    // Strictly numeric
+    const cleanVal = value.replace(/\D/g, "");
     if (!cleanVal) {
       const newDigits = [...pinDigits];
       newDigits[index] = "";
@@ -209,24 +213,42 @@ export default function AdminPanalPage() {
     setPinDigits(newDigits);
 
     // Auto-focus next box
-    if (index < 5 && lastChar) {
+    if (index < 5) {
       pinInputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleDigitKeyDown = (index, e) => {
-    if (e.key === "Backspace" && !pinDigits[index] && index > 0) {
-      pinInputRefs.current[index - 1]?.focus();
-    } else if (e.key === "ArrowLeft" && index > 0) {
-      pinInputRefs.current[index - 1]?.focus();
-    } else if (e.key === "ArrowRight" && index < 5) {
-      pinInputRefs.current[index + 1]?.focus();
+    // Allow navigation, control keys, and backspace/delete
+    if (
+      e.key === "Backspace" ||
+      e.key === "Delete" ||
+      e.key === "Tab" ||
+      e.key === "ArrowLeft" ||
+      e.key === "ArrowRight" ||
+      e.key === "Enter" ||
+      (e.ctrlKey || e.metaKey)
+    ) {
+      if (e.key === "Backspace" && !pinDigits[index] && index > 0) {
+        pinInputRefs.current[index - 1]?.focus();
+      } else if (e.key === "ArrowLeft" && index > 0) {
+        pinInputRefs.current[index - 1]?.focus();
+      } else if (e.key === "ArrowRight" && index < 5) {
+        pinInputRefs.current[index + 1]?.focus();
+      }
+      return;
+    }
+
+    // Block ANY non-numeric key press
+    if (!/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
     }
   };
 
   const handlePinPaste = (e) => {
     e.preventDefault();
-    const pastedData = e.clipboardData.getData("text").replace(/[^0-9]/g, "").slice(0, 6);
+    if (pinError) setPinError("");
+    const pastedData = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
     if (!pastedData) return;
 
     const newDigits = [...pinDigits];
@@ -278,16 +300,40 @@ export default function AdminPanalPage() {
     };
   }, []);
 
-  const handlePinSubmit = (e) => {
+  const handlePinSubmit = async (e) => {
     if (e) e.preventDefault();
     const currentPin = pinDigits.join("");
-    if (currentPin.length === 6) {
-      const expiresAt = new Date().getTime() + (12 * 60 * 60 * 1000); // 12 hours from now
+    if (currentPin.length !== 6) return;
+
+    setVerifyingPin(true);
+    setPinError("");
+
+    try {
+      const res = await fetch("/api/admin-auth/verify-pin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: currentPin }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setPinError(data.message || "Incorrect PIN. Please try again.");
+        setPinDigits(["", "", "", "", "", ""]);
+        pinInputRefs.current[0]?.focus();
+        return;
+      }
+
+      // Valid PIN
+      const expiresAt = new Date().getTime() + (12 * 60 * 60 * 1000); // 12 hours
       const authData = encryptData(JSON.stringify({ pin: currentPin, expiresAt }));
       localStorage.setItem("adminAuth", authData);
       sessionStorage.setItem("adminPin", currentPin);
       setPinPrompt(false);
       window.location.reload();
+    } catch (err) {
+      setPinError("Verification error. Please check your network.");
+    } finally {
+      setVerifyingPin(false);
     }
   };
 
@@ -473,6 +519,13 @@ export default function AdminPanalPage() {
             </p>
           </div>
 
+          {/* Error Message */}
+          {pinError && (
+            <div className="w-full py-2 px-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center font-medium animate-in fade-in slide-in-from-top-1">
+              {pinError}
+            </div>
+          )}
+
           {/* 6 Digit Inputs */}
           <div className="space-y-3 w-full">
             <div className="flex items-center justify-center gap-2" onPaste={handlePinPaste}>
@@ -482,13 +535,17 @@ export default function AdminPanalPage() {
                   ref={(el) => (pinInputRefs.current[idx] = el)}
                   type={showPin ? "text" : "password"}
                   inputMode="numeric"
+                  pattern="[0-9]*"
+                  autoComplete="one-time-code"
                   maxLength={1}
                   value={digit}
                   onChange={(e) => handleDigitChange(idx, e.target.value)}
                   onKeyDown={(e) => handleDigitKeyDown(idx, e)}
                   autoFocus={idx === 0}
-                  className={`w-10 h-12 sm:w-11 sm:h-12 text-center text-lg font-bold rounded-xl bg-neutral-950 border transition-colors outline-none ${
-                    digit
+                  className={`w-10 h-12 sm:w-11 sm:h-12 text-center text-lg font-bold rounded-xl bg-neutral-950 border transition-all outline-none ${
+                    pinError
+                      ? "border-red-500/60 text-red-400 focus:border-red-500"
+                      : digit
                       ? "border-[var(--accent)] text-[var(--accent)]"
                       : "border-neutral-800 text-white focus:border-[var(--accent)]"
                   }`}
@@ -501,7 +558,7 @@ export default function AdminPanalPage() {
               <button
                 type="button"
                 onClick={() => setShowPin(!showPin)}
-                className="flex items-center gap-1.5 hover:text-white transition-colors"
+                className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
               >
                 {showPin ? <Icons.eyeOff size={14} /> : <Icons.eye size={14} />}
                 <span>{showPin ? "Hide PIN" : "Show PIN"}</span>
@@ -512,9 +569,10 @@ export default function AdminPanalPage() {
                   type="button"
                   onClick={() => {
                     setPinDigits(["", "", "", "", "", ""]);
+                    setPinError("");
                     pinInputRefs.current[0]?.focus();
                   }}
-                  className="hover:text-red-400 transition-colors"
+                  className="hover:text-red-400 transition-colors cursor-pointer"
                 >
                   Clear
                 </button>
@@ -526,10 +584,17 @@ export default function AdminPanalPage() {
           <button
             aria-label="button"
             type="submit"
-            disabled={!isComplete}
-            className="w-full py-3 rounded-xl bg-[var(--accent)] text-black font-bold text-sm hover:opacity-90 active:scale-[0.99] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            disabled={!isComplete || verifyingPin}
+            className="w-full py-3 rounded-xl bg-[var(--accent)] text-black font-bold text-sm hover:opacity-90 active:scale-[0.99] disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
-            Unlock
+            {verifyingPin ? (
+              <>
+                <span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />
+                <span>Verifying...</span>
+              </>
+            ) : (
+              "Unlock"
+            )}
           </button>
         </form>
       </div>
@@ -556,7 +621,7 @@ export default function AdminPanalPage() {
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-gradient-to-r from-[var(--accent)]/15 via-[var(--accent)]/5 to-transparent border border-[var(--accent)]/25">
                 <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse shadow-sm shadow-[var(--accent)]/50" />
                 <h1 className="text-xs sm:text-sm font-black tracking-widest text-[var(--foreground)] uppercase">
-                  Admin Console
+                  Admin 
                 </h1>
               </div>
             </div>

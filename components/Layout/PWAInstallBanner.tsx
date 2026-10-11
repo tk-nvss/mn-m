@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 declare global {
   interface Window {
@@ -24,6 +25,7 @@ export default function PWAInstallBanner({
   playStoreAppName = "Bluebuff Games",
   playStoreAppSubtext = "Google Play App",
 }: PWAInstallBannerProps) {
+  const pathname = usePathname();
   const [visible, setVisible]                         = useState(false);
   const [dismissed, setDismissed]                     = useState(false);
   const [playStoreVisible, setPlayStoreVisible]       = useState(false);
@@ -195,7 +197,11 @@ export default function PWAInstallBanner({
   const isPwaActive = showPwa && visible && !dismissed && (!isStandalone || updateAvailable);
   const isPlayStoreActive = showPlayStore && playStoreVisible && !playStoreDismissed;
 
-  if (!isPwaActive && !isPlayStoreActive && !showModal) return null;
+  // Do not show any install banners on login, register, or admin screens
+  const hideOnRoutes = ["/login", "/register", "/admin", "/owner-panal"];
+  const isHiddenRoute = hideOnRoutes.some((route) => pathname?.startsWith(route));
+
+  if (isHiddenRoute || (!isPwaActive && !isPlayStoreActive && !showModal)) return null;
 
   return (
     <>
