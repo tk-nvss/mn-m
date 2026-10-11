@@ -52,33 +52,33 @@ export default function RedeemTab({ setWalletBalance }: RedeemTabProps) {
     ];
 
     return (
-        <div className="max-w-sm mx-auto py-6 px-4 space-y-5">
+        <div className="max-w-sm mx-auto py-2 px-2 space-y-4">
 
-            {/* ── HERO CARD ── */}
+            {/* ── REDEEM FORM ── */}
             <motion.div
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 space-y-5"
+                className="space-y-3"
             >
                 {/* Title block */}
                 <div>
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[var(--border)] bg-[var(--background)] mb-3">
-                        <Icons.gift size={10} className="text-[var(--muted)]" />
-                        <span className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]">Redeem</span>
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-[var(--border)] bg-[var(--card)]/40 mb-2">
+                        <Icons.gift size={9} className="text-[var(--muted)]" />
+                        <span className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)]">Redeem</span>
                     </div>
-                    <h1 className="text-3xl font-black uppercase tracking-tight text-[var(--foreground)] leading-none">
+                    <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[var(--foreground)] leading-none">
                         Enter<br />
                         <span className="text-[var(--accent)]">Your Code</span>
                     </h1>
-                    <p className="text-[10px] font-bold text-[var(--muted)]/50 uppercase tracking-widest mt-2">
+                    <p className="text-[9px] font-bold text-[var(--muted)]/60 uppercase tracking-widest mt-1.5">
                         Add credit to your wallet instantly.
                     </p>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleRedeem} className="space-y-3">
-                    <div className="space-y-1.5">
-                        <label className="text-[8px] uppercase tracking-widest font-black text-[var(--muted)]/40">
+                <form onSubmit={handleRedeem} className="space-y-2.5">
+                    <div className="space-y-1">
+                        <label className="text-[7.5px] uppercase tracking-widest font-black text-[var(--muted)]/50">
                             Code
                         </label>
                         <input
@@ -89,7 +89,7 @@ export default function RedeemTab({ setWalletBalance }: RedeemTabProps) {
                                 if (status.type) setStatus({ type: null, message: "" });
                             }}
                             placeholder="TK-XXXX-XXXX"
-                            className="w-full bg-[var(--background)] border border-[var(--border)] rounded-xl px-4 py-4 text-xl font-black tracking-[0.2em] text-[var(--foreground)] placeholder:text-[var(--muted)]/20 focus:border-[var(--foreground)]/40 outline-none transition-colors"
+                            className="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-3.5 py-2.5 sm:py-3 text-lg font-black tracking-[0.18em] text-[var(--foreground)] placeholder:text-[var(--muted)]/20 focus:border-[var(--accent)] outline-none transition-colors"
                             autoFocus
                             disabled={loading}
                         />
@@ -100,14 +100,14 @@ export default function RedeemTab({ setWalletBalance }: RedeemTabProps) {
                         aria-label="button"
                         type="submit"
                         disabled={loading || !code.trim()}
-                        className="w-full h-12 rounded-xl bg-[var(--foreground)] text-[var(--background)] font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 disabled:opacity-25 hover:opacity-90 transition-opacity"
+                        className="w-full h-11 rounded-xl bg-[var(--foreground)] text-[var(--background)] font-black uppercase tracking-widest text-[9.5px] flex items-center justify-center gap-2 disabled:opacity-25 hover:opacity-90 transition-opacity cursor-pointer shadow-xs"
                     >
                         {loading ? (
                             <LoadingSpinner size="xs" color="current" />
                         ) : (
                             <>
                                 <span>Add to Wallet</span>
-                                <Icons.arrowRight size={13} />
+                                <Icons.arrowRight size={12} />
                             </>
                         )}
                     </motion.button>
@@ -117,16 +117,16 @@ export default function RedeemTab({ setWalletBalance }: RedeemTabProps) {
                 <AnimatePresence mode="wait">
                     {status.type && (
                         <motion.div
-                            initial={{ opacity: 0, y: 6 }}
+                            initial={{ opacity: 0, y: 4 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0 }}
-                            className={`flex items-center gap-2.5 p-3 rounded-xl border text-[10px] font-black uppercase tracking-widest ${
+                            className={`flex items-center gap-2 p-2.5 rounded-xl border text-[9px] font-black uppercase tracking-wider ${
                                 status.type === 'success'
-                                    ? 'bg-emerald-500/8 border-emerald-500/25 text-emerald-500'
-                                    : 'bg-rose-500/8 border-rose-500/25 text-rose-500'
+                                    ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-500'
+                                    : 'bg-rose-500/10 border-rose-500/25 text-rose-500'
                             }`}
                         >
-                            {status.type === 'success' ? <Icons.checkCircle size={14} /> : <Icons.alertCircle size={14} />}
+                            {status.type === 'success' ? <Icons.checkCircle size={13} /> : <Icons.alertCircle size={13} />}
                             <span>{status.message}</span>
                         </motion.div>
                     )}
@@ -135,29 +135,29 @@ export default function RedeemTab({ setWalletBalance }: RedeemTabProps) {
 
             {/* ── HOW IT WORKS ── */}
             <motion.div
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 space-y-4"
+                className="pt-1 space-y-2.5"
             >
-                <p className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/40">How it works</p>
+                <p className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)]/50">How it works</p>
 
                 <div className="space-y-0">
                     {steps.map(({ n, title, desc }, idx) => (
-                        <div key={n} className="flex gap-3 items-start">
+                        <div key={n} className="flex gap-2.5 items-start">
                             {/* Number + connector */}
                             <div className="flex flex-col items-center">
-                                <div className="w-7 h-7 rounded-lg border border-[var(--border)] bg-[var(--background)] flex items-center justify-center text-[10px] font-black text-[var(--foreground)] shrink-0">
+                                <div className="w-5 h-5 rounded-md border border-[var(--border)] bg-[var(--card)] flex items-center justify-center text-[9px] font-black text-[var(--foreground)] shrink-0">
                                     {n}
                                 </div>
                                 {idx < steps.length - 1 && (
-                                    <div className="w-px h-6 bg-[var(--border)] my-0.5" />
+                                    <div className="w-px h-4 bg-[var(--border)] my-0.5" />
                                 )}
                             </div>
                             {/* Text */}
-                            <div className={`${idx < steps.length - 1 ? "pb-4" : ""} pt-0.5`}>
-                                <p className="text-[11px] font-black uppercase tracking-tight text-[var(--foreground)]">{title}</p>
-                                <p className="text-[9px] text-[var(--muted)]/50 mt-0.5 font-bold uppercase tracking-wide">{desc}</p>
+                            <div className={`${idx < steps.length - 1 ? "pb-2.5" : ""} pt-0.5`}>
+                                <p className="text-[9.5px] font-black uppercase tracking-tight text-[var(--foreground)]">{title}</p>
+                                <p className="text-[8px] text-[var(--muted)]/60 mt-0.5 font-bold uppercase tracking-wide">{desc}</p>
                             </div>
                         </div>
                     ))}
@@ -169,10 +169,10 @@ export default function RedeemTab({ setWalletBalance }: RedeemTabProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="flex items-center justify-center gap-2 py-2"
+                className="flex items-center justify-center gap-1.5 pt-1"
             >
-                <Icons.shield size={10} className="text-[var(--muted)]/30" />
-                <p className="text-[8px] font-black uppercase tracking-widest text-[var(--muted)]/30">
+                <Icons.shield size={9} className="text-[var(--muted)]/40" />
+                <p className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)]/40">
                     Safe &amp; Secure · No expiry on active codes
                 </p>
             </motion.div>
