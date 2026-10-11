@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiPlusCircle,
@@ -684,18 +685,47 @@ function TransactionHistorySection({ onResumeUsdt }: { onResumeUsdt: (txn: any) 
         </h3>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <div className="relative w-full sm:w-auto flex-1 group">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] opacity-50 group-focus-within:opacity-100 group-focus-within:text-[var(--accent)] transition-all" size={14} />
-            <input 
-              type="text" 
-              placeholder="SEARCH..."
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && setSearch(searchValue)}
-              className="w-full sm:w-48 h-9 pl-9 pr-4 rounded-2xl bg-[var(--background)] border border-[var(--border)] focus:border-[var(--accent)]/50 text-[10px] uppercase font-bold tracking-widest outline-none transition-colors placeholder:text-[var(--muted)]/50 text-[var(--foreground)]"
-            />
+          {/* SEARCH CONSOLE WITH INTEGRATED FILTER */}
+          <div className="relative w-full sm:w-64">
+            <div className="relative flex items-center">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]/50 pointer-events-none flex items-center justify-center">
+                <FiSearch size={13} />
+              </div>
+              <input 
+                type="text" 
+                placeholder="Search history..."
+                value={searchValue}
+                onChange={(e) => {
+                  setSearchValue(e.target.value);
+                  setSearch(e.target.value);
+                }}
+                className="w-full h-9 pl-9 pr-14 text-xs rounded-full border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] outline-none transition-all placeholder:text-[var(--muted)]/40 focus:border-[var(--accent)]/50 focus:bg-[var(--background)] focus:ring-2 focus:ring-[var(--accent)]/10 font-sans"
+              />
+
+              <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                {searchValue && (
+                  <button
+                    type="button"
+                    aria-label="Clear search"
+                    onClick={() => {
+                      setSearchValue("");
+                      setSearch("");
+                    }}
+                    className="p-1 rounded-full text-[var(--muted)] hover:text-[var(--foreground)] transition-colors cursor-pointer"
+                  >
+                    <Icons.x size={12} />
+                  </button>
+                )}
+                <WalletFilterBottomSheet
+                  status={status}
+                  setStatus={setStatus}
+                  typeFilter={typeFilter}
+                  setTypeFilter={setTypeFilter}
+                />
+              </div>
+            </div>
           </div>
-          <FilterDropdown status={status} setStatus={setStatus} typeFilter={typeFilter} setTypeFilter={setTypeFilter} />
+
           <TransactionHistoryRefresh />
         </div>
       </div>
@@ -711,61 +741,176 @@ function TransactionHistorySection({ onResumeUsdt }: { onResumeUsdt: (txn: any) 
   );
 }
 
-function FilterDropdown({ status, setStatus, typeFilter, setTypeFilter }: any) {
+function WalletFilterBottomSheet({ status, setStatus, typeFilter, setTypeFilter }: any) {
   const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const handleClickOutside = (e: any) => {
-      if (ref.current && !ref.current.contains(e.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    setMounted(true);
   }, []);
 
-  return (
-    <div className="relative" ref={ref}>
-      <button aria-label="filter" onClick={() => setIsOpen(!isOpen)} className={`w-9 h-9 flex items-center justify-center rounded-2xl border transition-colors ${isOpen || status !== 'all' || typeFilter !== 'all' ? 'bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]' : 'bg-[var(--background)] border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)]'}`}>
-        <FiFilter size={14} />
-      </button>
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
-      <AnimatePresence>
-        {isOpen && (
+  const activeCount = (status !== "all" ? 1 : 0) + (typeFilter !== "all" ? 1 : 0);
+
+  const resetAll = () => {
+    setStatus("all");
+    setTypeFilter("all");
+  };
+
+  const sheetContent = (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4">
+          {/* Backdrop */}
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute right-0 top-full mt-2 w-56 bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-xl z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs cursor-pointer z-[9999]"
+          />
+
+          {/* Bottom Sheet Drawer */}
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 28, stiffness: 300 }}
+            className="relative w-full sm:max-w-md bg-[var(--card)] border-t sm:border border-[var(--border)] rounded-t-3xl sm:rounded-2xl shadow-2xl p-5 pb-8 sm:pb-5 z-[10000] max-h-[85vh] overflow-y-auto"
           >
-            <div className="space-y-4">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)] mb-2">Status</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {["all", "pending", "success", "failed"].map(f => (
-                    <button aria-label="button" key={f} onClick={() => setStatus(f)} className={`px-2.5 py-1 rounded-lg text-[10px] font-bold capitalize transition-all ${status === f ? "bg-[var(--accent)] text-black" : "bg-[var(--foreground)]/[0.03] text-[var(--muted)] hover:text-[var(--foreground)]"}`}>
-                      {f}
-                    </button>
-                  ))}
-                </div>
+            {/* Grab handle */}
+            <div className="w-10 h-1 bg-[var(--border)] rounded-full mx-auto mb-3" />
+
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-[var(--border)]/60">
+              <div className="flex items-center gap-2">
+                <FiFilter size={15} className="text-[var(--accent)]" />
+                <span className="text-sm font-bold tracking-tight text-[var(--foreground)]">Filter Transactions</span>
               </div>
-              
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)] mb-2">Type</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {["all", "credit", "debit"].map(f => (
-                    <button aria-label="button" key={f} onClick={() => setTypeFilter(f)} className={`px-2.5 py-1 rounded-lg text-[10px] font-bold capitalize transition-all ${typeFilter === f ? "bg-[var(--accent)] text-black" : "bg-[var(--foreground)]/[0.03] text-[var(--muted)] hover:text-[var(--foreground)]"}`}>
-                      {f}
-                    </button>
-                  ))}
-                </div>
+              <div className="flex items-center gap-2">
+                {activeCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={resetAll}
+                    className="text-[11px] font-semibold text-[var(--muted)] hover:text-[var(--accent)] transition-colors cursor-pointer mr-1"
+                  >
+                    Reset All
+                  </button>
+                )}
+                <button
+                  type="button"
+                  aria-label="Close"
+                  onClick={() => setIsOpen(false)}
+                  className="w-7 h-7 flex items-center justify-center rounded-full text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors cursor-pointer"
+                >
+                  <Icons.x size={16} />
+                </button>
               </div>
             </div>
+
+            {/* Section 1: Transaction Status */}
+            <div className="mb-4">
+              <p className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-2">
+                Status
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {["all", "pending", "success", "failed"].map((f) => {
+                  const isSelected = status === f;
+                  return (
+                    <button
+                      key={f}
+                      type="button"
+                      onClick={() => setStatus(f)}
+                      className={`py-2 px-3 rounded-xl border text-xs font-semibold capitalize transition-all cursor-pointer text-center ${
+                        isSelected
+                          ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)] shadow-2xs font-bold"
+                          : "bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
+                      }`}
+                    >
+                      {f}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Section 2: Transaction Type */}
+            <div className="mb-5">
+              <p className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-2">
+                Transaction Type
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {["all", "credit", "debit"].map((f) => {
+                  const isSelected = typeFilter === f;
+                  return (
+                    <button
+                      key={f}
+                      type="button"
+                      onClick={() => setTypeFilter(f)}
+                      className={`py-2 px-3 rounded-xl border text-xs font-semibold capitalize transition-all cursor-pointer text-center ${
+                        isSelected
+                          ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)] shadow-2xs font-bold"
+                          : "bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
+                      }`}
+                    >
+                      {f === "all" ? "All Types" : f}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Apply Button */}
+            <div className="pt-2 border-t border-[var(--border)]/60">
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="w-full py-2.5 rounded-xl bg-[var(--accent)] hover:opacity-90 text-white text-xs font-bold transition-all cursor-pointer text-center shadow-xs"
+              >
+                Apply Filters {activeCount > 0 ? `(${activeCount})` : ""}
+              </button>
+            </div>
           </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+
+  return (
+    <>
+      <button
+        type="button"
+        aria-label="Filter transactions"
+        onClick={() => setIsOpen(true)}
+        className={`relative w-7 h-7 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
+          activeCount > 0
+            ? "bg-[var(--accent)] text-white shadow-2xs"
+            : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06]"
+        }`}
+      >
+        <FiFilter size={13} />
+        {activeCount > 0 && (
+          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-white text-[var(--accent)] text-[8px] font-black flex items-center justify-center shadow-xs">
+            {activeCount}
+          </span>
         )}
-      </AnimatePresence>
-    </div>
+      </button>
+
+      {mounted && typeof document !== "undefined"
+        ? createPortal(sheetContent, document.body)
+        : null}
+    </>
   );
 }
 
@@ -965,71 +1110,128 @@ function TransactionHistory({ filter, status, typeFilter, search, onResumeUsdt }
       </div>
 
       {/* MOBILE CARD VIEW */}
-      <div className="sm:hidden space-y-3">
-        {history.map((txn) => (
-          <div key={txn._id} className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] flex flex-col relative overflow-hidden">
-            <div className="flex items-start justify-between relative z-10">
-              <div className="flex gap-3 items-start">
-                <div className={`mt-0.5 p-2 rounded-xl flex-shrink-0 ${
-                    txn.type === 'credit'
-                      ? 'bg-green-500/10 text-green-500'
-                      : 'bg-red-500/10 text-red-500'
-                  }`}>
-                    {txn.type === 'credit' ? <FiArrowDownLeft size={16} /> : <FiArrowUpRight size={16} />}
-                </div>
-                <div>
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border ${
-                      txn.type === 'credit' 
-                        ? 'bg-green-500/10 text-green-500 border-green-500/20' 
-                        : 'bg-red-500/10 text-red-500 border-red-500/20'
-                    }`}>
-                      {txn.type}
-                    </span>
-                    <p className="text-[9px] font-mono text-[var(--muted)] uppercase tracking-tighter truncate max-w-[120px]">
-                      ID: {txn.transactionId || txn._id?.slice(0, 10)}
-                    </p>
-                  </div>
-                  <p className="text-xs font-bold text-[var(--foreground)] leading-tight">{txn.description}</p>
-                </div>
-              </div>
-              
-              <div className="flex flex-col items-end">
-                <span className={`text-[10px] font-black uppercase tracking-widest italic ${
-                  txn.status === 'success' ? 'text-green-500'
-                  : txn.status === 'failed' ? 'text-red-500'
-                  : txn.status === 'waiting' ? 'text-amber-500'
-                  : 'text-yellow-500'
-                }`}>
-                  {txn.status}
-                </span>
-                {txn.status === 'waiting' && onResumeUsdt && (
-                  <button aria-label="button" 
-                    onClick={() => onResumeUsdt(txn)}
-                    className="mt-1 text-[8px] font-black uppercase tracking-[0.2em] bg-green-500 text-black px-2 py-1 rounded-lg hover:scale-105 active:scale-95 transition-all"
+      <div className="sm:hidden space-y-2.5">
+        {history.map((txn, index) => {
+          const isCredit = txn.type === "credit";
+          const isPending = txn.status === "pending" || txn.status === "waiting";
+          const isSuccess = txn.status === "success";
+          const isFailed = txn.status === "failed";
+          const isRefund = txn.status === "refund" || txn.status === "refunded";
+
+          const idDisplay = txn.transactionId || txn._id || "";
+
+          return (
+            <div
+              key={txn._id}
+              className={`relative overflow-hidden rounded-xl border transition-all ${
+                index % 2 === 0
+                  ? "bg-[var(--card)] border-[var(--border)]"
+                  : "bg-[var(--foreground)]/[0.02] border-[var(--border)]"
+              }`}
+            >
+              {/* TOP STATUS BAR */}
+              <div className="px-3.5 py-2 flex items-center justify-between border-b border-[var(--border)]/50 bg-[var(--foreground)]/[0.015] gap-2">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
+                      isCredit
+                        ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                        : "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                    }`}
                   >
-                    Submit Hash
-                  </button>
+                    {txn.type}
+                  </span>
+
+                  <span
+                    className={`text-[9px] font-bold uppercase tracking-wider ${
+                      isSuccess
+                        ? "text-emerald-500"
+                        : isFailed
+                        ? "text-rose-500"
+                        : isRefund
+                        ? "text-blue-500"
+                        : "text-amber-500"
+                    }`}
+                  >
+                    {txn.status}
+                  </span>
+                </div>
+
+                {/* ID & ACTION */}
+                <div className="flex items-center gap-1.5 shrink-0 opacity-70 hover:opacity-100 transition-opacity">
+                  <span className="text-[8px] font-mono font-medium text-[var(--muted)]">
+                    ID: {idDisplay.slice(0, 14)}…
+                  </span>
+                  {idDisplay && (
+                    <CopyButton text={idDisplay} size="xs" variant="ghost" className="p-0.5" />
+                  )}
+                </div>
+              </div>
+
+              {/* MAIN CONTENT AREA */}
+              <div className="p-3.5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                    <div
+                      className={`mt-0.5 p-2 rounded-xl flex-shrink-0 ${
+                        isCredit
+                          ? "bg-emerald-500/10 text-emerald-500"
+                          : "bg-rose-500/10 text-rose-500"
+                      }`}
+                    >
+                      {isCredit ? <FiArrowDownLeft size={14} /> : <FiArrowUpRight size={14} />}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-bold text-[var(--foreground)] leading-snug line-clamp-2">
+                        {txn.description || "Wallet Transaction"}
+                      </p>
+                      <div className="flex items-center gap-1.5 mt-1 text-[9px] text-[var(--muted)]">
+                        <FiClock size={9} className="opacity-70" />
+                        <span>
+                          {new Date(txn.createdAt).toLocaleDateString()} •{" "}
+                          {new Date(txn.createdAt).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* AMOUNT & BALANCE */}
+                  <div className="flex flex-col items-end leading-none shrink-0">
+                    <span
+                      className={`text-base font-black tabular-nums tracking-tight ${
+                        isCredit ? "text-emerald-500" : "text-rose-500"
+                      }`}
+                    >
+                      {isCredit ? "+" : "-"}₹{txn.amount}
+                    </span>
+                    {txn.balanceAfter !== undefined && (
+                      <span className="text-[9px] font-mono text-[var(--muted)]/80 mt-1 tabular-nums">
+                        Bal: ₹{txn.balanceAfter}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* RESUME USDT ACTION IF WAITING */}
+                {txn.status === "waiting" && onResumeUsdt && (
+                  <div className="mt-3 pt-2.5 border-t border-[var(--border)]/40 flex justify-end">
+                    <button
+                      type="button"
+                      aria-label="Submit Hash"
+                      onClick={() => onResumeUsdt(txn)}
+                      className="px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider bg-[var(--accent)] hover:opacity-90 text-white rounded-lg transition-all cursor-pointer shadow-2xs"
+                    >
+                      Submit Hash
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
-            
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-[var(--border)]/20 relative z-10">
-              <div className="text-[10px] text-[var(--muted)] flex items-center gap-1 font-mono">
-                 <FiClock size={10} />
-                 <span>{new Date(txn.createdAt).toLocaleDateString()} &bull; {new Date(txn.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-              </div>
-              <div className="text-right flex items-center gap-2">
-                {txn.balanceAfter !== undefined && (
-                  <p className="mt-1 font-mono">After: ₹{txn.balanceAfter}</p>
-                )}
-              </div>
-              <div className={`text-sm font-black italic ${txn.type === 'credit' ? 'text-green-500' : 'text-red-500'}`}>
-                {txn.type === 'credit' ? '+' : '-'}₹{txn.amount}
-              </div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Simple Pagination */}

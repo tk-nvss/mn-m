@@ -147,6 +147,7 @@ export const Icons = {
   // Actions
   search: Search,
   close: Close,
+  x: Close,
   check: Check,
   checkCircle: CheckCircle,
   checkCircle2: CheckCircle2,
@@ -265,6 +266,7 @@ export {
   ExternalLink,
   Search,
   Close,
+  Close as X,
   Check,
   CheckCircle,
   CheckCircle2,

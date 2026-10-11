@@ -196,7 +196,7 @@ export interface StatusBadgeProps {
   status?: StatusType | null;
   label?: string;
   size?: "xs" | "sm" | "md" | "lg";
-  variant?: "pill" | "rounded" | "dot";
+  variant?: "pill" | "rounded" | "dot" | "borderless";
   showIcon?: boolean;
   pulse?: boolean;
   className?: string;
@@ -207,6 +207,13 @@ const SIZE_CLASSES = {
   sm: "px-2 py-0.5 text-[9px] gap-1.5",
   md: "px-2.5 py-1 text-[11px] gap-1.5",
   lg: "px-3 py-1.5 text-xs gap-2",
+};
+
+const BORDERLESS_SIZE_CLASSES = {
+  xs: "text-[8px] gap-1",
+  sm: "text-[9px] gap-1.5",
+  md: "text-[11px] gap-1.5",
+  lg: "text-xs gap-2",
 };
 
 const ICON_SIZES = {
@@ -232,11 +239,42 @@ export default function StatusBadge({
   };
 
   const Icon = config.icon;
+  const isBorderless = variant === "borderless";
   const isPill = variant === "pill";
-  const roundedClass = isPill ? "rounded-full" : "rounded-md";
+  const roundedClass = isBorderless ? "" : isPill ? "rounded-full" : "rounded-md";
   const isPulseActive = pulse !== undefined ? pulse : !!config.showDotPulse;
   const isSpinning = config.animateIcon;
   const displayLabel = label || config.label;
+
+  // For borderless: extract text color class and omit bg/border
+  const borderlessColor = config.className
+    .split(" ")
+    .filter((c) => c.startsWith("text-"))
+    .join(" ");
+
+  if (isBorderless) {
+    return (
+      <span
+        className={`inline-flex items-center font-black uppercase tracking-wider shrink-0 transition-colors select-none ${BORDERLESS_SIZE_CLASSES[size]} ${borderlessColor} ${className}`}
+      >
+        {isPulseActive && (
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-current" />
+          </span>
+        )}
+
+        {showIcon && !isPulseActive && (
+          <Icon
+            size={ICON_SIZES[size]}
+            className={`shrink-0 ${isSpinning ? "animate-spin" : ""}`}
+          />
+        )}
+
+        <span className="leading-none">{displayLabel}</span>
+      </span>
+    );
+  }
 
   return (
     <span

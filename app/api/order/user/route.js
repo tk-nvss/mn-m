@@ -46,17 +46,38 @@ export async function POST(req) {
     const limit = Math.max(1, Number(body.limit) || 10);
     const search = body.search?.trim();
     const status = body.status?.trim();
+    const sortBy = body.sortBy?.trim() || "newest"; // "newest", "oldest", "price_high", "price_low"
+    const dateRange = body.dateRange?.trim(); // "all", "today", "7days", "30days"
+    const paymentMethod = body.paymentMethod?.trim(); // "all", "upi", "wallet", etc.
 
     const skip = (page - 1) * limit;
 
     /* ================= EMAIL-ONLY FILTER ================= */
     const userFilter = { email: user.email };
 
-    /* ================= STATUS & SEARCH FILTER ================= */
+    /* ================= STATUS, SEARCH, DATE & PAYMENT FILTER ================= */
     let andConditions = [userFilter];
 
     if (status && status !== "all") {
       andConditions.push({ status: { $regex: new RegExp(`^${status}$`, "i") } });
+    }
+
+    if (paymentMethod && paymentMethod !== "all") {
+      andConditions.push({ paymentMethod: { $regex: new RegExp(`^${paymentMethod}$`, "i") } });
+    }
+
+    if (dateRange && dateRange !== "all") {
+      const now = new Date();
+      if (dateRange === "today") {
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        andConditions.push({ createdAt: { $gte: startOfDay } });
+      } else if (dateRange === "7days") {
+        const past7Days = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        andConditions.push({ createdAt: { $gte: past7Days } });
+      } else if (dateRange === "30days") {
+        const past30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        andConditions.push({ createdAt: { $gte: past30Days } });
+      }
     }
 
     if (search) {
@@ -72,10 +93,16 @@ export async function POST(req) {
 
     const finalFilter = andConditions.length > 1 ? { $and: andConditions } : userFilter;
 
+    /* ================= SORT CONFIG ================= */
+    let sortConfig = { createdAt: -1 };
+    if (sortBy === "oldest") sortConfig = { createdAt: 1 };
+    else if (sortBy === "price_high") sortConfig = { price: -1, createdAt: -1 };
+    else if (sortBy === "price_low") sortConfig = { price: 1, createdAt: -1 };
+
     /* ================= FETCH ORDERS ================= */
     const orders = await Order.find(finalFilter)
       .select("-gatewayResponse -externalResponse")
-      .sort({ createdAt: -1 })
+      .sort(sortConfig)
       .skip(skip)
       .limit(limit)
       .lean();

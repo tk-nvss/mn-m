@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FiUser } from "react-icons/fi";
+import { FiUser, FiRefreshCw } from "react-icons/fi";
 import { StatusBadge, CopyButton, LoadingSpinner } from "@/components/common";
 import { formatCurrency, formatDateTime } from "@/utils";
 
@@ -87,26 +87,29 @@ export default function OrderItem({ order, index = 0 }: { order: OrderType, inde
     <div className={`relative overflow-hidden rounded border transition-colors ${index % 2 === 0 ? 'bg-[var(--background)] border-[var(--border)]' : 'bg-[var(--foreground)]/[0.04] border-[var(--foreground)]/[0.1]'}`}>
 
       {/* TOP STATUS BAR */}
-      <div className="px-3.5 py-1.5 flex items-center justify-between border-b border-[var(--border)]/50 bg-[var(--foreground)]/[0.02]">
-        <div className="flex items-center gap-3">
-          <StatusBadge status={rawStatus} size="xs" />
-
-          {rawStatus === 'pending' && order.paymentMethod?.toLowerCase() === 'upi' && (
-            <button aria-label="button"
-              onClick={handleVerify}
-              disabled={verifyLoading}
-              className="px-2 py-0.5 rounded border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--accent)] text-[7px] font-bold uppercase tracking-widest hover:bg-[var(--accent)] hover:text-white transition-colors flex items-center gap-1"
-            >
-              {verifyLoading ? <LoadingSpinner size="xs" color="current" /> : "Check Status"}
-            </button>
-          )}
+      <div className="px-3.5 py-1.5 flex items-center justify-between border-b border-[var(--border)]/50 bg-[var(--foreground)]/[0.02] gap-2">
+        <div className="flex items-center gap-2">
+          <StatusBadge status={rawStatus} size="xs" variant="borderless" />
         </div>
         
-        <div className="flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
-          <span className="text-[7.5px] font-bold text-[var(--foreground)] font-mono break-all leading-none max-w-[140px]">
-            {order.orderId.toUpperCase()}
-          </span>
-          <CopyButton text={order.orderId} size="xs" variant="ghost" className="p-0.5" />
+        <div className="flex items-center gap-2 shrink-0">
+          {rawStatus === 'pending' && order.paymentMethod?.toLowerCase() === 'upi' && (
+            <button aria-label="Check payment status"
+              onClick={handleVerify}
+              disabled={verifyLoading}
+              className="h-5 px-2 rounded-md border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--accent)] text-[8px] font-black uppercase tracking-wider hover:bg-[var(--accent)] hover:text-white transition-all flex items-center gap-1 cursor-pointer active:scale-95 disabled:opacity-50"
+            >
+              <FiRefreshCw size={9} className={verifyLoading ? "animate-spin" : ""} />
+              <span>{verifyLoading ? "Checking..." : "Check Status"}</span>
+            </button>
+          )}
+
+          <div className="flex items-center gap-1 opacity-60 hover:opacity-100 transition-opacity">
+            <span className="text-[7.5px] font-bold text-[var(--foreground)] font-mono break-all leading-none max-w-[140px]">
+              {order.orderId.toUpperCase()}
+            </span>
+            <CopyButton text={order.orderId} size="xs" variant="ghost" className="p-0.5" />
+          </div>
         </div>
       </div>
 
@@ -140,11 +143,9 @@ export default function OrderItem({ order, index = 0 }: { order: OrderType, inde
 
       {/* Additional info for pending UPI status */}
       {rawStatus === 'pending' && order.paymentMethod?.toLowerCase() === 'upi' && (
-        <div className="px-3.5 pb-3.5 mt-[-4px]">
-          <div className="p-2 rounded bg-amber-500/10 border border-amber-500/20">
-            <p className="text-[7.5px] font-bold text-amber-600 uppercase tracking-widest leading-relaxed">
-              Paid via UPI but order still shows pending? Tap "Check Status" above to update it.
-            </p>
+        <div className="px-3 pb-2.5 mt-[-4px]">
+          <div className="px-2 py-1 rounded-md bg-amber-500/10 border border-amber-500/20 flex items-center justify-between gap-1 text-[7.5px] font-bold text-amber-600 uppercase tracking-tight">
+            <span>UPI paid? Tap "Check Status" above to update</span>
           </div>
         </div>
       )}
