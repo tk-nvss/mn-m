@@ -69,7 +69,7 @@ export default function GiveawayBanner() {
                   </span>
                 )}
               </div>
-              <p key={animKey} className="gw-content text-[11px] sm:text-[12.5px] font-black tracking-normal text-[var(--foreground)] mt-0.5 truncate">
+              <p key={animKey} className="gw-content text-[10px] sm:text-[11px] font-bold tracking-normal text-[var(--foreground)] mt-0.5 truncate">
                 {g.title}
               </p>
             </div>
@@ -93,11 +93,11 @@ export default function GiveawayBanner() {
 
             {/* Action Button */}
             <button 
-              className="h-6 sm:h-7 px-3 sm:px-3.5 rounded-lg bg-[var(--accent)] hover:brightness-110 !text-white flex items-center justify-center gap-1 text-[9px] sm:text-[10px] font-black uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
+              className="h-6 sm:h-6.5 px-2.5 sm:px-3 rounded-full bg-[var(--accent)] hover:brightness-110 !text-white flex items-center justify-center gap-1 text-[8.5px] sm:text-[9.5px] font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
               onClick={e => { e.stopPropagation(); router.push('/giveaways'); }}
             >
               <span>Enter</span>
-              <FiChevronRight size={11} />
+              <FiChevronRight size={10} />
             </button>
             
             {/* Close Button */}

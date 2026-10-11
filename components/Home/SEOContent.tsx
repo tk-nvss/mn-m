@@ -53,7 +53,7 @@ const itemVariants: Variants = {
 };
 
 export default function SEOContent() {
-  const [openFaq, setOpenFaq] = useState<number | null>(0); // First open by default
+  const [openFaq, setOpenFaq] = useState<number | null>(null); // All closed by default
   const [showInfo, setShowInfo] = useState(false);
 
   const toggleFaq = (index: number) => {
@@ -198,41 +198,41 @@ export default function SEOContent() {
           whileInView="visible"
           viewport={{ once: true, margin: "-30px" }}
           variants={containerVariants}
-          className="space-y-5"
+          className="space-y-4"
         >
           <div className="flex items-center gap-2">
-            <FiHelpCircle className="text-[var(--accent)] size-5" />
-            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[var(--foreground)]">
+            <FiHelpCircle className="text-[var(--accent)] size-4" />
+            <h2 className="text-base sm:text-lg font-bold uppercase tracking-tight text-[var(--foreground)]">
               Frequently Asked <span className="text-[var(--accent)]">Questions</span>
             </h2>
           </div>
           
-          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-3.5 items-start">
+          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-2.5 items-start">
             {FAQS.map((faq, i) => {
               const isOpen = openFaq === i;
               return (
                 <div 
                   key={i} 
-                  className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                  className={`rounded-xl border transition-all duration-200 overflow-hidden ${
                     isOpen 
-                      ? "border-[var(--accent)]/40 bg-[var(--card)] shadow-md" 
+                      ? "border-[var(--accent)]/40 bg-[var(--card)]" 
                       : "border-[var(--border)] bg-[var(--card)]/30 hover:border-[var(--accent)]/30 hover:bg-[var(--card)]/60"
                   }`}
                 >
                   <button
                     onClick={() => toggleFaq(i)}
-                    className="w-full text-left p-4 flex items-center justify-between gap-3 cursor-pointer group"
+                    className="w-full text-left px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-2.5 cursor-pointer group"
                     aria-expanded={isOpen}
                   >
-                    <span className={`text-xs sm:text-sm font-bold transition-colors leading-snug ${
+                    <span className={`text-[11px] sm:text-xs font-bold transition-colors leading-snug ${
                       isOpen ? "text-[var(--accent)]" : "text-[var(--foreground)] group-hover:text-[var(--accent)]"
                     }`}>
                       {faq.q}
                     </span>
-                    <div className={`shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-300 ${
+                    <div className={`shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-transform duration-200 ${
                       isOpen ? "rotate-180 bg-[var(--accent)]/10 text-[var(--accent)]" : "text-[var(--muted)] group-hover:text-[var(--foreground)]"
                     }`}>
-                      <FiChevronDown size={15} />
+                      <FiChevronDown size={13} />
                     </div>
                   </button>
 
@@ -242,9 +242,9 @@ export default function SEOContent() {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.28, ease: "easeInOut" }}
+                        transition={{ duration: 0.22, ease: "easeInOut" }}
                       >
-                        <div className="px-4 pb-4 pt-1 text-[11px] sm:text-xs text-[var(--muted)] leading-relaxed border-t border-[var(--border)]/40 mt-1">
+                        <div className="px-3.5 pb-3 pt-1 text-[10px] sm:text-[10.5px] text-[var(--muted)] leading-relaxed border-t border-[var(--border)]/30">
                           {faq.a}
                         </div>
                       </motion.div>

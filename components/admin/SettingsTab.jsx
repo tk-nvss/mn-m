@@ -144,10 +144,8 @@ const SettingsTab = ({ onProviderChange, providerBalances }) => {
         <div className="max-w-2xl space-y-4">
             {/* Header Strip */}
             <div className="flex items-center justify-between gap-3 pb-3 border-b border-[var(--border)]/70">
-                <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
-                        <Icons.settings size={16} />
-                    </div>
+                <div className="flex items-center gap-2">
+                    <Icons.settings size={16} className="text-[var(--accent)] shrink-0" />
                     <div className="flex items-center gap-1.5">
                         <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">Main Settings</h2>
                         <InfoTooltip
@@ -189,26 +187,36 @@ const SettingsTab = ({ onProviderChange, providerBalances }) => {
                             <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
                                 Primary Top-up Provider
                             </h3>
+                            <InfoTooltip
+                                content="Select which backend provider API processes and delivers instant game top-up orders automatically."
+                                position="top"
+                                iconClassName="text-[var(--muted)] hover:text-[var(--accent)] transition-colors"
+                            />
                         </div>
                         <p className="text-[11px] text-[var(--muted)] mt-0.5">
                             Fulfills orders via <span className="font-semibold text-[var(--foreground)]">{currentProvider === "1game" ? "1Game (1gamestopup.com)" : "Bluebuff (api.bluebuff.in)"}</span>
                         </p>
                     </div>
 
-                    <div className="inline-flex items-center self-start sm:self-auto p-1 bg-[var(--card)] border border-[var(--border)] rounded-xl gap-1 shadow-2xs">
+                    <div className="inline-flex items-center self-start sm:self-auto p-0.5 bg-[var(--foreground)]/[0.04] border border-[var(--border)] rounded-xl gap-0.5">
                         <button
                             type="button"
                             onClick={() => updateProvider("1game")}
                             disabled={saving}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                            className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                                 currentProvider === "1game"
-                                    ? "bg-emerald-500 text-white shadow-xs"
-                                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.04]"
+                                    ? "bg-[var(--card)] text-[var(--foreground)] shadow-xs border border-[var(--border)]"
+                                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.03]"
                             }`}
                         >
-                            <span>1Game</span>
-                            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded font-semibold ${
-                                currentProvider === "1game" ? "bg-black/20 text-white" : "bg-[var(--foreground)]/5 text-[var(--muted)]"
+                            <span className="flex items-center gap-1.5">
+                                <span className={`w-1.5 h-1.5 rounded-full ${currentProvider === "1game" ? "bg-emerald-500 ring-2 ring-emerald-500/20" : "bg-transparent"}`} />
+                                1Game
+                            </span>
+                            <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md font-semibold ${
+                                currentProvider === "1game" 
+                                    ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" 
+                                    : "bg-[var(--foreground)]/5 text-[var(--muted)]"
                             }`}>
                                 {providerBalances?.oneGame?.balance !== undefined ? `$${providerBalances.oneGame.balance.toFixed(2)}` : "---"}
                             </span>
@@ -218,15 +226,20 @@ const SettingsTab = ({ onProviderChange, providerBalances }) => {
                             type="button"
                             onClick={() => updateProvider("bluebuff")}
                             disabled={saving}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                            className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                                 currentProvider === "bluebuff"
-                                    ? "bg-cyan-500 text-white shadow-xs"
-                                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.04]"
+                                    ? "bg-[var(--card)] text-[var(--foreground)] shadow-xs border border-[var(--border)]"
+                                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.03]"
                             }`}
                         >
-                            <span>Bluebuff</span>
-                            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded font-semibold ${
-                                currentProvider === "bluebuff" ? "bg-black/20 text-white" : "bg-[var(--foreground)]/5 text-[var(--muted)]"
+                            <span className="flex items-center gap-1.5">
+                                <span className={`w-1.5 h-1.5 rounded-full ${currentProvider === "bluebuff" ? "bg-cyan-500 ring-2 ring-cyan-500/20" : "bg-transparent"}`} />
+                                Bluebuff
+                            </span>
+                            <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md font-semibold ${
+                                currentProvider === "bluebuff" 
+                                    ? "bg-cyan-500/10 text-cyan-500 border border-cyan-500/20" 
+                                    : "bg-[var(--foreground)]/5 text-[var(--muted)]"
                             }`}>
                                 {providerBalances?.bluebuff?.balance !== undefined ? `$${providerBalances.bluebuff.balance.toFixed(2)}` : "---"}
                             </span>
@@ -237,7 +250,14 @@ const SettingsTab = ({ onProviderChange, providerBalances }) => {
                 {/* 2. Maintenance Mode */}
                 <div className="py-3 sm:py-3.5 flex items-center justify-between gap-4">
                     <div className="min-w-0 flex-1">
-                        <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Maintenance Mode</h3>
+                        <div className="flex items-center gap-1.5">
+                            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Maintenance Mode</h3>
+                            <InfoTooltip
+                                content="When enabled, public users see a friendly maintenance screen while admins can still manage the dashboard."
+                                position="top"
+                                iconClassName="text-[var(--muted)] hover:text-[var(--accent)] transition-colors"
+                            />
+                        </div>
                         <p className="text-[11px] text-[var(--muted)] mt-0.5">
                             Show maintenance screen to visitors while keeping admin panel accessible
                         </p>
@@ -264,7 +284,14 @@ const SettingsTab = ({ onProviderChange, providerBalances }) => {
                 {/* 3. Disable Taking Orders */}
                 <div className="py-3 sm:py-3.5 flex items-center justify-between gap-4">
                     <div className="min-w-0 flex-1">
-                        <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Disable Taking Orders</h3>
+                        <div className="flex items-center gap-1.5">
+                            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Disable Taking Orders</h3>
+                            <InfoTooltip
+                                content="Prevent checkout and new order creation while still allowing users to browse items and view their account."
+                                position="top"
+                                iconClassName="text-[var(--muted)] hover:text-[var(--accent)] transition-colors"
+                            />
+                        </div>
                         <p className="text-[11px] text-[var(--muted)] mt-0.5">
                             Temporarily pause new checkout purchases while catalog remains browsable
                         </p>

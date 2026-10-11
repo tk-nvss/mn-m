@@ -9,7 +9,7 @@ import {
   Users, Smartphone, Trophy, Gamepad2, CreditCard, Clock, Crown, 
   Moon, Sun, Sunrise,
   Sparkles, MessageSquare, BarChart3, Coins, Bell, ChevronRight,
-  UserPlus, UserCheck, Zap, Activity
+  UserPlus, UserCheck, Zap, Activity, Globe
 } from "lucide-react";
 import { InfoTooltip } from "@/components/common";
 import { formatCurrency, formatNumber } from "@/utils";
@@ -465,141 +465,140 @@ export default function AnalyticsTab({ onNavigate }) {
       </div>
 
       {/* Compact Text Store Summary */}
-      <div className="p-2.5 sm:px-3 sm:py-2 rounded-xl border border-emerald-500/20 bg-gradient-to-r from-emerald-500/[0.04] via-[var(--card)] to-blue-500/[0.03] text-xs shadow-2xs space-y-1.5">
+      <div className="p-2 sm:px-3 sm:py-1.5 rounded-xl border border-[var(--border)] bg-[var(--card)] text-xs space-y-1">
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <span className="text-[10px] font-black uppercase tracking-wider text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+          <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
             Store Summary
           </span>
 
           <div className="flex items-center gap-1.5 text-[10px]">
             <PercentBadge value={growthMetrics.revGrowth} label="growth" />
-            <span className="font-bold text-[var(--muted)] bg-[var(--foreground)]/[0.04] px-1.5 py-0.5 rounded border border-[var(--border)]">
+            <span className="font-semibold text-[var(--muted)] text-[9px] uppercase tracking-wider">
               {timeframeLabel}
             </span>
           </div>
         </div>
 
-        <p className="text-xs font-medium text-[var(--foreground)] leading-relaxed">
-          <strong className="text-emerald-500 font-bold">{formatCurrency(currentPeriodRevenue)}</strong> total sales across <strong className="font-bold">{currentPeriodOrders} orders</strong> • <strong className="text-blue-400 font-bold">{formatNumber(userStats.activeStats?.[periodKey] || 0)} active users</strong> • <strong className="text-amber-400 font-bold">{formatNumber(userStats.payingStats?.[periodKey] || 0)} buyers</strong> • Avg order <strong className="text-[var(--foreground)] font-bold">{formatCurrency(aovMetrics.aov || (currentPeriodOrders > 0 ? Math.round(currentPeriodRevenue / currentPeriodOrders) : 0))}</strong>
+        <p className="text-[11px] font-medium text-[var(--foreground)] leading-snug">
+          <strong className="text-emerald-400 font-bold">{formatCurrency(currentPeriodRevenue)}</strong> sales across <strong className="font-bold">{currentPeriodOrders} orders</strong> • <strong className="text-blue-400 font-bold">{formatNumber(userStats.activeStats?.[periodKey] || 0)} active</strong> • <strong className="text-amber-400 font-bold">{formatNumber(userStats.payingStats?.[periodKey] || 0)} buyers</strong> • Avg <strong className="text-[var(--foreground)] font-bold">{formatCurrency(aovMetrics.aov || (currentPeriodOrders > 0 ? Math.round(currentPeriodRevenue / currentPeriodOrders) : 0))}</strong>
         </p>
       </div>
 
-      {/* 4 Compact & Premium Hero Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+      {/* 4 Compact & Premium Hero Cards (2 columns on mobile, 4 on desktop) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
         
         {/* Card 1: Sales & Orders */}
-        <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xs hover:border-emerald-500/30 transition-all flex flex-col justify-between">
+        <div className="p-2 sm:p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] hover:border-emerald-500/30 transition-all flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-1">
-              <span>Sales & Orders</span>
+            <div className="flex items-center justify-between text-[8.5px] sm:text-[9px] font-bold uppercase tracking-wider text-[var(--muted)] mb-0.5">
+              <span className="truncate">Sales & Orders</span>
               <PercentBadge value={growthMetrics.revGrowth} />
             </div>
-            <div className="text-xl sm:text-2xl font-black text-emerald-500 tabular-nums tracking-tight my-0.5">
+            <div className="text-base sm:text-lg font-bold text-emerald-400 tabular-nums tracking-tight my-0.5">
               {formatCurrency(currentPeriodRevenue)}
             </div>
-            <div className="flex flex-wrap items-center gap-1.5 text-xs font-bold text-[var(--foreground)] mt-1">
+            <div className="flex flex-wrap items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-[var(--foreground)] mt-0.5">
               <span>{currentPeriodOrders} orders</span>
-              <span className="text-[10px] font-semibold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+              <span className="text-[8.5px] font-bold text-emerald-400 bg-emerald-500/10 px-1 rounded">
                 {successCount} ok
               </span>
               {currentHealth.failed > 0 && (
-                <span className="text-[10px] font-semibold text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded border border-rose-500/20">
+                <span className="text-[8.5px] font-bold text-rose-400 bg-rose-500/10 px-1 rounded">
                   {currentHealth.failed} fail
                 </span>
               )}
             </div>
           </div>
-          <div className="pt-2 mt-2.5 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
-            <span>Avg: <strong className="text-[var(--foreground)] font-bold">{formatCurrency(aovMetrics.aov || 0)}</strong></span>
-            <span>Total: <strong className="text-[var(--foreground)] font-bold">{formatCurrency(getPeriodValue(txStats.volume, periodKey) || currentPeriodRevenue)}</strong></span>
+          <div className="pt-1 mt-1.5 border-t border-[var(--border)]/40 flex items-center justify-between text-[8.5px] sm:text-[9.5px] text-[var(--muted)]">
+            <span>Avg: <strong className="text-[var(--foreground)] font-semibold">{formatCurrency(aovMetrics.aov || 0)}</strong></span>
+            <span className="truncate">Tot: <strong className="text-[var(--foreground)] font-semibold">{formatCurrency(getPeriodValue(txStats.volume, periodKey) || currentPeriodRevenue)}</strong></span>
           </div>
         </div>
 
         {/* Card 2: App & Alerts */}
-        <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xs hover:border-purple-500/30 transition-all flex flex-col justify-between">
+        <div className="p-2 sm:p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] hover:border-purple-500/30 transition-all flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-1">
-              <span>App & Alerts</span>
-              <span className="text-[9px] font-bold text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20 flex items-center gap-1">
-                <Bell size={9} /> {pwaStats.totalPushSubscribers || 0} Push
+            <div className="flex items-center justify-between text-[8.5px] sm:text-[9px] font-bold uppercase tracking-wider text-[var(--muted)] mb-0.5">
+              <span className="truncate">App & Alerts</span>
+              <span className="text-[8px] sm:text-[8.5px] font-bold text-purple-400 bg-purple-500/10 px-1 py-0.2 rounded flex items-center gap-0.5">
+                <Bell size={8} /> {pwaStats.totalPushSubscribers || 0}
               </span>
             </div>
-            <div className="text-xl sm:text-2xl font-black text-purple-400 tabular-nums tracking-tight my-0.5">
-              {formatNumber(pwaStats.totalInstalls || 0)} <span className="text-xs font-normal text-[var(--muted)]">Installs</span>
+            <div className="text-base sm:text-lg font-bold text-purple-400 tabular-nums tracking-tight my-0.5">
+              {formatNumber(pwaStats.totalInstalls || 0)} <span className="text-[10px] font-normal text-[var(--muted)]">Installs</span>
             </div>
-            <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-[var(--foreground)] mt-1">
-              <span className="text-[11px] text-purple-400 flex items-center gap-1 font-semibold">
-                <Smartphone size={11} /> {formatNumber(pwaStats.activeDevices || 0)} active
+            <div className="flex flex-wrap items-center gap-1.5 text-[10px] sm:text-[11px] font-semibold text-[var(--foreground)] mt-0.5">
+              <span className="text-[9.5px] text-purple-400 flex items-center gap-1 font-semibold truncate">
+                <Smartphone size={9} /> {formatNumber(pwaStats.activeDevices || 0)} act
               </span>
-              <span className="text-[10px] font-medium text-[var(--muted)]">
-                {platformStats.pwa.orders || 0} app orders
+              <span className="text-[9px] font-medium text-[var(--muted)] truncate">
+                {platformStats.pwa.orders || 0} app ord
               </span>
             </div>
           </div>
-          <div className="pt-2 mt-2.5 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
-            <span>Push: <strong className="text-purple-400 font-bold">{pwaStats.totalPushSubscribers || 0}</strong></span>
-            <span>Sales: <strong className="text-[var(--foreground)] font-bold">{formatCurrency(platformStats.pwa.revenue || 0)}</strong></span>
+          <div className="pt-1 mt-1.5 border-t border-[var(--border)]/40 flex items-center justify-between text-[8.5px] sm:text-[9.5px] text-[var(--muted)]">
+            <span>Push: <strong className="text-purple-400 font-semibold">{pwaStats.totalPushSubscribers || 0}</strong></span>
+            <span>Sales: <strong className="text-[var(--foreground)] font-semibold">{formatCurrency(platformStats.pwa.revenue || 0)}</strong></span>
           </div>
         </div>
 
         {/* Card 3: Users & Customers */}
-        <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xs hover:border-amber-500/30 transition-all flex flex-col justify-between">
+        <div className="p-2 sm:p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] hover:border-amber-500/30 transition-all flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-1">
-              <span>Users & Buyers</span>
-              <span className="text-[9px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+            <div className="flex items-center justify-between text-[8.5px] sm:text-[9px] font-bold uppercase tracking-wider text-[var(--muted)] mb-0.5">
+              <span className="truncate">Users & Buyers</span>
+              <span className="text-[8px] sm:text-[8.5px] font-bold text-amber-400 bg-amber-500/10 px-1 py-0.2 rounded">
                 {userStats.conversionStats?.[periodKey] || 0}% Conv
               </span>
             </div>
-            <div className="text-xl sm:text-2xl font-black text-[var(--foreground)] tabular-nums tracking-tight my-0.5">
-              {formatNumber(userStats.total || 0)} <span className="text-xs font-normal text-[var(--muted)]">Users</span>
+            <div className="text-base sm:text-lg font-bold text-[var(--foreground)] tabular-nums tracking-tight my-0.5">
+              {formatNumber(userStats.total || 0)} <span className="text-[10px] font-normal text-[var(--muted)]">Users</span>
             </div>
-            <div className="grid grid-cols-3 gap-1 mt-1 text-center">
-              <div className="p-1 rounded-md bg-[var(--foreground)]/[0.03] border border-[var(--border)]/50">
-                <span className="text-[8px] uppercase font-bold text-[var(--muted)] block">Active</span>
-                <span className="text-xs font-black text-emerald-500 tabular-nums">{formatNumber(userStats.activeStats?.[periodKey] || 0)}</span>
+            <div className="grid grid-cols-3 gap-0.5 mt-0.5 text-center">
+              <div className="py-0.5 rounded bg-[var(--foreground)]/[0.03]">
+                <span className="text-[7px] uppercase font-bold text-[var(--muted)] block">Act</span>
+                <span className="text-[10px] font-bold text-emerald-400 tabular-nums">{formatNumber(userStats.activeStats?.[periodKey] || 0)}</span>
               </div>
-              <div className="p-1 rounded-md bg-[var(--foreground)]/[0.03] border border-[var(--border)]/50">
-                <span className="text-[8px] uppercase font-bold text-[var(--muted)] block">New</span>
-                <span className="text-xs font-black text-purple-400 tabular-nums">+{formatNumber(userStats.newStats?.[periodKey] || 0)}</span>
+              <div className="py-0.5 rounded bg-[var(--foreground)]/[0.03]">
+                <span className="text-[7px] uppercase font-bold text-[var(--muted)] block">New</span>
+                <span className="text-[10px] font-bold text-purple-400 tabular-nums">+{formatNumber(userStats.newStats?.[periodKey] || 0)}</span>
               </div>
-              <div className="p-1 rounded-md bg-[var(--foreground)]/[0.03] border border-[var(--border)]/50">
-                <span className="text-[8px] uppercase font-bold text-[var(--muted)] block">Buyers</span>
-                <span className="text-xs font-black text-amber-400 tabular-nums">{formatNumber(userStats.payingStats?.[periodKey] || 0)}</span>
+              <div className="py-0.5 rounded bg-[var(--foreground)]/[0.03]">
+                <span className="text-[7px] uppercase font-bold text-[var(--muted)] block">Buy</span>
+                <span className="text-[10px] font-bold text-amber-400 tabular-nums">{formatNumber(userStats.payingStats?.[periodKey] || 0)}</span>
               </div>
             </div>
           </div>
-          <div className="pt-2 mt-2.5 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
-            <span>Paying Users: <strong className="text-[var(--foreground)] font-bold">{userStats.payingStats?.allTime || 0}</strong></span>
-            <span className="text-amber-400/90 font-medium">{timeframeLabel}</span>
+          <div className="pt-1 mt-1.5 border-t border-[var(--border)]/40 flex items-center justify-between text-[8.5px] sm:text-[9.5px] text-[var(--muted)]">
+            <span className="truncate">Buyers: <strong className="text-[var(--foreground)] font-semibold">{userStats.payingStats?.allTime || 0}</strong></span>
+            <span className="text-amber-400/90 font-medium text-[8px] sm:text-[9px]">{timeframeLabel}</span>
           </div>
         </div>
 
         {/* Card 4: User Wallets */}
-        <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xs hover:border-emerald-500/30 transition-all flex flex-col justify-between">
+        <div className="p-2 sm:p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] hover:border-emerald-500/30 transition-all flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-1">
-              <span>Customer Wallets</span>
-              <span className="text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
-                {formatNumber(walletStats.activeWallets || 0)} Funded
+            <div className="flex items-center justify-between text-[8.5px] sm:text-[9px] font-bold uppercase tracking-wider text-[var(--muted)] mb-0.5">
+              <span className="truncate">Customer Wallets</span>
+              <span className="text-[8px] sm:text-[8.5px] font-bold text-emerald-400 bg-emerald-500/10 px-1 py-0.2 rounded">
+                {formatNumber(walletStats.activeWallets || 0)} Fund
               </span>
             </div>
-            <div className="text-xl sm:text-2xl font-black text-emerald-500 tabular-nums tracking-tight my-0.5">
+            <div className="text-base sm:text-lg font-bold text-emerald-400 tabular-nums tracking-tight my-0.5">
               {formatCurrency(walletStats.totalBalance || 0)}
             </div>
-            <div className="flex items-center justify-between text-xs font-bold text-[var(--foreground)] mt-1">
-              <span className="text-[11px] text-emerald-500 flex items-center gap-1 font-bold">
-                <Wallet size={11} /> {formatNumber(walletStats.activeWallets || 0)} funded wallets
+            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-semibold text-[var(--foreground)] mt-0.5">
+              <span className="text-[9.5px] text-emerald-400 flex items-center gap-1 font-semibold truncate">
+                <Wallet size={9} /> {formatNumber(walletStats.activeWallets || 0)} funded
               </span>
-              <span className="text-[10px] text-[var(--muted)] font-medium">In Wallets</span>
+              <span className="text-[9px] text-[var(--muted)] font-medium">In Wallets</span>
             </div>
           </div>
-          <div className="pt-2 mt-2.5 border-t border-[var(--border)]/50 flex items-center justify-between text-[10px] text-[var(--muted)]">
-            <span className="text-emerald-500 font-bold">+{formatCurrency(getPeriodValue(walletStats.deposits, periodKey))}</span>
-            <span className="text-rose-500 font-bold">-{formatCurrency(getPeriodValue(walletStats.usage, periodKey))}</span>
+          <div className="pt-1 mt-1.5 border-t border-[var(--border)]/40 flex items-center justify-between text-[8.5px] sm:text-[9.5px] text-[var(--muted)]">
+            <span className="text-emerald-400 font-semibold truncate">+{formatCurrency(getPeriodValue(walletStats.deposits, periodKey))}</span>
+            <span className="text-rose-400 font-semibold truncate">-{formatCurrency(getPeriodValue(walletStats.usage, periodKey))}</span>
           </div>
         </div>
-
       </div>
 
       {/* Ultra-Compact Quick Stats Ribbon (Borderless & Flat) */}
@@ -861,32 +860,30 @@ export default function AnalyticsTab({ onNavigate }) {
             <div>
               <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
                 <div className="flex items-center gap-1.5">
-                  <div className="p-1 rounded-md bg-purple-500/10 text-purple-400">
-                    <Smartphone size={12} />
-                  </div>
+                  <Smartphone size={13} className="text-purple-400" />
                   <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
-                    App vs Web Orders & Sales
+                    App vs Web Split
                   </h3>
                 </div>
 
                 <span className="text-[9px] font-bold text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded">
-                  {platformStats.pwa.revenueShare || 0}% App Share
+                  {platformStats.pwa.revenueShare || 0}% App
                 </span>
               </div>
 
               <div className="space-y-2 pt-0.5">
                 <div className="flex justify-between items-center text-xs font-bold">
-                  <span className="text-purple-400 flex items-center gap-1">
-                    📱 Mobile App: {formatCurrency(platformStats.pwa.revenue || 0)} 
-                    <span className="text-[9px] font-bold bg-purple-500/15 px-1 py-0.2 rounded">({platformStats.pwa.revenueShare || 0}%)</span>
+                  <span className="text-purple-400 flex items-center gap-1.5">
+                    <Smartphone size={13} /> App: {formatCurrency(platformStats.pwa.revenue || 0)} 
+                    <span className="text-[9px] font-semibold bg-purple-500/15 px-1 rounded">({platformStats.pwa.revenueShare || 0}%)</span>
                   </span>
-                  <span className="text-blue-400 flex items-center gap-1">
-                    🌐 Website: {formatCurrency(platformStats.web.revenue || 0)} 
-                    <span className="text-[9px] font-bold bg-blue-500/15 px-1 py-0.2 rounded">({platformStats.web.revenueShare || 0}%)</span>
+                  <span className="text-blue-400 flex items-center gap-1.5">
+                    <Globe size={13} /> Web: {formatCurrency(platformStats.web.revenue || 0)} 
+                    <span className="text-[9px] font-semibold bg-blue-500/15 px-1 rounded">({platformStats.web.revenueShare || 0}%)</span>
                   </span>
                 </div>
 
-                <div className="h-1.5 w-full bg-[var(--foreground)]/[0.06] rounded-full overflow-hidden flex p-0.5 gap-0.5">
+                <div className="h-1.5 w-full bg-[var(--foreground)]/[0.06] rounded-full overflow-hidden flex gap-0.5">
                   <div
                     className="h-full bg-purple-500 rounded-l-full transition-all duration-500"
                     style={{ width: `${Math.max(platformStats.pwa.revenueShare || 0, (platformStats.pwa.revenue || 0) > 0 ? 5 : 0)}%` }}
@@ -898,28 +895,32 @@ export default function AnalyticsTab({ onNavigate }) {
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 text-[10px] text-[var(--muted)] pt-0.5">
-                  <span>📱 App: {platformStats.pwa.orders || 0} orders • {platformStats.pwa.successRate || 0}% ok • Avg {formatCurrency(platformStats.pwa.aov || 0)}</span>
-                  <span>🌐 Web: {platformStats.web.orders || 0} orders • {platformStats.web.successRate || 0}% ok • Avg {formatCurrency(platformStats.web.aov || 0)}</span>
+                  <span className="flex items-center gap-1">
+                    <Smartphone size={10} className="text-purple-400" />
+                    {platformStats.pwa.orders || 0} ord • {platformStats.pwa.successRate || 0}% ok • Avg {formatCurrency(platformStats.pwa.aov || 0)}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Globe size={10} className="text-blue-400" />
+                    {platformStats.web.orders || 0} ord • {platformStats.web.successRate || 0}% ok • Avg {formatCurrency(platformStats.web.aov || 0)}
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="pt-2 mt-2 border-t border-[var(--border)]/50 flex flex-wrap items-center justify-between gap-1 text-[10px] text-[var(--muted)]">
+            <div className="pt-2 mt-2 border-t border-[var(--border)]/50 flex items-center justify-between gap-1 text-[10px] text-[var(--muted)]">
               <span>All-time App: <strong className="text-[var(--foreground)] font-bold">{platformStats.allTime?.pwaOrders || 0}</strong></span>
               <span>All-time Web: <strong className="text-[var(--foreground)] font-bold">{platformStats.allTime?.webOrders || 0}</strong></span>
             </div>
           </div>
 
-          {/* Peak Hours Heatmap (Mobile Responsive: 2 cols on xs, 3 cols on sm, 6 cols on md/lg) */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/40 p-3.5 sm:p-4 flex flex-col justify-between">
+          {/* Peak Hours Heatmap */}
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 flex flex-col justify-between shadow-2xs">
             <div>
               <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
                 <div className="flex items-center gap-1.5">
-                  <div className="p-1 rounded-md bg-purple-500/10 text-purple-400">
-                    <Clock size={12} />
-                  </div>
+                  <Clock size={13} className="text-purple-400" />
                   <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
-                    Busiest Shopping Hours
+                    Peak Shopping Hours
                   </h3>
                 </div>
                 <span className="text-[9px] font-bold text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded">
@@ -927,30 +928,46 @@ export default function AnalyticsTab({ onNavigate }) {
                 </span>
               </div>
 
+              {/* 6-Period Heatmap Grid */}
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 pt-0.5">
                 {slotStats.map((slot, idx) => {
                   const isPeak = slot.count === maxSlotCount && maxSlotCount > 0;
+                  const SlotIcon = slot.icon;
                   return (
-                    <div key={idx} className="p-1.5 rounded-lg bg-[var(--foreground)]/[0.02] border border-[var(--border)]/50 space-y-1">
-                      <div className="flex justify-between items-center text-[10px]">
-                        <span className="font-bold text-[var(--foreground)] truncate">{slot.name}</span>
+                    <div 
+                      key={idx} 
+                      className={`p-1.5 rounded-lg border transition-all ${
+                        isPeak 
+                          ? "bg-purple-500/10 border-purple-500/30 text-[var(--foreground)]" 
+                          : "bg-[var(--foreground)]/[0.02] border-[var(--border)]/40 hover:bg-[var(--foreground)]/[0.04]"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between text-[9.5px]">
+                        <span className="flex items-center gap-1 font-bold truncate">
+                          <SlotIcon size={10} className={isPeak ? "text-purple-400" : "text-[var(--muted)]"} />
+                          <span className="truncate">{slot.name}</span>
+                        </span>
                         {isPeak ? (
-                          <span className="text-[8px] bg-purple-500/20 text-purple-400 px-1 rounded font-bold">TOP</span>
+                          <span className="text-[8px] bg-purple-500 text-white px-1 rounded font-bold">TOP</span>
                         ) : (
                           <span className="text-[9px] text-[var(--muted)]">{slot.pct}%</span>
                         )}
                       </div>
-                      <div className="h-1 w-full bg-[var(--foreground)]/[0.05] rounded-full overflow-hidden">
+
+                      <div className="h-1 w-full bg-[var(--foreground)]/[0.06] rounded-full overflow-hidden my-1">
                         <div
                           className={`h-full rounded-full transition-all duration-300 ${
-                            isPeak ? "bg-purple-500" : slot.pct > 0 ? "bg-blue-500" : "bg-[var(--foreground)]/[0.05]"
+                            isPeak ? "bg-purple-500" : slot.pct > 0 ? "bg-blue-500" : "bg-transparent"
                           }`}
-                          style={{ width: `${Math.max(slot.pct, slot.pct > 0 ? 5 : 0)}%` }}
+                          style={{ width: `${Math.max(slot.pct, slot.pct > 0 ? 6 : 0)}%` }}
                         />
                       </div>
-                      <div className="flex justify-between text-[9px] text-[var(--muted)] font-mono">
+
+                      <div className="flex items-center justify-between text-[8.5px] text-[var(--muted)] font-mono">
                         <span>{slot.label.split("–")[0].trim()}</span>
-                        <span className="font-bold text-[var(--foreground)]">{slot.count} ord</span>
+                        <span className={`font-bold ${isPeak ? "text-purple-400" : "text-[var(--foreground)]"}`}>
+                          {slot.count} ord
+                        </span>
                       </div>
                     </div>
                   );
@@ -958,12 +975,12 @@ export default function AnalyticsTab({ onNavigate }) {
               </div>
             </div>
 
-            <div className="pt-2 mt-2 border-t border-[var(--border)]/50 text-[10px] text-[var(--muted)] flex flex-wrap items-center justify-between gap-1">
-              <span className="flex items-center gap-1">
+            <div className="pt-2 mt-2 border-t border-[var(--border)]/50 text-[10px] text-[var(--muted)] flex items-center justify-between gap-1">
+              <span className="flex items-center gap-1 truncate">
                 <Sparkles size={11} className="text-amber-400 shrink-0" />
-                <span>Best time: <strong className="text-[var(--foreground)] font-bold">{peakSlot.label} ({peakSlot.name})</strong></span>
+                <span>Best time: <strong className="text-[var(--foreground)] font-bold">{peakSlot.label}</strong></span>
               </span>
-              <span className="font-bold">{timeframeLabel}</span>
+              <span className="text-[9px] font-semibold text-[var(--muted)] uppercase tracking-wider shrink-0">{timeframeLabel}</span>
             </div>
           </div>
 
@@ -977,9 +994,7 @@ export default function AnalyticsTab({ onNavigate }) {
             <div>
               <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
                 <div className="flex items-center gap-1.5">
-                  <div className="p-1 rounded-md bg-blue-500/10 text-blue-400">
-                    <UserCheck size={12} />
-                  </div>
+                  <UserCheck size={13} className="text-blue-400" />
                   <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
                     Buyer Loyalty
                   </h3>
@@ -993,15 +1008,15 @@ export default function AnalyticsTab({ onNavigate }) {
                 <div className="flex justify-between items-center text-[11px] font-bold">
                   <span className="text-emerald-400 flex items-center gap-1">
                     <UserPlus size={11} /> New: {formatCurrency(buyerSplit.newBuyers?.revenue || 0)}
-                    <span className="text-[8.5px] bg-emerald-500/15 text-emerald-400 px-1 py-0.2 rounded">({buyerSplit.newBuyers?.sharePct || 0}%)</span>
+                    <span className="text-[8.5px] bg-emerald-500/15 text-emerald-400 px-1 rounded">({buyerSplit.newBuyers?.sharePct || 0}%)</span>
                   </span>
                   <span className="text-blue-400 flex items-center gap-1">
                     <UserCheck size={11} /> Regular: {formatCurrency(buyerSplit.returningBuyers?.revenue || 0)}
-                    <span className="text-[8.5px] bg-blue-500/15 text-blue-400 px-1 py-0.2 rounded">({buyerSplit.returningBuyers?.sharePct || 0}%)</span>
+                    <span className="text-[8.5px] bg-blue-500/15 text-blue-400 px-1 rounded">({buyerSplit.returningBuyers?.sharePct || 0}%)</span>
                   </span>
                 </div>
 
-                <div className="h-1.5 w-full bg-[var(--foreground)]/[0.06] rounded-full overflow-hidden flex p-0.5 gap-0.5">
+                <div className="h-1.5 w-full bg-[var(--foreground)]/[0.06] rounded-full overflow-hidden flex gap-0.5">
                   <div
                     className="h-full bg-emerald-500 rounded-l-full transition-all duration-500"
                     style={{ width: `${Math.max(buyerSplit.newBuyers?.sharePct || 0, (buyerSplit.newBuyers?.revenue || 0) > 0 ? 5 : 0)}%` }}
@@ -1030,9 +1045,7 @@ export default function AnalyticsTab({ onNavigate }) {
             <div>
               <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
                 <div className="flex items-center gap-1.5">
-                  <div className="p-1 rounded-md bg-amber-500/10 text-amber-400">
-                    <Trophy size={12} />
-                  </div>
+                  <Trophy size={13} className="text-amber-400" />
                   <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
                     Best-Selling
                   </h3>
@@ -1047,19 +1060,19 @@ export default function AnalyticsTab({ onNavigate }) {
                   {topProducts.slice(0, 3).map((prod, idx) => (
                     <div key={idx} className="flex items-center justify-between p-1.5 rounded-lg bg-[var(--foreground)]/[0.02] hover:bg-[var(--foreground)]/[0.04] transition-all">
                       <div className="flex items-center gap-1.5 min-w-0 flex-1 mr-1">
-                        <span className={`text-[9px] font-mono font-bold shrink-0 w-3.5 text-center py-0.5 rounded flex items-center justify-center ${
-                          idx === 0 ? "text-amber-400 bg-amber-500/10" : "text-[var(--muted)]"
+                        <span className={`text-[8.5px] font-mono font-bold shrink-0 w-4 text-center py-0.5 rounded flex items-center justify-center ${
+                          idx === 0 ? "text-amber-400" : "text-[var(--muted)]"
                         }`}>
-                          {idx === 0 ? <Crown size={9} className="text-amber-400" /> : `0${idx + 1}`}
+                          {idx === 0 ? <Crown size={11} className="text-amber-400" /> : `0${idx + 1}`}
                         </span>
                         <div className="flex flex-col min-w-0">
-                          <span className="text-xs font-bold text-[var(--foreground)] truncate">{prod._id || "Unknown Item"}</span>
-                          <span className="text-[8px] text-[var(--muted)] uppercase font-medium">{prod.gameSlug || "Game"}</span>
+                          <span className="text-xs font-bold text-[var(--foreground)] truncate leading-tight">{prod._id || "Unknown Item"}</span>
+                          <span className="text-[8px] text-[var(--muted)] uppercase font-medium mt-0.5 truncate">{prod.gameSlug || "Game"}</span>
                         </div>
                       </div>
-                      <div className="flex flex-col items-end shrink-0">
-                        <span className="text-xs font-bold text-emerald-500 tabular-nums">{formatCurrency(prod.revenue)}</span>
-                        <span className="text-[8px] text-[var(--muted)]">{prod.count} sold</span>
+                      <div className="flex flex-col items-end shrink-0 leading-tight">
+                        <span className="text-xs font-bold text-emerald-400 tabular-nums">{formatCurrency(prod.revenue)}</span>
+                        <span className="text-[8px] text-[var(--muted)] mt-0.5">{prod.count} sold</span>
                       </div>
                     </div>
                   ))}
@@ -1082,9 +1095,7 @@ export default function AnalyticsTab({ onNavigate }) {
             <div>
               <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
                 <div className="flex items-center gap-1.5">
-                  <div className="p-1 rounded-md bg-blue-500/10 text-blue-400">
-                    <Gamepad2 size={12} />
-                  </div>
+                  <Gamepad2 size={13} className="text-blue-400" />
                   <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
                     Sales by Game
                   </h3>
@@ -1135,9 +1146,7 @@ export default function AnalyticsTab({ onNavigate }) {
             <div>
               <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[var(--border)]/50">
                 <div className="flex items-center gap-1.5">
-                  <div className="p-1 rounded-md bg-emerald-500/10 text-emerald-500">
-                    <CreditCard size={12} />
-                  </div>
+                  <CreditCard size={13} className="text-emerald-500" />
                   <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
                     Payment Gateways
                   </h3>

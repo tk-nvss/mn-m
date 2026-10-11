@@ -31,6 +31,7 @@ import {
   FiExternalLink,
   FiChevronUp,
   FiChevronDown,
+  FiFilter,
 } from "react-icons/fi";
 import { GiTrophy, GiSwords } from "react-icons/gi";
 import { LoadingSpinner, InfoTooltip } from "@/components/common";
@@ -158,6 +159,7 @@ export default function TournamentsAdminTab() {
   const [showSaveTemplate, setShowSaveTemplate] = useState(false);
 
   // Filters
+  const [showFilters, setShowFilters] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
   const [gameFilter, setGameFilter] = useState("all");
   const [search, setSearch] = useState("");
@@ -572,38 +574,86 @@ export default function TournamentsAdminTab() {
         )}
       </AnimatePresence>
 
-      {/* ── Header Bar ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-3.5">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
-            <GiTrophy size={16} />
+      {/* ── Flat & Borderless Header Bar with Top Refresh ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-[var(--border)]/70">
+        {/* Top Row: Title, Badge + Top Refresh */}
+        <div className="flex items-center justify-between gap-2 w-full sm:w-auto">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="text-amber-400 flex items-center justify-center shrink-0">
+              <GiTrophy size={18} />
+            </div>
+            <div className="flex items-center gap-1.5 min-w-0">
+              <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)] truncate">
+                Tournaments Console
+              </h2>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-[var(--foreground)]/5 text-[var(--muted)] shrink-0">
+                {tournaments.length}
+              </span>
+            </div>
           </div>
-          <div className="flex items-center gap-1.5">
-            <h2 className="text-sm font-black uppercase tracking-tight text-[var(--foreground)]">
-              Tournaments Console
-            </h2>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <InfoTooltip
-              content="Manage custom scrims, match rooms, participant brackets & prizes"
-              position="bottom"
-              iconClassName="text-[var(--muted)] hover:text-amber-400 transition-colors"
-            />
-          </div>
+
+          {/* Top Refresh on mobile */}
+          <button
+            type="button"
+            onClick={fetchAll}
+            disabled={loading}
+            className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] flex sm:hidden items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-colors cursor-pointer shrink-0"
+            title="Refresh list"
+          >
+            <FiRefreshCw size={11} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
+          </button>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-1.5 flex-wrap">
+        {/* Action Controls & Search */}
+        <div className="flex items-center gap-1.5 flex-1 sm:flex-initial justify-between sm:justify-end">
+          {/* Inline Quick Search */}
+          <div className="relative flex-1 sm:w-44">
+            <FiSearch size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full h-7 pl-7 pr-6 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[11px] text-[var(--foreground)] placeholder-[var(--muted)]/60 outline-none focus:border-[var(--accent)]"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
+              >
+                <FiX size={10} />
+              </button>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowFilters((v) => !v)}
+            className={`h-7 px-2.5 rounded-lg border text-[10.5px] font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
+              showFilters || statusFilter !== "all" || gameFilter !== "all"
+                ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]"
+                : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
+            }`}
+          >
+            <FiFilter size={11} />
+            <span className="hidden sm:inline">Filters</span>
+            {(statusFilter !== "all" || gameFilter !== "all") && (
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            )}
+          </button>
+
           <button
             type="button"
             onClick={() => setShowTemplates((v) => !v)}
-            className={`h-7.5 px-3 rounded-xl border text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer ${
+            className={`h-7 px-2.5 rounded-lg border text-[10.5px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 ${
               showTemplates
                 ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]"
                 : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
             }`}
           >
             <FiZap size={11} className={showTemplates ? "text-[var(--background)]" : "text-amber-400"} />
-            Presets
+            <span className="hidden sm:inline">Presets</span>
           </button>
 
           <button
@@ -619,107 +669,135 @@ export default function TournamentsAdminTab() {
                 setShowForm(true);
               }
             }}
-            className={`h-7.5 px-3.5 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer ${
+            className={`h-7 px-2.5 rounded-lg text-[10.5px] font-bold uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shrink-0 ${
               showForm
                 ? "bg-[var(--foreground)]/10 text-[var(--foreground)] border border-[var(--border)]"
-                : "bg-[var(--accent)] text-white hover:opacity-90 shadow-sm shadow-[var(--accent)]/20"
+                : "bg-[var(--accent)] text-white hover:opacity-90 shadow-2xs"
             }`}
           >
-            {showForm ? <FiX size={12} /> : <FiPlus size={12} />}
-            {showForm ? "Close Form" : "New Tournament"}
+            {showForm ? <FiX size={11} /> : <FiPlus size={11} />}
+            <span>{showForm ? "Close" : "New Tournament"}</span>
           </button>
 
+          {/* Desktop Refresh */}
           <button
             type="button"
             onClick={fetchAll}
             disabled={loading}
-            className="w-7.5 h-7.5 rounded-xl bg-[var(--card)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-colors cursor-pointer"
+            className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] hidden sm:flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-colors cursor-pointer shrink-0"
             title="Refresh list"
           >
-            <FiRefreshCw size={12} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
+            <FiRefreshCw size={11} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
           </button>
         </div>
       </div>
 
-      {/* ── Status Metrics & Filters Bar ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-        {/* Metric Chips */}
-        <div className="flex items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden py-0.5">
-          {[
-            { id: "all", label: "All", count: stats.total, color: "text-[var(--foreground)]" },
-            { id: "open", label: "Open", count: stats.open, color: "text-emerald-400" },
-            { id: "ongoing", label: "Live", count: stats.ongoing, color: "text-blue-400" },
-            { id: "upcoming", label: "Upcoming", count: stats.upcoming, color: "text-amber-400" },
-            { id: "ended", label: "Ended", count: stats.ended, color: "text-[var(--muted)]" },
-          ].map((tab) => {
-            const active = statusFilter === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setStatusFilter(tab.id)}
-                className={`h-7 px-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 border transition-all cursor-pointer whitespace-nowrap ${
-                  active
-                    ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]"
-                    : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
-                }`}
-              >
-                <span>{tab.label}</span>
-                <span
-                  className={`text-[9px] px-1.5 py-0.2 rounded-md ${
-                    active
-                      ? "bg-[var(--background)]/20 text-[var(--background)] font-bold"
-                      : "bg-[var(--foreground)]/5 " + tab.color
-                  }`}
-                >
-                  {tab.count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Search Input */}
-        <div className="relative w-full sm:w-64 shrink-0">
-          <FiSearch size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
-          <input
-            type="text"
-            placeholder="Search tournament, prize, game..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-7 pl-7 pr-7 rounded-xl bg-[var(--card)] border border-[var(--border)] text-[10px] text-[var(--foreground)] placeholder-[var(--muted)]/60 outline-none focus:border-[var(--accent)]"
-          />
-          {search && (
-            <button
-              onClick={() => setSearch("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
-            >
-              <FiX size={11} />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* ── Game Filter Strip ── */}
-      <div className="flex items-center gap-1 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-        <span className="text-[8px] font-black uppercase tracking-wider text-[var(--muted)] mr-1 shrink-0">
-          Game:
-        </span>
-        {["all", ...GAMES].map((g) => (
-          <button
-            key={g}
-            type="button"
-            onClick={() => setGameFilter(g)}
-            className={`px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-              gameFilter === g
-                ? "bg-[var(--accent)] text-white shadow-xs"
-                : "bg-[var(--foreground)]/5 text-[var(--muted)] hover:text-[var(--foreground)] border border-[var(--border)]/50"
-            }`}
+      {/* ── Collapsible Filters Drawer ── */}
+      <AnimatePresence>
+        {showFilters && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.18 }}
+            className="overflow-hidden"
           >
-            {g === "all" ? "All Games" : g}
-          </button>
-        ))}
-      </div>
+            <div className="p-3 bg-[var(--card)] border border-[var(--border)] rounded-2xl space-y-2.5">
+              {/* Search + Clear Row */}
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <FiSearch size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
+                  <input
+                    type="text"
+                    placeholder="Search tournament, prize, game..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-full h-7 pl-7 pr-7 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[11px] text-[var(--foreground)] placeholder-[var(--muted)]/60 outline-none focus:border-[var(--accent)]"
+                  />
+                  {search && (
+                    <button
+                      onClick={() => setSearch("")}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
+                    >
+                      <FiX size={11} />
+                    </button>
+                  )}
+                </div>
+
+                {(statusFilter !== "all" || gameFilter !== "all" || search) && (
+                  <button
+                    onClick={() => {
+                      setStatusFilter("all");
+                      setGameFilter("all");
+                      setSearch("");
+                    }}
+                    className="h-7 px-2 rounded-lg text-[10px] font-bold text-[var(--muted)] hover:text-rose-400 transition-colors shrink-0"
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
+
+              {/* Status Chips */}
+              <div className="flex items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden pt-0.5">
+                {[
+                  { id: "all", label: "All", count: stats.total, color: "text-[var(--foreground)]" },
+                  { id: "open", label: "Open", count: stats.open, color: "text-emerald-400" },
+                  { id: "ongoing", label: "Live", count: stats.ongoing, color: "text-blue-400" },
+                  { id: "upcoming", label: "Upcoming", count: stats.upcoming, color: "text-amber-400" },
+                  { id: "ended", label: "Ended", count: stats.ended, color: "text-[var(--muted)]" },
+                ].map((tab) => {
+                  const active = statusFilter === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setStatusFilter(tab.id)}
+                      className={`h-6.5 px-2.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 border transition-all cursor-pointer whitespace-nowrap ${
+                        active
+                          ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]"
+                          : "bg-[var(--background)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
+                      }`}
+                    >
+                      <span>{tab.label}</span>
+                      <span
+                        className={`text-[9px] px-1 py-0.2 rounded ${
+                          active
+                            ? "bg-[var(--background)]/20 text-[var(--background)] font-bold"
+                            : "bg-[var(--foreground)]/5 " + tab.color
+                        }`}
+                      >
+                        {tab.count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Game Filter Strip */}
+              <div className="flex items-center gap-1 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden pt-0.5 border-t border-[var(--border)]/40">
+                <span className="text-[8.5px] font-bold uppercase tracking-wider text-[var(--muted)] mr-1 shrink-0">
+                  Game:
+                </span>
+                {["all", ...GAMES].map((g) => (
+                  <button
+                    key={g}
+                    type="button"
+                    onClick={() => setGameFilter(g)}
+                    className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
+                      gameFilter === g
+                        ? "bg-[var(--accent)] text-white shadow-xs"
+                        : "bg-[var(--background)] text-[var(--muted)] hover:text-[var(--foreground)] border border-[var(--border)]/50"
+                    }`}
+                  >
+                    {g === "all" ? "All Games" : g}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Presets Template Strip (Collapsible) ── */}
       <AnimatePresence>
@@ -1155,7 +1233,7 @@ export default function TournamentsAdminTab() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
           {filteredTournaments.map((t) => {
             const isPending = confirmAction?.id === t._id;
             const slotsPct = Math.min(100, Math.round(((t.slotsFilled || 0) / (t.slots || 1)) * 100));
@@ -1163,12 +1241,12 @@ export default function TournamentsAdminTab() {
             return (
               <div
                 key={t._id}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3 hover:border-[var(--accent)]/40 transition-all flex flex-col justify-between group space-y-2 relative"
+                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-2.5 sm:p-3 hover:border-[var(--accent)]/40 transition-all flex flex-col justify-between group relative gap-2"
               >
                 {/* Card Top: Game badge + Status Pill */}
-                <div>
-                  <div className="flex items-center justify-between gap-1 mb-1.5">
-                    <span className="text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-[var(--foreground)]/5 border border-[var(--border)] text-[var(--foreground)]">
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-[var(--foreground)]/5 border border-[var(--border)] text-[var(--foreground)]">
                       {t.game}
                     </span>
 
@@ -1176,7 +1254,7 @@ export default function TournamentsAdminTab() {
                       type="button"
                       onClick={(e) => cycleStatus(t, e)}
                       title="Click to cycle status"
-                      className={`text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
+                      className={`text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md border transition-all cursor-pointer ${
                         STATUS_COLOR[t.status] || ""
                       }`}
                     >
@@ -1184,23 +1262,25 @@ export default function TournamentsAdminTab() {
                     </button>
                   </div>
 
-                  {/* Title & Format */}
-                  <h3 className="text-xs font-black uppercase tracking-tight text-[var(--foreground)] line-clamp-1 group-hover:text-[var(--accent)] transition-colors">
-                    {t.title}
-                  </h3>
-                  <p className="text-[8px] text-[var(--muted)] uppercase font-bold tracking-wide line-clamp-1 mt-0.5">
-                    {t.format} {t.subtitle ? `• ${t.subtitle}` : ""}
-                  </p>
-
-                  {/* Prize Tag */}
-                  <div className="mt-1.5 flex items-center gap-1 text-[9px] font-black text-amber-400">
-                    <GiTrophy size={11} className="shrink-0" />
-                    <span className="truncate">{t.prize}</span>
+                  {/* Title & Format & Prize in compact arrangement */}
+                  <div>
+                    <h3 className="text-[11.5px] font-black uppercase tracking-tight text-[var(--foreground)] line-clamp-1 group-hover:text-[var(--accent)] transition-colors">
+                      {t.title}
+                    </h3>
+                    <div className="flex items-center justify-between gap-1 mt-0.5 text-[8px]">
+                      <span className="text-[var(--muted)] uppercase font-semibold tracking-wide truncate">
+                        {t.format} {t.subtitle ? `• ${t.subtitle}` : ""}
+                      </span>
+                      <span className="flex items-center gap-0.5 font-black text-amber-400 shrink-0">
+                        <GiTrophy size={10} className="shrink-0" />
+                        <span className="truncate">{t.prize}</span>
+                      </span>
+                    </div>
                   </div>
 
                   {/* Slots Progress */}
-                  <div className="mt-2 space-y-1">
-                    <div className="flex items-center justify-between text-[8px] font-mono text-[var(--muted)]">
+                  <div className="space-y-0.5 pt-0.5">
+                    <div className="flex items-center justify-between text-[7.5px] font-mono text-[var(--muted)]">
                       <span>Slots</span>
                       <span>
                         <strong className="text-[var(--foreground)]">{t.slotsFilled || 0}</strong>/{t.slots} ({slotsPct}%)
@@ -1216,57 +1296,60 @@ export default function TournamentsAdminTab() {
                     </div>
                   </div>
 
-                  {/* Room ID pill if configured */}
-                  {t.roomId && (
-                    <div className="mt-1.5 flex items-center gap-1 text-[7.5px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
-                      <FiLock size={8} /> Room: {t.roomId}
-                    </div>
-                  )}
+                  {/* Room ID & Match Time (Single Compact Row) */}
+                  {(t.roomId || t.startsAt) && (
+                    <div className="flex items-center justify-between gap-1 text-[7.5px] font-mono pt-0.5">
+                      {t.roomId ? (
+                        <span className="flex items-center gap-1 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1 py-0.5 rounded truncate">
+                          <FiLock size={7.5} /> {t.roomId}
+                        </span>
+                      ) : <span />}
 
-                  {/* Match Time */}
-                  {t.startsAt && (
-                    <div className="mt-1 flex items-center gap-1 text-[7.5px] text-[var(--muted)] font-mono">
-                      <FiClock size={8} />
-                      <span>{new Date(t.startsAt).toLocaleDateString([], { month: "short", day: "numeric" })} {new Date(t.startsAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                      {t.startsAt && (
+                        <span className="flex items-center gap-1 text-[var(--muted)] shrink-0 ml-auto">
+                          <FiClock size={7.5} />
+                          <span>{new Date(t.startsAt).toLocaleDateString([], { month: "short", day: "numeric" })} {new Date(t.startsAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
 
                 {/* Card Actions Bottom */}
-                <div className="pt-2 border-t border-[var(--border)]/60 flex items-center justify-between gap-1">
+                <div className="pt-1.5 border-t border-[var(--border)]/60 flex items-center justify-between gap-1">
                   <button
                     type="button"
                     onClick={() => openEntries(t)}
-                    className="flex-1 h-6.5 px-2 rounded-lg bg-[var(--foreground)] text-[var(--background)] text-[8.5px] font-black uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center justify-center gap-1 cursor-pointer"
+                    className="flex-1 h-6 px-2 rounded-lg bg-[var(--foreground)] text-[var(--background)] text-[8px] font-black uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center justify-center gap-1 cursor-pointer"
                   >
-                    <FiUsers size={10} /> Entries ({t.slotsFilled || 0})
+                    <FiUsers size={9} /> Entries ({t.slotsFilled || 0})
                   </button>
 
                   <button
                     type="button"
                     onClick={() => duplicateTournament(t)}
-                    className="w-6.5 h-6.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)] flex items-center justify-center transition-colors cursor-pointer"
+                    className="w-6 h-6 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)] flex items-center justify-center transition-colors cursor-pointer"
                     title="Duplicate"
                   >
-                    <FiCopy size={11} />
+                    <FiCopy size={10} />
                   </button>
 
                   <button
                     type="button"
                     onClick={() => openEdit(t)}
-                    className="w-6.5 h-6.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] flex items-center justify-center transition-colors cursor-pointer"
+                    className="w-6 h-6 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] flex items-center justify-center transition-colors cursor-pointer"
                     title="Edit"
                   >
-                    <FiEdit2 size={11} />
+                    <FiEdit2 size={10} />
                   </button>
 
                   <button
                     type="button"
                     onClick={() => deleteTournament(t._id)}
-                    className="w-6.5 h-6.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-rose-400 hover:border-rose-500/30 flex items-center justify-center transition-colors cursor-pointer"
+                    className="w-6 h-6 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-rose-400 hover:border-rose-500/30 flex items-center justify-center transition-colors cursor-pointer"
                     title="Delete"
                   >
-                    <FiTrash2 size={11} />
+                    <FiTrash2 size={10} />
                   </button>
                 </div>
 

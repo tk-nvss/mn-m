@@ -111,20 +111,20 @@ export default function BlocklistTab() {
   return (
     <div className="space-y-3">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-[var(--border)]/70">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[var(--border)]/70">
+        <div className="flex items-center gap-2 min-w-0">
           <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
-          <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
+          <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)] truncate">
             Blocklist Management
           </h2>
           {items.length > 0 && (
-            <span className="px-2 py-0.5 rounded-md bg-[var(--card)] border border-[var(--border)] text-[10px] font-bold text-[var(--foreground)] tabular-nums shadow-2xs">
+            <span className="px-2 py-0.5 rounded-full bg-[var(--card)] border border-[var(--border)] text-[10px] font-bold text-[var(--foreground)] tabular-nums shrink-0">
               {items.length} <span className="text-[9px] text-[var(--muted)] font-medium">Blocked</span>
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={fetchBlocklist}
             disabled={loading}
@@ -244,47 +244,50 @@ export default function BlocklistTab() {
             No blocked entries found.
           </div>
         ) : (
-          <div className="overflow-x-auto no-scrollbar">
-            <table className="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr className="border-b border-[var(--border)]/70 bg-[var(--foreground)]/[0.02] text-[9px] font-bold uppercase tracking-wider text-[var(--muted)]">
-                  <th className="py-2 px-3 sm:px-3.5">Type</th>
-                  <th className="py-2 px-3 sm:px-3.5">Value</th>
-                  <th className="py-2 px-3 sm:px-3.5">Reason</th>
-                  <th className="py-2 px-3 sm:px-3.5">Date</th>
-                  <th className="py-2 px-3 sm:px-3.5 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border)]/60">
-                {filteredItems.map((item) => (
-                  <tr key={item._id} className="hover:bg-[var(--foreground)]/[0.015] transition-colors">
-                    <td className="py-2 px-3 sm:px-3.5">
-                      <span className={`px-1.5 py-0.2 rounded border text-[8.5px] font-bold uppercase tracking-wider ${
-                        item.type === "ip" ? "bg-blue-500/10 text-blue-400 border-blue-500/20" :
-                        item.type === "email" ? "bg-purple-500/10 text-purple-400 border-purple-500/20" :
-                        "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                      }`}>
-                        {item.type}
-                      </span>
-                    </td>
-                    <td className="py-2 px-3 sm:px-3.5 font-mono font-bold text-xs text-[var(--foreground)]">{item.value}</td>
-                    <td className="py-2 px-3 sm:px-3.5 text-[10px] text-[var(--muted)] font-medium truncate max-w-[150px]">{item.reason || "-"}</td>
-                    <td className="py-2 px-3 sm:px-3.5 text-[10px] text-[var(--muted)] font-mono">
-                      {formatDateTime(item.createdAt)}
-                    </td>
-                    <td className="py-2 px-3 sm:px-3.5 text-right">
-                      <button
-                        onClick={() => handleDelete(item._id)}
-                        className="w-7 h-7 inline-flex items-center justify-center text-[var(--muted)] hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all cursor-pointer shadow-2xs"
-                        title="Remove from blocklist"
-                      >
-                        <Icons.trash size={12} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="divide-y divide-[var(--border)]/50">
+            {filteredItems.map((item) => (
+              <div 
+                key={item._id} 
+                className="p-2.5 sm:px-3.5 flex items-center justify-between gap-3 hover:bg-[var(--foreground)]/[0.015] transition-colors"
+              >
+                {/* Left: Badge + Value & Reason */}
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <span className={`px-1.5 py-0.5 rounded text-[8.5px] font-bold uppercase tracking-wider shrink-0 ${
+                    item.type === "ip" ? "bg-blue-500/10 text-blue-400" :
+                    item.type === "email" ? "bg-purple-500/10 text-purple-400" :
+                    "bg-amber-500/10 text-amber-400"
+                  }`}>
+                    {item.type}
+                  </span>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="font-mono font-bold text-xs text-[var(--foreground)] leading-tight truncate">
+                      {item.value}
+                    </div>
+                    {item.reason && (
+                      <div className="text-[10px] text-[var(--muted)] font-medium mt-0.5 truncate">
+                        {item.reason}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right: Date & Delete Button */}
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-[9.5px] text-[var(--muted)] font-mono hidden sm:inline">
+                    {formatDateTime(item.createdAt)}
+                  </span>
+
+                  <button
+                    onClick={() => handleDelete(item._id)}
+                    className="w-7 h-7 flex items-center justify-center text-[var(--muted)] hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all cursor-pointer"
+                    title="Remove from blocklist"
+                  >
+                    <Icons.trash size={13} />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

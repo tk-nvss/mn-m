@@ -22,6 +22,7 @@ import {
   FiChevronDown,
   FiGlobe,
   FiLayers,
+  FiFilter,
 } from "react-icons/fi";
 import { LoadingSpinner } from "@/components/common";
 
@@ -64,6 +65,7 @@ export default function EventsAdminTab() {
   const [gameFilter, setGameFilter] = useState("all");
   const [editingId, setEditingId] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
@@ -286,22 +288,38 @@ export default function EventsAdminTab() {
     <div className="space-y-3.5 pb-8">
       {/* ── TOP HEADER & STATS CHIPS ── */}
       <div className="space-y-2.5 pb-3 border-b border-[var(--border)]">
-        <div className="flex flex-wrap items-center justify-between gap-2.5">
+        <div className="flex items-center justify-between gap-2">
           {/* Title & Count */}
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
-              <FiCalendar size={14} />
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="text-[var(--accent)] flex items-center justify-center shrink-0">
+              <FiCalendar size={16} />
             </div>
-            <h2 className="text-xs font-black uppercase tracking-wider text-[var(--foreground)]">
+            <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)] truncate">
               Event Calendar
             </h2>
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[var(--foreground)]/5 border border-[var(--border)] text-[var(--muted)]">
+            <span className="px-1.5 py-0.5 rounded-full text-[9.5px] font-bold bg-[var(--foreground)]/5 text-[var(--muted)] shrink-0">
               {events.length}
             </span>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-1.5">
+          {/* Action Buttons (Right side of title) */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className={`h-7 px-2.5 rounded-lg border text-[11px] font-bold flex items-center gap-1.5 transition-all ${
+                isFilterOpen || statusFilter !== "all" || gameFilter !== "all" || search
+                  ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]"
+                  : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
+              }`}
+              title="Filters"
+            >
+              <FiFilter size={11} />
+              <span className="hidden sm:inline">Filters</span>
+              {(statusFilter !== "all" || gameFilter !== "all" || search) && (
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              )}
+            </button>
+
             <button
               onClick={fetchEvents}
               className="h-7 w-7 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--muted)] hover:text-[var(--foreground)] flex items-center justify-center transition-all"
@@ -340,62 +358,87 @@ export default function EventsAdminTab() {
           </div>
         </div>
 
-        {/* Filter Pills Row */}
-        <div className="flex items-center justify-between gap-2 flex-wrap">
-          {/* Status Chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-            {[
-              { id: "all", label: "All", count: stats.total, color: "text-[var(--foreground)]" },
-              { id: "active", label: "Active", count: stats.active, color: "text-emerald-400" },
-              { id: "upcoming", label: "Upcoming", count: stats.upcoming, color: "text-cyan-400" },
-              { id: "completed", label: "Completed", count: stats.completed, color: "text-purple-400" },
-              { id: "featured", label: "Featured ⭐", count: stats.featured, color: "text-amber-400" },
-            ].map((tab) => {
-              const isActive = statusFilter === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setStatusFilter(tab.id)}
-                  className={`h-6.5 px-2 rounded-md text-[10.5px] font-bold flex items-center gap-1.5 shrink-0 transition-all ${
-                    isActive
-                      ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm"
-                      : "bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
-                  }`}
-                >
-                  <span className={isActive ? "" : tab.color}>{tab.label}</span>
-                  <span className={`text-[9px] px-1 rounded-full ${isActive ? "bg-[var(--background)]/20 text-[var(--background)]" : "bg-[var(--foreground)]/5 text-[var(--muted)]"}`}>
-                    {tab.count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Search & Game select */}
-          <div className="flex items-center gap-1.5 flex-1 sm:flex-initial justify-end">
-            <div className="relative flex-1 sm:w-40">
-              <FiSearch size={11} className="absolute left-2 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
-              <input
-                type="text"
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full h-6.5 pl-6 pr-2 bg-[var(--card)] border border-[var(--border)] rounded-md text-[11px] text-[var(--foreground)] focus:border-[var(--accent)] outline-none"
-              />
-            </div>
-
-            <select
-              value={gameFilter}
-              onChange={(e) => setGameFilter(e.target.value)}
-              className="h-6.5 px-1.5 bg-[var(--card)] border border-[var(--border)] rounded-md text-[10.5px] font-medium text-[var(--foreground)] focus:border-[var(--accent)] outline-none"
+        {/* Collapsible Filter Console */}
+        <AnimatePresence>
+          {isFilterOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.18 }}
+              className="overflow-hidden pt-2"
             >
-              <option value="all">All Games</option>
-              {GAME_OPTIONS.map((g) => (
-                <option key={g} value={g}>{g}</option>
-              ))}
-            </select>
-          </div>
-        </div>
+              <div className="p-2.5 rounded-xl bg-[var(--card)] border border-[var(--border)] space-y-2.5">
+                {/* Search & Game row */}
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <FiSearch size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
+                    <input
+                      type="text"
+                      placeholder="Search events..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="w-full h-7 pl-7 pr-2.5 bg-[var(--background)] border border-[var(--border)] rounded-lg text-xs text-[var(--foreground)] focus:border-[var(--accent)] outline-none"
+                    />
+                  </div>
+
+                  <select
+                    value={gameFilter}
+                    onChange={(e) => setGameFilter(e.target.value)}
+                    className="h-7 px-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-xs font-medium text-[var(--foreground)] focus:border-[var(--accent)] outline-none"
+                  >
+                    <option value="all">All Games</option>
+                    {GAME_OPTIONS.map((g) => (
+                      <option key={g} value={g}>{g}</option>
+                    ))}
+                  </select>
+
+                  {(statusFilter !== "all" || gameFilter !== "all" || search) && (
+                    <button
+                      onClick={() => {
+                        setStatusFilter("all");
+                        setGameFilter("all");
+                        setSearch("");
+                      }}
+                      className="h-7 px-2 rounded-lg text-[10px] font-bold text-[var(--muted)] hover:text-rose-400 transition-colors shrink-0"
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
+
+                {/* Status Chips Row */}
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
+                  {[
+                    { id: "all", label: "All", count: stats.total, color: "text-[var(--foreground)]" },
+                    { id: "active", label: "Active", count: stats.active, color: "text-emerald-400" },
+                    { id: "upcoming", label: "Upcoming", count: stats.upcoming, color: "text-cyan-400" },
+                    { id: "completed", label: "Completed", count: stats.completed, color: "text-purple-400" },
+                    { id: "featured", label: "Featured ⭐", count: stats.featured, color: "text-amber-400" },
+                  ].map((tab) => {
+                    const isActive = statusFilter === tab.id;
+                    return (
+                      <button
+                        key={tab.id}
+                        onClick={() => setStatusFilter(tab.id)}
+                        className={`h-6 px-2 rounded-md text-[10px] font-bold flex items-center gap-1.5 shrink-0 transition-all ${
+                          isActive
+                            ? "bg-[var(--foreground)] text-[var(--background)]"
+                            : "bg-[var(--background)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
+                        }`}
+                      >
+                        <span className={isActive ? "" : tab.color}>{tab.label}</span>
+                        <span className={`text-[8.5px] px-1 rounded-full ${isActive ? "bg-[var(--background)]/20 text-[var(--background)]" : "bg-[var(--foreground)]/5 text-[var(--muted)]"}`}>
+                          {tab.count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ── COLLAPSIBLE FORM DRAWER ── */}

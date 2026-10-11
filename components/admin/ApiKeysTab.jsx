@@ -45,10 +45,8 @@ export default function ApiKeysTab() {
         <div className="w-full space-y-4">
             {/* ================= HEADER ================= */}
             <div className="flex items-center justify-between gap-3 pb-3 border-b border-[var(--border)]/70">
-                <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
-                        <Key size={16} />
-                    </div>
+                <div className="flex items-center gap-2">
+                    <Key size={16} className="text-[var(--accent)] shrink-0" />
                     <div className="flex items-center gap-1.5">
                         <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">API Keys</h2>
                         <InfoTooltip
@@ -195,58 +193,55 @@ export default function ApiKeysTab() {
                         </div>
  
                         {/* MOBILE LIST */}
-                        <div className="lg:hidden space-y-2.5">
+                        <div className="lg:hidden space-y-2">
                             {keys.map((k, idx) => (
                                 <motion.div
                                     key={k._id}
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     transition={{ delay: idx * 0.03 }}
-                                    className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] space-y-2.5 shadow-2xs"
+                                    className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] space-y-2 shadow-2xs"
                                 >
-                                    <div className="flex justify-between items-center pb-2 border-b border-[var(--border)]/60">
+                                    <div className="flex justify-between items-center gap-2">
                                         <div className="flex items-center gap-2 min-w-0">
-                                            <div className="w-7 h-7 rounded-lg bg-[var(--foreground)]/[0.04] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] shrink-0">
-                                                <User size={13} />
-                                            </div>
-                                            <div className="flex flex-col min-w-0">
+                                            <User size={13} className="text-[var(--muted)] shrink-0" />
+                                            <div className="min-w-0 flex items-center gap-2">
                                                 <span className="text-xs font-bold text-[var(--foreground)] truncate">{k.userDetails?.name || "Unknown User"}</span>
-                                                <span className="text-[10px] text-[var(--muted)] truncate">{k.userDetails?.email || "No email"}</span>
+                                                <span className="text-[10.5px] text-[var(--muted)] truncate max-w-[140px] sm:max-w-none">{k.userDetails?.email || ""}</span>
                                             </div>
                                         </div>
                                         {k.hasRecentOrder ? (
-                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shrink-0">
+                                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8.5px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shrink-0">
                                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Active
                                             </span>
                                         ) : (
-                                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-[var(--foreground)]/5 text-[var(--muted)] border border-[var(--border)] shrink-0">
+                                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[8.5px] font-medium bg-[var(--foreground)]/5 text-[var(--muted)] border border-[var(--border)] shrink-0">
                                                 Offline
                                             </span>
                                         )}
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-2 text-xs">
-                                        <div className="flex flex-col gap-0.5">
-                                            <span className="text-[9px] font-bold uppercase text-[var(--muted)]">Key</span>
-                                            <span className="text-xs font-bold text-[var(--foreground)] truncate">{k.name}</span>
-                                            <span className="text-[10px] font-mono text-[var(--muted)]">•••• {k.lastFour}</span>
+                                    {/* Middle info strip: Key & Last Used on single line */}
+                                    <div className="flex items-center justify-between gap-2 text-[10px] pt-0.5">
+                                        <div className="flex items-center gap-1.5 min-w-0">
+                                            <span className="text-[8.5px] font-bold uppercase text-[var(--muted)]">KEY</span>
+                                            <span className="font-bold text-[var(--foreground)] truncate">{k.name}</span>
+                                            <span className="font-mono text-[var(--muted)] shrink-0">•••• {k.lastFour}</span>
                                         </div>
-                                        <div className="flex flex-col gap-0.5 text-right">
-                                            <span className="text-[9px] font-bold uppercase text-[var(--muted)]">Last Used</span>
-                                            <span className="text-xs font-bold text-[var(--foreground)]">
-                                                {k.lastUsed ? new Date(k.lastUsed).toLocaleDateString() : "Never"}
-                                            </span>
-                                            <span className="text-[9px] text-[var(--muted)]">
-                                                {k.lastUsed ? new Date(k.lastUsed).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "--"}
+                                        <div className="flex items-center gap-1 shrink-0 text-right">
+                                            <span className="text-[8.5px] font-bold uppercase text-[var(--muted)]">LAST USED</span>
+                                            <span className="font-bold text-[var(--foreground)]">
+                                                {k.lastUsed ? new Date(k.lastUsed).toLocaleDateString([], { month: "short", day: "numeric" }) : "Never"}
                                             </span>
                                         </div>
                                     </div>
 
-                                    <div className="pt-1">
-                                        <div className="flex justify-between items-center text-[10px] mb-1">
-                                            <span className="font-medium text-[var(--muted)]">Usage</span>
+                                    {/* Usage progress */}
+                                    <div className="space-y-0.5 pt-0.5">
+                                        <div className="flex justify-between items-center text-[9px]">
+                                            <span className="font-semibold text-[var(--muted)]">Usage</span>
                                             <span className="font-bold text-[var(--foreground)] tabular-nums">
-                                                ₹{(k.usedToday || 0).toLocaleString()} / ₹{(k.dailyLimit || 10000).toLocaleString()}
+                                                ₹{(k.usedToday || 0).toLocaleString()} <span className="text-[var(--muted)] font-normal">/ ₹{(k.dailyLimit || 10000).toLocaleString()}</span>
                                             </span>
                                         </div>
                                         <div className="w-full h-1 bg-[var(--foreground)]/[0.06] rounded-full overflow-hidden">
