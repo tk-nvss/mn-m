@@ -54,6 +54,7 @@ const itemVariants: Variants = {
 
 export default function SEOContent() {
   const [openFaq, setOpenFaq] = useState<number | null>(0); // First open by default
+  const [showInfo, setShowInfo] = useState(false);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -66,72 +67,123 @@ export default function SEOContent() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12 relative z-10">
         
-        {/* ── Section 1: About Header ────────────────────────────── */}
+        {/* ── Section 1: About Header with Info (i) Component ────────────── */}
         <motion.div 
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-30px" }}
           variants={containerVariants}
-          className="max-w-4xl space-y-3"
+          className="max-w-4xl space-y-2.5"
         >
-          <motion.div variants={itemVariants} className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[9px] font-black uppercase tracking-widest">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-              <span>India's #1 MLBB Store</span>
+          <motion.div variants={itemVariants} className="space-y-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[9px] font-black uppercase tracking-widest">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+                <span>India's #1 MLBB Store</span>
+              </div>
+
+              {/* Info Button */}
+              <button
+                type="button"
+                onClick={() => setShowInfo(true)}
+                aria-label="More Information"
+                className="w-5 h-5 rounded-full bg-[var(--foreground)]/5 border border-[var(--border)] hover:border-[var(--accent)] text-[var(--muted)] hover:text-[var(--accent)] flex items-center justify-center text-[10px] font-bold transition-all cursor-pointer"
+              >
+                i
+              </button>
+
+              {/* Responsive Modal / Drawer for Info */}
+              <AnimatePresence>
+                {showInfo && (
+                  <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+                    {/* Backdrop */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      onClick={() => setShowInfo(false)}
+                      className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+                    />
+
+                    {/* Content Box */}
+                    <motion.div
+                      initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                      animate={{ scale: 1, opacity: 1, y: 0 }}
+                      exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                      transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                      className="relative z-10 w-full max-w-md p-5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-2xl text-[12px] sm:text-xs leading-relaxed text-[var(--muted)]"
+                    >
+                      <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--border)]/40">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
+                          <h4 className="text-xs font-black uppercase tracking-wider text-[var(--foreground)]">About mlbbtopup.in</h4>
+                        </div>
+                        <button
+                          onClick={() => setShowInfo(false)}
+                          className="w-6 h-6 rounded-full bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 text-[var(--foreground)] flex items-center justify-center text-xs font-bold transition-colors"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      <div className="space-y-3">
+                        <p>
+                          <strong className="text-[var(--foreground)]">mlbbtopup.in</strong> (an official product from <a href="https://bluebuff.in" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] hover:underline font-bold">bluebuff.in</a>) is India's most trusted and affordable Mobile Legends: Bang Bang top-up platform. Enjoy instant recharges via UPI, PhonePe, Google Pay, and Paytm without ever sharing your login credentials.
+                        </p>
+                        <p>
+                          Whether you're renewing your <strong className="text-[var(--foreground)]">Weekly Diamond Pass</strong> or preparing for Starlight events, our prices remain <strong className="text-[var(--accent)] font-bold">10–20% cheaper than Codashop</strong>. Trusted by over 100,000+ Indian gamers.
+                        </p>
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+              </AnimatePresence>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-[var(--foreground)] leading-tight">
+            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[var(--foreground)] leading-tight">
               Cheapest <span className="text-[var(--accent)]">MLBB Diamond</span> Top Up In India
             </h2>
             
-            <div className="space-y-3 text-[12px] sm:text-xs text-[var(--muted)] leading-relaxed">
-              <p>
-                <strong className="text-[var(--foreground)]">mlbbtopup.in</strong> (an official product from <a href="https://bluebuff.in" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] hover:underline font-bold">bluebuff.in</a>) is India's most trusted and affordable Mobile Legends: Bang Bang top-up platform. Enjoy instant recharges via UPI, PhonePe, Google Pay, and Paytm without ever sharing your login credentials.
-              </p>
-              <p>
-                Whether you're renewing your <strong className="text-[var(--foreground)]">Weekly Diamond Pass</strong> or preparing for Starlight events, our prices remain <strong className="text-[var(--accent)] font-bold">10–20% cheaper than Codashop</strong>. Trusted by over 100,000+ Indian gamers.
-              </p>
-            </div>
+            <p className="text-[11px] sm:text-xs text-[var(--muted)] leading-relaxed line-clamp-2">
+              <strong className="text-[var(--foreground)]">mlbbtopup.in</strong> (official by <a href="https://bluebuff.in" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] hover:underline font-bold">bluebuff.in</a>) — Instant recharges via UPI, PhonePe, & Paytm. Zero credentials needed.
+            </p>
           </motion.div>
         </motion.div>
 
-        {/* ── Section 2: How to Top Up (Compact Step Bar) ─────────────── */}
+        {/* ── Section 2: How to Top Up (Simple One Row) ─────────────── */}
         <motion.div 
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-30px" }}
           variants={containerVariants}
-          className="space-y-3"
+          className="space-y-2.5"
         >
           <div className="flex items-center justify-between">
-            <h2 className="text-lg sm:text-xl font-black uppercase tracking-tight text-[var(--foreground)]">
+            <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
               How to Buy <span className="text-[var(--accent)]">— Step by Step</span>
             </h2>
           </div>
           
-          <motion.div variants={itemVariants} className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 backdrop-blur-md overflow-hidden">
-            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y divide-x-0 sm:divide-y-0 sm:divide-x divide-[var(--border)]">
+          <motion.div variants={itemVariants} className="overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div className="flex items-stretch gap-2 min-w-max sm:min-w-0 sm:grid sm:grid-cols-4">
               {[
-                { step: "01", title: "Select Package", desc: "Choose diamond pack or Weekly Pass.", icon: FiGrid },
-                { step: "02", title: "Enter Details", desc: "Provide your Player ID & Zone ID.", icon: FiUserCheck },
-                { step: "03", title: "Make Payment", desc: "Pay via UPI, GPay, or Paytm.", icon: FiCreditCard },
-                { step: "04", title: "Instant Delivery", desc: "Receive diamonds in 1–5 minutes.", icon: FiZap },
+                { step: "1", title: "Select Package", desc: "Choose pack or pass", icon: FiGrid },
+                { step: "2", title: "Enter Details", desc: "Player ID & Zone ID", icon: FiUserCheck },
+                { step: "3", title: "Make Payment", desc: "UPI, GPay, Paytm", icon: FiCreditCard },
+                { step: "4", title: "Instant Delivery", desc: "Arrives in 1–5 mins", icon: FiZap },
               ].map((item) => {
                 const Icon = item.icon;
                 return (
                   <div 
                     key={item.step} 
-                    className="p-3.5 sm:p-4 flex items-start gap-3 group hover:bg-[var(--accent)]/[0.03] transition-colors"
+                    className="flex-1 min-w-[140px] sm:min-w-0 px-2.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--card)]/40 flex items-center gap-2"
                   >
-                    <div className="shrink-0 w-7 h-7 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 flex items-center justify-center text-[var(--accent)] group-hover:scale-105 transition-transform">
-                      <Icon size={14} />
+                    <div className="shrink-0 w-6 h-6 rounded-lg bg-[var(--accent)]/10 text-[var(--accent)] flex items-center justify-center font-black text-[10px]">
+                      {item.step}
                     </div>
                     <div className="min-w-0">
-                      <span className="text-[8px] font-black uppercase tracking-widest text-[var(--accent)] font-mono block mb-0.5">
-                        STEP {item.step}
-                      </span>
-                      <h3 className="text-xs font-bold text-[var(--foreground)] leading-tight">{item.title}</h3>
-                      <p className="text-[10px] text-[var(--muted)] leading-snug mt-0.5">{item.desc}</p>
+                      <h3 className="text-[11px] font-black uppercase text-[var(--foreground)] leading-none truncate">{item.title}</h3>
+                      <p className="text-[9px] text-[var(--muted)] leading-tight mt-0.5 truncate">{item.desc}</p>
                     </div>
                   </div>
                 );

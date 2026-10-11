@@ -10,7 +10,18 @@ import {
   FiLinkedin,
   FiChevronUp,
   FiShield,
-  FiExternalLink
+  FiExternalLink,
+  FiHome,
+  FiShoppingBag,
+  FiServer,
+  FiGlobe,
+  FiBookOpen,
+  FiUsers,
+  FiInfo,
+  FiLock,
+  FiFileText,
+  FiHeadphones,
+  FiRotateCcw,
 } from "react-icons/fi";
 
 const BRAND = process.env.NEXT_PUBLIC_BRAND_NAME || "mlbbtopup.in";
@@ -26,22 +37,22 @@ const FOOTER_LINKS = [
   {
     title: "Pages",
     links: [
-      { label: "Home", href: "/" },
-      { label: "Store", href: "/games" },
-      { label: "Services", href: "/services" },
-      { label: "Region", href: "/region" },
-      { label: "Blog", href: "/blog" },
-      { label: "Partner With Us", href: "/partner" },
+      { label: "Home", href: "/", icon: FiHome },
+      { label: "Store", href: "/games", icon: FiShoppingBag },
+      { label: "Services", href: "/services", icon: FiServer },
+      { label: "Region", href: "/region", icon: FiGlobe },
+      { label: "Blog", href: "/blog", icon: FiBookOpen },
+      { label: "Partner With Us", href: "/partner", icon: FiUsers },
     ],
   },
   {
     title: "Legal",
     links: [
-      { label: "About Us", href: "/about" },
-      { label: "Privacy", href: "/privacy-policy" },
-      { label: "Terms", href: "/terms-and-conditions" },
-      { label: "Support", href: "/contact" },
-      { label: "Refunds", href: "/refund-policy" },
+      { label: "About Us", href: "/about", icon: FiInfo },
+      { label: "Privacy", href: "/privacy-policy", icon: FiLock },
+      { label: "Terms", href: "/terms-and-conditions", icon: FiFileText },
+      { label: "Support", href: "/contact", icon: FiHeadphones },
+      { label: "Refunds", href: "/refund-policy", icon: FiRotateCcw },
     ],
   },
 ];
@@ -138,16 +149,20 @@ export default function Footer() {
                   </h3>
                 </div>
                 <ul className="space-y-1.5">
-                  {section.links.map((link) => (
-                    <li key={link.href}>
-                      <Link
-                        href={link.href}
-                        className="text-xs font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:translate-x-0.5 transition-all block"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
+                  {section.links.map((link) => {
+                    const Icon = link.icon;
+                    return (
+                      <li key={link.href}>
+                        <Link
+                          href={link.href}
+                          className="text-xs font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:translate-x-0.5 transition-all flex items-center gap-1.5 group"
+                        >
+                          {Icon && <Icon size={12} className="opacity-60 group-hover:opacity-100 group-hover:text-[var(--accent)] transition-colors shrink-0" />}
+                          <span>{link.label}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             ))}

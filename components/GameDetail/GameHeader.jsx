@@ -39,9 +39,14 @@ export default function GameHeader({ game }) {
 
             {/* Region / Tag below title */}
             <div className="flex items-center gap-1.5 flex-wrap">
-              {Boolean(game.tagId?.tagName || game.gameSlug?.includes("india") || game.gameSlug?.includes("all-region")) && (
+              {Boolean(game.tagId?.tagName || game.gameSlug?.includes("india") || game.gameSlug?.includes("all-region") || game.gameSlug?.includes("united-states") || game.gameSlug?.includes("br178") || game.gameSlug?.includes("tr112")) && (
                 <span className="text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20">
-                  {game.tagId?.tagName || (game.gameSlug?.includes("all-region") ? "All Region" : "Indian Region")}
+                  {game.tagId?.tagName || (
+                    game.gameSlug?.includes("united-states") ? "US" :
+                    game.gameSlug?.includes("br178") ? "Brazil" :
+                    game.gameSlug?.includes("tr112") ? "Turkey" :
+                    game.gameSlug?.includes("all-region") ? "All Region" : "Indian Region"
+                  )}
                 </span>
               )}
               {game.isValidationRequired === false && game.gameDescription && (

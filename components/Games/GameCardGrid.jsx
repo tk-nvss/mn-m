@@ -20,6 +20,18 @@ export default function GameCardGrid({ game, isOutOfStock, index = 0 }) {
     displayTagName = "Indian";
     tagBg = "#1e3a8a";
     tagColor = "#ffffff";
+  } else if (game?.gameSlug === "mobile-legends-united-states41" || game?.gameSlug?.includes("united-states")) {
+    displayTagName = "US";
+    tagBg = "#1e3a8a";
+    tagColor = "#ffffff";
+  } else if (game?.gameSlug === "mlbbbr178" || game?.gameSlug?.includes("br178")) {
+    displayTagName = "Brazil";
+    tagBg = "#15803d";
+    tagColor = "#ffffff";
+  } else if (game?.gameSlug === "mlbbtr112" || game?.gameSlug?.includes("tr112")) {
+    displayTagName = "Turkey";
+    tagBg = "#b91c1c";
+    tagColor = "#ffffff";
   }
 
   return (

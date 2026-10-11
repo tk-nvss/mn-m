@@ -182,7 +182,7 @@ function GameCatalogContent() {
   );
 
   return (
-    <div className="min-h-screen bg-[var(--background)] px-4 py-4 sm:py-6 relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--background)] px-2 sm:px-4 py-3 sm:py-6 relative overflow-hidden">
       {/* Background Decorative Glows */}
       <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[var(--accent)]/10 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-[10%] left-[-10%] w-[400px] h-[400px] bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
