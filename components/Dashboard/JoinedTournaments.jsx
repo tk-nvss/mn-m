@@ -33,6 +33,10 @@ export default function JoinedTournaments() {
   const [filter, setFilter] = useState("all"); // 'all' | 'upcoming' | 'active' | 'ended' | 'available'
 
   useEffect(() => {
+    window.dispatchEvent(new CustomEvent("app-sheet-toggle", { detail: { isOpen: Boolean(selectedEntry) } }));
+  }, [selectedEntry]);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -415,25 +419,33 @@ export default function JoinedTournaments() {
         size="sm"
       />
 
-      {/* ── DETAIL MODAL ── */}
+      {/* ── DETAIL BOTTOM SHEET / MODAL ── */}
       <AnimatePresence>
         {selectedEntry && (
-          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3.5 sm:p-4">
+          <div className="fixed inset-0 z-[99999] flex items-end sm:items-center justify-center p-0 sm:p-4">
+            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedEntry(null)}
-              className="absolute inset-0 bg-black/85 backdrop-blur-md"
+              className="absolute inset-0 bg-black/75 backdrop-blur-sm"
             />
+            {/* Sheet Container */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 12 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 12 }}
-              className="relative w-full max-w-[420px] rounded-2xl sm:rounded-3xl bg-[var(--card)] border border-[var(--border)] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col z-10"
+              initial={{ opacity: 0, y: "100%" }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: "100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 300 }}
+              className="relative w-full max-w-[460px] rounded-t-3xl sm:rounded-3xl bg-[var(--card)] border border-[var(--border)] shadow-2xl overflow-hidden max-h-[88vh] sm:max-h-[90vh] flex flex-col z-10"
             >
-              {/* Modal header */}
-              <div className="flex items-center justify-between p-3.5 sm:p-4 border-b border-[var(--border)] bg-[var(--card)]">
+              {/* Drag / Pull handle for mobile sheet */}
+              <div className="sm:hidden flex justify-center pt-2.5 pb-1">
+                <div className="w-10 h-1 rounded-full bg-[var(--muted)]/30" />
+              </div>
+
+              {/* Sheet header */}
+              <div className="flex items-center justify-between px-4 py-3 sm:p-4 border-b border-[var(--border)] bg-[var(--card)]">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden border border-[var(--border)] shrink-0 bg-[var(--background)] flex items-center justify-center">
                     <Image
@@ -621,7 +633,7 @@ export default function JoinedTournaments() {
                 </div>
 
                 {/* ── HELP / SUPPORT LINK ── */}
-                <div className="pt-1 text-center">
+                <div className="pt-1 pb-4 sm:pb-1 text-center">
                   <Link
                     href="/dashboard/support"
                     className="inline-flex items-center gap-1.5 text-[8.5px] font-black uppercase tracking-widest text-[var(--accent)] hover:underline opacity-80 hover:opacity-100 transition-opacity py-1 px-3 rounded-lg hover:bg-[var(--accent)]/5"

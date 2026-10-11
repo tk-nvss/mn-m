@@ -14,10 +14,20 @@ import {
 export default function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const [sheetOpen, setSheetOpen] = useState(false);
 
-  // Hide BottomNav on admin, auth pages, and inside game detail/purchase pages
+  useEffect(() => {
+    const handleSheetState = (e: any) => {
+      setSheetOpen(Boolean(e.detail?.isOpen));
+    };
+    window.addEventListener("app-sheet-toggle" as any, handleSheetState);
+    return () => window.removeEventListener("app-sheet-toggle" as any, handleSheetState);
+  }, []);
+
+  // Hide BottomNav on admin, auth pages, inside game detail pages, or when sheet/modal is open
   const hideOnRoutes = ["/admin", "/owner-panal", "/login", "/register"];
   if (
+    sheetOpen ||
     pathname?.startsWith("/games/") ||
     hideOnRoutes.some((route) => pathname?.startsWith(route))
   ) {

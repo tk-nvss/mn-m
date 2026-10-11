@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import api from "@/lib/axios";
-import { FiUser, FiMail, FiPhone, FiShield, FiSave, FiEdit2, FiCheckCircle, FiClock, FiArrowRight, FiAward } from "react-icons/fi";
+import { FiUser, FiMail, FiPhone, FiShield, FiSave, FiEdit2, FiCheckCircle, FiClock, FiArrowRight, FiAward, FiCalendar, FiCopy, FiCheck } from "react-icons/fi";
 import { LoadingSpinner } from "@/components/common";
 import { formatDate } from "@/utils";
 import Link from "next/link";
@@ -14,6 +14,7 @@ export default function MyProfilePage() {
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [phoneInput, setPhoneInput] = useState(user?.phone || "");
   const [loading, setLoading] = useState(false);
+  const [copiedId, setCopiedId] = useState(false);
 
   const handleUpdatePhone = async () => {
     if (!phoneInput) {
@@ -39,6 +40,13 @@ export default function MyProfilePage() {
     }
   };
 
+  const handleCopyId = () => {
+    if (!user?.userId) return;
+    navigator.clipboard.writeText(user.userId);
+    setCopiedId(true);
+    setTimeout(() => setCopiedId(false), 2000);
+  };
+
   if (!user) {
     return (
       <div className="flex justify-center items-center h-64 text-[var(--muted)]">
@@ -50,63 +58,88 @@ export default function MyProfilePage() {
   const isLifetime = user.userType === "owner" || user.userType === "user";
   const displayExpiry = isLifetime ? "Lifetime" : (user.membershipExpiry ? formatDate(user.membershipExpiry) : "Lifetime");
   const displayRole = user.userType === "user" ? "Normal User" : user.userType === "admin" ? "Reseller" : user.userType;
+  const memberSince = user.createdAt ? formatDate(user.createdAt, { style: "medium" }) : "Member";
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8 pb-20">
+    <div className="max-w-2xl mx-auto space-y-5 pb-20 px-2 sm:px-4 pt-1">
       
-      {/* HEADER SECTION */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-3xl p-8 sm:p-10 shadow-sm flex flex-col items-center text-center">
-        <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-white shadow-md bg-[var(--background)] flex items-center justify-center text-[var(--accent)] text-5xl font-[1000] overflow-hidden mb-5">
-          {user.avatar ? (
-            <Image src={user.avatar} alt={user.name} fill unoptimized className="object-cover" />
-          ) : (
-            user.name?.charAt(0)?.toUpperCase() || <FiUser />
-          )}
+      {/* ── SIMPLE PROFILE HEADER (NO CARD) ── */}
+      <div className="flex flex-col gap-3">
+        {/* Top row: Avatar left, Name and ID right */}
+        <div className="flex items-center gap-3.5 sm:gap-4">
+          {/* Avatar on left */}
+          <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border border-[var(--border)] bg-[var(--card)] flex items-center justify-center text-[var(--accent)] text-2xl font-black shrink-0 overflow-hidden shadow-xs">
+            {user.avatar ? (
+              <Image src={user.avatar} alt={user.name} fill unoptimized className="object-cover" />
+            ) : (
+              user.name?.charAt(0)?.toUpperCase() || <FiUser />
+            )}
+          </div>
+
+          {/* Name & ID on right */}
+          <div className="min-w-0 flex-1">
+            <h2 className="text-xl sm:text-2xl font-black text-[var(--foreground)] tracking-tight truncate leading-tight">
+              {user.name || "User"}
+            </h2>
+            {user.userId && (
+              <button
+                onClick={handleCopyId}
+                className="inline-flex items-center gap-1.5 mt-1 px-2 py-0.5 rounded-lg text-[9.5px] font-mono text-[var(--muted)] hover:text-[var(--foreground)] bg-[var(--card)] border border-[var(--border)] transition-colors cursor-pointer"
+                title="Click to copy User ID"
+              >
+                <span>{user.userId}</span>
+                {copiedId ? <FiCheck size={10} className="text-emerald-500" /> : <FiCopy size={9} />}
+              </button>
+            )}
+          </div>
         </div>
-        
-        <h2 className="text-3xl font-[1000] text-[var(--foreground)] leading-none tracking-tight mb-4">{user.name || "User"}</h2>
-        
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <div className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-600 dark:bg-blue-900/20 dark:border-blue-800/30 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest">
-            <FiShield size={14} />
+
+        {/* Compact stats row below (low height) */}
+        <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-500 dark:text-blue-400 text-[8.5px] font-black uppercase tracking-wider">
+            <FiShield size={11} />
             {displayRole}
-          </div>
-          <div className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-50 border border-purple-100 text-purple-600 dark:bg-purple-900/20 dark:border-purple-800/30 dark:text-purple-400 text-[10px] font-black uppercase tracking-widest">
-            <FiClock size={14} />
+          </span>
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 dark:text-emerald-400 text-[8.5px] font-black uppercase tracking-wider">
+            <FiCalendar size={11} />
+            Since {memberSince}
+          </span>
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-500 dark:text-purple-400 text-[8.5px] font-black uppercase tracking-wider">
+            <FiClock size={11} />
             Expiry: {displayExpiry}
-          </div>
+          </span>
         </div>
       </div>
 
-      {/* ACCOUNT DETAILS */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-3xl p-6 sm:p-8 shadow-sm">
-        <h3 className="text-[11px] font-black uppercase tracking-widest text-[var(--muted)] flex items-center gap-2 mb-6">
-          <FiUser size={14} /> Account Details
+      {/* ── ACCOUNT DETAILS ── */}
+      <div className="space-y-2 pt-1">
+        <h3 className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)]/60 flex items-center gap-2 px-1">
+          <FiUser size={13} /> Account Details
         </h3>
 
-        <div className="space-y-4">
+        <div className="space-y-2">
           {/* EMAIL */}
-          <div className="flex items-center justify-between gap-4 p-5 rounded-2xl bg-[var(--background)] border border-[var(--border)]">
-            <div className="flex items-center gap-4 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-[var(--card)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] shrink-0 shadow-sm">
-                <FiMail size={18} />
+          <div className="flex items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-[var(--background)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] shrink-0">
+                <FiMail size={16} />
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-1">Email Address</p>
-                <p className="text-sm sm:text-base font-bold text-[var(--foreground)] truncate">{user.email || "Not provided"}</p>
+                <p className="text-[9px] font-black text-[var(--muted)] uppercase tracking-wider mb-0.5">Email Address</p>
+                <p className="text-xs sm:text-sm font-bold text-[var(--foreground)] truncate">{user.email || "Not provided"}</p>
               </div>
             </div>
-            {user.email && <FiCheckCircle className="text-emerald-500 shrink-0" size={20} />}
+            {user.email && <FiCheckCircle className="text-emerald-500 shrink-0" size={18} />}
           </div>
 
           {/* PHONE */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-[var(--background)] border border-[var(--border)]">
-            <div className="flex items-center gap-4 min-w-0 flex-1">
-              <div className="w-10 h-10 rounded-xl bg-[var(--card)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] shrink-0 shadow-sm">
-                <FiPhone size={18} />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-9 h-9 rounded-xl bg-[var(--background)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] shrink-0">
+                <FiPhone size={16} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-1">Phone Number</p>
+                <p className="text-[9px] font-black text-[var(--muted)] uppercase tracking-wider mb-0.5">Phone Number</p>
                 
                 {isEditingPhone ? (
                   <div className="flex items-center gap-2 mt-1">
@@ -115,24 +148,24 @@ export default function MyProfilePage() {
                       value={phoneInput}
                       onChange={(e) => setPhoneInput(e.target.value)}
                       placeholder="Enter phone number"
-                      className="flex-1 bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm font-bold text-[var(--foreground)] focus:outline-none focus:border-[var(--accent)] transition-colors"
+                      className="flex-1 bg-[var(--background)] border border-[var(--border)] rounded-xl px-3 py-1.5 text-xs font-bold text-[var(--foreground)] focus:outline-none focus:border-[var(--accent)] transition-colors"
                     />
                   </div>
                 ) : (
-                  <p className="text-sm sm:text-base font-bold text-[var(--foreground)] truncate">{user.phone || "Not set"}</p>
+                  <p className="text-xs sm:text-sm font-bold text-[var(--foreground)] truncate">{user.phone || "Not set"}</p>
                 )}
               </div>
             </div>
 
-            <div className="shrink-0 flex items-center gap-2 pl-[3.5rem] sm:pl-0">
+            <div className="shrink-0 flex items-center gap-2 pl-[3rem] sm:pl-0">
               {isEditingPhone ? (
                 <>
                   <button 
                     onClick={handleUpdatePhone}
                     disabled={loading}
-                    className="px-4 py-2 bg-[var(--accent)] text-white text-xs font-bold rounded-lg hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-2 shadow-sm"
+                    className="px-3 py-1.5 bg-[var(--accent)] text-white text-[10px] font-black uppercase tracking-wider rounded-xl hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
                   >
-                    {loading ? <LoadingSpinner size="xs" color="white" /> : <FiSave size={12} />}
+                    {loading ? <LoadingSpinner size="xs" color="white" /> : <FiSave size={11} />}
                     Save
                   </button>
                   <button 
@@ -140,7 +173,7 @@ export default function MyProfilePage() {
                       setIsEditingPhone(false);
                       setPhoneInput(user.phone || "");
                     }}
-                    className="px-4 py-2 bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] text-xs font-bold rounded-lg hover:bg-[var(--background)] transition-all"
+                    className="px-3 py-1.5 bg-[var(--background)] border border-[var(--border)] text-[var(--muted)] text-[10px] font-bold uppercase tracking-wider rounded-xl hover:text-[var(--foreground)] transition-all cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -148,12 +181,30 @@ export default function MyProfilePage() {
               ) : (
                 <button 
                   onClick={() => setIsEditingPhone(true)}
-                  className="px-5 py-2.5 rounded-xl bg-[var(--card)] border border-[var(--border)] text-[var(--accent)] text-xs font-black uppercase tracking-widest hover:border-[var(--accent)] transition-colors flex items-center gap-2 shadow-sm"
+                  className="px-3.5 py-1.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--accent)] text-[10px] font-black uppercase tracking-wider hover:border-[var(--accent)] transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
                 >
-                  <FiEdit2 size={12} /> {user.phone ? "Edit" : "Add"}
+                  <FiEdit2 size={11} /> {user.phone ? "Edit" : "Add"}
                 </button>
               )}
             </div>
+          </div>
+
+          {/* MEMBER SINCE ROW */}
+          <div className="flex items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xs">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-[var(--background)] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] shrink-0">
+                <FiCalendar size={16} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[9px] font-black text-[var(--muted)] uppercase tracking-wider mb-0.5">Member Since</p>
+                <p className="text-xs sm:text-sm font-bold text-[var(--foreground)] truncate">
+                  {user.createdAt ? formatDate(user.createdAt, { style: "long" }) : "Active Member"}
+                </p>
+              </div>
+            </div>
+            <span className="text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shrink-0">
+              Verified
+            </span>
           </div>
         </div>
       </div>

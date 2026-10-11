@@ -52,6 +52,7 @@ export default function DashboardLayout({
                         referralUsed: data.user.referralUsed,
                         referralCount: data.user.referralCount,
                         avatar: data.user.avatar,
+                        createdAt: data.user.createdAt,
                     });
                     setWalletBalance(data.user.wallet || 0);
                 }
