@@ -255,6 +255,8 @@ export async function GET() {
            "roblox7",
        "mlbbph643",
 
+       "flash-weekly621"
+
     ];
 
     await connectDB();
