@@ -341,6 +341,13 @@ export default function CoinsTab() {
   // Dynamic ad channel rewards tracking
   const [adRewardTimes, setAdRewardTimes] = useState<Record<string, string | null>>({});
 
+  // Dynamic ads configuration
+  const [adsConfig, setAdsConfig] = useState({
+    adsterraLink: ADS_CONFIG.ADSTERRA_LINK,
+    enabled: true,
+    channels: ADS_CONFIG.WATCH_EARN_CHANNELS,
+  });
+
   const [history, setHistory] = useState<CoinHistory[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [pendingClaims, setPendingClaims] = useState<Set<string>>(new Set());
@@ -387,11 +394,22 @@ export default function CoinsTab() {
 
   const fetchData = useCallback(async () => {
     try {
-      // Fire both requests simultaneously
-      const [balRes, taskRes] = await Promise.all([
+      // Fire requests simultaneously
+      const [balRes, taskRes, adsRes] = await Promise.all([
         api.get(`/api/coins/balance?historyPage=${historyPage}`),
         api.get(`/api/coins/tasks?page=${tasksPage}`),
+        api.get(`/api/coins/ads-config`).catch(() => null),
       ]);
+
+      if (adsRes?.data?.success && adsRes.data.data) {
+        setAdsConfig({
+          adsterraLink: adsRes.data.data.adsterraLink || ADS_CONFIG.ADSTERRA_LINK,
+          enabled: adsRes.data.data.enabled !== false,
+          channels: adsRes.data.data.channels && adsRes.data.data.channels.length > 0 
+            ? adsRes.data.data.channels 
+            : ADS_CONFIG.WATCH_EARN_CHANNELS,
+        });
+      }
 
       const bal = balRes.data;
       const tData = taskRes.data;
@@ -431,7 +449,7 @@ export default function CoinsTab() {
 
   const handleCheckin = async () => {
     // Open Ad first
-    window.open(ADS_CONFIG.ADSTERRA_LINK, "_blank", "noopener,noreferrer");
+    window.open(adsConfig.adsterraLink, "_blank", "noopener,noreferrer");
 
     setCheckinLoading(true);
     try {
@@ -497,7 +515,7 @@ export default function CoinsTab() {
 
   // ── AD GATEWAY LOGIC ──
   const handleStartAd = (targetId: string) => {
-    window.open(ADS_CONFIG.ADSTERRA_LINK, "_blank", "noopener,noreferrer");
+    window.open(adsConfig.adsterraLink, "_blank", "noopener,noreferrer");
     setActiveAdTarget(targetId);
     setAdTimer(15);
   };
@@ -869,24 +887,31 @@ export default function CoinsTab() {
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  {ADS_CONFIG.WATCH_EARN_CHANNELS.map((channel) => (
-                    <AdsterraCard
-                      key={channel.id}
-                      adId={channel.id}
-                      title={channel.title}
-                      adLink={channel.link}
-                      reward={(channel as any).reward}
-                      cooldownMs={(channel as any).cooldownMs}
-                      lastAdReward={adRewardTimes[channel.id] || null}
-                      onReward={(bal, id, lastTime) => {
-                        setCoins(bal);
-                        setAdRewardTimes(prev => ({ ...prev, [id]: lastTime }));
-                      }}
-                      showToast={showToast}
-                    />
-                  ))}
-                </div>
+                {!adsConfig.enabled ? (
+                  <div className="p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 text-center">
+                    <p className="text-xs font-bold text-amber-400">Ad rewards are temporarily paused.</p>
+                    <p className="text-[10px] text-[var(--muted)] mt-1">Please check back soon for bonus channels!</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {adsConfig.channels.map((channel) => (
+                      <AdsterraCard
+                        key={channel.id}
+                        adId={channel.id}
+                        title={channel.title}
+                        adLink={channel.link}
+                        reward={(channel as any).reward}
+                        cooldownMs={(channel as any).cooldownMs}
+                        lastAdReward={adRewardTimes[channel.id] || null}
+                        onReward={(bal, id, lastTime) => {
+                          setCoins(bal);
+                          setAdRewardTimes(prev => ({ ...prev, [id]: lastTime }));
+                        }}
+                        showToast={showToast}
+                      />
+                    ))}
+                  </div>
+                )}
 
                 <div className="relative rounded-2xl border border-[var(--border)] bg-gradient-to-br from-blue-500/5 to-indigo-500/5 p-3 overflow-hidden">
                   <div className="flex items-start gap-3">

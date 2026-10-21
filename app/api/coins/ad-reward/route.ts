@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import { ADS_CONFIG } from "@/lib/adsConfig";
+import { getAdsConfig } from "@/lib/adsConfig";
 import { verifyHmac } from "@/lib/hmac";
 import { createCoinTx } from "@/lib/coinService";
 
@@ -41,10 +41,20 @@ export async function POST(req: Request) {
     const user = await User.findOne({ _id: userId });
     if (!user) return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });
 
+    // Fetch dynamic ads configuration
+    const adsConfig = await getAdsConfig();
+    if (!adsConfig.enabled) {
+      return NextResponse.json({ success: false, message: "Ad rewards are temporarily paused by admin" }, { status: 400 });
+    }
+
     // Find specific channel config
-    const channel = ADS_CONFIG.WATCH_EARN_CHANNELS.find(c => c.id === adId);
-    const rewardCoins = (channel as any)?.reward || ADS_CONFIG.REWARD_COINS;
-    const cooldownMs = (channel as any)?.cooldownMs || ADS_CONFIG.COOLDOWN_MS;
+    const channel = adsConfig.channels.find(c => c.id === adId);
+    if (channel && channel.enabled === false) {
+      return NextResponse.json({ success: false, message: "This ad channel is currently inactive" }, { status: 400 });
+    }
+
+    const rewardCoins = channel?.reward ?? adsConfig.defaultRewardCoins;
+    const cooldownMs = channel?.cooldownMs ?? adsConfig.cooldownMs;
     const channelName = channel ? channel.title : adId;
 
     const now = new Date();

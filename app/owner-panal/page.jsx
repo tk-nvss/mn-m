@@ -30,6 +30,7 @@ import {
   FiShield,
   FiBarChart2,
   FiCalendar,
+  FiTv,
 } from "react-icons/fi";
 
 import AuthGuard from "@/components/AuthGuard";
@@ -47,6 +48,7 @@ import ApiKeysTab from "@/components/admin/ApiKeysTab";
 import UsdtTab from "@/components/admin/UsdtTab";
 import PromotionalTab from "@/components/admin/PromotionalTab";
 import CoinsAdminTab from "@/components/admin/CoinsAdminTab";
+import AdsMonetizationTab from "@/components/admin/AdsMonetizationTab";
 import TournamentsAdminTab from "@/components/admin/TournamentsAdminTab";
 import EventsAdminTab from "@/components/admin/EventsAdminTab";
 
@@ -93,6 +95,7 @@ const MENU_CATEGORIES = [
       { id: "promotional", label: "Promotions & Offers", icon: FiStar },
       { id: "redeem", label: "Redeem Codes", icon: FiGift },
       { id: "coins", label: "Coin Rewards", icon: FiZap },
+      { id: "ads", label: "Ads & Monetization", icon: FiTv },
       { id: "banners", label: "Store Banners", icon: FiImage },
       { id: "giveaway", label: "Giveaways", icon: FiGift },
       { id: "events", label: "Events Calendar", icon: FiCalendar },
@@ -114,7 +117,7 @@ const VALID_TABS = [
   "analytics", "activity", "pwa-stats",
   "orders", "transactions", "pricing", "wallet", "usdt",
   "users", "memberships", "queries", "blocklist",
-  "promotional", "redeem", "coins", "banners", "giveaway", "events", "tournaments",
+  "promotional", "redeem", "coins", "ads", "banners", "giveaway", "events", "tournaments",
   "ui-settings", "api-keys", "settings"
 ];
 
@@ -769,6 +772,7 @@ export default function AdminPanalPage() {
             {activeTab === "usdt" && <UsdtTab />}
             {activeTab === "redeem" && <RedeemCodesTab />}
             {activeTab === "coins" && <CoinsAdminTab />}
+            {activeTab === "ads" && <AdsMonetizationTab />}
             {activeTab === "users" && (
               <UsersTab />
             )}
