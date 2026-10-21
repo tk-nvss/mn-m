@@ -49,6 +49,7 @@ import UsdtTab from "@/components/admin/UsdtTab";
 import PromotionalTab from "@/components/admin/PromotionalTab";
 import CoinsAdminTab from "@/components/admin/CoinsAdminTab";
 import AdsMonetizationTab from "@/components/admin/AdsMonetizationTab";
+import FlashSaleTab from "@/components/admin/FlashSaleTab";
 import TournamentsAdminTab from "@/components/admin/TournamentsAdminTab";
 import EventsAdminTab from "@/components/admin/EventsAdminTab";
 
@@ -76,6 +77,7 @@ const MENU_CATEGORIES = [
       { id: "orders", label: "Orders", icon: FiShoppingCart },
       { id: "transactions", label: "Transactions", icon: FiRepeat },
       { id: "pricing", label: "Pricing & Catalog", icon: FiTag },
+      { id: "flash-sale", label: "Flash Sale & Deals", icon: FiZap },
       { id: "wallet", label: "Wallet Balances", icon: FiPocket },
       { id: "usdt", label: "USDT Crypto", icon: FiDatabase },
     ]
@@ -115,7 +117,7 @@ const MENU_CATEGORIES = [
 
 const VALID_TABS = [
   "analytics", "activity", "pwa-stats",
-  "orders", "transactions", "pricing", "wallet", "usdt",
+  "orders", "transactions", "pricing", "flash-sale", "wallet", "usdt",
   "users", "memberships", "queries", "blocklist",
   "promotional", "redeem", "coins", "ads", "banners", "giveaway", "events", "tournaments",
   "ui-settings", "api-keys", "settings"
@@ -822,6 +824,9 @@ export default function AdminPanalPage() {
                 savingPricing={savingPricing}
                 onSave={savePricing}
               />
+            )}
+            {activeTab === "flash-sale" && (
+              <FlashSaleTab />
             )}
             {activeTab === "events" && (
               <EventsAdminTab />
