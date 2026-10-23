@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Icons } from "@/components/icons";
+import { SectionTitle } from "@/components/common";
 
 export default function ServicesPage() {
   const whatsappLink = `https://wa.me/${process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP}`;
@@ -50,29 +51,20 @@ export default function ServicesPage() {
   ];
 
   return (
-    <section className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pb-20 transition-colors duration-300 px-3 sm:px-6">
-      <div className="max-w-5xl mx-auto pt-12 md:pt-16 relative z-10">
+    <section className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pb-20 transition-colors duration-300 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl xl:max-w-[1440px] mx-auto pt-12 md:pt-16 relative z-10">
 
         {/* HEADER */}
-        <motion.div
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="mb-10"
-        >
-          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[var(--accent)]/5 border border-[var(--accent)]/10 mb-2">
-            <Icons.zap className="text-[var(--accent)]" size={10} />
-            <span className="text-[8px] font-black uppercase tracking-widest text-[var(--accent)]">For Businesses</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-black italic tracking-tighter uppercase leading-none">
-            <span className="text-[var(--accent)]">OUR</span> SERVICES
-          </h1>
-          <p className="text-[var(--muted)] text-[9px] font-bold uppercase tracking-widest opacity-70 mt-1 italic font-sans">
-            Scale your business.
-          </p>
-        </motion.div>
+        <SectionTitle
+          subtitle="FOR BUSINESSES"
+          title="OUR SERVICES"
+          description="Scale your business with automated APIs, custom bots, instant gaming, and web solutions"
+          icon={<Icons.zap className="text-[var(--accent)]" size={13} />}
+          className="mb-8 sm:mb-10"
+        />
 
-        {/* SERVICES LIST */}
-        <div className="space-y-3">
+        {/* SERVICES GRID (2 in a row on desktop) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {services.map((service, i) => {
             const Icon = service.icon;
             return (
@@ -82,34 +74,36 @@ export default function ServicesPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
                 onClick={() => service.active && window.open(service.href || whatsappLink, "_blank")}
-                className={`group relative p-4 sm:p-5 rounded-2xl bg-[var(--card)]/30 border border-white/5 transition-all duration-300 flex items-center gap-3 sm:gap-5 ${service.active
-                  ? "cursor-pointer hover:border-[var(--accent)]/30 hover:bg-[var(--card)]/50"
+                className={`group relative p-4 sm:p-5 rounded-2xl bg-[var(--card)]/40 border border-[var(--border)] transition-all duration-300 flex items-center justify-between gap-3 sm:gap-4 h-full ${service.active
+                  ? "cursor-pointer hover:border-[var(--accent)]/50 hover:bg-[var(--card)]/70 hover:shadow-lg hover:shadow-[var(--accent)]/5"
                   : "opacity-30 grayscale cursor-not-allowed border-dashed"
                   }`}
               >
-                {/* Icon */}
-                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-[var(--accent)]/60 group-hover:text-[var(--accent)] group-hover:bg-[var(--accent)]/10 transition-all flex-shrink-0">
-                  <Icon size={18} />
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1">
-                    <h3 className="text-sm md:text-base font-black uppercase tracking-tighter italic text-[var(--foreground)] group-hover:text-[var(--accent)] transition-colors leading-none">
-                      {service.title}
-                    </h3>
-                    <span className="text-[7px] font-black px-1.5 py-0.5 rounded bg-[var(--accent)]/5 text-[var(--accent)]/40 border border-[var(--accent)]/10 tracking-widest uppercase">
-                      {service.badge}
-                    </span>
+                <div className="flex items-start gap-3.5 sm:gap-4 min-w-0 flex-1">
+                  {/* Icon */}
+                  <div className="w-11 h-11 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 flex items-center justify-center text-[var(--accent)] group-hover:scale-105 group-hover:bg-[var(--accent)]/20 transition-all flex-shrink-0 mt-0.5">
+                    <Icon size={20} />
                   </div>
-                  <p className="text-[var(--muted)] text-[10px] md:text-[11px] leading-normal opacity-80 font-bold uppercase tracking-tight mt-1">
-                    {service.desc}
-                  </p>
+
+                  {/* Content */}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5">
+                      <h3 className="text-sm sm:text-base font-black uppercase tracking-tight italic text-[var(--foreground)] group-hover:text-[var(--accent)] transition-colors leading-none">
+                        {service.title}
+                      </h3>
+                      <span className="text-[7.5px] font-black px-2 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 tracking-widest uppercase">
+                        {service.badge}
+                      </span>
+                    </div>
+                    <p className="text-[var(--muted)] text-[10.5px] sm:text-[11.5px] leading-relaxed opacity-80 font-medium">
+                      {service.desc}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Arrow */}
-                <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:border-[var(--accent)]/30 transition-all flex-shrink-0">
-                  <Icons.arrowRight size={14} />
+                <div className="w-9 h-9 rounded-xl bg-[var(--foreground)]/[0.04] border border-[var(--border)] flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--accent)] group-hover:border-[var(--accent)]/40 group-hover:bg-[var(--accent)]/10 transition-all flex-shrink-0 ml-1">
+                  <Icons.arrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </motion.div>
             );
@@ -120,18 +114,22 @@ export default function ServicesPage() {
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          className="mt-12 p-6 rounded-3xl border border-white/5 bg-[var(--card)]/20 text-center space-y-4"
+          className="mt-12 p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-[var(--card)]/40 text-center space-y-4"
         >
           <div>
-            <h4 className="text-base font-black italic uppercase tracking-tighter mb-1">Need more?</h4>
-            <p className="text-[var(--muted)] text-[8px] font-black uppercase tracking-widest opacity-70 italic">Contact us for custom deals.</p>
+            <h4 className="text-lg sm:text-xl font-black italic uppercase tracking-tight text-[var(--foreground)] mb-1">
+              Need A Custom <span className="text-[var(--accent)]">Solution?</span>
+            </h4>
+            <p className="text-[var(--muted)] text-[9px] sm:text-[10px] font-black uppercase tracking-widest opacity-70 italic">
+              Enterprise integrations, custom bots & volume reseller discounts available.
+            </p>
           </div>
-          <button aria-label="button"
+          <button aria-label="WhatsApp Us"
             onClick={() => window.open(whatsappLink, "_blank")}
-            className="px-6 py-2.5 rounded-xl bg-[var(--accent)] text-black font-black uppercase tracking-widest text-[9px] italic shadow-lg hover:scale-[1.03] active:scale-95 transition-all flex items-center gap-2 mx-auto"
+            className="px-6 py-3 rounded-xl bg-[var(--accent)] text-black font-black uppercase tracking-widest text-[10px] italic shadow-lg shadow-[var(--accent)]/20 hover:scale-[1.03] active:scale-95 transition-all flex items-center gap-2 mx-auto cursor-pointer"
           >
-            <Icons.whatsapp size={12} />
-            WhatsApp Us
+            <Icons.whatsapp size={14} />
+            <span>Chat on WhatsApp</span>
           </button>
         </motion.div>
 

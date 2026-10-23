@@ -22,7 +22,7 @@ import {
   FiArrowUpRight,
 } from "react-icons/fi";
 import { Icons } from "@/components/icons";
-import { CopyButton, LoadingSpinner } from "@/components/common";
+import { CopyButton, LoadingSpinner, SectionTitle } from "@/components/common";
 import { formatCurrency, formatNumber } from "@/utils";
 import { TransactionSkeleton } from "../Skeleton/Skeleton";
 import api from "@/lib/axios";
@@ -270,7 +270,14 @@ export default function WalletTab({
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
+      <SectionTitle
+        subtitle="FUNDS & BALANCE"
+        title="DIGITAL WALLET"
+        icon={<FiDollarSign className="text-[var(--accent)]" size={13} />}
+        description="Instant deposit via UPI & USDT crypto, view available funds and ledger history"
+      />
+
       {/* TACTICAL BALANCE MODULE */}
       <div className="relative group overflow-hidden">
         <div className="relative p-5 sm:p-6 rounded-2xl bg-[var(--card)] border border-[var(--border)] flex items-center justify-between overflow-hidden">

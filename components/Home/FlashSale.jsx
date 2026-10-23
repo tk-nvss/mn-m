@@ -13,9 +13,9 @@ const DEFAULT_FLASH_ITEMS = [
     name: "Weekly Pass",
     game: "MLBB",
     image: "/game-assets/weeklypass.webp",
-    price: "₹149",
+    price: "₹151",
     originalPrice: "₹170",
-    slug: "mobile-legends114?type=weekly-pass",
+    slug: "flash-weekly621",
     badge: "Hot",
   },
   {

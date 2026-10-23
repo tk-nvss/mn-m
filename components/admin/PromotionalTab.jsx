@@ -29,7 +29,7 @@ import {
   Smartphone,
   Monitor
 } from "lucide-react";
-import { SearchInput, Pagination, LoadingSpinner } from "@/components/common";
+import { SearchInput, Pagination, LoadingSpinner, SectionTitle } from "@/components/common";
 
 export default function PromotionalTab() {
   const [users, setUsers] = useState([]);
@@ -424,13 +424,14 @@ export default function PromotionalTab() {
       {/* ================= PREMIUM DASHBOARD HEADER ================= */}
       {/* ================= PREMIUM DASHBOARD HEADER ================= */}
       <div className="space-y-3 sm:space-y-4">
-        <div className="flex items-center justify-between gap-3 pb-2 border-b border-[var(--border)]/70">
-          <div className="flex items-center gap-2">
-            <Send size={16} className="text-[var(--accent)] shrink-0" />
-            <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
-              Promo mail
-            </h2>
-          </div>
+        <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-[var(--border)]/70">
+          <SectionTitle
+            size="xs"
+            subtitle="EMAIL & OUTREACH"
+            title="PROMO CAMPAIGNS"
+            highlight="CAMPAIGNS"
+            pulse
+          />
           
           <div className="flex items-center gap-2 shrink-0">
             <button 
@@ -438,10 +439,10 @@ export default function PromotionalTab() {
                  fetchStats();
                  fetchUsers();
                }}
-               className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] transition-all active:scale-95 cursor-pointer"
+               className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-2xs shrink-0"
                title="Refresh stats"
             >
-              <RefreshCcw size={13} className={loading ? "animate-spin" : ""} />
+              <RefreshCcw size={12} className={loading ? "animate-spin" : ""} />
             </button>
           </div>
         </div>

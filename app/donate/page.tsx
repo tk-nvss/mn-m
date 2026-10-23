@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaHeart, FaGift, FaHandsHelping, FaCreditCard, FaTimes } from "react-icons/fa";
 import { QRCodeSVG } from "qrcode.react";
-import { CopyButton } from "@/components/common";
+import { CopyButton, SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 import { formatCurrency } from "@/utils";
 
@@ -46,18 +46,17 @@ export default function DonatePage() {
       <div className="max-w-6xl mx-auto pt-16 md:pt-24 relative z-10 w-full">
         
         {/* HEADER */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12 text-center md:text-left"
-        >
-          <h1 className="text-4xl md:text-6xl font-[900] italic tracking-tighter uppercase leading-none mb-2">
-            SUPPORT A <span className="text-rose-500">NOBLE CAUSE</span>
-          </h1>
-          <p className="text-[var(--muted)] text-[10px] md:text-xs font-black uppercase tracking-[0.3em] opacity-60 italic">
-            Your contribution makes a difference
-          </p>
-        </motion.div>
+        <div className="mb-8">
+          <SectionTitle
+            as="h1"
+            accentColor="rose"
+            subtitle="CONTRIBUTION & CHARITY"
+            title="SUPPORT A NOBLE CAUSE"
+            highlight="CAUSE"
+            description="Your contribution empowers players, tournaments, and community initiatives."
+            pulse
+          />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-16 items-start">
           {/* Info Side */}

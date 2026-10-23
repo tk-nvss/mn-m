@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 
 const BRAND = process.env.NEXT_PUBLIC_BRAND_NAME || "Blue Buff";
@@ -40,25 +41,13 @@ export default function PrivacyPolicy() {
       <div className="max-w-3xl mx-auto space-y-6 relative z-10">
 
         {/* HEADER */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="space-y-1.5"
-        >
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 text-[9px] font-black uppercase tracking-widest">
-            <Icons.shield size={11} />
-            <span>Privacy</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[var(--foreground)]">
-            Privacy <span className="text-[var(--accent)]">Policy</span>
-          </h1>
-
-          <p className="text-xs text-[var(--muted)] leading-relaxed">
-            How we protect your personal information, handle data, and ensure top-up privacy.
-          </p>
-        </motion.div>
+        <SectionTitle
+          subtitle="DATA PROTECTION"
+          title="PRIVACY POLICY"
+          highlight="POLICY"
+          icon={<Icons.shield className="text-[var(--accent)]" size={13} />}
+          description="How we protect your personal information, handle data, and ensure top-up privacy."
+        />
 
         {/* POLICY LIST */}
         <div className="space-y-2.5">

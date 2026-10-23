@@ -22,7 +22,7 @@ import {
   Smartphone,
   ShoppingBag
 } from "lucide-react";
-import { EmptyState, StatusBadge, SearchInput, Pagination } from "@/components/common";
+import { EmptyState, StatusBadge, SearchInput, Pagination, SectionTitle } from "@/components/common";
 import { formatCurrency, formatDate, formatTime, formatDateTime } from "@/utils";
 
 export default function TransactionsTab() {
@@ -103,23 +103,30 @@ export default function TransactionsTab() {
   return (
     <div className="space-y-6 pb-10">
       {/* ================= HEADER ================= */}
-      <div className="flex items-center justify-between gap-3 mb-2">
-        <div>
-          <h2 className="text-lg md:text-xl font-black tracking-widest text-[var(--foreground)] uppercase italic">Transactions</h2>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="px-2.5 py-1.5 rounded-full bg-[var(--foreground)]/[0.03] border border-[var(--border)] flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[9px] font-black tracking-widest text-[var(--muted)] uppercase">
-              {pagination.total} TXNS
+      <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-[var(--border)]/70">
+        <SectionTitle
+          size="xs"
+          accentColor="emerald"
+          subtitle={
+            <span className="inline-flex items-center gap-1.5">
+              FINANCIAL LEDGER
+              <span className="px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[9px] font-bold">
+                {pagination.total} TXNS
+              </span>
             </span>
-          </div>
+          }
+          title="ALL TRANSACTIONS"
+          highlight="TRANSACTIONS"
+          pulse
+        />
+
+        <div className="flex items-center gap-1.5">
           <button aria-label="button"
             onClick={() => { fetchTransactionsList(); }}
-            className="h-9 w-9 rounded-full border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] flex items-center justify-center hover:bg-[var(--foreground)]/[0.05] transition-all outline-none"
+            className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-2xs shrink-0"
+            title="Refresh transactions"
           >
-            <RefreshCcw size={14} className={loading ? "animate-spin" : "text-[var(--accent)]"} />
+            <RefreshCcw size={12} className={loading ? "animate-spin" : ""} />
           </button>
         </div>
       </div>

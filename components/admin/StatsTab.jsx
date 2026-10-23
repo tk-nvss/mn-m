@@ -24,7 +24,7 @@ import {
 } from "react-icons/fi";
 import { Loader2, Zap, ArrowUpRight, ArrowDownRight, User, Wallet, ChevronDown, ChevronUp, RefreshCcw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Pagination, SearchInput, StatusBadge } from "@/components/common";
+import { Pagination, SearchInput, StatusBadge, SectionTitle } from "@/components/common";
 import { formatCurrency, formatDate, formatDateTime } from "@/utils";
 
 export default function StatsTab() {
@@ -224,21 +224,27 @@ export default function StatsTab() {
         <div className="space-y-4 sm:space-y-6 pb-10">
 
             {/* HEADER */}
-            <div className="flex items-center justify-between gap-2 md:gap-3 mb-2">
-                <h2 className="text-base md:text-xl font-black tracking-wide md:tracking-widest text-[var(--foreground)] uppercase italic shrink-0">Wallet</h2>
+            <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-[var(--border)]/70 mb-2">
+                <SectionTitle
+                    size="xs"
+                    subtitle="BALANCE & LEDGER"
+                    title="WALLET MANAGER"
+                    highlight="MANAGER"
+                    pulse
+                />
 
-                <div className="flex items-center justify-end gap-1.5 md:gap-2 flex-1 min-w-0">
+                <div className="flex items-center justify-end gap-1.5 md:gap-2 shrink-0">
                     {/* TABS */}
-                    <div className="flex bg-[var(--foreground)]/[0.03] p-0.5 rounded-full border border-[var(--border)] flex-1 md:flex-none">
+                    <div className="flex bg-[var(--foreground)]/[0.03] p-0.5 rounded-full border border-[var(--border)]">
                         <button aria-label="button"
                             onClick={() => setActiveTab("history")}
-                            className={`flex-1 px-2 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${activeTab === 'history' ? 'bg-[var(--card)] text-[var(--foreground)] shadow-sm' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
+                            className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider transition-all ${activeTab === 'history' ? 'bg-[var(--card)] text-[var(--foreground)] shadow-sm' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
                         >
                             History
                         </button>
                         <button aria-label="button"
                             onClick={() => setActiveTab("wallets")}
-                            className={`flex-1 px-2 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${activeTab === 'wallets' ? 'bg-[var(--card)] text-[var(--foreground)] shadow-sm' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
+                            className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider transition-all ${activeTab === 'wallets' ? 'bg-[var(--card)] text-[var(--foreground)] shadow-sm' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
                         >
                             Wallets
                         </button>
@@ -250,7 +256,8 @@ export default function StatsTab() {
                             else fetchWallets();
                         }}
                         disabled={loading || (activeTab === "history" ? historyLoading : walletLoading)}
-                        className="h-7 w-7 md:h-9 md:w-9 rounded-full bg-[var(--foreground)]/[0.02] border border-[var(--border)] text-[var(--foreground)] flex items-center justify-center hover:bg-[var(--foreground)]/[0.05] transition-all outline-none disabled:opacity-50 shrink-0"
+                        className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-2xs disabled:opacity-50 shrink-0"
+                        title="Refresh wallet data"
                     >
                         {loading || (activeTab === "history" ? historyLoading : walletLoading) ? (
                             <Loader2 className="animate-spin text-[var(--accent)]" size={12} />

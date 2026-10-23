@@ -1,6 +1,7 @@
 "use client";
 
 import { Icons } from "@/components/icons";
+import { SectionTitle } from "@/components/common";
 
 const SECTIONS = [
   {
@@ -52,17 +53,16 @@ export default function TradeLandingPage() {
       <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-purple-500/10 blur-[100px] -z-10 rounded-full" />
 
       <div className="max-w-5xl mx-auto space-y-6 md:space-y-10 relative z-10 w-full">
-        <div className="space-y-2 md:space-y-3 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent)] text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1 italic">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-            Live Marketplace
-          </div>
-          <h1 className="text-2xl md:text-5xl lg:text-6xl font-black italic uppercase tracking-tighter leading-none">
-            Any Game <span className="text-[var(--accent)] drop-shadow-[0_0_15px_rgba(var(--accent-rgb),0.3)]">Any ID</span>
-          </h1>
-          <p className="text-[var(--muted)] text-[10px] md:text-sm max-w-xl mx-auto font-medium tracking-tight opacity-80 leading-relaxed">
-            Get premium IDs with the skins and heroes you want. Value for money transactions with absolute security and 24/7 WhatsApp support.
-          </p>
+        <div className="pb-2">
+          <SectionTitle
+            align="center"
+            as="h1"
+            subtitle="LIVE MARKETPLACE"
+            title="ANY GAME ANY ID"
+            highlight="ANY ID"
+            description="Get premium IDs with the skins and heroes you want. Value for money transactions with absolute security."
+            pulse
+          />
         </div>
 
         {/* 2x2 GRID FOR ALL SCREENS */}

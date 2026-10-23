@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Icons } from "@/components/icons";
-import { LoadingSpinner, InfoTooltip } from "@/components/common";
+import { LoadingSpinner, InfoTooltip, SectionTitle } from "@/components/common";
 
 const SettingsTab = ({ onProviderChange, providerBalances }) => {
     const [settings, setSettings] = useState({ maintenanceMode: false, topupProvider: "1game" });
@@ -143,18 +143,14 @@ const SettingsTab = ({ onProviderChange, providerBalances }) => {
     return (
         <div className="max-w-2xl space-y-4">
             {/* Header Strip */}
-            <div className="flex items-center justify-between gap-3 pb-3 border-b border-[var(--border)]/70">
-                <div className="flex items-center gap-2">
-                    <Icons.settings size={16} className="text-[var(--accent)] shrink-0" />
-                    <div className="flex items-center gap-1.5">
-                        <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">Main Settings</h2>
-                        <InfoTooltip
-                            content="Store Controls & API Provider Routing"
-                            position="bottom"
-                            iconClassName="text-[var(--muted)] hover:text-[var(--accent)] transition-colors"
-                        />
-                    </div>
-                </div>
+            <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-[var(--border)]/70">
+                <SectionTitle
+                    size="xs"
+                    subtitle="CORE CONTROLS"
+                    title="MAIN SETTINGS"
+                    highlight="SETTINGS"
+                    pulse
+                />
 
                 {message.text && (
                     <div className={`hidden sm:flex items-center gap-2 text-[11px] font-bold px-3 py-1 rounded-lg ${

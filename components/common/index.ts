@@ -18,7 +18,14 @@ export type { LoadingSpinnerProps, PageLoaderProps } from "./LoadingSpinner";
 
 export { default as InfoTooltip } from "./InfoTooltip";
 
-export { default as SectionTitle, SectionTitle as HeadingTitle } from "./SectionTitle";
+export {
+  default as SectionTitle,
+  SectionTitle as HeadingTitle,
+  TITLE_SIZES,
+  SUBTITLE_SIZES,
+  SIZE_STYLES,
+  SECTION_TITLE_SIZES,
+} from "./SectionTitle";
 export type { SectionTitleProps, SectionTitleSize, SectionTitleAlign, SectionTitleColor } from "./SectionTitle";
 
 export { default as Icons, Icons as IconCatalog } from "../icons";

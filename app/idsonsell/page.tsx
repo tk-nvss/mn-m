@@ -4,7 +4,7 @@ import { useState } from "react";
 import ids from "@/data/idsOnSell";
 import IdCard from "@/components/IdsOnSell/IdCard";
 import IdsFilterModal from "@/components/IdsOnSell/IdsFilterModal";
-import { SearchInput, EmptyState } from "@/components/common";
+import { SearchInput, EmptyState, SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 
 export default function IdsOnSellPage() {
@@ -31,6 +31,12 @@ export default function IdsOnSellPage() {
 
   return (
     <main className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
+      <SectionTitle
+        subtitle="VERIFIED MARKETPLACE"
+        title="IDS ON SALE"
+        description="Browse verified, competition-ready gaming accounts for sale & rent"
+      />
+
       {/* ================= HEADER ================= */}
       <div className="flex items-center gap-3">
         {/* SEARCH */}

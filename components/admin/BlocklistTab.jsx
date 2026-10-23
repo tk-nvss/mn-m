@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
-import { LoadingSpinner, EmptyState } from "@/components/common";
+import { LoadingSpinner, EmptyState, SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 import { formatDateTime } from "@/utils";
 
@@ -112,17 +112,23 @@ export default function BlocklistTab() {
     <div className="space-y-3">
       {/* Header */}
       <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[var(--border)]/70">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
-          <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)] truncate">
-            Blocklist Management
-          </h2>
-          {items.length > 0 && (
-            <span className="px-2 py-0.5 rounded-full bg-[var(--card)] border border-[var(--border)] text-[10px] font-bold text-[var(--foreground)] tabular-nums shrink-0">
-              {items.length} <span className="text-[9px] text-[var(--muted)] font-medium">Blocked</span>
+        <SectionTitle
+          size="xs"
+          accentColor="rose"
+          subtitle={
+            <span className="inline-flex items-center gap-1.5">
+              SECURITY & ACCESS
+              {items.length > 0 && (
+                <span className="px-1.5 py-0.2 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[9px] font-bold">
+                  {items.length} Blocked
+                </span>
+              )}
             </span>
-          )}
-        </div>
+          }
+          title="FRAUD BLOCKLIST"
+          highlight="BLOCKLIST"
+          pulse
+        />
 
         <div className="flex items-center gap-1.5 shrink-0">
           <button

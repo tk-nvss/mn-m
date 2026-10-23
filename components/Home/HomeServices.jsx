@@ -1,6 +1,7 @@
 "use client";
 
 import { FiUsers, FiGlobe, FiZap, FiArrowRight, FiMessageCircle } from "react-icons/fi";
+import { SectionTitle } from "@/components/common";
 
 const SERVICES = [
   {
@@ -33,13 +34,12 @@ export default function HomeServices() {
       <div className="max-w-6xl mx-auto relative z-10 px-6">
         {/* HEADER */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-6 h-[1px] bg-[var(--accent)]/30" />
-            <span className="text-[var(--accent)] text-[8px] font-black uppercase tracking-widest italic opacity-40">Scale up</span>
-          </div>
-          <h2 className="text-2xl font-black italic tracking-tighter uppercase leading-none">
-            GROW YOUR <span className="text-[var(--accent)]">BUSINESS</span>
-          </h2>
+          <SectionTitle
+            subtitle="SCALE UP"
+            title="GROW YOUR BUSINESS"
+            highlight="BUSINESS"
+            pulse
+          />
         </div>
 
         {/* SERVICES CARDS */}

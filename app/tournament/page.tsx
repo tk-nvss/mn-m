@@ -259,10 +259,9 @@ export default function TournamentHub() {
         >
           <SectionTitle
             as="h1"
-            size="xl"
-            subtitle="Blue Buff India Esports"
-            title="Competitive"
-            highlight="Arena"
+            subtitle="BLUE BUFF INDIA ESPORTS"
+            title="COMPETITIVE ARENA"
+            highlight="ARENA"
             description="Join daily community scrims & cash cups. Compete with your squad, win Weekly Passes, Diamonds & cash prizes."
             action={
               <div className="flex items-center gap-2.5">

@@ -67,7 +67,6 @@ export default function OrdersTab() {
         <SectionTitle
           subtitle="ORDER HISTORY"
           title="YOUR ORDERS"
-          size="md"
           icon={<ShoppingBag className="w-3.5 h-3.5 text-[var(--accent)]" />}
           action={
             <div className="relative w-full sm:w-72">

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Icons } from "@/components/icons";
+import { SectionTitle } from "@/components/common";
 import Link from "next/link";
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: any; title: string; description: string }) => (
@@ -27,25 +28,12 @@ export default function PartnershipPage() {
       <div className="max-w-3xl mx-auto space-y-6 relative z-10">
 
         {/* HEADER */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="space-y-1.5"
-        >
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[9px] font-black uppercase tracking-widest text-[var(--accent)]">
-            <Icons.zap size={11} className="animate-pulse" />
-            <span>Partnership</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[var(--foreground)]">
-            Partner With <span className="text-[var(--accent)]">mlbbtopup.in</span>
-          </h1>
-
-          <p className="text-xs text-[var(--muted)] leading-relaxed">
-            Promote your YouTube channel, app, or gaming community to over 100,000+ active mobile gamers through rewarded tasks and sponsored events.
-          </p>
-        </motion.div>
+        <SectionTitle
+          subtitle="COLLABORATION"
+          title="PARTNER PROGRAM"
+          icon={<Icons.zap className="text-[var(--accent)]" size={13} />}
+          description="Promote your YouTube channel, app, or gaming community to over 100,000+ active mobile gamers through rewarded tasks and sponsored events."
+        />
 
         {/* PROMOTION TYPES */}
         <div className="space-y-2.5">

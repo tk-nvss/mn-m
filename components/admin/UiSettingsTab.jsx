@@ -15,7 +15,7 @@ import {
   Save,
   ExternalLink
 } from "lucide-react";
-import { InfoTooltip } from "@/components/common";
+import { InfoTooltip, SectionTitle } from "@/components/common";
 
 const UiSettingsTab = () => {
   const [settings, setSettings] = useState({ 
@@ -202,26 +202,23 @@ const UiSettingsTab = () => {
   return (
     <div className="space-y-5 pb-8 max-w-full overflow-x-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
-        <div className="flex items-center gap-2">
-          <Layout size={16} className="text-purple-400 shrink-0" />
-          <div className="flex items-center gap-1.5">
-            <h2 className="text-sm font-black uppercase tracking-wider leading-tight text-[var(--foreground)]">UI & Display Settings</h2>
-            <InfoTooltip
-              content="Control website banners, popups, and layout modules"
-              position="bottom"
-              iconClassName="text-[var(--muted)] hover:text-purple-400 transition-colors"
-            />
-          </div>
-        </div>
+      <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-[var(--border)]/70 mb-2">
+        <SectionTitle
+          size="xs"
+          accentColor="purple"
+          subtitle="LAYOUT & DISPLAY"
+          title="UI SETTINGS"
+          highlight="SETTINGS"
+          pulse
+        />
 
         <button 
           aria-label="button"
           onClick={fetchSettings}
-          className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] transition-all active:scale-95 ml-auto cursor-pointer"
+          className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-2xs ml-auto shrink-0"
           title="Refresh settings"
         >
-          <RefreshCcw size={13} className={loading ? "animate-spin" : ""} />
+          <RefreshCcw size={12} className={loading ? "animate-spin" : ""} />
         </button>
       </div>
 

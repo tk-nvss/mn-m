@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 
 const BRAND = process.env.NEXT_PUBLIC_BRAND_NAME || "Blue Buff";
@@ -44,25 +45,13 @@ export default function TermsAndConditions() {
       <div className="max-w-3xl mx-auto space-y-6 relative z-10">
 
         {/* HEADER */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="space-y-1.5"
-        >
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 text-[9px] font-black uppercase tracking-widest">
-            <Icons.fileText size={11} />
-            <span>Legal</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[var(--foreground)]">
-            Terms & <span className="text-[var(--accent)]">Conditions</span>
-          </h1>
-
-          <p className="text-xs text-[var(--muted)] leading-relaxed">
-            Please read these terms carefully before placing top-up orders on our platform.
-          </p>
-        </motion.div>
+        <SectionTitle
+          subtitle="LEGAL AGREEMENT"
+          title="TERMS & CONDITIONS"
+          highlight="CONDITIONS"
+          icon={<Icons.fileText className="text-[var(--accent)]" size={13} />}
+          description="Please read these terms carefully before placing top-up orders on our platform."
+        />
 
         {/* SECTIONS LIST */}
         <div className="space-y-2.5">

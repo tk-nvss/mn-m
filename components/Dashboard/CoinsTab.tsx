@@ -11,7 +11,7 @@ import {
   FiPlay, FiTarget, FiBox, FiArrowLeft, FiGift, FiInfo, FiAlertTriangle, FiPlus
 } from "react-icons/fi";
 import { Icons } from "@/components/icons";
-import { Pagination, EmptyState, LoadingSpinner } from "@/components/common";
+import { Pagination, EmptyState, LoadingSpinner, SectionTitle } from "@/components/common";
 import { formatCoins, formatCurrency, formatNumber, formatDate, formatDateTime } from "@/utils";
 import Link from "next/link";
 import NativeBanner from "@/components/Ads/NativeBanner";
@@ -553,7 +553,16 @@ export default function CoinsTab() {
   const completedTasks = tasks.filter(t => t.status === "completed");
 
   return (
-    <div className="max-w-3xl mx-auto space-y-2 pb-16 px-2 pt-0.5">
+    <div className="max-w-3xl mx-auto space-y-3 pb-16 px-2 pt-0.5">
+
+      <SectionTitle
+        subtitle="REWARDS & TASKS"
+        title="BBC COINS"
+        accentColor="amber"
+        icon={<FiStar className="text-amber-400" size={13} />}
+        description="Daily check-ins, rewarded videos, and tasks to earn BBC Coins"
+        className="mb-1"
+      />
 
       {/* ── TOP PROMO BANNER ────────────────────────────────────────── */}
       <a

@@ -28,6 +28,8 @@ export interface SectionTitleProps {
   description?: ReactNode;
   /** Component size scale: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" (default: "lg") */
   size?: SectionTitleSize;
+  /** Optional custom font size / class for the title (overrides size's default font size) */
+  fontSize?: string;
   /** Alignment: "left" | "center" | "right" (default: "left") */
   align?: SectionTitleAlign;
   /** Color theme for accent line and highlighted word (default: "accent") */
@@ -105,7 +107,26 @@ const COLOR_MAP: Record<string, { text: string; bg: string; glow: string; border
   },
 };
 
-const SIZE_STYLES: Record<
+/** Centralized font size and typography tokens for headings across the application */
+export const TITLE_SIZES = {
+  xs: "text-xs sm:text-sm font-black italic uppercase tracking-tight",
+  sm: "text-sm sm:text-base font-black italic uppercase tracking-tight",
+  md: "text-base sm:text-xl md:text-2xl font-[1000] italic uppercase tracking-tighter leading-none",
+  lg: "text-xl sm:text-3xl font-[1000] italic uppercase tracking-tighter leading-none",
+  xl: "text-2xl sm:text-4xl md:text-5xl font-[1000] italic uppercase tracking-tighter leading-none",
+  "2xl": "text-3xl sm:text-5xl md:text-6xl font-[1000] italic uppercase tracking-tighter leading-none",
+} as const;
+
+export const SUBTITLE_SIZES = {
+  xs: "text-[8px] sm:text-[9px] tracking-[0.2em]",
+  sm: "text-[9px] sm:text-[10px] tracking-[0.25em]",
+  md: "text-[10px] sm:text-xs tracking-[0.25em]",
+  lg: "text-[9px] sm:text-xs tracking-[0.3em]",
+  xl: "text-xs sm:text-sm tracking-[0.3em]",
+  "2xl": "text-xs sm:text-sm tracking-[0.35em]",
+} as const;
+
+export const SIZE_STYLES: Record<
   SectionTitleSize,
   {
     subtitle: string;
@@ -117,54 +138,56 @@ const SIZE_STYLES: Record<
   }
 > = {
   xs: {
-    subtitle: "text-[8px] sm:text-[9px] tracking-[0.2em]",
+    subtitle: SUBTITLE_SIZES.xs,
     line: "w-3.5 h-[1.5px]",
-    title: "text-xs sm:text-sm font-black italic uppercase tracking-tight",
+    title: TITLE_SIZES.xs,
     desc: "text-[9px] text-[var(--muted)]",
     gap: "gap-0.5",
     subGap: "gap-1.5",
   },
   sm: {
-    subtitle: "text-[9px] sm:text-[10px] tracking-[0.25em]",
+    subtitle: SUBTITLE_SIZES.sm,
     line: "w-4 h-[1.5px]",
-    title: "text-sm sm:text-base font-black italic uppercase tracking-tight",
+    title: TITLE_SIZES.sm,
     desc: "text-[10px] sm:text-xs text-[var(--muted)]",
     gap: "gap-1",
     subGap: "gap-2",
   },
   md: {
-    subtitle: "text-[10px] sm:text-xs tracking-[0.25em]",
+    subtitle: SUBTITLE_SIZES.md,
     line: "w-5 h-[2px]",
-    title: "text-base sm:text-xl md:text-2xl font-[1000] italic uppercase tracking-tighter leading-none",
+    title: TITLE_SIZES.md,
     desc: "text-xs text-[var(--muted)]",
     gap: "gap-1 sm:gap-1.5",
     subGap: "gap-2",
   },
   lg: {
-    subtitle: "text-[9px] sm:text-xs tracking-[0.3em]",
+    subtitle: SUBTITLE_SIZES.lg,
     line: "w-6 sm:w-8 h-[1.5px] sm:h-[2px]",
-    title: "text-xl sm:text-3xl font-[1000] italic uppercase tracking-tighter leading-none",
+    title: TITLE_SIZES.lg,
     desc: "text-xs sm:text-sm text-[var(--muted)]",
     gap: "gap-1.5 sm:gap-2",
     subGap: "gap-2 sm:gap-2.5",
   },
   xl: {
-    subtitle: "text-xs sm:text-sm tracking-[0.3em]",
+    subtitle: SUBTITLE_SIZES.xl,
     line: "w-8 sm:w-10 h-[2px]",
-    title: "text-2xl sm:text-4xl md:text-5xl font-[1000] italic uppercase tracking-tighter leading-none",
+    title: TITLE_SIZES.xl,
     desc: "text-sm text-[var(--muted)]",
     gap: "gap-2",
     subGap: "gap-2.5",
   },
   "2xl": {
-    subtitle: "text-xs sm:text-sm tracking-[0.35em]",
+    subtitle: SUBTITLE_SIZES["2xl"],
     line: "w-10 sm:w-14 h-[2.5px]",
-    title: "text-3xl sm:text-5xl md:text-6xl font-[1000] italic uppercase tracking-tighter leading-none",
+    title: TITLE_SIZES["2xl"],
     desc: "text-sm sm:text-base text-[var(--muted)]",
     gap: "gap-2.5",
     subGap: "gap-3",
   },
 };
+
+export const SECTION_TITLE_SIZES = SIZE_STYLES;
 
 export function SectionTitle({
   subtitle,
@@ -173,6 +196,7 @@ export function SectionTitle({
   highlightLastWord = true,
   description,
   size = "lg",
+  fontSize,
   align = "left",
   accentColor = "accent",
   as: Component = "h2",
@@ -323,7 +347,7 @@ export function SectionTitle({
       {/* ── Main Title Row ── */}
       {(title || highlight) && (
         <Component
-          className={`${sizeConfig.title} text-[var(--foreground)] ${titleClassName}`}
+          className={`${fontSize || sizeConfig.title} text-[var(--foreground)] ${titleClassName}`}
         >
           {renderTitleContent()}
           {pulse && (

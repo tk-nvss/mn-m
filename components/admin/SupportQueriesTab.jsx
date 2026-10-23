@@ -13,7 +13,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { Icons } from "@/components/icons";
-import { StatusBadge, SearchInput, EmptyState, Pagination, LoadingSpinner, InfoTooltip } from "@/components/common";
+import { StatusBadge, SearchInput, EmptyState, Pagination, LoadingSpinner, InfoTooltip, SectionTitle } from "@/components/common";
 import { formatDate, formatTime, formatDateTime, formatRelativeTime } from "@/utils";
 
 export default function SupportQueriesTab() {
@@ -186,17 +186,14 @@ export default function SupportQueriesTab() {
     <div className="space-y-4 pb-6 max-w-full overflow-x-hidden">
       {/* ================= HEADER ================= */}
       <div className="flex items-center justify-between flex-wrap gap-3 pb-2 border-b border-[var(--border)]/70">
-        <div className="flex items-center gap-2">
-            <MessageSquare size={16} className="text-cyan-400 shrink-0" />
-            <div className="flex items-center gap-1.5">
-                <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">Support</h2>
-                <InfoTooltip
-                    content="Customer Support Queries & Tickets"
-                    position="bottom"
-                    iconClassName="text-[var(--muted)] hover:text-cyan-400 transition-colors"
-                />
-            </div>
-        </div>
+        <SectionTitle
+          size="xs"
+          accentColor="cyan"
+          subtitle="HELPDESK"
+          title="SUPPORT TICKETS"
+          highlight="TICKETS"
+          pulse
+        />
 
         <div className="flex items-center gap-2 ml-auto shrink-0">
           <div className="flex items-center gap-1 text-[var(--muted)] text-xs font-bold tabular-nums">

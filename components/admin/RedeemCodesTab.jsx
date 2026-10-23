@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FiGift, FiPlus, FiClock, FiUser, FiTrash2, FiZap, FiHash, FiType } from "react-icons/fi";
+import { FiGift, FiPlus, FiClock, FiUser, FiTrash2, FiZap, FiHash, FiType, FiRefreshCw } from "react-icons/fi";
 import { Ticket, Gift, CheckCircle2, Percent } from "lucide-react";
-import { StatusBadge, CopyButton } from "@/components/common";
+import { StatusBadge, CopyButton, SectionTitle } from "@/components/common";
 import { formatCurrency, formatDate, formatDateTime, formatNumber } from "@/utils";
 
 export default function RedeemCodesTab() {
@@ -108,6 +108,24 @@ export default function RedeemCodesTab() {
 
     return (
         <div className="space-y-3 sm:space-y-4 animate-in fade-in duration-300">
+            {/* ── HEADER ── */}
+            <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-[var(--border)]/70">
+                <SectionTitle
+                    size="xs"
+                    subtitle="VOUCHER ENGINE"
+                    title="REDEEM CODES"
+                    highlight="CODES"
+                    pulse
+                />
+                <button
+                    onClick={() => fetchCodes(page)}
+                    disabled={loading}
+                    className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-2xs disabled:opacity-50 shrink-0"
+                    title="Refresh codes"
+                >
+                    <FiRefreshCw size={12} className={loading ? "animate-spin" : ""} />
+                </button>
+            </div>
 
             {/* ── UNIFIED 1-ROW STATS BAR ── */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-2 sm:p-2.5 shadow-2xs">

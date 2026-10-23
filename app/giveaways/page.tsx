@@ -88,10 +88,9 @@ export default function GiveawaysPage() {
         <div className="pb-3 border-b border-[var(--border)]/60">
           <SectionTitle
             as="h1"
-            size="md"
-            subtitle="Free Rewards & Drops"
-            title="Giveaways & Free"
-            highlight="Drops"
+            subtitle="FREE REWARDS & DROPS"
+            title="GIVEAWAYS & DROPS"
+            highlight="DROPS"
             pulse
             description="Enter free drops to win MLBB Diamonds, Passes & Vouchers"
             action={

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthGuard from "@/components/AuthGuard";
 import { FiUsers, FiDollarSign } from "react-icons/fi";
-import { LoadingSpinner, EmptyState } from "@/components/common";
+import { LoadingSpinner, EmptyState, SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 import { formatCurrency, formatNumber } from "@/utils";
 
@@ -49,22 +49,12 @@ export default function LeaderboardPage() {
         <div className="max-w-2xl mx-auto px-6 pt-12 md:pt-24 relative z-10">
 
           {/* 🏆 HEADER SECTION */}
-          <motion.div
+          <SectionTitle
+            subtitle="CHAMPIONS LEAGUE"
+            title={type === "purchase" ? "TOP SPENDERS" : "TOP INVITERS"}
+            description={type === "purchase" ? "Real-time purchase leaderboard and top diamond spenders" : "All-time community builders and referral champions"}
             className="mb-8"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <h1 className="text-4xl md:text-5xl font-[900] italic tracking-tighter uppercase leading-none mb-2 transition-colors text-center md:text-left flex flex-col md:block">
-              {type === "purchase" ? (
-                <>TOP <span className="text-[var(--accent)]">SPENDERS</span></>
-              ) : (
-                <>TOP <span className="text-[var(--accent)]">INVITERS</span></>
-              )}
-            </h1>
-            <p className="text-[var(--muted)] text-[10px] font-black uppercase tracking-[0.3em] opacity-40 italic text-center md:text-left">
-              Leaderboard
-            </p>
-          </motion.div>
+          />
 
           {/* 🎛️ CONTROLS SECTION */}
           <motion.div

@@ -19,7 +19,7 @@ import {
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import { toPng } from "html-to-image";
-import { LoadingSpinner } from "@/components/common";
+import { LoadingSpinner, SectionTitle } from "@/components/common";
 
 interface EventItem {
   _id?: string;
@@ -262,20 +262,24 @@ export default function EventCalendarPage() {
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] py-4 sm:py-8 px-2 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-4 sm:space-y-5">
 
-        {/* TOP CONTROLS: Only Event Days Toggle */}
-        <div className="flex justify-end px-1">
-          <button
-            onClick={() => setOnlyEventDays(!onlyEventDays)}
-            className={`flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-bold transition-all border shadow-sm active:scale-95 ${
-              onlyEventDays
-                ? "bg-blue-600/15 border-blue-500 text-blue-400 shadow-blue-500/10"
-                : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
-            }`}
-          >
-            <span>🎯</span>
-            <span>Only Event Days</span>
-          </button>
-        </div>
+        <SectionTitle
+          subtitle="COMMUNITY SCHEDULE"
+          title="EVENT CALENDAR"
+          description="Stay ahead of upcoming tournaments, live scrims, and scheduled gaming events"
+          action={
+            <button
+              onClick={() => setOnlyEventDays(!onlyEventDays)}
+              className={`flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-bold transition-all border shadow-sm active:scale-95 ${
+                onlyEventDays
+                  ? "bg-blue-600/15 border-blue-500 text-blue-400 shadow-blue-500/10"
+                  : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
+              }`}
+            >
+              <span>🎯</span>
+              <span>Only Event Days</span>
+            </button>
+          }
+        />
 
         {/* CALENDAR CARD CONTAINER */}
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl sm:rounded-3xl p-3 sm:p-7 shadow-sm space-y-4 sm:space-y-6">

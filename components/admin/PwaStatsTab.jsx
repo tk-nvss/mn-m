@@ -10,8 +10,7 @@ import {
   FiImage, FiTag, FiChevronDown, FiChevronUp,
   FiShoppingCart, FiCalendar, FiCheck
 } from "react-icons/fi";
-import { LoadingSpinner } from "@/components/common";
-import InfoTooltip from "@/components/common/InfoTooltip";
+import { LoadingSpinner, InfoTooltip, SectionTitle } from "@/components/common";
 import { formatNumber, formatPercent, formatDateTime, formatCurrency } from "@/utils";
 
 const PRESET_IMAGES = [
@@ -134,17 +133,15 @@ export default function PwaStatsTab() {
     <div className="space-y-6">
 
       {/* ── Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[var(--border)]/50">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-bold tracking-tight text-[var(--foreground)] uppercase truncate">
-            PWA & Push Notifications
-          </h2>
-          <InfoTooltip
-            content="Real-time install, active devices & push subscriber metrics"
-            position="bottom"
-            iconClassName="text-[var(--muted)] hover:text-emerald-400 transition-colors"
-          />
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2.5 border-b border-[var(--border)]/70">
+        <SectionTitle
+          size="xs"
+          accentColor="emerald"
+          subtitle="DEVICE & SUBSCRIBERS"
+          title="PWA & NOTIFICATIONS"
+          highlight="NOTIFICATIONS"
+          pulse
+        />
 
         <div className="flex items-center gap-1.5 self-end sm:self-auto">
           {/* Timeframe Filter Dropdown */}

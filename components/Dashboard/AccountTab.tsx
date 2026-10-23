@@ -12,7 +12,7 @@ import {
   FiAlertCircle,
   FiZap,
 } from "react-icons/fi";
-import { LoadingSpinner } from "@/components/common";
+import { LoadingSpinner, SectionTitle } from "@/components/common";
 import api from "@/lib/axios";
 
 interface UserDetails {
@@ -59,19 +59,12 @@ export default function AccountTab({ userDetails }: AccountTabProps) {
   return (
     <div className="max-w-5xl mx-auto space-y-12">
       {/* IDENTITY MATRIX HEADER */}
-      <div className="flex items-center gap-6">
-        <div className="w-16 h-16 rounded-[2rem] bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] border border-[var(--accent)]/20 shadow-[0_0_30px_rgba(var(--accent-rgb),0.1)]">
-          <FiUser size={32} />
-        </div>
-        <div>
-          <h2 className="text-3xl font-black uppercase italic tracking-tighter leading-none mb-2">
-            My <span className="text-[var(--accent)]">Account</span>
-          </h2>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--muted)] opacity-50">
-            Your profile and settings
-          </p>
-        </div>
-      </div>
+      <SectionTitle
+        subtitle="PROFILE & SETTINGS"
+        title="MY ACCOUNT"
+        icon={<FiUser className="text-[var(--accent)]" size={13} />}
+        description="Manage your identity credentials, password security, and verified account information"
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* PROFILE CARD */}

@@ -24,7 +24,7 @@ import {
   EyeOff,
   Link2
 } from "lucide-react";
-import { LoadingSpinner, InfoTooltip } from "@/components/common";
+import { LoadingSpinner, InfoTooltip, SectionTitle } from "@/components/common";
 
 export default function AdsMonetizationTab() {
   const [loading, setLoading] = useState(true);
@@ -234,22 +234,15 @@ export default function AdsMonetizationTab() {
   return (
     <div className="space-y-6 max-w-6xl">
       {/* HEADER BAR */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--border)]">
-        <div>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-              <Tv size={17} />
-            </div>
-            <div>
-              <h1 className="text-sm sm:text-base font-black uppercase tracking-wider text-[var(--foreground)]">
-                Ads & Monetization Control
-              </h1>
-              <p className="text-[11px] text-[var(--muted)]">
-                Manage Adsterra direct links, Watch & Earn video channels, coin rewards, and cooldown intervals
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2.5 border-b border-[var(--border)]/70">
+        <SectionTitle
+          size="xs"
+          accentColor="amber"
+          subtitle="REVENUE & TRAFFIC"
+          title="ADS & MONETIZATION"
+          highlight="MONETIZATION"
+          pulse
+        />
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <button

@@ -8,7 +8,7 @@ import {
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/lib/axios";
-import { CopyButton, LoadingSpinner } from "@/components/common";
+import { CopyButton, LoadingSpinner, SectionTitle } from "@/components/common";
 
 interface ReferralTabProps {
     userReferral?: {
@@ -76,6 +76,14 @@ export default function ReferralTab({ userReferral }: ReferralTabProps) {
 
     return (
         <div className="max-w-md mx-auto space-y-4 px-2 pb-8">
+
+            <SectionTitle
+              subtitle="INVITE & EARN"
+              title="REFERRAL PROGRAM"
+              icon={<FiUsers className="text-[var(--accent)]" size={13} />}
+              description="Share your unique link and earn bonus BBC Coins when friends top up."
+              className="mb-1"
+            />
 
             {/* ── HERO STAT (Borderless / Card-free) ── */}
             <motion.div

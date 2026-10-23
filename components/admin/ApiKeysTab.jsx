@@ -12,7 +12,7 @@ import {
   Clock,
 } from "lucide-react";
 import { Icons } from "@/components/icons";
-import { StatusBadge, EmptyState, LoadingSpinner, InfoTooltip } from "@/components/common";
+import { StatusBadge, EmptyState, LoadingSpinner, InfoTooltip, SectionTitle } from "@/components/common";
 import { formatCurrency, formatDate } from "@/utils";
 
 export default function ApiKeysTab() {
@@ -45,17 +45,13 @@ export default function ApiKeysTab() {
         <div className="w-full space-y-4">
             {/* ================= HEADER ================= */}
             <div className="flex items-center justify-between gap-3 pb-3 border-b border-[var(--border)]/70">
-                <div className="flex items-center gap-2">
-                    <Key size={16} className="text-[var(--accent)] shrink-0" />
-                    <div className="flex items-center gap-1.5">
-                        <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">API Keys</h2>
-                        <InfoTooltip
-                            content="Developer & Merchant Integrations"
-                            position="bottom"
-                            iconClassName="text-[var(--muted)] hover:text-[var(--accent)] transition-colors"
-                        />
-                    </div>
-                </div>
+                <SectionTitle
+                    size="xs"
+                    subtitle="INTEGRATIONS & ACCESS"
+                    title="API KEYS"
+                    highlight="KEYS"
+                    pulse
+                />
 
                 <div className="flex items-center gap-2 shrink-0">
                     <div className="flex items-center gap-1 text-[var(--muted)] text-xs font-bold tabular-nums">

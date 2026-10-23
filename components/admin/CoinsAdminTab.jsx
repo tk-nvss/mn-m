@@ -25,7 +25,7 @@ import {
   FiEye,
 } from "react-icons/fi";
 import { Coins, ArrowUpRight, ArrowDownRight } from "lucide-react";
-import { StatusBadge, SearchInput, EmptyState, Pagination, LoadingSpinner } from "@/components/common";
+import { StatusBadge, SearchInput, EmptyState, Pagination, LoadingSpinner, SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 import { formatCurrency, formatCoins, formatNumber, formatDate, formatDateTime } from "@/utils";
 
@@ -294,17 +294,23 @@ export default function CoinsAdminTab() {
       {/* Header */}
       {/* ── HEADER ── */}
       <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-[var(--border)]/70">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
-          <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
-            BBC Coins Manager
-          </h2>
-          {pendingCount > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[9px] font-black animate-pulse">
-              {pendingCount}
+        <SectionTitle
+          size="xs"
+          accentColor="amber"
+          subtitle={
+            <span className="inline-flex items-center gap-1.5">
+              REWARDS ENGINE
+              {pendingCount > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[9px] font-black animate-pulse">
+                  {pendingCount}
+                </span>
+              )}
             </span>
-          )}
-        </div>
+          }
+          title="BBC COINS MANAGER"
+          highlight="MANAGER"
+          pulse
+        />
 
         <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto no-scrollbar">
           <button aria-label="button"

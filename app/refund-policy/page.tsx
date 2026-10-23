@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 
 export default function RefundPolicy() {
@@ -33,25 +34,13 @@ export default function RefundPolicy() {
       <div className="max-w-3xl mx-auto space-y-6 relative z-10">
 
         {/* HEADER */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="space-y-1.5"
-        >
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 text-[9px] font-black uppercase tracking-widest">
-            <Icons.fileText size={11} />
-            <span>Policy</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[var(--foreground)]">
-            Refund <span className="text-[var(--accent)]">Policy</span>
-          </h1>
-
-          <p className="text-xs text-[var(--muted)] leading-relaxed">
-            Clear, transparent guidelines regarding purchases, digital goods delivery, and refund eligibility.
-          </p>
-        </motion.div>
+        <SectionTitle
+          subtitle="SATISFACTION GUARANTEE"
+          title="REFUND POLICY"
+          highlight="POLICY"
+          icon={<Icons.fileText className="text-[var(--accent)]" size={13} />}
+          description="Clear, transparent guidelines regarding purchases, digital goods delivery, and refund eligibility."
+        />
 
         {/* POLICY LIST */}
         <div className="space-y-2.5">

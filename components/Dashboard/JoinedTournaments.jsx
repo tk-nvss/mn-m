@@ -11,7 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { TableRowSkeleton } from "@/components/Skeleton/Skeleton";
 import { motion, AnimatePresence } from "framer-motion";
-import { StatusBadge, CopyButton, EmptyState, Pagination } from "@/components/common";
+import { StatusBadge, CopyButton, EmptyState, Pagination, SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 import { formatDate, formatTime, formatCoins } from "@/utils";
 
@@ -135,6 +135,13 @@ export default function JoinedTournaments() {
 
   return (
     <div className="space-y-3.5 sm:space-y-4">
+      <SectionTitle
+        subtitle="COMPETITIVE ARENA"
+        title="MY TOURNAMENTS"
+        icon={<GiTrophy className="text-[var(--accent)]" size={13} />}
+        description="View your enrolled matches, live room credentials, and match history."
+        className="mb-1"
+      />
 
       {/* ── STATS OVERVIEW (COMPACT 4-COL ROW) ── */}
       <div className="grid grid-cols-4 gap-1.5 sm:gap-3">

@@ -8,7 +8,7 @@ import GameList from "@/components/Games/GameList";
 import FilterModal from "@/components/Games/FilterModal";
 import ServiceGridSection from "@/components/Games/ServiceGridSection";
 import { ProductCardSkeleton, ProductListSkeleton } from "@/components/Skeleton/Skeleton";
-import { EmptyState } from "@/components/common";
+import { EmptyState, SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 import api from "@/lib/axios";
 
@@ -188,6 +188,18 @@ function GameCatalogContent() {
       <div className="absolute bottom-[10%] left-[-10%] w-[400px] h-[400px] bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
+        {/* HEADER */}
+        <div className="mb-4">
+          <SectionTitle
+            as="h1"
+            subtitle="INSTANT TOP-UP"
+            title="GAME CATALOG"
+            highlight="CATALOG"
+            description="Explore our full collection of games, direct recharges, and subscriptions."
+            pulse
+          />
+        </div>
+
         {/* ================= COMPACT SEARCH & CONTROLS (NO SHADOWS) ================= */}
         <div className="space-y-3 mb-6">
           <div className="relative bg-[var(--card)] backdrop-blur-3xl border border-[var(--border)] rounded-full p-1 flex items-center gap-1 focus-within:border-[var(--accent)]">

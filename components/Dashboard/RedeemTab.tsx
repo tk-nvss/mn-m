@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LoadingSpinner } from "@/components/common";
+import { LoadingSpinner, SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 
 interface RedeemTabProps {
@@ -61,15 +61,12 @@ export default function RedeemTab({ setWalletBalance }: RedeemTabProps) {
                 className="space-y-3"
             >
                 {/* Title block */}
-                <div>
-                    <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[var(--foreground)] leading-none">
-                        Enter<br />
-                        <span className="text-[var(--accent)]">Your Code</span>
-                    </h1>
-                    <p className="text-[9px] font-bold text-[var(--muted)]/60 uppercase tracking-widest mt-1.5">
-                        Add credit to your wallet instantly.
-                    </p>
-                </div>
+                <SectionTitle
+                  subtitle="INSTANT VOUCHER"
+                  title="REDEEM CODE"
+                  icon={<Icons.zap className="text-[var(--accent)]" size={13} />}
+                  description="Add credit to your wallet instantly using your gift card or voucher code."
+                />
 
                 {/* Form */}
                 <form onSubmit={handleRedeem} className="space-y-2.5">

@@ -12,7 +12,7 @@ import { FiChevronDown, FiZap, FiTarget, FiMail, FiRefreshCw, FiClock, FiCheckCi
 import { QuerySkeleton } from "../Skeleton/Skeleton";
 import api from "@/lib/axios";
 import { useAuthStore } from "@/store/useAuthStore";
-import { StatusBadge, Pagination, LoadingSpinner, EmptyState } from "@/components/common";
+import { StatusBadge, Pagination, LoadingSpinner, EmptyState, SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 import { formatDateTime } from "@/utils";
 
@@ -120,18 +120,13 @@ export default function QueryTab() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       {/* HEADER */}
-      <div className="flex flex-col gap-2">
-        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[var(--accent)]/5 border border-[var(--accent)]/10 w-fit">
-          <FiZap className="text-[var(--accent)] animate-pulse" size={10} />
-          <span className="text-[8px] font-black uppercase tracking-widest text-[var(--accent)]">Support</span>
-        </div>
-        <h2 className="text-2xl md:text-3xl font-black uppercase italic tracking-tighter leading-none text-[var(--foreground)]">
-          {SUPPORT_CONFIG.header.title} <span className="text-[var(--accent)]">{SUPPORT_CONFIG.header.highlight}</span>
-        </h2>
-        <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--muted)] opacity-50">
-          {SUPPORT_CONFIG.header.subtitle}
-        </p>
-      </div>
+      <SectionTitle
+        subtitle="HELP & ASSISTANCE"
+        title={SUPPORT_CONFIG.header.title}
+        highlight={SUPPORT_CONFIG.header.highlight}
+        description={SUPPORT_CONFIG.header.subtitle}
+        pulse
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* CONTACTS */}

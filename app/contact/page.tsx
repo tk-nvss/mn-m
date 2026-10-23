@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Icons } from "@/components/icons";
+import { SectionTitle } from "@/components/common";
 
 import { FaWhatsapp } from "react-icons/fa";
 import Link from "next/link";
@@ -25,25 +26,12 @@ export default function ContactPage() {
       <div className="max-w-3xl mx-auto space-y-6 relative z-10">
 
         {/* HEADER */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="space-y-1.5"
-        >
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 text-[9px] font-black uppercase tracking-widest">
-            <Icons.mail size={11} />
-            <span>Support</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[var(--foreground)]">
-            Contact <span className="text-[var(--accent)]">Support</span>
-          </h1>
-
-          <p className="text-xs text-[var(--muted)] leading-relaxed">
-            Need help with a recharge or have a query? Reach out directly and our team will assist you.
-          </p>
-        </motion.div>
+        <SectionTitle
+          subtitle="24/7 ASSISTANCE"
+          title="CONTACT SUPPORT"
+          icon={<Icons.mail className="text-[var(--accent)]" size={13} />}
+          description="Need help with a recharge or have a query? Reach out directly and our team will assist you."
+        />
 
         {/* DIRECT ACTION CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

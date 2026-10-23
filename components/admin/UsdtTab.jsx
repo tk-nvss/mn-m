@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { StatusBadge, CopyButton, Pagination, LoadingSpinner, EmptyState } from "@/components/common";
+import { StatusBadge, CopyButton, Pagination, LoadingSpinner, EmptyState, SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 import { formatDateTime, formatCoins } from "@/utils";
 
@@ -67,11 +67,15 @@ export default function UsdtTab() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-        <h2 className="text-lg md:text-xl font-black uppercase tracking-widest text-[var(--foreground)] flex items-center gap-2">
-           <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-           Crypto Deposits
-        </h2>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2.5 border-b border-[var(--border)]/70 mb-4">
+        <SectionTitle
+          size="xs"
+          accentColor="emerald"
+          subtitle="WEB3 GATEWAY"
+          title="USDT CRYPTO DEPOSITS"
+          highlight="DEPOSITS"
+          pulse
+        />
         
         <div className="w-full md:w-auto">
           {/* MOBILE DROPDOWN */}

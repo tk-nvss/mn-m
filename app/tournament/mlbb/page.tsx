@@ -12,7 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { TournamentSkeleton, SkeletonGrid } from "@/components/Skeleton/Skeleton";
 import { useAuthStore } from "@/store/useAuthStore";
-import { StatusBadge, LoadingSpinner, EmptyState } from "@/components/common";
+import { StatusBadge, LoadingSpinner, EmptyState, SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 import { formatCoins, formatDateTime } from "@/utils";
 
@@ -160,27 +160,25 @@ function MLBBTournamentContent() {
             <FiChevronLeft size={13} /> Back to All Games
           </Link>
 
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--card)] shrink-0 flex items-center justify-center">
-                <Image src="/game-assets/mlbbindia.webp" alt="MLBB" width={44} height={44} className="object-cover w-full h-full" onError={(e: any) => { e.currentTarget.src = "/logoBB.png"; }} />
-              </div>
-              <div>
-                <p className="text-[8px] font-black uppercase tracking-widest text-[var(--accent)]">Mobile Legends: Bang Bang</p>
-                <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[var(--foreground)] leading-tight">
-                  Available <span className="text-[var(--accent)]">Rooms</span>
-                </h1>
-              </div>
-            </div>
-
-            <Link
-              href="/dashboard/tournaments"
-              style={{ color: "#ffffff" }}
-              className="hidden sm:inline-flex px-3.5 py-2 rounded-xl bg-[var(--accent)] !text-white text-[9px] font-black uppercase tracking-widest items-center gap-1.5 hover:opacity-90 transition-opacity shadow-sm"
-            >
-              <GiTrophy size={12} /> My Matches
-            </Link>
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+            <SectionTitle
+              subtitle="MOBILE LEGENDS: BANG BANG"
+              title="AVAILABLE ROOMS"
+              icon={
+                <div className="w-5 h-5 rounded overflow-hidden border border-[var(--border)] shrink-0 inline-flex items-center justify-center -translate-y-0.5">
+                  <Image src="/game-assets/mlbbindia.webp" alt="MLBB" width={20} height={20} className="object-cover" onError={(e: any) => { e.currentTarget.src = "/logoBB.png"; }} />
+                </div>
+              }
+              action={
+                <Link
+                  href="/dashboard/tournaments"
+                  style={{ color: "#ffffff" }}
+                  className="hidden sm:inline-flex px-3.5 py-2 rounded-xl bg-[var(--accent)] !text-white text-[9px] font-black uppercase tracking-widest items-center gap-1.5 hover:opacity-90 transition-opacity shadow-sm"
+                >
+                  <GiTrophy size={12} /> My Matches
+                </Link>
+              }
+            />
           </motion.div>
         </div>
 
