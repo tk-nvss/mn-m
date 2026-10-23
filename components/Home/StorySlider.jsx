@@ -13,14 +13,14 @@ const storyData = [
   //   image: "/game-assets/bgmi-logo.webp",
   //   link: "/games/bgmi-manual",
   // },
-  {
-    id: 0,
-    title: "Weekly Pass",
-    badge: "Best",
-    color: "#15803d", // Green
-    image: "/game-assets/weeklypass.webp",
-    link: "/games/mobile-legends114?type=weekly-pass",
-  },
+  // {
+  //   id: 0,
+  //   title: "Weekly Pass",
+  //   badge: "Best",
+  //   color: "#15803d", // Green
+  //   image: "/game-assets/weeklypass.webp",
+  //   link: "/games/mobile-legends114?type=weekly-pass",
+  // },
   {
     id: 1,
     title: "Weekly Bundle",

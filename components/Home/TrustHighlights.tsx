@@ -62,9 +62,10 @@ export default function TrustHighlights() {
         <div className="mb-2.5">
           <SectionTitle
             size="sm"
-            subtitle="Guaranteed Excellence"
-            title="Why"
-            highlight="Us"
+            subtitle="GUARANTEED EXCELLENCE"
+            title="WHY US"
+            highlight="US"
+            pulse
           />
         </div>
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
