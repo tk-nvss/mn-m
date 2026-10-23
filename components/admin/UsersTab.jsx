@@ -89,12 +89,26 @@ export default function UsersTab() {
     return 'bg-[var(--foreground)]/[0.05] text-[var(--muted)] border-[var(--border)]';
   };
 
+  const formatShortDate = (date) => {
+    if (!date) return "--";
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "--";
+    return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "2-digit" });
+  };
+
+  const formatShortTime = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
   useEffect(() => {
     fetchUsersStats();
   }, []);
 
   useEffect(() => {
-    fetchUsersList();
+    fetchUsersList(users.length > 0);
   }, [page, limit, search, filters, sortBy, order]);
 
   const fetchUsersStats = async () => {
@@ -115,9 +129,9 @@ export default function UsersTab() {
     }
   };
 
-  const fetchUsersList = async () => {
+  const fetchUsersList = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const token = localStorage.getItem("token");
 
       const params = new URLSearchParams({
@@ -253,9 +267,9 @@ export default function UsersTab() {
               {pagination.total} Users 
             </span>
           </div>
-          <button aria-label="button"
-            onClick={() => { fetchUsersStats(); fetchUsersList(); }}
-            className="p-2 sm:p-2.5 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] active:scale-95 transition-all outline-none"
+          <button aria-label="Refresh users list"
+            onClick={() => { fetchUsersStats(); fetchUsersList(users.length > 0); }}
+            className="p-2 sm:p-2.5 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] active:scale-95 transition-all outline-none cursor-pointer"
           >
             <RefreshCcw size={14} className={loading ? "animate-spin" : ""} />
           </button>
@@ -277,9 +291,9 @@ export default function UsersTab() {
           className="flex-1 min-w-0"
         />
         <div className="flex gap-2 shrink-0">
-          <button aria-label="button"
+          <button aria-label="Filter users"
             onClick={() => setShowFilters(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-2xl border transition-colors bg-[var(--background)] border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)] outline-none shrink-0"
+            className="w-9 h-9 flex items-center justify-center rounded-2xl border transition-colors bg-[var(--background)] border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)] outline-none shrink-0 cursor-pointer"
           >
             <Filter size={14} />
           </button>
@@ -293,8 +307,8 @@ export default function UsersTab() {
       </div>
 
       {/* ================= CONTENT ================= */}
-      <AnimatePresence mode="wait">
-        {loading ? (
+      <AnimatePresence>
+        {loading && users.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -419,87 +433,136 @@ export default function UsersTab() {
             </div>
 
             {/* MOBILE LIST */}
-            <div className="lg:hidden space-y-3">
+            <div className="lg:hidden space-y-1.5">
               {users.map((u, idx) => (
                 <motion.div
                   key={u._id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.03 }}
+                  transition={{ delay: idx * 0.02 }}
                   onClick={() => setSelectedUser(u)}
-                  className="p-3.5 sm:p-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] active:bg-[var(--foreground)]/[0.04] transition-all relative"
+                  className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] active:bg-[var(--foreground)]/[0.05] hover:border-[var(--accent)]/30 transition-all cursor-pointer"
                 >
-                  <div className="flex justify-between items-start mb-2.5 gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
+                  {/* Top Row: User Identity on Left, Role & Orders on Right */}
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
                       <Avatar user={u} size="sm" />
-                        <div className="min-w-0">
-                          <p className="font-bold text-[var(--foreground)] text-xs truncate leading-tight">{u.name}</p>
-                          <p className="text-[10px] text-[var(--muted)]/40 font-mono truncate lowercase leading-tight">{u.userId}</p>
-                          <div className="flex flex-wrap gap-1 mt-1">
-                               {u.tags?.map(tag => (
-                                 <span key={tag} className={`px-1.5 py-0.5 rounded text-[7px] font-black lowercase tracking-tight ${getTagColor(tag)}`}>
-                                   #{tag}
-                                 </span>
-                               ))}
-                            </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="font-bold text-[var(--foreground)] text-[11px] leading-tight truncate">
+                            {u.name}
+                          </p>
+                          {u.tags?.map((tag) => (
+                            <span
+                              key={tag}
+                              className={`px-1 py-0.2 rounded text-[7.5px] font-bold lowercase tracking-tight border ${getTagColor(tag)}`}
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <p className="text-[8.5px] font-mono text-[var(--muted)]/70 uppercase tracking-tight truncate">
+                            {u.userId}
+                          </p>
+                          {u.userId && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleCopy(u.userId, `u-id-${u._id}`, e)}
+                              className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0 cursor-pointer"
+                              title="Copy User ID"
+                            >
+                              {copiedKey === `u-id-${u._id}` ? (
+                                <Check size={8.5} className="text-emerald-500" />
+                              ) : (
+                                <Copy size={8.5} />
+                              )}
+                            </button>
+                          )}
                         </div>
                       </div>
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[8px] font-black uppercase tracking-wider ${getRoleClass(u.userType)}`}>
-                        {u.userType}
-                      </span>
-                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border border-[var(--border)] bg-blue-500/5 text-blue-400 text-[8px] font-black uppercase tracking-wider">
-                        {u.totalOrders || 0}
+                    </div>
+
+                    <div className="flex flex-col items-end shrink-0 gap-1">
+                      <div className="flex items-center gap-1">
+                        <span
+                          className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[8px] font-black uppercase tracking-wider ${getRoleClass(u.userType)}`}
+                        >
+                          {getRoleIcon(u.userType)}
+                          {u.userType}
+                        </span>
+                        <span
+                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md border border-blue-500/20 bg-blue-500/10 text-blue-400 text-[8px] font-black uppercase tracking-wider tabular-nums"
+                          title={`${u.totalOrders || 0} orders`}
+                        >
+                          <span>{u.totalOrders || 0}</span>
+                          <span className="opacity-70 text-[6.5px]">ORD</span>
+                        </span>
+                      </div>
+                      <span className="text-[7.5px] font-medium text-[var(--muted)]/60 tabular-nums">
+                        {u.lastLogin ? `Active ${formatShortDate(u.lastLogin)}` : "Never Active"}
                       </span>
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-[var(--muted)]/80 px-0.5">
-                      <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
-                        <Mail size={10} className="shrink-0 text-[var(--accent)]" />
-                        <span className="text-[10px] font-medium truncate lowercase">{u.email}</span>
+                  {/* Bottom Row: Contact & Dates on Left, WhatsApp or Details on Right */}
+                  <div className="flex items-center justify-between gap-2 pt-1.5 mt-1.5 border-t border-[var(--border)]/30">
+                    <div className="flex-1 min-w-0 space-y-0.5">
+                      <div className="flex items-center gap-1 text-[var(--foreground)]/80">
+                        <Mail size={9} className="text-[var(--accent)] shrink-0" />
+                        <span className="text-[9.5px] font-medium truncate lowercase leading-tight">
+                          {u.email}
+                        </span>
+                        {u.email && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleCopy(u.email, `u-email-${u._id}`, e)}
+                            className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0 cursor-pointer"
+                            title="Copy Email"
+                          >
+                            {copiedKey === `u-email-${u._id}` ? (
+                              <Check size={8} className="text-emerald-500" />
+                            ) : (
+                              <Copy size={8} />
+                            )}
+                          </button>
+                        )}
                       </div>
-                      {u.phone && (
+                      <div className="flex items-center gap-2 text-[7.5px] text-[var(--muted)]/50 tabular-nums">
+                        <span>Joined {formatShortDate(u.createdAt)}</span>
+                        {u.lastLogin && (
+                          <>
+                            <span>•</span>
+                            <span className="text-emerald-500/70">
+                              Active {formatShortTime(u.lastLogin)}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
+                      {u.phone ? (
                         <a
                           href={getWhatsAppUrl(u.phone, u)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded shrink-0 hover:bg-emerald-500/20 transition-all"
+                          className="flex items-center gap-1 text-[8.5px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 px-2 py-0.5 rounded-md transition-all active:scale-95 shrink-0 cursor-pointer"
+                          title="Chat on WhatsApp"
                         >
-                          <FaWhatsapp size={10} />
+                          <FaWhatsapp size={10} className="text-emerald-400" />
                           <span>WhatsApp</span>
                         </a>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedUser(u)}
+                          className="flex items-center gap-0.5 text-[8.5px] font-bold text-[var(--muted)] hover:text-[var(--foreground)] px-1.5 py-0.5 rounded-md hover:bg-[var(--foreground)]/[0.04] transition-all cursor-pointer"
+                        >
+                          <span>Details</span>
+                          <ChevronRight size={10} className="text-[var(--muted)]/60" />
+                        </button>
                       )}
-                    </div>
-
-                    <div className="flex items-center justify-between gap-4 pt-2.5 border-t border-[var(--border)]" onClick={(e) => e.stopPropagation()}>
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1 text-[var(--muted)]/40">
-                          <Calendar size={10} className="text-[var(--accent)]/50" />
-                          <div className="flex flex-col">
-                            <span className="text-[8px] font-bold uppercase tracking-tight">{new Date(u.createdAt).toLocaleDateString()}</span>
-                            <span className="text-[7px] font-medium opacity-60 leading-none">{new Date(u.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1 text-[var(--muted)]/40">
-                          <Activity size={10} className="text-emerald-500/50" />
-                          <div className="flex flex-col">
-                            <span className="text-[8px] font-bold uppercase tracking-tight">
-                              {u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : "Never"}
-                            </span>
-                            {u.lastLogin && (
-                              <span className="text-[7px] font-medium opacity-60 leading-none">{new Date(u.lastLogin).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="shrink-0">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[8px] font-black uppercase tracking-wider ${getRoleClass(u.userType)}`}>
-                          {u.userType}
-                        </span>
-                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -546,33 +609,33 @@ export default function UsersTab() {
               className="fixed right-0 top-0 h-full w-full max-w-[360px] bg-[var(--background)] border-l border-[var(--border)] z-[1110] flex flex-col"
             >
               {/* Simple Premium Header - Compact */}
-              <div className="p-5 border-b border-[var(--border)] bg-[var(--background)]">
-                <div className="flex items-center justify-between mb-5">
+              <div className="p-3 sm:p-4 border-b border-[var(--border)] bg-[var(--card)]/30">
+                <div className="flex items-center justify-between mb-2.5">
                   <div className="flex items-center gap-1.5">
-                    <User size={14} className="text-[var(--muted)]" />
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--foreground)]">User Profile</h3>
+                    <User size={13} className="text-[var(--accent)]" />
+                    <h3 className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">User Profile</h3>
                   </div>
-                  <button aria-label="button"
+                  <button aria-label="Close user profile"
                     onClick={() => setSelectedUser(null)}
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05] transition-all outline-none"
+                    className="w-6 h-6 rounded-lg flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.05] transition-all outline-none cursor-pointer"
                   >
-                    <X size={14} />
+                    <X size={13} />
                   </button>
                 </div>
 
-                <div className="flex items-center gap-3.5">
+                <div className="flex items-center gap-3">
                   <div className="relative">
                     <Avatar user={selectedUser} size="md" />
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[var(--background)]" />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[var(--background)]" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h4 className="text-lg font-bold text-[var(--foreground)] truncate leading-none mb-1.5">{selectedUser.name}</h4>
+                    <h4 className="text-sm sm:text-base font-bold text-[var(--foreground)] truncate leading-tight mb-1">{selectedUser.name}</h4>
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <span className={`px-2 py-0.5 rounded border text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 ${getRoleClass(selectedUser.userType)}`}>
+                      <span className={`px-2 py-0.5 rounded border text-[8px] font-bold uppercase tracking-wider flex items-center gap-1 ${getRoleClass(selectedUser.userType)}`}>
                         {getRoleIcon(selectedUser.userType)}
                         {selectedUser.userType}
                       </span>
-                      <span className="text-[10px] text-[var(--muted)] font-mono">
+                      <span className="text-[9px] text-[var(--muted)] font-mono">
                         {selectedUser.userId}
                       </span>
                     </div>
@@ -581,28 +644,28 @@ export default function UsersTab() {
               </div>
 
               {/* Scrollable Content - Compact */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-[var(--foreground)]/[0.01]">
-                <DrawerSection icon={<Shield size={14} />} title="Account">
-                  <div className="space-y-4">
-                    <div className="space-y-1.5">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted)] px-1">Role Assignment</p>
-                      <div className="px-2 py-1.5 bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-md">
-                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wider ${getRoleClass(selectedUser.userType)}`}>
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 custom-scrollbar bg-[var(--foreground)]/[0.01]">
+                <DrawerSection icon={<Shield size={12} />} title="Account">
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <p className="text-[8.5px] font-bold uppercase tracking-wider text-[var(--muted)]/70 px-0.5">Role Assignment</p>
+                      <div className="px-2 py-1 bg-[var(--foreground)]/[0.03] border border-[var(--border)] rounded-lg">
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md border text-[9px] font-bold uppercase tracking-wider ${getRoleClass(selectedUser.userType)}`}>
                           {selectedUser.userType}
                         </span>
                       </div>
                       {selectedUser.userType === "owner" && (
-                        <p className="text-[9px] text-rose-500/80 font-medium px-2 flex items-center gap-1 mt-1.5 bg-rose-500/10 py-1 rounded border border-rose-500/20">
-                          <ShieldAlert size={10} /> Owner role
+                        <p className="text-[8.5px] text-rose-500/80 font-medium px-2 flex items-center gap-1 mt-1 bg-rose-500/10 py-0.5 rounded border border-rose-500/20">
+                          <ShieldAlert size={9} /> Owner role
                         </p>
                       )}
                     </div>
 
-                    <div className="space-y-1.5 pt-3 border-t border-[var(--border)]/50">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted)] px-1">Session Action</p>
-                      <button aria-label="button"
+                    <div className="space-y-1 pt-2 border-t border-[var(--border)]/40">
+                      <p className="text-[8.5px] font-bold uppercase tracking-wider text-[var(--muted)]/70 px-0.5">Session Action</p>
+                      <button aria-label="Force log out user"
                         onClick={() => handleForceLogout(selectedUser._id)}
-                        className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-500 hover:bg-rose-500 hover:text-white transition-all text-xs font-bold shadow-sm active:scale-[0.98]"
+                        className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-500 hover:bg-rose-500 hover:text-white transition-all text-xs font-bold shadow-xs active:scale-[0.98] cursor-pointer"
                       >
                         Force Log Out
                       </button>
@@ -610,22 +673,22 @@ export default function UsersTab() {
                   </div>
                 </DrawerSection>
 
-                <DrawerSection icon={<Tag size={14} />} title="Tags">
-                  <div className="space-y-2.5">
-                    <p className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted)] flex items-center gap-1 px-1">
-                      <Plus size={10} /> Select Category (1 Max)
+                <DrawerSection icon={<Tag size={12} />} title="Tags">
+                  <div className="space-y-1.5">
+                    <p className="text-[8.5px] font-bold uppercase tracking-wider text-[var(--muted)]/70 flex items-center gap-1 px-0.5">
+                      <Plus size={9} /> Category Tag (1 Max)
                     </p>
                     
-                    <div className="flex flex-wrap gap-1.5 p-2 rounded-lg bg-[var(--foreground)]/[0.02] border border-[var(--border)]/30">
+                    <div className="flex flex-wrap gap-1 p-1.5 rounded-lg bg-[var(--foreground)]/[0.02] border border-[var(--border)]/30">
                       {ALLOWED_TAGS.map(tag => {
                         const isActive = selectedUser.tags?.includes(tag);
                         return (
-                          <button aria-label="button"
+                          <button aria-label={`Toggle tag ${tag}`}
                             key={tag}
                             onClick={() => isActive ? removeTagFromUser(selectedUser, tag) : addTagToUser(selectedUser, tag)}
-                            className={`px-2.5 py-1 rounded-md border text-[9px] font-bold lowercase transition-all active:scale-95 ${
+                            className={`px-2 py-0.5 rounded-md border text-[8.5px] font-bold lowercase transition-all active:scale-95 cursor-pointer ${
                               isActive 
-                                ? getTagColor(tag).replace('15', '100').replace('600', 'white') + " border-transparent shadow-sm"
+                                ? getTagColor(tag).replace('15', '100').replace('600', 'white') + " border-transparent shadow-xs"
                                 : getTagColor(tag) + " bg-transparent opacity-60 hover:opacity-100 hover:bg-[var(--foreground)]/[0.03]"
                             }`}
                           >
@@ -637,8 +700,8 @@ export default function UsersTab() {
                   </div>
                 </DrawerSection>
 
-                <DrawerSection icon={<IdCard size={14} />} title="Identity">
-                  <div className="grid grid-cols-1 gap-2">
+                <DrawerSection icon={<IdCard size={12} />} title="Identity">
+                  <div className="grid grid-cols-1 gap-1.5">
                     <DrawerDetail
                       label="Full Name"
                       value={selectedUser.name}
@@ -658,8 +721,8 @@ export default function UsersTab() {
                   </div>
                 </DrawerSection>
 
-                <DrawerSection icon={<Mail size={14} />} title="Contact">
-                  <div className="grid grid-cols-1 gap-2">
+                <DrawerSection icon={<Mail size={12} />} title="Contact">
+                  <div className="grid grid-cols-1 gap-1.5">
                     <DrawerDetail
                       label="Email Address"
                       value={selectedUser.email}
@@ -681,11 +744,11 @@ export default function UsersTab() {
                         href={getWhatsAppUrl(selectedUser.phone, selectedUser)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-1.5 flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-emerald-400 font-bold text-xs transition-all active:scale-[0.98] group shadow-[0_0_12px_rgba(16,185,129,0.1)]"
+                        className="mt-1 flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-emerald-400 font-bold text-xs transition-all active:scale-[0.98] group cursor-pointer"
                       >
-                        <FaWhatsapp size={15} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+                        <FaWhatsapp size={13} className="text-emerald-400 group-hover:scale-110 transition-transform" />
                         <span>Chat with User on WhatsApp</span>
-                        <ExternalLink size={11} className="opacity-60" />
+                        <ExternalLink size={10} className="opacity-60" />
                       </a>
                     )}
                   </div>
@@ -842,35 +905,37 @@ export default function UsersTab() {
 
 /* ================= AVATAR ================= */
 function Avatar({ user, size = "md" }) {
+  const [imgError, setImgError] = useState(false);
   const sizeClasses = {
-    sm: "h-8 w-8",
-    md: "h-10 w-10",
-    lg: "h-14 w-14",
+    xs: "h-5 w-5 text-[8px]",
+    sm: "h-7 w-7 text-[9.5px]",
+    md: "h-9 w-9 text-xs",
+    lg: "h-11 w-11 text-sm",
   };
 
-  const initials = user.userId
+  const initials = user?.userId
     ?.replace(/[^A-Za-z]/g, "")
     .slice(0, 2)
-    .toUpperCase() || "U";
+    .toUpperCase() || user?.name?.slice(0, 2).toUpperCase() || "U";
 
-  if (user.avatar) {
+  if (user?.avatar && !imgError) {
     return (
       <img
         src={user.avatar}
-        alt={user.name}
-        className={`${sizeClasses[size]} rounded-2xl object-cover border-2 border-[var(--border)] shadow-inner`}
+        alt={user.name || "User"}
+        onError={() => setImgError(true)}
+        className={`${sizeClasses[size] || sizeClasses.md} rounded-lg object-cover border border-[var(--border)] shadow-xs shrink-0`}
       />
     );
   }
 
   return (
-    <div className={`${sizeClasses[size]} rounded-2xl flex items-center justify-center text-xs font-bold text-white bg-gradient-to-br from-[var(--accent)] via-indigo-500 to-purple-600 shadow-lg shadow-[var(--accent)]/10`}>
-      {size === 'lg' ? <User size={24} /> : initials}
+    <div className={`${sizeClasses[size] || sizeClasses.md} rounded-lg flex items-center justify-center font-bold text-white bg-gradient-to-br from-[var(--accent)] via-indigo-500 to-purple-600 shadow-xs shrink-0 select-none`}>
+      {size === 'lg' ? <User size={18} /> : initials}
     </div>
   );
 }
 
-/* ================= HELPERS ================= */
 /* ================= HELPERS ================= */
 
 function getWhatsAppUrl(phone, user) {
@@ -886,13 +951,13 @@ function getWhatsAppUrl(phone, user) {
 
 function DrawerSection({ icon, title, children }) {
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2 text-[var(--foreground)]">
-        <div className="p-1.5 rounded-lg bg-[var(--accent)]/10 text-[var(--accent)]">{icon}</div>
-        <h4 className="text-[10px] font-black uppercase tracking-widest">{title}</h4>
-        <div className="h-px flex-1 bg-gradient-to-r from-[var(--border)] to-transparent ml-2" />
+    <div className="space-y-1.5">
+      <div className="flex items-center gap-1.5 text-[var(--foreground)]">
+        <div className="p-1 rounded-md bg-[var(--accent)]/10 text-[var(--accent)]">{icon}</div>
+        <h4 className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]/80">{title}</h4>
+        <div className="h-px flex-1 bg-gradient-to-r from-[var(--border)]/70 to-transparent ml-2" />
       </div>
-      <div className="flex flex-col gap-2 px-1 mt-1">{children}</div>
+      <div className="flex flex-col gap-1 px-0.5 mt-0.5">{children}</div>
     </div>
   );
 }
@@ -900,22 +965,22 @@ function DrawerSection({ icon, title, children }) {
 function DrawerDetail({ label, value, emphasize, copyText, onCopy, isCopied, whatsappUrl, code }) {
   return (
     <div className="flex items-end justify-between gap-1 group w-full py-0.5">
-      <span className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-widest whitespace-nowrap mb-0.5">{label}</span>
-      <div className="flex-1 border-b-2 border-dotted border-[var(--border)]/30 mx-2 mb-1.5 opacity-50 group-hover:opacity-100 transition-opacity" />
+      <span className="text-[9px] font-bold text-[var(--muted)]/70 uppercase tracking-wider whitespace-nowrap mb-0.5">{label}</span>
+      <div className="flex-1 border-b border-dotted border-[var(--border)]/40 mx-2 mb-1 opacity-50 group-hover:opacity-100 transition-opacity" />
       <div className="flex items-center gap-1.5 justify-end max-w-[65%]">
         {whatsappUrl ? (
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs md:text-sm font-black text-right truncate text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-1 transition-colors"
+            className="text-xs font-bold text-right truncate text-emerald-400 hover:text-emerald-300 hover:underline flex items-center gap-1 transition-colors"
             title="Open WhatsApp chat with user"
           >
             <span className="truncate">{value || "N/A"}</span>
-            <FaWhatsapp size={12} className="text-emerald-400 shrink-0 inline-block ml-0.5" />
+            <FaWhatsapp size={11} className="text-emerald-400 shrink-0 inline-block ml-0.5" />
           </a>
         ) : (
-          <span className={`text-xs md:text-sm font-black text-right truncate ${code ? "font-mono" : ""} ${emphasize ? "text-[var(--accent)] drop-shadow-[0_0_5px_rgba(var(--accent-rgb),0.3)] italic uppercase" : "text-[var(--foreground)]"}`}>
+          <span className={`text-xs font-bold text-right truncate ${code ? "font-mono" : ""} ${emphasize ? "text-[var(--accent)] drop-shadow-[0_0_5px_rgba(var(--accent-rgb),0.3)] italic uppercase" : "text-[var(--foreground)]"}`}>
             {value || "N/A"}
           </span>
         )}
@@ -923,15 +988,15 @@ function DrawerDetail({ label, value, emphasize, copyText, onCopy, isCopied, wha
           <button
             type="button"
             onClick={(e) => onCopy && onCopy(copyText, e)}
-            className="p-1 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0"
+            className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0 cursor-pointer"
             title={`Copy ${label}`}
           >
             {isCopied ? (
-              <span className="text-[8.5px] font-bold text-emerald-500 flex items-center gap-0.5">
-                <Check size={10} className="text-emerald-500" />
+              <span className="text-[8px] font-bold text-emerald-500 flex items-center gap-0.5">
+                <Check size={9} className="text-emerald-500" />
               </span>
             ) : (
-              <Copy size={10} />
+              <Copy size={9} />
             )}
           </button>
         )}

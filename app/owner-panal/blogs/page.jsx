@@ -81,6 +81,7 @@ export default function AdminBlogsPage() {
               subtitle="Content Management"
               title="Manage"
               highlight="Blogs"
+              actionLayout="row"
               icon={
                 <Link
                   href="/owner-panal"

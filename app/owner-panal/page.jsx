@@ -631,6 +631,7 @@ export default function AdminPanalPage() {
               title="Admin"
               highlight={MENU_CATEGORIES.flatMap((c) => c.items).find((i) => i.id === activeTab)?.label || "Console"}
               pulse
+              actionLayout="row"
               action={
                 <button
                   aria-label="Open Admin Menu"

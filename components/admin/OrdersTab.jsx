@@ -41,7 +41,7 @@ export default function OrdersTab() {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(false);
+  const [updatingId, setUpdatingId] = useState(null);
   const [copiedKey, setCopiedKey] = useState(null);
 
   const handleCopy = (text, key, e) => {
@@ -76,9 +76,9 @@ export default function OrdersTab() {
   }, [page, limit, search, filters]);
 
   /* ================= FETCH ORDERS LIST ================= */
-  const fetchOrdersList = async () => {
+  const fetchOrdersList = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const token = localStorage.getItem("token");
 
       const params = new URLSearchParams({
@@ -103,9 +103,9 @@ export default function OrdersTab() {
       );
     } catch (err) {
       console.error("Fetch orders list failed", err);
-      setOrders([]);
+      if (!silent) setOrders([]);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -121,7 +121,16 @@ export default function OrdersTab() {
         return;
       }
 
-      setUpdating(true);
+      setUpdatingId(orderId);
+
+      // 1. Optimistic update in local state so UI responds instantly
+      setOrders((prev) =>
+        prev.map((ord) => (ord.orderId === orderId ? { ...ord, status } : ord))
+      );
+      if (selectedOrder?.orderId === orderId) {
+        setSelectedOrder((prev) => (prev ? { ...prev, status } : null));
+      }
+
       const token = localStorage.getItem("token");
 
       const res = await fetch("/api/admin/orders", {
@@ -137,6 +146,7 @@ export default function OrdersTab() {
 
       if (!res.ok) {
         alert(data.message || "Failed to update order");
+        fetchOrdersList(true);
         return;
       }
 
@@ -144,12 +154,21 @@ export default function OrdersTab() {
         alert(data.message || "Successfully refunded to user wallet!");
       }
 
-      fetchOrdersList();
+      // Merge server response data silently without full-page re-render
+      if (data?.data) {
+        setOrders((prev) =>
+          prev.map((ord) => (ord.orderId === orderId ? { ...ord, ...data.data } : ord))
+        );
+        if (selectedOrder?.orderId === orderId) {
+          setSelectedOrder((prev) => (prev ? { ...prev, ...data.data } : null));
+        }
+      }
     } catch (err) {
       console.error("Update order status failed:", err);
       alert("Network error updating order");
+      fetchOrdersList(true);
     } finally {
-      setUpdating(false);
+      setUpdatingId(null);
     }
   };
 
@@ -217,8 +236,8 @@ export default function OrdersTab() {
       </div>
 
       {/* ================= CONTENT ================= */}
-      <AnimatePresence mode="wait">
-        {loading ? (
+      <AnimatePresence>
+        {loading && orders.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -308,7 +327,7 @@ export default function OrdersTab() {
                         <td className="px-4 py-2.5" onClick={(e) => e.stopPropagation()}>
                           <StatusDropdown
                             value={o.status}
-                            disabled={updating}
+                            disabled={updatingId === o.orderId}
                             onChange={(v) => updateOrderStatus(o.orderId, v)}
                             options={ORDER_STATUS_OPTIONS}
                           />
@@ -321,7 +340,7 @@ export default function OrdersTab() {
             </div>
 
             {/* MOBILE LIST */}
-            <div className="lg:hidden space-y-2">
+            <div className="lg:hidden space-y-1.5">
               {orders.map((o, idx) => {
                 return (
                   <motion.div
@@ -330,22 +349,40 @@ export default function OrdersTab() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     onClick={() => setSelectedOrder(o)}
-                    className="p-3 rounded-[1.2rem] border border-[var(--border)] bg-[var(--card)] active:bg-[var(--foreground)]/[0.05] transition-all"
+                    className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] active:bg-[var(--foreground)]/[0.05] hover:border-[var(--accent)]/30 transition-all cursor-pointer"
                   >
-                    <div className="flex justify-between items-start mb-2.5">
-                      <div className="flex flex-col min-w-0">
-                        <p className="font-bold text-[var(--foreground)] uppercase text-[10px] leading-none mb-0.5 truncate">{o.gameSlug}</p>
-                        <p className="text-[9px] text-[var(--muted)] font-medium truncate max-w-[150px] lowercase leading-none">{o.email}</p>
+                    {/* Top Row: Game Slug & Email on Left, Price / Method / Date on Right */}
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <p className="font-bold text-[var(--foreground)] uppercase text-[10px] leading-tight truncate mb-0.5">
+                          {o.gameSlug}
+                        </p>
+                        <p className="text-[8.5px] text-[var(--muted)] font-medium truncate lowercase leading-tight">
+                          {o.email}
+                        </p>
                       </div>
-                      <div className="flex flex-col items-end">
-                        <span className="text-sm font-black text-emerald-500 tabular-nums">{formatCurrency(o.price)}</span>
-                        <span className="text-[7px] font-bold text-[var(--muted)] uppercase opacity-60 tracking-tighter">{o.paymentMethod}</span>
+
+                      <div className="flex flex-col items-end shrink-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[13px] font-black text-emerald-500 tabular-nums leading-none">
+                            {formatCurrency(o.price)}
+                          </span>
+                          <span className="text-[7.5px] font-bold text-[var(--muted)] uppercase opacity-70 tracking-tight px-1 py-0.2 rounded bg-[var(--foreground)]/[0.04]">
+                            {o.paymentMethod || "N/A"}
+                          </span>
+                        </div>
+                        <span className="text-[8px] font-medium text-[var(--muted)]/55 leading-tight mt-1 tabular-nums">
+                          {formatDate(o.createdAt)} • {formatTime(o.createdAt)}
+                        </span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between gap-3 text-[10px]">
+                    {/* Bottom Row: Item & Player Details on Left, Status Dropdown on Right */}
+                    <div className="flex items-center justify-between gap-2 pt-1.5 mt-1.5 border-t border-[var(--border)]/30">
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-[var(--foreground)]/80 line-clamp-1 truncate">"{o.itemName}"</p>
+                        <p className="font-bold text-[var(--foreground)]/85 text-[10px] leading-tight truncate">
+                          "{o.itemName}"
+                        </p>
                         <div className="flex items-center gap-1 mt-0.5">
                           <p className="text-[8.5px] font-mono text-[var(--muted)] uppercase tracking-tight truncate">
                             {o.playerId}{o.zoneId ? ` (${o.zoneId})` : ""} {o.playerName ? `• ${o.playerName}` : ""}
@@ -354,27 +391,23 @@ export default function OrdersTab() {
                             <button
                               type="button"
                               onClick={(e) => handleCopy(o.zoneId ? `${o.playerId} ${o.zoneId}` : o.playerId, `m-player-${o._id}`, e)}
-                              className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0"
+                              className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0 cursor-pointer"
                               title="Copy Player ID"
                             >
                               {copiedKey === `m-player-${o._id}` ? (
-                                <Check size={10} className="text-emerald-500" />
+                                <Check size={9} className="text-emerald-500" />
                               ) : (
-                                <Copy size={10} />
+                                <Copy size={9} />
                               )}
                             </button>
                           )}
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex flex-col items-end mr-1">
-                          <span className="font-bold text-[var(--muted)]/60 leading-tight">{formatDate(o.createdAt)}</span>
-                          <span className="text-[8px] font-medium text-[var(--muted)]/40 leading-tight">{formatTime(o.createdAt)}</span>
-                        </div>
+                      <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
                         <StatusDropdown
                           value={o.status}
-                          disabled={updating}
+                          disabled={updatingId === o.orderId}
                           onChange={(v) => updateOrderStatus(o.orderId, v)}
                           compact
                           options={ORDER_STATUS_OPTIONS}
@@ -424,63 +457,63 @@ export default function OrdersTab() {
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed right-0 top-0 h-full w-full max-w-lg bg-[var(--background)] border-l border-[var(--border)] z-[1110] flex flex-col"
             >
-              <div className="p-4 sm:p-5 border-b border-[var(--border)] bg-[var(--card)]/30">
-                <div className="flex items-start justify-between mb-3">
+              <div className="p-3 sm:p-4 border-b border-[var(--border)] bg-[var(--card)]/30">
+                <div className="flex items-start justify-between mb-2">
                   <div className="space-y-0.5">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <p className="text-[9px] font-mono font-black text-[var(--accent)] uppercase tracking-[0.2em] opacity-80">
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-[8.5px] font-mono font-bold text-[var(--accent)] uppercase tracking-wider opacity-85">
                         #{selectedOrder.orderId.toUpperCase()}
                       </p>
                       <button
                         type="button"
                         onClick={(e) => handleCopy(selectedOrder.orderId, `drawer-oid-${selectedOrder._id}`, e)}
-                        className="p-1 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] transition-all shrink-0 cursor-pointer"
+                        className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] transition-all shrink-0 cursor-pointer"
                         title="Copy Order ID"
                       >
                         {copiedKey === `drawer-oid-${selectedOrder._id}` ? (
-                          <span className="text-[8px] font-bold text-emerald-500 flex items-center gap-0.5">
-                            <Check size={10} className="text-emerald-500" /> Copied
+                          <span className="text-[7.5px] font-bold text-emerald-500 flex items-center gap-0.5">
+                            <Check size={9} className="text-emerald-500" /> Copied
                           </span>
                         ) : (
-                          <Copy size={10} />
+                          <Copy size={9} />
                         )}
                       </button>
                     </div>
-                    <h3 className="text-base sm:text-lg font-black uppercase tracking-tight text-[var(--foreground)]">Order Details</h3>
+                    <h3 className="text-sm sm:text-base font-black uppercase tracking-tight text-[var(--foreground)] leading-tight">Order Details</h3>
                   </div>
-                  <button aria-label="button"
+                  <button aria-label="Close"
                     onClick={() => setSelectedOrder(null)}
-                    className="w-7 h-7 rounded-lg bg-[var(--foreground)]/[0.05] hover:bg-[var(--foreground)]/[0.1] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-all cursor-pointer"
+                    className="w-6 h-6 rounded-md bg-[var(--foreground)]/[0.05] hover:bg-[var(--foreground)]/[0.1] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-all cursor-pointer"
                   >
-                    <X size={14} />
+                    <X size={13} />
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]">
+                <div className="flex items-center justify-between p-2 sm:p-2.5 rounded-xl bg-[var(--card)] border border-[var(--border)]">
                   <div>
-                    <p className="text-[9px] font-bold text-[var(--muted)] uppercase tracking-widest mb-0.5">Settlement</p>
-                    <span className="text-xl sm:text-2xl font-black text-emerald-500 tabular-nums leading-none">{formatCurrency(selectedOrder.price)}</span>
+                    <p className="text-[8px] font-bold text-[var(--muted)] uppercase tracking-wider">Settlement</p>
+                    <span className="text-lg sm:text-xl font-black text-emerald-500 tabular-nums leading-tight">{formatCurrency(selectedOrder.price)}</span>
                   </div>
                   <StatusDropdown
                     value={selectedOrder.status}
                     compact
+                    disabled={updatingId === selectedOrder.orderId}
                     onChange={(v) => {
                       updateOrderStatus(selectedOrder.orderId, v);
-                      setSelectedOrder(null);
                     }}
                     options={ORDER_STATUS_OPTIONS}
                   />
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-4 md:p-5 space-y-5 md:space-y-6">
-                <DrawerSection icon={<Gamepad2 size={14} />} title="Item Info">
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3">
+                <DrawerSection icon={<Gamepad2 size={12} />} title="Item Info">
                   <DrawerDetail label="Game" value={selectedOrder.gameSlug} emphasize />
                   <DrawerDetail label="Item Name" value={selectedOrder.itemName} />
                   <DrawerDetail label="Item Code" value={selectedOrder.itemSlug} />
                 </DrawerSection>
 
-                <DrawerSection icon={<Smartphone size={14} />} title="Player ID Info">
+                <DrawerSection icon={<Smartphone size={12} />} title="Player ID Info">
                   <DrawerDetail
                     label="Player Name"
                     value={selectedOrder.playerName || "Unknown"}
@@ -505,20 +538,20 @@ export default function OrdersTab() {
                   />
                 </DrawerSection>
 
-                <DrawerSection icon={<CreditCard size={14} />} title="Payment Info">
+                <DrawerSection icon={<CreditCard size={12} />} title="Payment Info">
                   <DrawerDetail label="Payment Method" value={selectedOrder.paymentMethod} />
                   <DrawerDetail label="Platform" value={selectedOrder.platform?.toLowerCase() === "pwa" ? "📱 Installed PWA" : "🌐 Web Browser"} />
                   <div className="flex items-center justify-between gap-1 group w-full py-0.5">
-                    <span className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-widest">Payment Status</span>
+                    <span className="text-[9px] font-bold text-[var(--muted)]/70 uppercase tracking-wider">Payment Status</span>
                     <StatusBadge status={selectedOrder.paymentStatus} size="xs" />
                   </div>
                   <div className="flex items-center justify-between gap-1 group w-full py-0.5">
-                    <span className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-widest">Product Status</span>
+                    <span className="text-[9px] font-bold text-[var(--muted)]/70 uppercase tracking-wider">Product Status</span>
                     <StatusBadge status={selectedOrder.topupStatus} size="xs" />
                   </div>
                 </DrawerSection>
 
-                <DrawerSection icon={<User size={14} />} title="Buyer Info">
+                <DrawerSection icon={<User size={12} />} title="Buyer Info">
                   <DrawerDetail
                     label="Email"
                     value={selectedOrder.email || "GUEST"}
@@ -541,16 +574,16 @@ export default function OrdersTab() {
                       href={getWhatsAppUrl(selectedOrder.phone, selectedOrder)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-1.5 flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-emerald-400 font-bold text-xs transition-all active:scale-[0.98] group shadow-[0_0_12px_rgba(16,185,129,0.1)]"
+                      className="mt-1 flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-emerald-400 font-bold text-xs transition-all active:scale-[0.98] group"
                     >
-                      <FaWhatsapp size={15} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+                      <FaWhatsapp size={13} className="text-emerald-400 group-hover:scale-110 transition-transform" />
                       <span>Chat with Buyer on WhatsApp</span>
-                      <ExternalLink size={11} className="opacity-60" />
+                      <ExternalLink size={10} className="opacity-60" />
                     </a>
                   )}
                 </DrawerSection>
 
-                <div className="pb-6" />
+                <div className="pb-4" />
               </div>
             </motion.div>
           </>
@@ -698,7 +731,11 @@ function StatusDropdown({ value, onChange, options, disabled, compact }) {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
   }, []);
 
   const styles = {
@@ -721,15 +758,20 @@ function StatusDropdown({ value, onChange, options, disabled, compact }) {
 
   return (
     <div className="relative" ref={containerRef}>
-      <button aria-label="button"
-        onClick={() => !disabled && setIsOpen(!isOpen)}
+      <button
+        type="button"
+        aria-label="Status selection"
+        onClick={(e) => {
+          e.stopPropagation();
+          if (!disabled) setIsOpen((prev) => !prev);
+        }}
         disabled={disabled}
         className={`
-          flex items-center justify-between gap-2 px-3 
-          ${compact ? "h-8 min-w-[110px]" : "h-10 min-w-[130px]"}
-          rounded-xl border border-[var(--border)] bg-[var(--foreground)]/[0.04] 
-          text-[10px] font-black uppercase transition-all
-          ${disabled ? "opacity-30 cursor-not-allowed" : "hover:bg-[var(--foreground)]/[0.08]"}
+          flex items-center justify-between gap-1 px-2 
+          ${compact ? "h-6.5 min-w-[85px] text-[8px]" : "h-10 min-w-[130px] text-[10px] px-3"}
+          rounded-lg border border-[var(--border)] bg-[var(--foreground)]/[0.04] 
+          font-black uppercase transition-all cursor-pointer
+          ${disabled ? "opacity-40 cursor-not-allowed pointer-events-none" : "hover:bg-[var(--foreground)]/[0.08]"}
           ${isOpen ? "border-[var(--accent)] ring-1 ring-[var(--accent)]/30" : ""}
         `}
       >
@@ -737,26 +779,29 @@ function StatusDropdown({ value, onChange, options, disabled, compact }) {
           <div className={`w-1.5 h-1.5 rounded-full bg-current shrink-0 ${styles[value] || "text-[var(--foreground)]"}`} />
           <span className={`truncate ${styles[value] || "text-[var(--foreground)]"}`}>{selectedOption?.label}</span>
         </div>
-        <ChevronDown size={12} className={`shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown size={compact ? 10 : 12} className={`shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+            initial={{ opacity: 0, scale: 0.95, y: -6 }}
             animate={{ opacity: 1, scale: 1, y: 4 }}
-            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-            className="absolute z-[1200] right-0 w-full min-w-[170px] rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl p-1 overflow-hidden backdrop-blur-xl"
+            exit={{ opacity: 0, scale: 0.95, y: -6 }}
+            className="absolute z-[1200] right-0 min-w-[145px] w-max max-w-[190px] rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl p-1 overflow-hidden backdrop-blur-xl"
           >
             {options.map((option) => (
-              <button aria-label="button"
+              <button
+                type="button"
+                aria-label={option.label}
                 key={option.value}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   onChange(option.value);
                   setIsOpen(false);
                 }}
                 className={`
-                  w-full px-3 py-2 text-left text-[9px] font-black uppercase rounded-lg transition-all flex items-center gap-2
+                  w-full px-2.5 py-1.5 text-left text-[9px] font-black uppercase rounded-lg transition-all flex items-center gap-2 cursor-pointer
                   ${option.value === value
                     ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20"
                     : `text-[var(--foreground)]/70 hover:bg-[var(--foreground)]/[0.05] ${optionStyles[option.value] || "hover:text-[var(--foreground)]"}`}

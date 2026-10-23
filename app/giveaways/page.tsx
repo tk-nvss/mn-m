@@ -2,11 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Icons } from "@/components/icons";
 import { EmptyState, SectionTitle } from "@/components/common";
 import GiveawayEntryModal from "@/components/Giveaway/GiveawayEntryModal";
 import { useAuthStore } from "@/store/useAuthStore";
-import { FiGift, FiZap, FiAward, FiPackage, FiShare2, FiChevronRight, FiCheckCircle, FiInfo, FiHelpCircle, FiClock, FiUsers } from "react-icons/fi";
+import {
+  Sparkles,
+  Gift,
+  Ticket,
+  Crown,
+  Trophy,
+  History,
+  CheckCircle2,
+  Share2,
+  HelpCircle,
+  ChevronRight,
+  Flame,
+} from "lucide-react";
 
 // Helper function to pick dynamic icon & style based on giveaway title/prize
 function getGiveawayIcon(title: string = "", prize: string = "") {
@@ -14,25 +25,25 @@ function getGiveawayIcon(title: string = "", prize: string = "") {
 
   if (t.includes("reedm") || t.includes("redeem") || t.includes("code") || t.includes("voucher")) {
     return {
-      icon: Icons.key,
-      colorClass: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+      icon: Ticket,
+      colorClass: "text-purple-400",
     };
   }
-  if (t.includes("pass") || t.includes("weekly") || t.includes("wdp")) {
+  if (t.includes("pass") || t.includes("weekly") || t.includes("wdp") || t.includes("diamond")) {
     return {
-      icon: FiZap,
-      colorClass: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+      icon: Sparkles,
+      colorClass: "text-amber-400",
     };
   }
-  if (t.includes("membership") || t.includes("month")) {
+  if (t.includes("membership") || t.includes("month") || t.includes("vip")) {
     return {
-      icon: FiAward,
-      colorClass: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+      icon: Crown,
+      colorClass: "text-cyan-400",
     };
   }
   return {
-    icon: FiGift,
-    colorClass: "bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/20",
+    icon: Gift,
+    colorClass: "text-[var(--accent)]",
   };
 }
 
@@ -84,7 +95,7 @@ export default function GiveawaysPage() {
     <div className="min-h-screen pb-16 pt-3 sm:pt-5 bg-[var(--background)]">
       
       {/* ── CLEAN MINIMAL HEADER ───────────────────────────── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-5">
         <div className="pb-3 border-b border-[var(--border)]/60">
           <SectionTitle
             as="h1"
@@ -96,14 +107,14 @@ export default function GiveawaysPage() {
             action={
               <button
                 onClick={() => setShowInfo(!showInfo)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 cursor-pointer ${
                   showInfo
                     ? "bg-[var(--accent)] text-white"
-                    : "bg-[var(--card)] hover:bg-[var(--card)]/70 text-[var(--muted)] hover:text-[var(--foreground)]"
+                    : "bg-[var(--card)] hover:bg-[var(--card)]/70 text-[var(--muted)] hover:text-[var(--foreground)] border border-[var(--border)]"
                 }`}
                 title="How it works"
               >
-                <FiInfo size={14} className={showInfo ? "text-white" : "text-[var(--accent)]"} />
+                <HelpCircle size={13} className={showInfo ? "text-white" : "text-[var(--accent)]"} />
                 <span className="hidden sm:inline">How it works</span>
               </button>
             }
@@ -115,12 +126,12 @@ export default function GiveawaysPage() {
           <div className="mt-3 p-3.5 sm:p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-sm animate-in fade-in">
             <div className="flex items-center justify-between mb-2.5">
               <div className="flex items-center gap-2 text-xs font-bold text-[var(--foreground)]">
-                <FiHelpCircle className="text-[var(--accent)]" />
+                <HelpCircle className="text-[var(--accent)]" size={14} />
                 <span>How Live Drops & Giveaways Work</span>
               </div>
               <button 
                 onClick={() => setShowInfo(false)}
-                className="text-[10px] text-[var(--muted)] hover:text-[var(--foreground)] font-bold"
+                className="text-[10px] text-[var(--muted)] hover:text-[var(--foreground)] font-bold cursor-pointer"
               >
                 Close ✕
               </button>
@@ -146,14 +157,14 @@ export default function GiveawaysPage() {
         )}
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6">
         
         {/* ── ACTIVE GIVEAWAYS SECTION ──────────────────────────────────────── */}
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-rose-500" />
             <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)] leading-none flex items-center gap-1.5">
-              <FiZap size={13} className="text-rose-500" />
+              <Flame size={14} className="text-rose-500 fill-rose-500/20" />
               <span>Active Giveaways</span>
             </h2>
           </div>
@@ -166,7 +177,7 @@ export default function GiveawaysPage() {
             </div>
           ) : giveaways.length === 0 ? (
             <EmptyState
-              icon={Icons.gift}
+              icon={Gift}
               title="No Active Drops Right Now"
               description="All giveaway slots have been filled. New MLBB diamond drops & redeem code giveaways are posted daily!"
               size="md"
@@ -186,11 +197,11 @@ export default function GiveawaysPage() {
                     key={g._id}
                     whileHover={{ y: isFull ? 0 : -2 }}
                     onClick={() => !isFull && setSelectedGiveaway(g)}
-                    className={`group relative flex flex-col justify-between p-2.5 sm:p-3 rounded-xl bg-[var(--card)]/60 hover:bg-[var(--card)] border border-[var(--border)]/30 hover:border-[var(--accent)]/40 transition-all duration-200 ${
+                    className={`group relative flex flex-col justify-between p-3 rounded-xl bg-[var(--card)]/60 hover:bg-[var(--card)] border border-[var(--border)]/40 hover:border-[var(--accent)]/40 transition-all duration-200 ${
                       isFull ? "opacity-60" : "cursor-pointer"
                     }`}
                   >
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                       {/* Top Meta Header: Status & Count */}
                       <div className="flex items-center justify-between text-xs">
                         <div className="flex items-center gap-1.5">
@@ -207,8 +218,8 @@ export default function GiveawaysPage() {
 
                       {/* Icon + Title */}
                       <div className="flex items-start gap-2">
-                        <div className="mt-0.5 shrink-0 text-[var(--accent)]">
-                          <IconComponent size={15} />
+                        <div className={`mt-0.5 shrink-0 ${iconInfo.colorClass}`}>
+                          <IconComponent size={16} />
                         </div>
 
                         <div className="min-w-0 flex-1">
@@ -239,7 +250,7 @@ export default function GiveawaysPage() {
                         onClick={(e) => handleShare(e, g)}
                         aria-label="Share Giveaway"
                       >
-                        <FiShare2 size={11} />
+                        <Share2 size={11} />
                         <span>{copiedId === g._id ? "Copied" : "Share"}</span>
                       </button>
 
@@ -256,7 +267,7 @@ export default function GiveawaysPage() {
                         }}
                       >
                         <span>{isFull ? "Closed" : "Enter"}</span>
-                        {!isFull && <FiChevronRight size={10} />}
+                        {!isFull && <ChevronRight size={11} />}
                       </button>
                     </div>
                   </motion.div>
@@ -272,7 +283,7 @@ export default function GiveawaysPage() {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-amber-500" />
               <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)] leading-none flex items-center gap-1.5">
-                <FiAward size={13} className="text-amber-500" />
+                <Trophy size={14} className="text-amber-500" />
                 <span>Your Claimed Rewards</span>
               </h2>
             </div>
@@ -281,22 +292,22 @@ export default function GiveawaysPage() {
               {wonGiveaways.map(g => (
                 <div 
                   key={g._id} 
-                  className="flex items-center gap-2 p-2 rounded-xl bg-amber-500/5 border border-amber-500/15"
+                  className="flex items-center gap-2.5 p-2.5 rounded-xl bg-amber-500/5 border border-amber-500/20"
                 >
-                  <div className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center bg-amber-500/10 text-amber-500">
-                    <FiAward size={14} />
+                  <div className="shrink-0 text-amber-500 mt-0.5">
+                    <Trophy size={16} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1">
-                      <FiCheckCircle size={8.5} className="text-amber-500" />
-                      <span className="text-[7px] font-black uppercase tracking-widest text-amber-500">
+                      <CheckCircle2 size={9} className="text-amber-500" />
+                      <span className="text-[7.5px] font-black uppercase tracking-widest text-amber-500">
                         REWARD CLAIMED
                       </span>
                     </div>
-                    <h3 className="font-bold text-[var(--foreground)] text-[10.5px] truncate">
+                    <h3 className="font-bold text-[var(--foreground)] text-[11px] truncate">
                       {g.title}
                     </h3>
-                    <p className="text-[8.5px] text-[var(--muted)] font-medium truncate">
+                    <p className="text-[9px] text-[var(--muted)] font-medium truncate">
                       Prize: {g.prize}
                     </p>
                   </div>
@@ -312,7 +323,7 @@ export default function GiveawaysPage() {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[var(--muted)]/40" />
               <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)] leading-none flex items-center gap-1.5">
-                <FiPackage size={13} className="text-[var(--muted)]" />
+                <History size={14} className="text-[var(--muted)]" />
                 <span>Completed Drops</span>
               </h2>
             </div>
@@ -323,8 +334,8 @@ export default function GiveawaysPage() {
                   key={g._id} 
                   className="flex items-center gap-2 p-2 rounded-xl bg-[var(--card)]/40 border border-[var(--border)]/30 opacity-75"
                 >
-                  <div className="shrink-0 w-6 h-6 rounded-lg flex items-center justify-center bg-[var(--foreground)]/5 text-[var(--muted)]">
-                    <FiCheckCircle size={11} />
+                  <div className="shrink-0 text-emerald-500/80 mt-0.5">
+                    <CheckCircle2 size={15} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <span className="text-[7px] font-black uppercase tracking-widest text-[var(--muted)] bg-[var(--background)] px-1 py-0.2 rounded inline-block">

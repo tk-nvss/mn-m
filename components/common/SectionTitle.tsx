@@ -44,6 +44,8 @@ export interface SectionTitleProps {
   pulse?: boolean;
   /** Optional right-side action element (e.g. search, filters, buttons, countdown) */
   action?: ReactNode;
+  /** Layout for action element: "responsive" (stacks on mobile, row on desktop) or "row" (always one row side-by-side). Default: "responsive" */
+  actionLayout?: "responsive" | "row";
   /** Subtle neon glow effect on the highlighted text */
   glow?: boolean;
   /** Additional wrapper class names */
@@ -204,6 +206,7 @@ export function SectionTitle({
   icon,
   pulse = false,
   action,
+  actionLayout = "responsive",
   glow = false,
   className = "",
   titleClassName = "",
@@ -371,9 +374,14 @@ export function SectionTitle({
 
   // If there's an action, wrap in responsive flex container
   if (action) {
+    const layoutClasses =
+      actionLayout === "row"
+        ? "flex flex-row items-center justify-between gap-2.5 sm:gap-3"
+        : "flex flex-col md:flex-row md:items-end justify-between gap-3";
+
     return (
       <div
-        className={`flex flex-col md:flex-row md:items-end justify-between gap-3 relative ${className}`}
+        className={`${layoutClasses} relative ${className}`}
       >
         <div className="min-w-0">{content}</div>
         <div className="shrink-0 relative z-10">{action}</div>
