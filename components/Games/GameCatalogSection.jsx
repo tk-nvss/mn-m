@@ -192,10 +192,10 @@ function GameCatalogContent() {
         <div className="mb-4">
           <SectionTitle
             as="h1"
+            size="sm"
             subtitle="INSTANT TOP-UP"
             title="GAME CATALOG"
             highlight="CATALOG"
-            description="Explore our full collection of games, direct recharges, and subscriptions."
             pulse
           />
         </div>
