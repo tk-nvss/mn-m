@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiPlus,
@@ -34,7 +35,7 @@ import {
   FiFilter,
 } from "react-icons/fi";
 import { GiTrophy, GiSwords } from "react-icons/gi";
-import { LoadingSpinner, InfoTooltip, SectionTitle } from "@/components/common";
+import { LoadingSpinner, InfoTooltip, SectionTitle, SearchInput } from "@/components/common";
 
 const GAMES = ["mlbb", "freefire", "codm", "honorkings", "other"];
 const STATUSES = ["upcoming", "open", "ongoing", "closed", "ended"];
@@ -163,6 +164,14 @@ export default function TournamentsAdminTab() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [gameFilter, setGameFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const activeFilterCount = (statusFilter !== "all" ? 1 : 0) + (gameFilter !== "all" ? 1 : 0);
+  const hasActiveFilters = activeFilterCount > 0 || (search && search.trim() !== "");
 
   // Confirmation state — { id, type: "end" | "delete" }
   const [confirmAction, setConfirmAction] = useState(null);
@@ -555,6 +564,145 @@ export default function TournamentsAdminTab() {
     });
   }, [entries, entrySearch, entryFilter]);
 
+  /* ── FILTER BOTTOM SHEET CONTENT ── */
+  const filterSheetContent = (
+    <AnimatePresence>
+      {showFilters && (
+        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setShowFilters(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs cursor-pointer z-[9999]"
+          />
+
+          {/* Bottom Sheet Drawer */}
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 28, stiffness: 300 }}
+            className="relative w-full sm:max-w-md bg-[var(--card)] border-t sm:border border-[var(--border)] rounded-t-3xl sm:rounded-2xl shadow-2xl p-5 pb-8 sm:pb-5 z-[10000] max-h-[85vh] overflow-y-auto"
+          >
+            {/* Drag Handle */}
+            <div className="w-10 h-1 bg-[var(--border)] rounded-full mx-auto mb-3 sm:hidden" />
+
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-[var(--border)]/60">
+              <div className="flex items-center gap-2">
+                <FiFilter size={16} className="text-amber-400" />
+                <span className="text-sm font-bold tracking-tight text-[var(--foreground)]">Filter Tournaments</span>
+                {activeFilterCount > 0 && (
+                  <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                    {activeFilterCount} active
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {activeFilterCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStatusFilter("all");
+                      setGameFilter("all");
+                    }}
+                    className="text-[11px] font-semibold text-[var(--muted)] hover:text-rose-400 transition-colors cursor-pointer mr-1"
+                  >
+                    Reset
+                  </button>
+                )}
+                <button
+                  type="button"
+                  aria-label="Close"
+                  onClick={() => setShowFilters(false)}
+                  className="w-7 h-7 flex items-center justify-center rounded-full text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors cursor-pointer"
+                >
+                  <FiX size={16} />
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Section 1: Tournament Status */}
+            <div className="mb-4">
+              <p className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-2 flex items-center gap-1.5">
+                <span>Status</span>
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {[
+                  { id: "all", label: "All Statuses", count: stats.total },
+                  { id: "open", label: "Open", count: stats.open },
+                  { id: "ongoing", label: "Live", count: stats.ongoing },
+                  { id: "upcoming", label: "Upcoming", count: stats.upcoming },
+                  { id: "ended", label: "Ended", count: stats.ended },
+                ].map((tab) => {
+                  const active = statusFilter === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setStatusFilter(tab.id)}
+                      className={`py-2 px-2.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-left flex items-center justify-between ${
+                        active
+                          ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)] shadow-2xs font-bold"
+                          : "bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
+                      }`}
+                    >
+                      <span className="truncate">{tab.label}</span>
+                      <span className={`text-[9px] px-1 rounded font-bold ${active ? "bg-[var(--background)]/20 text-[var(--background)]" : "bg-[var(--foreground)]/5 text-[var(--muted)]"}`}>
+                        {tab.count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Filter Section 2: Game Filter */}
+            <div className="mb-5">
+              <p className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-2 flex items-center gap-1.5">
+                <span>Game</span>
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {["all", ...GAMES].map((g) => {
+                  const active = gameFilter === g;
+                  return (
+                    <button
+                      key={g}
+                      type="button"
+                      onClick={() => setGameFilter(g)}
+                      className={`py-2 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-center uppercase tracking-wider ${
+                        active
+                          ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)] shadow-2xs font-bold"
+                          : "bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
+                      }`}
+                    >
+                      {g === "all" ? "All Games" : g}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="pt-2 border-t border-[var(--border)]/60">
+              <button
+                type="button"
+                onClick={() => setShowFilters(false)}
+                style={{ color: "#ffffff" }}
+                className="w-full py-2.5 rounded-xl bg-[var(--accent)] hover:opacity-90 text-white text-xs font-bold transition-all cursor-pointer text-center shadow-xs"
+              >
+                Apply Filters {activeFilterCount > 0 ? `(${activeFilterCount})` : ""}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+
   return (
     <div className="space-y-4 max-w-7xl mx-auto">
       {/* ── Top Flash Message ── */}
@@ -574,70 +722,21 @@ export default function TournamentsAdminTab() {
         )}
       </AnimatePresence>
 
-      {/* ── Flat & Borderless Header Bar with Top Refresh ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-[var(--border)]/70">
-        {/* Top Row: Title, Badge + Top Refresh */}
-        <div className="flex items-center justify-between gap-2 w-full sm:w-auto">
-          <SectionTitle
-            size="xs"
-            accentColor="amber"
-            subtitle="Esports & Custom Rooms"
-            title="Tournaments"
-            highlight="Console"
-            icon={<GiTrophy size={13} className="text-amber-400" />}
-            pulse
-          />
+      {/* ── Top Header Toolbar (Row 1) ── */}
+      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-[var(--border)]/70">
+        <SectionTitle
+          size="xs"
+          accentColor="amber"
+          subtitle="Esports & Custom Rooms"
+          title="Tournaments"
+          highlight="Console"
+          icon={<GiTrophy size={13} className="text-amber-400" />}
+          pulse
+        />
 
-          {/* Top Refresh on mobile */}
-          <button
-            type="button"
-            onClick={fetchAll}
-            disabled={loading}
-            className="w-7 h-7 rounded-lg flex sm:hidden items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors cursor-pointer shrink-0"
-            title="Refresh list"
-          >
-            <FiRefreshCw size={11} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
-          </button>
-        </div>
-
-        {/* Action Controls & Search */}
-        <div className="flex items-center gap-1.5 flex-1 sm:flex-initial justify-between sm:justify-end">
-          {/* Inline Quick Search */}
-          <div className="relative flex-1 sm:w-44">
-            <FiSearch size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-7 pl-7 pr-6 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[11px] text-[var(--foreground)] placeholder-[var(--muted)]/60 outline-none focus:border-[var(--accent)]"
-            />
-            {search && (
-              <button
-                onClick={() => setSearch("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
-              >
-                <FiX size={10} />
-              </button>
-            )}
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setShowFilters((v) => !v)}
-            className={`h-7 px-2.5 rounded-lg text-[10.5px] font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
-              showFilters || statusFilter !== "all" || gameFilter !== "all"
-                ? "bg-[var(--foreground)] text-[var(--background)]"
-                : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06]"
-            }`}
-          >
-            <FiFilter size={11} />
-            <span className="hidden sm:inline">Filters</span>
-            {(statusFilter !== "all" || gameFilter !== "all") && (
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            )}
-          </button>
-
+        {/* Action Controls */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          {/* Presets Button */}
           <button
             type="button"
             onClick={() => setShowTemplates((v) => !v)}
@@ -646,11 +745,24 @@ export default function TournamentsAdminTab() {
                 ? "bg-[var(--foreground)] text-[var(--background)]"
                 : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06]"
             }`}
+            title="Tournament Presets"
           >
             <FiZap size={11} className={showTemplates ? "text-[var(--background)]" : "text-amber-400"} />
             <span className="hidden sm:inline">Presets</span>
           </button>
 
+          {/* Refresh */}
+          <button
+            type="button"
+            onClick={fetchAll}
+            disabled={loading}
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors cursor-pointer shrink-0"
+            title="Refresh list"
+          >
+            <FiRefreshCw size={11} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
+          </button>
+
+          {/* New Tournament Button */}
           <button
             type="button"
             onClick={() => {
@@ -664,135 +776,67 @@ export default function TournamentsAdminTab() {
                 setShowForm(true);
               }
             }}
-            className={`h-7 px-2.5 rounded-lg text-[10.5px] font-bold uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shrink-0 ${
+            style={{ color: showForm ? undefined : "#ffffff" }}
+            className={`h-7 px-2.5 rounded-lg text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shrink-0 active:scale-95 shadow-2xs ${
               showForm
                 ? "bg-[var(--foreground)]/10 text-[var(--foreground)]"
-                : "bg-[var(--accent)] text-white hover:opacity-90 shadow-2xs"
+                : "bg-[var(--accent)] text-white hover:brightness-110"
             }`}
           >
-            {showForm ? <FiX size={11} /> : <FiPlus size={11} />}
-            <span>{showForm ? "Close" : "New Tournament"}</span>
-          </button>
-
-          {/* Desktop Refresh */}
-          <button
-            type="button"
-            onClick={fetchAll}
-            disabled={loading}
-            className="w-7 h-7 rounded-lg hidden sm:flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors cursor-pointer shrink-0"
-            title="Refresh list"
-          >
-            <FiRefreshCw size={11} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
+            {showForm ? <FiX size={11} /> : <FiPlus size={12} color="#ffffff" style={{ color: "#ffffff" }} className="stroke-[2.5]" />}
+            <span style={{ color: showForm ? undefined : "#ffffff" }} className="whitespace-nowrap font-black">
+              {showForm ? "Close" : "New Tournament"}
+            </span>
           </button>
         </div>
       </div>
 
-      {/* ── Collapsible Filters Drawer ── */}
-      <AnimatePresence>
-        {showFilters && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.18 }}
-            className="overflow-hidden"
+      {/* ── Search & Filter Row (Row 2 - Filter side to search) ── */}
+      <div className="flex items-center gap-2 w-full">
+        <SearchInput
+          value={search}
+          onChange={(val) => setSearch(val)}
+          placeholder="Search tournament, prize, game..."
+          variant="pill"
+          className="flex-1"
+        />
+
+        {/* Filter Trigger Button beside search */}
+        <button
+          type="button"
+          aria-label="Filter tournaments"
+          onClick={() => setShowFilters(true)}
+          className={`h-8.5 px-3 rounded-full border flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
+            activeFilterCount > 0
+              ? "bg-[var(--accent)] border-[var(--accent)] text-white shadow-2xs"
+              : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
+          }`}
+        >
+          <FiFilter size={13} style={{ color: activeFilterCount > 0 ? "#ffffff" : undefined }} />
+          <span className="text-[11px] font-bold" style={{ color: activeFilterCount > 0 ? "#ffffff" : undefined }}>
+            Filters
+          </span>
+          {activeFilterCount > 0 && (
+            <span className="w-4 h-4 rounded-full bg-white text-[var(--accent)] text-[9px] font-black flex items-center justify-center shadow-xs">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
+
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={() => {
+              setStatusFilter("all");
+              setGameFilter("all");
+              setSearch("");
+            }}
+            className="px-2 h-8.5 rounded-full text-rose-500 hover:bg-rose-500/10 text-[10px] font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer"
           >
-            <div className="p-3 bg-[var(--card)] border border-[var(--border)] rounded-2xl space-y-2.5">
-              {/* Search + Clear Row */}
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1">
-                  <FiSearch size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
-                  <input
-                    type="text"
-                    placeholder="Search tournament, prize, game..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-full h-7 pl-7 pr-7 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[11px] text-[var(--foreground)] placeholder-[var(--muted)]/60 outline-none focus:border-[var(--accent)]"
-                  />
-                  {search && (
-                    <button
-                      onClick={() => setSearch("")}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
-                    >
-                      <FiX size={11} />
-                    </button>
-                  )}
-                </div>
-
-                {(statusFilter !== "all" || gameFilter !== "all" || search) && (
-                  <button
-                    onClick={() => {
-                      setStatusFilter("all");
-                      setGameFilter("all");
-                      setSearch("");
-                    }}
-                    className="h-7 px-2 rounded-lg text-[10px] font-bold text-[var(--muted)] hover:text-rose-400 transition-colors shrink-0"
-                  >
-                    Reset
-                  </button>
-                )}
-              </div>
-
-              {/* Status Chips */}
-              <div className="flex items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden pt-0.5">
-                {[
-                  { id: "all", label: "All", count: stats.total, color: "text-[var(--foreground)]" },
-                  { id: "open", label: "Open", count: stats.open, color: "text-emerald-400" },
-                  { id: "ongoing", label: "Live", count: stats.ongoing, color: "text-blue-400" },
-                  { id: "upcoming", label: "Upcoming", count: stats.upcoming, color: "text-amber-400" },
-                  { id: "ended", label: "Ended", count: stats.ended, color: "text-[var(--muted)]" },
-                ].map((tab) => {
-                  const active = statusFilter === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => setStatusFilter(tab.id)}
-                      className={`h-6.5 px-2.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 border transition-all cursor-pointer whitespace-nowrap ${
-                        active
-                          ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]"
-                          : "bg-[var(--background)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
-                      }`}
-                    >
-                      <span>{tab.label}</span>
-                      <span
-                        className={`text-[9px] px-1 py-0.2 rounded ${
-                          active
-                            ? "bg-[var(--background)]/20 text-[var(--background)] font-bold"
-                            : "bg-[var(--foreground)]/5 " + tab.color
-                        }`}
-                      >
-                        {tab.count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Game Filter Strip */}
-              <div className="flex items-center gap-1 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden pt-0.5 border-t border-[var(--border)]/40">
-                <span className="text-[8.5px] font-bold uppercase tracking-wider text-[var(--muted)] mr-1 shrink-0">
-                  Game:
-                </span>
-                {["all", ...GAMES].map((g) => (
-                  <button
-                    key={g}
-                    type="button"
-                    onClick={() => setGameFilter(g)}
-                    className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-                      gameFilter === g
-                        ? "bg-[var(--accent)] text-white shadow-xs"
-                        : "bg-[var(--background)] text-[var(--muted)] hover:text-[var(--foreground)] border border-[var(--border)]/50"
-                    }`}
-                  >
-                    {g === "all" ? "All Games" : g}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+            Clear
+          </button>
         )}
-      </AnimatePresence>
+      </div>
 
       {/* ── Presets Template Strip (Collapsible) ── */}
       <AnimatePresence>
@@ -1918,6 +1962,11 @@ export default function TournamentsAdminTab() {
           </div>
         </div>
       )}
+
+      {/* ── Filter Bottom Sheet (Portal) ── */}
+      {mounted && typeof document !== "undefined"
+        ? createPortal(filterSheetContent, document.body)
+        : null}
     </div>
   );
 }

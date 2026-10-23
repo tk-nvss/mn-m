@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiCalendar,
@@ -24,7 +25,7 @@ import {
   FiLayers,
   FiFilter,
 } from "react-icons/fi";
-import { LoadingSpinner, SectionTitle } from "@/components/common";
+import { LoadingSpinner, SectionTitle, SearchInput } from "@/components/common";
 
 const EVENT_TYPES = [
   "In-Game Event",
@@ -66,6 +67,11 @@ export default function EventsAdminTab() {
   const [editingId, setEditingId] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [form, setForm] = useState({
     title: "",
@@ -284,157 +290,253 @@ export default function EventsAdminTab() {
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
-  return (
-    <div className="space-y-3.5 pb-8">
-      {/* ── TOP HEADER & STATS CHIPS ── */}
-      <div className="space-y-2.5 pb-3 border-b border-[var(--border)]">
-        <div className="flex items-center justify-between gap-2">
-          {/* Title & Count */}
-          <SectionTitle
-            size="xs"
-            subtitle="Schedule & Scrims"
-            title="Event"
-            highlight="Calendar"
-            icon={<FiCalendar size={13} className="text-[var(--accent)]" />}
+  const activeFilterCount = (statusFilter !== "all" ? 1 : 0) + (gameFilter !== "all" ? 1 : 0);
+  const hasActiveFilters = activeFilterCount > 0 || Boolean(search);
+
+  {/* ── Filter Bottom Sheet Content ── */}
+  const filterSheetContent = (
+    <AnimatePresence>
+      {isFilterOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-end justify-center">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsFilterOpen(false)}
+            className="absolute inset-0 bg-black/60 backdrop-blur-xs"
           />
 
-          {/* Action Buttons (Right side of title) */}
-          <div className="flex items-center gap-1.5 shrink-0">
-            <button
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className={`h-7 px-2.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                isFilterOpen || statusFilter !== "all" || gameFilter !== "all" || search
-                  ? "bg-[var(--foreground)] text-[var(--background)]"
-                  : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06]"
-              }`}
-              title="Filters"
-            >
-              <FiFilter size={11} />
-              <span className="hidden sm:inline">Filters</span>
-              {(statusFilter !== "all" || gameFilter !== "all" || search) && (
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              )}
-            </button>
+          {/* Bottom Sheet Drawer */}
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 28, stiffness: 280 }}
+            className="relative w-full max-w-lg bg-[var(--card)] border-t border-[var(--border)] rounded-t-3xl p-5 shadow-2xl max-h-[85vh] overflow-y-auto no-scrollbar z-10"
+          >
+            {/* Drag Handle Bar */}
+            <div className="flex justify-center -mt-1 mb-4">
+              <div className="w-10 h-1 rounded-full bg-[var(--border)]/80" />
+            </div>
 
-            <button
-              onClick={fetchEvents}
-              className="h-7 w-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] flex items-center justify-center transition-all cursor-pointer"
-              title="Refresh"
-            >
-              <FiRefreshCw size={11} className={loading ? "animate-spin" : ""} />
-            </button>
-
-            <button
-              onClick={() => {
-                if (isFormOpen && !editingId) {
-                  setIsFormOpen(false);
-                } else {
-                  resetForm();
-                  setIsFormOpen(true);
-                }
-              }}
-              className={`h-7 px-2.5 rounded-lg text-[11px] font-black uppercase tracking-wider flex items-center gap-1 transition-all active:scale-95 ${
-                isFormOpen
-                  ? "bg-[var(--foreground)]/10 text-[var(--foreground)] border border-[var(--border)]"
-                  : "bg-[var(--accent)] text-black shadow-sm"
-              }`}
-            >
-              {isFormOpen && !editingId ? (
-                <>
-                  <FiChevronUp size={12} />
-                  <span>Close</span>
-                </>
-              ) : (
-                <>
-                  <FiPlus size={12} />
-                  <span>New Event</span>
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Collapsible Filter Console */}
-        <AnimatePresence>
-          {isFilterOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.18 }}
-              className="overflow-hidden pt-2"
-            >
-              <div className="p-2.5 rounded-xl bg-[var(--card)] border border-[var(--border)] space-y-2.5">
-                {/* Search & Game row */}
-                <div className="flex items-center gap-2">
-                  <div className="relative flex-1">
-                    <FiSearch size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
-                    <input
-                      type="text"
-                      placeholder="Search events..."
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      className="w-full h-7 pl-7 pr-2.5 bg-[var(--background)] border border-[var(--border)] rounded-lg text-xs text-[var(--foreground)] focus:border-[var(--accent)] outline-none"
-                    />
-                  </div>
-
-                  <select
-                    value={gameFilter}
-                    onChange={(e) => setGameFilter(e.target.value)}
-                    className="h-7 px-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-xs font-medium text-[var(--foreground)] focus:border-[var(--accent)] outline-none"
-                  >
-                    <option value="all">All Games</option>
-                    {GAME_OPTIONS.map((g) => (
-                      <option key={g} value={g}>{g}</option>
-                    ))}
-                  </select>
-
-                  {(statusFilter !== "all" || gameFilter !== "all" || search) && (
-                    <button
-                      onClick={() => {
-                        setStatusFilter("all");
-                        setGameFilter("all");
-                        setSearch("");
-                      }}
-                      className="h-7 px-2 rounded-lg text-[10px] font-bold text-[var(--muted)] hover:text-rose-400 transition-colors shrink-0"
-                    >
-                      Reset
-                    </button>
-                  )}
-                </div>
-
-                {/* Status Chips Row */}
-                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
-                  {[
-                    { id: "all", label: "All", count: stats.total, color: "text-[var(--foreground)]" },
-                    { id: "active", label: "Active", count: stats.active, color: "text-emerald-400" },
-                    { id: "upcoming", label: "Upcoming", count: stats.upcoming, color: "text-cyan-400" },
-                    { id: "completed", label: "Completed", count: stats.completed, color: "text-purple-400" },
-                    { id: "featured", label: "Featured ⭐", count: stats.featured, color: "text-amber-400" },
-                  ].map((tab) => {
-                    const isActive = statusFilter === tab.id;
-                    return (
-                      <button
-                        key={tab.id}
-                        onClick={() => setStatusFilter(tab.id)}
-                        className={`h-6 px-2 rounded-md text-[10px] font-bold flex items-center gap-1.5 shrink-0 transition-all ${
-                          isActive
-                            ? "bg-[var(--foreground)] text-[var(--background)]"
-                            : "bg-[var(--background)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
-                        }`}
-                      >
-                        <span className={isActive ? "" : tab.color}>{tab.label}</span>
-                        <span className={`text-[8.5px] px-1 rounded-full ${isActive ? "bg-[var(--background)]/20 text-[var(--background)]" : "bg-[var(--foreground)]/5 text-[var(--muted)]"}`}>
-                          {tab.count}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
+            {/* Sheet Header */}
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-[var(--border)]/60">
+              <div className="flex items-center gap-2">
+                <FiFilter size={15} className="text-[var(--accent)]" />
+                <h3 className="text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
+                  Filter Events
+                </h3>
+                {activeFilterCount > 0 && (
+                  <span className="px-1.5 py-0.2 rounded-full bg-[var(--accent)] text-white text-[9px] font-black">
+                    {activeFilterCount} Active
+                  </span>
+                )}
               </div>
-            </motion.div>
+              <div className="flex items-center gap-2">
+                {(statusFilter !== "all" || gameFilter !== "all") && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStatusFilter("all");
+                      setGameFilter("all");
+                    }}
+                    className="text-[10px] font-bold text-rose-500 hover:underline cursor-pointer uppercase tracking-wider"
+                  >
+                    Reset
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setIsFilterOpen(false)}
+                  className="w-7 h-7 rounded-full bg-[var(--foreground)]/5 text-[var(--muted)] hover:text-[var(--foreground)] flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <FiX size={14} />
+                </button>
+              </div>
+            </div>
+
+            {/* Status Filter Chips */}
+            <div className="mb-4">
+              <p className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-2">
+                Event Status
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {[
+                  { id: "all", label: "All Events", count: stats.total },
+                  { id: "active", label: "Active", count: stats.active },
+                  { id: "upcoming", label: "Upcoming", count: stats.upcoming },
+                  { id: "completed", label: "Completed", count: stats.completed },
+                  { id: "featured", label: "Featured ⭐", count: stats.featured },
+                ].map((tab) => {
+                  const active = statusFilter === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setStatusFilter(tab.id)}
+                      className={`py-2 px-2.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-left flex items-center justify-between ${
+                        active
+                          ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)] shadow-2xs font-bold"
+                          : "bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
+                      }`}
+                    >
+                      <span className="truncate">{tab.label}</span>
+                      <span className={`text-[9px] px-1 rounded font-bold ${active ? "bg-[var(--background)]/20 text-[var(--background)]" : "bg-[var(--foreground)]/5 text-[var(--muted)]"}`}>
+                        {tab.count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Game Filter */}
+            <div className="mb-5">
+              <p className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-2">
+                Game
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {["all", ...GAME_OPTIONS].map((g) => {
+                  const active = gameFilter === g;
+                  return (
+                    <button
+                      key={g}
+                      type="button"
+                      onClick={() => setGameFilter(g)}
+                      className={`py-2 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-center uppercase tracking-wider ${
+                        active
+                          ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)] shadow-2xs font-bold"
+                          : "bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
+                      }`}
+                    >
+                      {g === "all" ? "All Games" : g}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Apply Action */}
+            <div className="pt-2 border-t border-[var(--border)]/60">
+              <button
+                type="button"
+                onClick={() => setIsFilterOpen(false)}
+                style={{ color: "#ffffff" }}
+                className="w-full py-2.5 rounded-xl bg-[var(--accent)] hover:opacity-90 text-white text-xs font-bold transition-all cursor-pointer text-center shadow-xs"
+              >
+                Apply Filters {activeFilterCount > 0 ? `(${activeFilterCount})` : ""}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+
+  return (
+    <div className="space-y-4 pb-8">
+      {/* ── Header Toolbar (Row 1) ── */}
+      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-[var(--border)]/70">
+        {/* Title */}
+        <SectionTitle
+          size="xs"
+          subtitle="Schedule & Scrims"
+          title="Event"
+          highlight="Calendar"
+          icon={<FiCalendar size={13} className="text-[var(--accent)]" />}
+        />
+
+        {/* Action Controls */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            onClick={fetchEvents}
+            disabled={loading}
+            className="w-7 h-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] flex items-center justify-center transition-all cursor-pointer shrink-0"
+            title="Refresh list"
+          >
+            <FiRefreshCw size={11} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (isFormOpen && !editingId) {
+                setIsFormOpen(false);
+              } else {
+                resetForm();
+                setIsFormOpen(true);
+              }
+            }}
+            style={{ color: isFormOpen && !editingId ? undefined : "#ffffff" }}
+            className={`h-7 px-2.5 rounded-lg text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1 transition-all active:scale-95 cursor-pointer shrink-0 shadow-2xs ${
+              isFormOpen && !editingId
+                ? "bg-[var(--foreground)]/10 text-[var(--foreground)]"
+                : "bg-[var(--accent)] text-white hover:brightness-110"
+            }`}
+          >
+            {isFormOpen && !editingId ? (
+              <>
+                <FiChevronUp size={12} />
+                <span>Close</span>
+              </>
+            ) : (
+              <>
+                <FiPlus size={12} color="#ffffff" style={{ color: "#ffffff" }} className="stroke-[2.5]" />
+                <span style={{ color: "#ffffff" }} className="whitespace-nowrap font-black">
+                  New Event
+                </span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* ── Search & Filter Row (Row 2 - Filter side to search) ── */}
+      <div className="flex items-center gap-2 w-full">
+        <SearchInput
+          value={search}
+          onChange={(val) => setSearch(val)}
+          placeholder="Search events, games, types..."
+          variant="pill"
+          className="flex-1"
+        />
+
+        {/* Filter Trigger Button beside search */}
+        <button
+          type="button"
+          aria-label="Filter events"
+          onClick={() => setIsFilterOpen(true)}
+          className={`h-8.5 px-3 rounded-full border flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
+            activeFilterCount > 0
+              ? "bg-[var(--accent)] border-[var(--accent)] text-white shadow-2xs"
+              : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
+          }`}
+        >
+          <FiFilter size={13} style={{ color: activeFilterCount > 0 ? "#ffffff" : undefined }} />
+          <span className="text-[11px] font-bold" style={{ color: activeFilterCount > 0 ? "#ffffff" : undefined }}>
+            Filters
+          </span>
+          {activeFilterCount > 0 && (
+            <span className="w-4 h-4 rounded-full bg-white text-[var(--accent)] text-[9px] font-black flex items-center justify-center shadow-xs">
+              {activeFilterCount}
+            </span>
           )}
-        </AnimatePresence>
+        </button>
+
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={() => {
+              setStatusFilter("all");
+              setGameFilter("all");
+              setSearch("");
+            }}
+            className="px-2 h-8.5 rounded-full text-rose-500 hover:bg-rose-500/10 text-[10px] font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer"
+          >
+            Clear
+          </button>
+        )}
       </div>
 
       {/* ── COLLAPSIBLE FORM DRAWER ── */}
@@ -929,6 +1031,11 @@ export default function EventsAdminTab() {
           </AnimatePresence>
         </div>
       )}
+
+      {/* ── Filter Bottom Sheet (Portal) ── */}
+      {mounted && typeof document !== "undefined"
+        ? createPortal(filterSheetContent, document.body)
+        : null}
     </div>
   );
 }

@@ -60,6 +60,7 @@ import GiveawayAdminTab from "@/components/admin/GiveawayAdminTab";
 import BlocklistTab from "@/components/admin/BlocklistTab";
 import AnalyticsTab from "@/components/admin/AnalyticsTab";
 import ActivityTab from "@/components/admin/ActivityTab";
+import BlogsTab from "@/components/admin/BlogsTab";
 
 
 const MENU_CATEGORIES = [
@@ -102,7 +103,7 @@ const MENU_CATEGORIES = [
       { id: "giveaway", label: "Giveaways", icon: FiGift },
       { id: "events", label: "Events Calendar", icon: FiCalendar },
       { id: "tournaments", label: "Tournaments", icon: FiAward },
-      { id: "blogs", label: "Blogs & Articles", icon: FiFileText, href: "/owner-panal/blogs" },
+      { id: "blogs", label: "Blogs & Articles", icon: FiFileText },
     ]
   },
   {
@@ -119,7 +120,7 @@ const VALID_TABS = [
   "analytics", "activity", "pwa-stats",
   "orders", "transactions", "pricing", "flash-sale", "wallet", "usdt",
   "users", "memberships", "queries", "blocklist",
-  "promotional", "redeem", "coins", "ads", "banners", "giveaway", "events", "tournaments",
+  "promotional", "redeem", "coins", "ads", "banners", "giveaway", "events", "tournaments", "blogs",
   "ui-settings", "api-keys", "settings"
 ];
 
@@ -927,6 +928,9 @@ export default function AdminPanalPage() {
             )}
             {activeTab === "tournaments" && (
               <TournamentsAdminTab />
+            )}
+            {activeTab === "blogs" && (
+              <BlogsTab />
             )}
             {activeTab === "ui-settings" && (
               <UiSettingsTab />

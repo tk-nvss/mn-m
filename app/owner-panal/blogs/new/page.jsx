@@ -46,7 +46,7 @@ export default function NewBlogPage() {
     try {
       const res = await api.post("/api/blogs", payload);
       if (res.data?.success) {
-        router.push("/owner-panal/blogs");
+        router.push("/owner-panal?tab=blogs");
       }
     } catch (error) {
       console.error("Error creating blog", error);
@@ -67,8 +67,8 @@ export default function NewBlogPage() {
               subtitle="Content Publishing"
               icon={
                 <Link
-                  href="/owner-panal/blogs"
-                  className="w-8 h-8 rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--muted)] inline-flex items-center justify-center hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 transition-all shadow-2xs mr-1.5"
+                  href="/owner-panal?tab=blogs"
+                  className="w-7 h-7 rounded-lg text-[var(--muted)] inline-flex items-center justify-center hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-all mr-1.5 cursor-pointer"
                 >
                   <FaArrowLeft size={12} />
                 </Link>

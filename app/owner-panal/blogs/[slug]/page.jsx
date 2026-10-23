@@ -52,7 +52,7 @@ export default function EditBlogPage({ params }) {
       } catch (error) {
         console.error("Error fetching blog", error);
         alert("Blog not found");
-        router.push("/owner-panal/blogs");
+        router.push("/owner-panal?tab=blogs");
       } finally {
         setFetching(false);
       }
@@ -82,7 +82,7 @@ export default function EditBlogPage({ params }) {
     try {
       const res = await api.put(`/api/blogs/${slug}`, payload);
       if (res.data?.success) {
-        router.push("/owner-panal/blogs");
+        router.push("/owner-panal?tab=blogs");
       }
     } catch (error) {
       console.error("Error updating blog", error);
@@ -111,8 +111,8 @@ export default function EditBlogPage({ params }) {
               subtitle="Content Management"
               icon={
                 <Link
-                  href="/owner-panal/blogs"
-                  className="w-8 h-8 rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--muted)] inline-flex items-center justify-center hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 transition-all shadow-2xs mr-1.5"
+                  href="/owner-panal?tab=blogs"
+                  className="w-7 h-7 rounded-lg text-[var(--muted)] inline-flex items-center justify-center hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-all mr-1.5 cursor-pointer"
                 >
                   <FaArrowLeft size={12} />
                 </Link>
