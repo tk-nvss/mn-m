@@ -266,10 +266,10 @@ export default function ActivityTab({ onNavigate }) {
           <button
             type="button"
             onClick={() => setShowFilters((prev) => !prev)}
-            className={`h-8 px-3 rounded-xl border text-[11px] font-semibold tracking-tight transition-all flex items-center gap-1.5 cursor-pointer shrink-0 shadow-2xs ${
+            className={`h-7 px-2.5 rounded-lg text-xs font-semibold tracking-tight transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
               showFilters || isFilterActive
-                ? "bg-[var(--card)] border-[var(--accent)] text-[var(--foreground)] ring-1 ring-[var(--accent)]/30"
-                : "bg-[var(--card)]/80 border-[var(--border)] text-[var(--foreground)] hover:border-[var(--accent)]/40 hover:bg-[var(--card)]"
+                ? "bg-[var(--accent)]/15 text-[var(--accent)]"
+                : "text-[var(--foreground)]/80 hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06]"
             }`}
             title="Change timeframe or filter"
           >
@@ -286,10 +286,10 @@ export default function ActivityTab({ onNavigate }) {
             type="button"
             onClick={() => fetchActivity()}
             disabled={loading}
-            className="w-8 h-8 rounded-xl bg-[var(--card)]/60 border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/40 transition-all flex items-center justify-center cursor-pointer disabled:opacity-50 shrink-0"
+            className="w-7 h-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] active:scale-95 transition-all flex items-center justify-center cursor-pointer disabled:opacity-50 shrink-0"
             title="Refresh feed"
           >
-            <FiRefreshCw size={12} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
+            <FiRefreshCw size={13} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
           </button>
         </div>
       </div>

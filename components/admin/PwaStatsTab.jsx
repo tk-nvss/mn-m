@@ -149,10 +149,10 @@ export default function PwaStatsTab() {
             <button
               type="button"
               onClick={() => setIsFilterOpen((prev) => !prev)}
-              className={`h-8 px-3 rounded-xl border text-[11px] font-semibold tracking-tight transition-all flex items-center gap-1.5 cursor-pointer shrink-0 shadow-2xs ${
+              className={`h-7 px-2.5 rounded-lg text-xs font-semibold tracking-tight transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
                 isFilterOpen
-                  ? "bg-[var(--card)] border-[var(--accent)] text-[var(--foreground)] ring-1 ring-[var(--accent)]/30"
-                  : "bg-[var(--card)]/80 border-[var(--border)] text-[var(--foreground)] hover:border-[var(--accent)]/40 hover:bg-[var(--card)]"
+                  ? "bg-[var(--accent)]/15 text-[var(--accent)]"
+                  : "text-[var(--foreground)]/80 hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06]"
               }`}
               title="Change timeframe"
             >
@@ -203,10 +203,10 @@ export default function PwaStatsTab() {
             aria-label="Refresh"
             type="button"
             onClick={() => fetchStats(days)}
-            className="w-8 h-8 rounded-xl border border-[var(--border)] bg-[var(--card)]/80 text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/40 transition-all flex items-center justify-center cursor-pointer active:scale-95 shadow-2xs"
+            className="w-7 h-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
             title="Refresh statistics"
           >
-            <FiRefreshCw size={12} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
+            <FiRefreshCw size={13} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
           </button>
         </div>
       </div>

@@ -249,10 +249,10 @@ export default function AdsMonetizationTab() {
             type="button"
             onClick={fetchAdsConfig}
             disabled={saving}
-            className="p-2 rounded-xl bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 transition-colors cursor-pointer"
+            className="w-7 h-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-all flex items-center justify-center cursor-pointer shrink-0"
             title="Refresh"
           >
-            <RefreshCcw size={15} />
+            <RefreshCcw size={12} className={saving ? "animate-spin" : ""} />
           </button>
 
           <button

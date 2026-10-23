@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Icons } from "@/components/icons";
 import { LoadingSpinner, SectionTitle } from "@/components/common";
@@ -127,8 +127,38 @@ export default function AdminPanalPage() {
   const router = useRouter();
   const [activeTab, setActiveTabState] = useState("orders");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [menuSearch, setMenuSearch] = useState("");
   const [isOwner, setIsOwner] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const closeSidebar = useCallback(() => {
+    setIsSidebarOpen(false);
+    setMenuSearch("");
+  }, []);
+
+  const filteredMenuCategories = useMemo(() => {
+    const q = menuSearch.trim().toLowerCase();
+    if (!q) return MENU_CATEGORIES;
+
+    return MENU_CATEGORIES.map((category) => {
+      const catMatches = category.category.toLowerCase().includes(q);
+      const matchingItems = category.items.filter(
+        (item) =>
+          catMatches ||
+          item.label.toLowerCase().includes(q) ||
+          item.id.toLowerCase().includes(q)
+      );
+
+      return {
+        ...category,
+        items: matchingItems,
+      };
+    }).filter((category) => category.items.length > 0);
+  }, [menuSearch]);
+
+  const totalMatchingItems = useMemo(() => {
+    return filteredMenuCategories.reduce((acc, cat) => acc + cat.items.length, 0);
+  }, [filteredMenuCategories]);
 
   // Sync activeTab with URL (?tab=xyz) & restore on reload / back-forward
   useEffect(() => {
@@ -174,6 +204,23 @@ export default function AdminPanalPage() {
       window.history.pushState({ tab: tabId }, "", newUrl);
     }
   }, []);
+
+  const handleMenuSearchKeyDown = useCallback((e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const firstMatch = filteredMenuCategories[0]?.items[0];
+      if (firstMatch) {
+        if (firstMatch.href) {
+          router.push(firstMatch.href);
+        } else {
+          handleTabChange(firstMatch.id);
+          closeSidebar();
+        }
+      }
+    } else if (e.key === "Escape") {
+      closeSidebar();
+    }
+  }, [filteredMenuCategories, router, handleTabChange, closeSidebar]);
 
   const [pinPrompt, setPinPrompt] = useState(true);
   const [pinDigits, setPinDigits] = useState(["", "", "", "", "", ""]);
@@ -634,12 +681,13 @@ export default function AdminPanalPage() {
               actionLayout="row"
               action={
                 <button
+                  type="button"
                   aria-label="Open Admin Menu"
                   onClick={() => setIsSidebarOpen(true)}
-                  className="px-2.5 py-1.5 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--foreground)]/[0.04] hover:border-[var(--accent)]/30 transition-all flex items-center gap-1.5 group shrink-0 shadow-2xs cursor-pointer"
+                  className="px-2 py-1 rounded-lg hover:bg-[var(--foreground)]/[0.06] text-[var(--foreground)] hover:text-[var(--accent)] transition-all flex items-center gap-1.5 group shrink-0 cursor-pointer"
                 >
-                  <FiMenu size={15} className="text-[var(--accent)] group-active:scale-90 transition-transform" />
-                  <span className="text-xs font-bold text-[var(--foreground)]">Menu</span>
+                  <FiMenu size={16} className="text-[var(--accent)] group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-bold">Menu</span>
                 </button>
               }
             />
@@ -649,64 +697,98 @@ export default function AdminPanalPage() {
           {/* HAMBURGER SIDEBAR SLIDER MENU */}
           <div
             className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] transition-opacity duration-300 ${isSidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
-            onClick={() => setIsSidebarOpen(false)}
+            onClick={closeSidebar}
           />
           <div
             className={`fixed left-0 top-0 h-[100dvh] w-[85%] max-w-[320px] bg-[var(--background)] border-r border-[var(--border)] z-[2001] shadow-[20px_0_50px_rgba(0,0,0,0.5)] flex flex-col transition-transform duration-300 ease-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
           >
-            <div className="p-4 flex items-center justify-between border-b border-[var(--border)] bg-[var(--card)]/50 backdrop-blur-md">
+            {/* Drawer Header */}
+            <div className="p-3.5 sm:p-4 flex items-center justify-between border-b border-[var(--border)] bg-[var(--card)]/50 backdrop-blur-md">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
-                <h2 className="text-base font-black tracking-widest uppercase text-[var(--foreground)]">Admin Menu</h2>
+                <h2 className="text-sm font-black tracking-widest uppercase text-[var(--foreground)]">Admin Menu</h2>
+                {menuSearch.trim() && (
+                  <span className="text-[9px] font-bold text-[var(--accent)] bg-[var(--accent)]/10 px-1.5 py-0.5 rounded-full border border-[var(--accent)]/20">
+                    {totalMatchingItems}
+                  </span>
+                )}
               </div>
-              <button aria-label="button" 
-                onClick={() => setIsSidebarOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--foreground)]/5 hover:bg-red-500/10 hover:text-red-500 transition-colors"
+              <button
+                type="button"
+                aria-label="Close admin menu"
+                onClick={closeSidebar}
+                className="w-7 h-7 flex items-center justify-center rounded-lg bg-[var(--foreground)]/5 hover:bg-red-500/10 hover:text-red-500 transition-colors cursor-pointer"
               >
-                <FiX size={18} />
+                <FiX size={16} />
               </button>
+            </div>
+
+            {/* Quick Search Input */}
+            <div className="p-2.5 border-b border-[var(--border)] bg-[var(--card)]/20">
+              <div className="relative">
+                <FiSearch size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]/60 pointer-events-none" />
+                <input
+                  type="text"
+                  value={menuSearch}
+                  onChange={(e) => setMenuSearch(e.target.value)}
+                  onKeyDown={handleMenuSearchKeyDown}
+                  placeholder="Quick search tabs (e.g. orders, users)..."
+                  className="w-full pl-8 pr-7 py-1.5 text-xs rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] placeholder:text-[var(--muted)]/50 focus:border-[var(--accent)] focus:outline-none transition-all"
+                />
+                {menuSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setMenuSearch("")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-[var(--muted)] hover:text-[var(--foreground)] cursor-pointer"
+                    title="Clear search"
+                  >
+                    <FiX size={12} />
+                  </button>
+                )}
+              </div>
             </div>
             
             <div className="flex-1 overflow-y-auto custom-scrollbar pb-6">
-              
-              {/* DUAL BALANCE WIDGET INSIDE SIDEBAR */}
-              <div className="p-3 border-b border-[var(--border)] bg-[var(--card)]/30 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[9px] uppercase tracking-widest text-[var(--muted)] font-black">API Provider Balances</span>
-                  <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Live
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className={`p-2 rounded-lg border ${providerBalances.activeProvider === '1game' ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)]'}`}>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[9.5px] font-bold text-[var(--muted)]">1Game</span>
-                      {providerBalances.activeProvider === '1game' && (
-                        <span className="text-[7.5px] font-bold text-emerald-500 bg-emerald-500/15 px-1 py-0.2 rounded">ACTIVE</span>
-                      )}
-                    </div>
-                    <div className="text-sm font-black text-[var(--foreground)] mt-0.5 tabular-nums">
-                      {providerBalances.oneGame?.balance !== undefined ? `$${providerBalances.oneGame.balance.toFixed(2)}` : '---'}
-                    </div>
+              {/* DUAL BALANCE WIDGET INSIDE SIDEBAR (Hidden during search for quick access) */}
+              {!menuSearch.trim() && (
+                <div className="p-3 border-b border-[var(--border)] bg-[var(--card)]/30 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] uppercase tracking-widest text-[var(--muted)] font-black">API Provider Balances</span>
+                    <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Live
+                    </span>
                   </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className={`p-2 rounded-lg border ${providerBalances.activeProvider === '1game' ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)]'}`}>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9.5px] font-bold text-[var(--muted)]">1Game</span>
+                        {providerBalances.activeProvider === '1game' && (
+                          <span className="text-[7.5px] font-bold text-emerald-500 bg-emerald-500/15 px-1 py-0.2 rounded">ACTIVE</span>
+                        )}
+                      </div>
+                      <div className="text-sm font-black text-[var(--foreground)] mt-0.5 tabular-nums">
+                        {providerBalances.oneGame?.balance !== undefined ? `$${providerBalances.oneGame.balance.toFixed(2)}` : '---'}
+                      </div>
+                    </div>
 
-                  <div className={`p-2 rounded-lg border ${providerBalances.activeProvider === 'bluebuff' ? 'bg-cyan-500/10 border-cyan-500/30' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)]'}`}>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[9.5px] font-bold text-[var(--muted)]">Bluebuff</span>
-                      {providerBalances.activeProvider === 'bluebuff' && (
-                        <span className="text-[7.5px] font-bold text-cyan-400 bg-cyan-500/15 px-1 py-0.2 rounded">ACTIVE</span>
-                      )}
-                    </div>
-                    <div className="text-sm font-black text-[var(--foreground)] mt-0.5 tabular-nums">
-                      {providerBalances.bluebuff?.balance !== undefined ? `$${providerBalances.bluebuff.balance.toFixed(2)}` : '---'}
+                    <div className={`p-2 rounded-lg border ${providerBalances.activeProvider === 'bluebuff' ? 'bg-cyan-500/10 border-cyan-500/30' : 'bg-[var(--foreground)]/[0.02] border-[var(--border)]'}`}>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9.5px] font-bold text-[var(--muted)]">Bluebuff</span>
+                        {providerBalances.activeProvider === 'bluebuff' && (
+                          <span className="text-[7.5px] font-bold text-cyan-400 bg-cyan-500/15 px-1 py-0.2 rounded">ACTIVE</span>
+                        )}
+                      </div>
+                      <div className="text-sm font-black text-[var(--foreground)] mt-0.5 tabular-nums">
+                        {providerBalances.bluebuff?.balance !== undefined ? `$${providerBalances.bluebuff.balance.toFixed(2)}` : '---'}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* CATEGORIZED MENU WITH ICONS */}
               <div className="px-3 py-3 space-y-4">
-                {MENU_CATEGORIES.map((category) => (
+                {filteredMenuCategories.map((category) => (
                   <div key={category.category} className="space-y-1">
                     <h3 className="px-2 pb-1 text-[9px] font-black uppercase tracking-[0.12em] text-[var(--muted)]/80 flex items-center justify-between">
                       <span>{category.category}</span>
@@ -717,14 +799,16 @@ export default function AdminPanalPage() {
                         const isActive = activeTab === item.id;
                         const Icon = item.icon;
                         return (
-                          <button aria-label="button"
+                          <button
+                            type="button"
+                            aria-label={item.label}
                             key={item.id}
                             onClick={() => {
                               if (item.href) {
                                 router.push(item.href);
                               } else {
                                 handleTabChange(item.id);
-                                setIsSidebarOpen(false);
+                                closeSidebar();
                               }
                             }}
                             className={`
@@ -754,6 +838,23 @@ export default function AdminPanalPage() {
                     </div>
                   </div>
                 ))}
+
+                {totalMatchingItems === 0 && (
+                  <div className="py-10 px-4 text-center space-y-2">
+                    <div className="w-8 h-8 rounded-full bg-[var(--foreground)]/5 text-[var(--muted)]/60 flex items-center justify-center mx-auto">
+                      <FiSearch size={14} />
+                    </div>
+                    <p className="text-xs font-bold text-[var(--foreground)]">No tabs match "{menuSearch}"</p>
+                    <p className="text-[10px] text-[var(--muted)]/70">Try searching for orders, users, pricing, or settings</p>
+                    <button
+                      type="button"
+                      onClick={() => setMenuSearch("")}
+                      className="text-[10px] font-bold text-[var(--accent)] hover:underline mt-1 cursor-pointer"
+                    >
+                      Clear search
+                    </button>
+                  </div>
+                )}
               </div>
               
             </div>

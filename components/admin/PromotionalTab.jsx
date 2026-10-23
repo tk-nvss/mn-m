@@ -439,7 +439,7 @@ export default function PromotionalTab() {
                  fetchStats();
                  fetchUsers();
                }}
-               className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-2xs shrink-0"
+               className="w-7 h-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
                title="Refresh stats"
             >
               <RefreshCcw size={12} className={loading ? "animate-spin" : ""} />

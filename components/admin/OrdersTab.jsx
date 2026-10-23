@@ -185,15 +185,18 @@ export default function OrdersTab() {
             icon={<ShoppingBag size={13} className="text-[var(--accent)]" />}
           />
 
-          <div className="flex items-center gap-1.5 sm:ml-2">
-            <span className="px-2 py-0.5 rounded-md bg-[var(--card)] border border-[var(--border)] text-[10px] font-bold text-[var(--foreground)] tabular-nums shadow-2xs">
-              {pagination.total} <span className="text-[9px] text-[var(--muted)] font-medium">Orders</span>
+          <div className="flex items-center gap-1 sm:ml-2">
+            <span className="px-1.5 py-0.5 text-[11px] font-bold text-[var(--foreground)] tabular-nums flex items-center gap-1">
+              <span>{pagination.total}</span>
+              <span className="text-[10px] text-[var(--muted)] font-medium">Orders</span>
             </span>
-            <button aria-label="Refresh Orders"
+            <button
+              type="button"
+              aria-label="Refresh Orders"
               onClick={() => { fetchOrdersList(); }}
-              className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+              className="w-7 h-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] active:scale-95 transition-all flex items-center justify-center cursor-pointer"
             >
-              <RefreshCcw size={12} className={loading ? "animate-spin" : ""} />
+              <RefreshCcw size={13} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
             </button>
           </div>
         </div>

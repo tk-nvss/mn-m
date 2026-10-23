@@ -260,18 +260,19 @@ export default function UsersTab() {
           icon={<Users size={12} className="text-[var(--accent)]" />}
         />
 
-        <div className="flex items-center justify-between sm:justify-end gap-3">
-          <div className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:justify-end">
+          <div className="px-1.5 py-0.5 flex items-center gap-1 text-[11px] font-bold text-[var(--foreground)] tabular-nums">
             <Users size={12} className="text-[var(--accent)]" />
-            <span className="text-xs sm:text-sm font-semibold text-[var(--muted)]">
-              {pagination.total} Users 
-            </span>
+            <span>{pagination.total}</span>
+            <span className="text-[10px] text-[var(--muted)] font-medium">Users</span>
           </div>
-          <button aria-label="Refresh users list"
+          <button
+            type="button"
+            aria-label="Refresh users list"
             onClick={() => { fetchUsersStats(); fetchUsersList(users.length > 0); }}
-            className="p-2 sm:p-2.5 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] active:scale-95 transition-all outline-none cursor-pointer"
+            className="w-7 h-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] active:scale-95 transition-all flex items-center justify-center outline-none cursor-pointer"
           >
-            <RefreshCcw size={14} className={loading ? "animate-spin" : ""} />
+            <RefreshCcw size={13} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
           </button>
         </div>
       </div>
@@ -291,9 +292,11 @@ export default function UsersTab() {
           className="flex-1 min-w-0"
         />
         <div className="flex gap-2 shrink-0">
-          <button aria-label="Filter users"
+          <button
+            type="button"
+            aria-label="Filter users"
             onClick={() => setShowFilters(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-2xl border transition-colors bg-[var(--background)] border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)] outline-none shrink-0 cursor-pointer"
+            className="h-9 px-2.5 rounded-xl text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors flex items-center justify-center outline-none shrink-0 cursor-pointer"
           >
             <Filter size={14} />
           </button>

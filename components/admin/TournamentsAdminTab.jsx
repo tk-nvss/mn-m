@@ -593,7 +593,7 @@ export default function TournamentsAdminTab() {
             type="button"
             onClick={fetchAll}
             disabled={loading}
-            className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] flex sm:hidden items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-colors cursor-pointer shrink-0"
+            className="w-7 h-7 rounded-lg flex sm:hidden items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors cursor-pointer shrink-0"
             title="Refresh list"
           >
             <FiRefreshCw size={11} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
@@ -625,10 +625,10 @@ export default function TournamentsAdminTab() {
           <button
             type="button"
             onClick={() => setShowFilters((v) => !v)}
-            className={`h-7 px-2.5 rounded-lg border text-[10.5px] font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
+            className={`h-7 px-2.5 rounded-lg text-[10.5px] font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
               showFilters || statusFilter !== "all" || gameFilter !== "all"
-                ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]"
-                : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
+                ? "bg-[var(--foreground)] text-[var(--background)]"
+                : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06]"
             }`}
           >
             <FiFilter size={11} />
@@ -641,10 +641,10 @@ export default function TournamentsAdminTab() {
           <button
             type="button"
             onClick={() => setShowTemplates((v) => !v)}
-            className={`h-7 px-2.5 rounded-lg border text-[10.5px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 ${
+            className={`h-7 px-2.5 rounded-lg text-[10.5px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 ${
               showTemplates
-                ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]"
-                : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
+                ? "bg-[var(--foreground)] text-[var(--background)]"
+                : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06]"
             }`}
           >
             <FiZap size={11} className={showTemplates ? "text-[var(--background)]" : "text-amber-400"} />
@@ -666,7 +666,7 @@ export default function TournamentsAdminTab() {
             }}
             className={`h-7 px-2.5 rounded-lg text-[10.5px] font-bold uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shrink-0 ${
               showForm
-                ? "bg-[var(--foreground)]/10 text-[var(--foreground)] border border-[var(--border)]"
+                ? "bg-[var(--foreground)]/10 text-[var(--foreground)]"
                 : "bg-[var(--accent)] text-white hover:opacity-90 shadow-2xs"
             }`}
           >
@@ -679,7 +679,7 @@ export default function TournamentsAdminTab() {
             type="button"
             onClick={fetchAll}
             disabled={loading}
-            className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] hidden sm:flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-colors cursor-pointer shrink-0"
+            className="w-7 h-7 rounded-lg hidden sm:flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors cursor-pointer shrink-0"
             title="Refresh list"
           >
             <FiRefreshCw size={11} className={loading ? "animate-spin text-[var(--accent)]" : ""} />

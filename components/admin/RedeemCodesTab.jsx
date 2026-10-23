@@ -120,10 +120,10 @@ export default function RedeemCodesTab() {
                 <button
                     onClick={() => fetchCodes(page)}
                     disabled={loading}
-                    className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-2xs disabled:opacity-50 shrink-0"
+                    className="w-7 h-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] active:scale-95 transition-all flex items-center justify-center cursor-pointer disabled:opacity-50 shrink-0"
                     title="Refresh codes"
                 >
-                    <FiRefreshCw size={12} className={loading ? "animate-spin" : ""} />
+                    <FiRefreshCw size={12} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
                 </button>
             </div>
 

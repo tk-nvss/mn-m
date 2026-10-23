@@ -423,13 +423,13 @@ export default function AnalyticsTab({ onNavigate }) {
               setShowFilters(true);
             }}
             aria-label="Filter timeframe"
-            className={`h-7 px-2.5 rounded-lg border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
+            className={`h-7 px-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
               periodId !== "today"
-                ? "bg-emerald-500 text-white border-emerald-500"
-                : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-emerald-500/30"
+                ? "bg-emerald-500 text-white"
+                : "text-[var(--foreground)]/80 hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06]"
             }`}
           >
-            <FiCalendar size={11} />
+            <FiCalendar size={12} className={periodId !== "today" ? "text-white" : "text-emerald-500"} />
             <span>{selectedPeriod?.label || "Period"}</span>
             {periodId !== "today" && (
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
@@ -453,10 +453,10 @@ export default function AnalyticsTab({ onNavigate }) {
             aria-label="Refresh Stats"
             onClick={() => handleFullRefresh()}
             disabled={loading}
-            className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-2xs disabled:opacity-50 shrink-0"
+            className="w-7 h-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] active:scale-95 transition-all flex items-center justify-center cursor-pointer disabled:opacity-50 shrink-0"
             title="Refresh stats"
           >
-            <FiRefreshCw size={12} className={loading ? "animate-spin" : ""} />
+            <FiRefreshCw size={13} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
           </button>
         </div>
       </div>

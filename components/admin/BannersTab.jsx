@@ -160,10 +160,10 @@ export default function BannersTab({ banners, onRefresh }) {
         />
           <button aria-label="button"
             onClick={onRefresh}
-            className="w-6.5 h-6.5 flex items-center justify-center rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 transition-all cursor-pointer"
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-all cursor-pointer shrink-0"
             title="Refresh List"
           >
-            <RefreshCcw size={11} />
+            <RefreshCcw size={12} />
           </button>
         </div>
 

@@ -209,8 +209,8 @@ export default function GiveawayAdminTab() {
           highlight="Manager"
           icon={<FiGift size={13} className="text-[var(--accent)]" />}
         />
-          <button aria-label="button" onClick={fetchGiveaways} className="w-6.5 h-6.5 flex items-center justify-center rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 transition-all cursor-pointer">
-            <FiRefreshCw size={11} className={loading ? "animate-spin" : ""} />
+          <button aria-label="button" onClick={fetchGiveaways} className="w-7 h-7 flex items-center justify-center rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-all cursor-pointer shrink-0">
+            <FiRefreshCw size={12} className={loading ? "animate-spin" : ""} />
           </button>
         </div>
 

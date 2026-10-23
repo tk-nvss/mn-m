@@ -302,10 +302,10 @@ export default function EventsAdminTab() {
           <div className="flex items-center gap-1.5 shrink-0">
             <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className={`h-7 px-2.5 rounded-lg border text-[11px] font-bold flex items-center gap-1.5 transition-all ${
+              className={`h-7 px-2.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                 isFilterOpen || statusFilter !== "all" || gameFilter !== "all" || search
-                  ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]"
-                  : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]"
+                  ? "bg-[var(--foreground)] text-[var(--background)]"
+                  : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06]"
               }`}
               title="Filters"
             >
@@ -318,7 +318,7 @@ export default function EventsAdminTab() {
 
             <button
               onClick={fetchEvents}
-              className="h-7 w-7 rounded-lg border border-[var(--border)] bg-[var(--card)] text-[var(--muted)] hover:text-[var(--foreground)] flex items-center justify-center transition-all"
+              className="h-7 w-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] flex items-center justify-center transition-all cursor-pointer"
               title="Refresh"
             >
               <FiRefreshCw size={11} className={loading ? "animate-spin" : ""} />
