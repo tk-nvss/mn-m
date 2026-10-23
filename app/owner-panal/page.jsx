@@ -628,7 +628,6 @@ export default function AdminPanalPage() {
             <SectionTitle
               as="h1"
               size="sm"
-              subtitle="Control Center"
               title="Admin"
               highlight={MENU_CATEGORIES.flatMap((c) => c.items).find((i) => i.id === activeTab)?.label || "Console"}
               pulse

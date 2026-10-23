@@ -1,5 +1,8 @@
 import { connectDB } from "@/lib/mongodb";
 import Order from "@/models/Order";
+import User from "@/models/User";
+import WalletTransaction from "@/models/WalletTransaction";
+import { generateTxId } from "@/utils/formatters";
 import jwt from "jsonwebtoken";
 
 /* =========================
@@ -498,12 +501,147 @@ export async function PATCH(req) {
       );
     }
 
-    const allowedStatus = ["pending", "success", "failed", "processing", "cancelled", "refund", "Refund", "REFUND"];
+    const allowedStatus = [
+      "pending",
+      "success",
+      "failed",
+      "processing",
+      "cancelled",
+      "refund",
+      "Refund",
+      "REFUND",
+      "refund_wallet",
+      "REFUND_WALLET",
+      "refund_to_wallet",
+    ];
     if (!allowedStatus.includes(status)) {
       return Response.json(
         { success: false, message: "Invalid status" },
         { status: 400 }
       );
+    }
+
+    const isWalletRefund =
+      status === "refund_wallet" ||
+      status === "REFUND_WALLET" ||
+      status === "refund_to_wallet";
+
+    if (isWalletRefund) {
+      // 1. Fetch current order to check previous state and user
+      const existingOrder = await Order.findOne({ orderId });
+      if (!existingOrder) {
+        return Response.json(
+          { success: false, message: "Order not found" },
+          { status: 404 }
+        );
+      }
+
+      // 2. Prevent duplicate refund to wallet
+      if (existingOrder.refundedToWallet || existingOrder.status === "refund_wallet") {
+        return Response.json(
+          { success: false, message: "This order has already been refunded to user wallet" },
+          { status: 400 }
+        );
+      }
+
+      // 3. Find registered user
+      let user = null;
+      if (existingOrder.userId) {
+        user = await User.findOne({ userId: existingOrder.userId });
+      }
+      if (!user && existingOrder.email) {
+        user = await User.findOne({ email: existingOrder.email.toLowerCase().trim() });
+      }
+
+      if (!user) {
+        return Response.json(
+          {
+            success: false,
+            message: "Cannot refund to wallet: No registered user found for this order (User ID / Email not linked).",
+          },
+          { status: 400 }
+        );
+      }
+
+      // 4. Validate refund amount
+      const refundAmount = Number(existingOrder.price) || 0;
+      if (refundAmount <= 0) {
+        return Response.json(
+          { success: false, message: "Cannot refund to wallet: Order amount is invalid or zero" },
+          { status: 400 }
+        );
+      }
+
+      // 5. Atomically update user wallet balance
+      const currentBalance = Number(user.wallet) || 0;
+      const updatedUser = await User.findOneAndUpdate(
+        { _id: user._id },
+        { $inc: { wallet: refundAmount } },
+        { new: true }
+      );
+
+      if (!updatedUser) {
+        return Response.json(
+          { success: false, message: "Failed to credit user wallet balance" },
+          { status: 500 }
+        );
+      }
+
+      // 6. Record WalletTransaction
+      const txId = generateTxId("REF_");
+      await WalletTransaction.create({
+        transactionId: txId,
+        userId: user.userId || String(user._id),
+        userObjectId: user._id,
+        type: "credit",
+        amount: refundAmount,
+        balanceBefore: currentBalance,
+        balanceAfter: updatedUser.wallet,
+        description: `Refund for Order #${existingOrder.orderId} (${existingOrder.itemName || existingOrder.gameSlug || "Order"})`,
+        status: "success",
+        referenceId: existingOrder.orderId,
+        performedBy: "admin",
+      });
+
+      // 7. Update order status
+      const updatedOrder = await Order.findOneAndUpdate(
+        { orderId },
+        {
+          status: "refund_wallet",
+          topupStatus: "refund",
+          paymentStatus: "refund",
+          refundedToWallet: true,
+          refundedToWalletAt: new Date(),
+          refundedAmount: refundAmount,
+          updatedAt: new Date(),
+        },
+        { new: true }
+      ).select("-gatewayResponse -externalResponse");
+
+      // 8. Trigger push notification to user in background
+      const targetUserId = user.userId || existingOrder.userId;
+      if (targetUserId) {
+        import("@/lib/webPush")
+          .then(({ broadcastPushNotification }) => {
+            broadcastPushNotification(
+              {
+                title: "💰 Wallet Refunded!",
+                body: `₹${refundAmount} has been refunded to your wallet for order #${existingOrder.orderId}.`,
+                url: "/dashboard/wallet",
+                icon: "/logoBB.png",
+                tag: `refund-${existingOrder.orderId}`,
+              },
+              { userId: targetUserId }
+            ).catch(() => {});
+          })
+          .catch(() => {});
+      }
+
+      return Response.json({
+        success: true,
+        message: `Successfully refunded ₹${refundAmount} to user wallet`,
+        data: updatedOrder,
+      });
     }
 
     const update = {

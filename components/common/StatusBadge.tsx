@@ -33,6 +33,8 @@ export type StatusType =
   | "expired"
   | "refund"
   | "refunded"
+  | "refund_wallet"
+  | "refund_to_wallet"
   | "ended"
   | "closed"
   | "draft"
@@ -162,6 +164,21 @@ const STATUS_MAP: Record<string, StatusConfig> = {
   refunded: {
     label: "Refunded",
     className: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    icon: RefreshCcw,
+  },
+  refund_wallet: {
+    label: "Refunded to Wallet",
+    className: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+    icon: RefreshCcw,
+  },
+  refund_to_wallet: {
+    label: "Refunded to Wallet",
+    className: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+    icon: RefreshCcw,
+  },
+  wallet_refunded: {
+    label: "Refunded to Wallet",
+    className: "bg-purple-500/10 text-purple-400 border-purple-500/20",
     icon: RefreshCcw,
   },
   ended: {

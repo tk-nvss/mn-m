@@ -19,23 +19,29 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       enum: [
         "pending", "success", "failed", "processing", "fraud",
-        "PENDING", "SUCCESS", "FAILED", "refund", "REFUND"
+        "PENDING", "SUCCESS", "FAILED", "refund", "REFUND",
+        "refund_wallet", "REFUND_WALLET", "refund_to_wallet"
       ],
       default: "pending"
     },
     // ✅ NEW: Top-up status
     paymentStatus: {
       type: String,
-      enum: ["pending", "success", "failed", "processing", "refund", "REFUND"],
+      enum: ["pending", "success", "failed", "processing", "refund", "REFUND", "refund_wallet", "REFUND_WALLET", "refund_to_wallet"],
       default: "pending",
     },
 
     /* ================= TOP-UP STATUS ================= */
     topupStatus: {
       type: String,
-      enum: ["pending", "success", "failed", "processing", "refund", "REFUND"],
+      enum: ["pending", "success", "failed", "processing", "refund", "REFUND", "refund_wallet", "REFUND_WALLET", "refund_to_wallet"],
       default: "pending",
     },
+
+    /* ================= WALLET REFUND TRACKING ================= */
+    refundedToWallet: { type: Boolean, default: false },
+    refundedToWalletAt: Date,
+    refundedAmount: Number,
 
     /* ================= PLATFORM SOURCE ================= */
     platform: {

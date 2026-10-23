@@ -29,6 +29,14 @@ import { FaWhatsapp } from "react-icons/fa";
 import { StatusBadge, SearchInput, EmptyState, Pagination, InfoTooltip, SectionTitle } from "@/components/common";
 import { formatCurrency, formatDate, formatTime, formatDateTime } from "@/utils";
 
+const ORDER_STATUS_OPTIONS = [
+  { value: "pending", label: "Pending" },
+  { value: "success", label: "Success" },
+  { value: "failed", label: "Failed" },
+  { value: "refund", label: "Refund" },
+  { value: "refund_wallet", label: "Refund to Wallet" },
+];
+
 export default function OrdersTab() {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -104,6 +112,15 @@ export default function OrdersTab() {
   /* ================= UPDATE ORDER STATUS ================= */
   const updateOrderStatus = async (orderId, status) => {
     try {
+      if (
+        status === "refund_wallet" &&
+        !window.confirm(
+          "Are you sure you want to refund this order and credit the amount to the user's wallet?"
+        )
+      ) {
+        return;
+      }
+
       setUpdating(true);
       const token = localStorage.getItem("token");
 
@@ -116,14 +133,22 @@ export default function OrdersTab() {
         body: JSON.stringify({ orderId, status }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const data = await res.json();
         alert(data.message || "Failed to update order");
         return;
       }
 
+      if (status === "refund_wallet") {
+        alert(data.message || "Successfully refunded to user wallet!");
+      }
+
       fetchOrdersList();
     } catch (err) {
+      console.error("Update order status failed:", err);
+      alert("Network error updating order");
+    } finally {
       setUpdating(false);
     }
   };
@@ -285,12 +310,7 @@ export default function OrdersTab() {
                             value={o.status}
                             disabled={updating}
                             onChange={(v) => updateOrderStatus(o.orderId, v)}
-                            options={[
-                              { value: "pending", label: "Pending" },
-                              { value: "success", label: "Success" },
-                              { value: "failed", label: "Failed" },
-                              { value: "refund", label: "Refund" },
-                            ]}
+                            options={ORDER_STATUS_OPTIONS}
                           />
                         </td>
                       </motion.tr>
@@ -357,12 +377,7 @@ export default function OrdersTab() {
                           disabled={updating}
                           onChange={(v) => updateOrderStatus(o.orderId, v)}
                           compact
-                          options={[
-                            { value: "pending", label: "Pending" },
-                            { value: "success", label: "Success" },
-                            { value: "failed", label: "Failed" },
-                            { value: "refund", label: "Refund" },
-                          ]}
+                          options={ORDER_STATUS_OPTIONS}
                         />
                       </div>
                     </div>
@@ -453,12 +468,7 @@ export default function OrdersTab() {
                       updateOrderStatus(selectedOrder.orderId, v);
                       setSelectedOrder(null);
                     }}
-                    options={[
-                      { value: "pending", label: "Pending" },
-                      { value: "success", label: "Success" },
-                      { value: "failed", label: "Failed" },
-                      { value: "refund", label: "Refund" },
-                    ]}
+                    options={ORDER_STATUS_OPTIONS}
                   />
                 </div>
               </div>
@@ -597,21 +607,28 @@ export default function OrdersTab() {
                 <div className="space-y-3">
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted)] ml-1">Process Status</label>
                   <div className="grid grid-cols-2 gap-2">
-                    {["pending", "success", "failed", "refund"].map((st) => (
+                    {[
+                      { value: "pending", label: "Pending" },
+                      { value: "success", label: "Success" },
+                      { value: "failed", label: "Failed" },
+                      { value: "refund", label: "Refund" },
+                      { value: "refund_wallet", label: "Wallet Refund" },
+                    ].map((item) => (
                       <button aria-label="button"
-                        key={st}
+                        key={item.value}
                         onClick={() => {
                           setPage(1);
-                          setFilters({ ...filters, status: filters.status === st ? "" : st });
+                          setFilters({ ...filters, status: filters.status === item.value ? "" : item.value });
                         }}
                         className={`
-                          py-3.5 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all
-                          ${filters.status === st
+                          py-3.5 px-2 rounded-xl border text-[10px] font-black uppercase tracking-wider transition-all truncate
+                          ${item.value === "refund_wallet" ? "col-span-2" : ""}
+                          ${filters.status === item.value
                             ? "bg-[var(--accent)] border-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20"
                             : "border-[var(--border)] bg-[var(--foreground)]/[0.04] text-[var(--muted)] hover:text-[var(--foreground)]"}
                         `}
                       >
-                        {st}
+                        {item.label}
                       </button>
                     ))}
                   </div>
@@ -669,7 +686,10 @@ function StatusDropdown({ value, onChange, options, disabled, compact }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
 
-  const selectedOption = options.find((o) => o.value === value);
+  const selectedOption = options.find((o) => o.value === value) || {
+    value,
+    label: value === "refund_wallet" ? "Refund to Wallet" : value,
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -686,6 +706,17 @@ function StatusDropdown({ value, onChange, options, disabled, compact }) {
     success: "text-emerald-500",
     failed: "text-rose-500",
     refund: "text-blue-500",
+    refund_wallet: "text-purple-400",
+    REFUND_WALLET: "text-purple-400",
+    refund_to_wallet: "text-purple-400",
+  };
+
+  const optionStyles = {
+    pending: "hover:text-amber-500",
+    success: "hover:text-emerald-500",
+    failed: "hover:text-rose-500",
+    refund: "hover:text-blue-500",
+    refund_wallet: "hover:text-purple-400",
   };
 
   return (
@@ -695,18 +726,18 @@ function StatusDropdown({ value, onChange, options, disabled, compact }) {
         disabled={disabled}
         className={`
           flex items-center justify-between gap-2 px-3 
-          ${compact ? "h-8 min-w-[100px]" : "h-10 min-w-[120px]"}
+          ${compact ? "h-8 min-w-[110px]" : "h-10 min-w-[130px]"}
           rounded-xl border border-[var(--border)] bg-[var(--foreground)]/[0.04] 
           text-[10px] font-black uppercase transition-all
           ${disabled ? "opacity-30 cursor-not-allowed" : "hover:bg-[var(--foreground)]/[0.08]"}
           ${isOpen ? "border-[var(--accent)] ring-1 ring-[var(--accent)]/30" : ""}
         `}
       >
-        <div className="flex items-center gap-1.5">
-          <div className={`w-1.5 h-1.5 rounded-full bg-current ${styles[value]}`} />
-          <span className={styles[value]}>{selectedOption?.label}</span>
+        <div className="flex items-center gap-1.5 truncate">
+          <div className={`w-1.5 h-1.5 rounded-full bg-current shrink-0 ${styles[value] || "text-[var(--foreground)]"}`} />
+          <span className={`truncate ${styles[value] || "text-[var(--foreground)]"}`}>{selectedOption?.label}</span>
         </div>
-        <ChevronDown size={12} className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown size={12} className={`shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       <AnimatePresence>
@@ -715,7 +746,7 @@ function StatusDropdown({ value, onChange, options, disabled, compact }) {
             initial={{ opacity: 0, scale: 0.95, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 4 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
-            className="absolute z-[1200] right-0 w-full min-w-[140px] rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl p-1 overflow-hidden backdrop-blur-xl"
+            className="absolute z-[1200] right-0 w-full min-w-[170px] rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl p-1 overflow-hidden backdrop-blur-xl"
           >
             {options.map((option) => (
               <button aria-label="button"
@@ -725,13 +756,22 @@ function StatusDropdown({ value, onChange, options, disabled, compact }) {
                   setIsOpen(false);
                 }}
                 className={`
-                  w-full px-3 py-2 text-left text-[9px] font-black uppercase rounded-lg transition-all
+                  w-full px-3 py-2 text-left text-[9px] font-black uppercase rounded-lg transition-all flex items-center gap-2
                   ${option.value === value
                     ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/20"
-                    : "text-[var(--foreground)]/60 hover:bg-[var(--foreground)]/[0.05] hover:text-[var(--foreground)]"}
+                    : `text-[var(--foreground)]/70 hover:bg-[var(--foreground)]/[0.05] ${optionStyles[option.value] || "hover:text-[var(--foreground)]"}`}
                 `}
               >
-                {option.label}
+                <div
+                  className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                    option.value === value
+                      ? "bg-white"
+                      : styles[option.value]
+                      ? `bg-current ${styles[option.value]}`
+                      : "bg-neutral-400"
+                  }`}
+                />
+                <span className="truncate">{option.label}</span>
               </button>
             ))}
           </motion.div>

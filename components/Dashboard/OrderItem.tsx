@@ -78,7 +78,9 @@ export default function OrderItem({ order, index = 0 }: { order: OrderType, inde
   };
 
   const rawStatus = (
-    localStatus?.toLowerCase().includes("refund")
+    localStatus?.toLowerCase().includes("wallet")
+      ? "refund_wallet"
+      : localStatus?.toLowerCase().includes("refund")
       ? "refund"
       : (localTopupStatus || localStatus || "")
   ).toLowerCase();
