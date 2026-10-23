@@ -6,6 +6,7 @@ import Link from "next/link";
 import AuthGuard from "@/components/AuthGuard";
 import api from "@/lib/axios";
 import { FaArrowLeft, FaSave } from "react-icons/fa";
+import { SectionTitle } from "@/components/common";
 
 export default function EditBlogPage({ params }) {
   const router = useRouter();
@@ -103,11 +104,22 @@ export default function EditBlogPage({ params }) {
     <AuthGuard>
       <section className="min-h-screen bg-[var(--background)] p-4 flex flex-col items-center pt-6 pb-20">
         <div className="w-full max-w-[1600px] bg-[var(--card)] border border-[var(--border)] rounded-3xl p-6 shadow-2xl">
-          <div className="flex items-center gap-4 border-b border-[var(--border)] pb-4 mb-6">
-            <Link href="/owner-panal/blogs" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">
-              <FaArrowLeft size={20} />
-            </Link>
-            <h1 className="text-2xl font-black italic uppercase tracking-tighter text-[var(--foreground)]">Edit Blog</h1>
+          <div className="pb-4 mb-6 border-b border-[var(--border)]">
+            <SectionTitle
+              as="h1"
+              size="lg"
+              subtitle="Content Management"
+              icon={
+                <Link
+                  href="/owner-panal/blogs"
+                  className="w-8 h-8 rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--muted)] inline-flex items-center justify-center hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 transition-all shadow-2xs mr-1.5"
+                >
+                  <FaArrowLeft size={12} />
+                </Link>
+              }
+              title="Edit"
+              highlight="Blog"
+            />
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

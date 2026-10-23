@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FiEye, FiZap, FiTv, FiShield, FiChevronRight } from "react-icons/fi";
+import { SectionTitle } from "@/components/common";
 
 export default function ServiceGridSection({
   title,
@@ -26,22 +27,13 @@ export default function ServiceGridSection({
     <section className="relative mb-4 sm:mb-6 px-1">
       {/* HEADER SYSTEM */}
       {title && (
-        <div className="flex items-center gap-4 mb-8">
-          <div className={`p-2.5 rounded-2xl bg-gradient-to-br ${config.gradient} text-white shadow-lg`}>
-            <Icon size={20} />
-          </div>
-          <div>
-            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tighter italic">
-              {title}
-            </h2>
-            <div className="flex items-center gap-2">
-              <div className="h-1 w-12 bg-[var(--accent)] rounded-full" />
-              <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-[0.2em]">
-                {total} Elite Items
-              </span>
-            </div>
-          </div>
-          <div className="flex-1 h-px bg-gradient-to-r from-[var(--border)] to-transparent" />
+        <div className="mb-6">
+          <SectionTitle
+            size="md"
+            subtitle={`${total || items.length} Elite Items`}
+            icon={<Icon size={12} className="text-[var(--accent)]" />}
+            title={title}
+          />
         </div>
       )}
 

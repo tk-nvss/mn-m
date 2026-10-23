@@ -6,7 +6,7 @@ import AuthGuard from "@/components/AuthGuard";
 import api from "@/lib/axios";
 import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaExternalLinkAlt, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { Filter } from "lucide-react";
-import { SearchInput } from "@/components/common";
+import { SearchInput, SectionTitle } from "@/components/common";
 
 export default function AdminBlogsPage() {
   const [blogs, setBlogs] = useState([]);
@@ -73,26 +73,32 @@ export default function AdminBlogsPage() {
       <section className="min-h-screen bg-[var(--background)] p-3 sm:p-4 flex flex-col items-center">
         <div className="w-full max-w-5xl space-y-3">
           {/* Top Header */}
-          <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[var(--border)]/70">
-            <div className="flex items-center gap-2">
-              <Link href="/owner-panal" className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] flex items-center justify-center hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 transition-all shadow-2xs">
-                <FaArrowLeft size={10} />
-              </Link>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse shrink-0" />
-                <h1 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
-                  Manage Blogs
-                </h1>
-              </div>
-            </div>
-            
-            <Link
-              href="/owner-panal/blogs/new"
-              className="h-7 px-2.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold uppercase tracking-wider text-[10px] transition-all flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
-            >
-              <FaPlus size={9} className="text-white shrink-0" />
-              <span className="text-white font-black whitespace-nowrap">New Blog</span>
-            </Link>
+          <div className="pb-2.5 border-b border-[var(--border)]/70">
+            <SectionTitle
+              as="h1"
+              size="sm"
+              accentColor="purple"
+              subtitle="Content Management"
+              title="Manage"
+              highlight="Blogs"
+              icon={
+                <Link
+                  href="/owner-panal"
+                  className="w-7 h-7 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] inline-flex items-center justify-center hover:text-[var(--foreground)] hover:border-[var(--accent)]/30 transition-all shadow-2xs mr-1"
+                >
+                  <FaArrowLeft size={10} />
+                </Link>
+              }
+              action={
+                <Link
+                  href="/owner-panal/blogs/new"
+                  className="h-7 px-2.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold uppercase tracking-wider text-[10px] transition-all flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
+                >
+                  <FaPlus size={9} className="text-white shrink-0" />
+                  <span className="text-white font-black whitespace-nowrap">New Blog</span>
+                </Link>
+              }
+            />
           </div>
 
           {/* Search Bar + Filter Trigger (Matching OrdersTab style) */}

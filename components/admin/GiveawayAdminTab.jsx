@@ -5,7 +5,7 @@ import {
   FiPlus, FiUsers, FiAward, FiTrash2, FiChevronDown, FiChevronUp,
   FiPlay, FiSquare, FiRefreshCw, FiDownload, FiGift, FiX, FiEdit2,
 } from "react-icons/fi";
-import { StatusBadge, EmptyState, LoadingSpinner } from "@/components/common";
+import { StatusBadge, EmptyState, LoadingSpinner, SectionTitle } from "@/components/common";
 import { Gift, Sparkles, CheckCircle2, UserCheck, Trash2 } from "lucide-react";
 
 const TASK_TYPES = [
@@ -202,12 +202,13 @@ export default function GiveawayAdminTab() {
       {/* Header */}
       <div className="flex items-center justify-between gap-3 pb-2 border-b border-[var(--border)]">
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5">
-            <h2 className="text-xs font-black tracking-wider text-[var(--foreground)] uppercase">Giveaway Manager</h2>
-            <span className="px-1.5 py-0.2 rounded-md bg-[var(--foreground)]/5 border border-[var(--border)] text-[9px] font-bold text-[var(--muted)]">
-              {giveaways?.length || 0}
-            </span>
-          </div>
+        <SectionTitle
+          size="xs"
+          subtitle="Community Drops"
+          title="Giveaway"
+          highlight="Manager"
+          icon={<FiGift size={13} className="text-[var(--accent)]" />}
+        />
           <button aria-label="button" onClick={fetchGiveaways} className="w-6.5 h-6.5 flex items-center justify-center rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 transition-all cursor-pointer">
             <FiRefreshCw size={11} className={loading ? "animate-spin" : ""} />
           </button>

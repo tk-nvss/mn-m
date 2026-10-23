@@ -34,7 +34,7 @@ import {
   FiFilter,
 } from "react-icons/fi";
 import { GiTrophy, GiSwords } from "react-icons/gi";
-import { LoadingSpinner, InfoTooltip } from "@/components/common";
+import { LoadingSpinner, InfoTooltip, SectionTitle } from "@/components/common";
 
 const GAMES = ["mlbb", "freefire", "codm", "honorkings", "other"];
 const STATUSES = ["upcoming", "open", "ongoing", "closed", "ended"];
@@ -578,20 +578,15 @@ export default function TournamentsAdminTab() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-[var(--border)]/70">
         {/* Top Row: Title, Badge + Top Refresh */}
         <div className="flex items-center justify-between gap-2 w-full sm:w-auto">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="text-amber-400 flex items-center justify-center shrink-0">
-              <GiTrophy size={18} />
-            </div>
-            <div className="flex items-center gap-1.5 min-w-0">
-              <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)] truncate">
-                Tournaments Console
-              </h2>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-              <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-[var(--foreground)]/5 text-[var(--muted)] shrink-0">
-                {tournaments.length}
-              </span>
-            </div>
-          </div>
+          <SectionTitle
+            size="xs"
+            accentColor="amber"
+            subtitle="Esports & Custom Rooms"
+            title="Tournaments"
+            highlight="Console"
+            icon={<GiTrophy size={13} className="text-amber-400" />}
+            pulse
+          />
 
           {/* Top Refresh on mobile */}
           <button

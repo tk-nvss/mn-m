@@ -24,7 +24,7 @@ import {
   FiLayers,
   FiFilter,
 } from "react-icons/fi";
-import { LoadingSpinner } from "@/components/common";
+import { LoadingSpinner, SectionTitle } from "@/components/common";
 
 const EVENT_TYPES = [
   "In-Game Event",
@@ -290,17 +290,13 @@ export default function EventsAdminTab() {
       <div className="space-y-2.5 pb-3 border-b border-[var(--border)]">
         <div className="flex items-center justify-between gap-2">
           {/* Title & Count */}
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="text-[var(--accent)] flex items-center justify-center shrink-0">
-              <FiCalendar size={16} />
-            </div>
-            <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--foreground)] truncate">
-              Event Calendar
-            </h2>
-            <span className="px-1.5 py-0.5 rounded-full text-[9.5px] font-bold bg-[var(--foreground)]/5 text-[var(--muted)] shrink-0">
-              {events.length}
-            </span>
-          </div>
+          <SectionTitle
+            size="xs"
+            subtitle="Schedule & Scrims"
+            title="Event"
+            highlight="Calendar"
+            icon={<FiCalendar size={13} className="text-[var(--accent)]" />}
+          />
 
           {/* Action Buttons (Right side of title) */}
           <div className="flex items-center gap-1.5 shrink-0">

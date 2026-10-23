@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import api from "@/lib/axios";
 import { FiFilter, FiShare2, FiMoreHorizontal } from "react-icons/fi";
-import { SearchInput, EmptyState, Pagination, LoadingSpinner } from "@/components/common";
+import { SearchInput, EmptyState, Pagination, LoadingSpinner, SectionTitle } from "@/components/common";
 import { Icons } from "@/components/icons";
 import { formatDate } from "@/utils";
 
@@ -87,42 +87,47 @@ export default function BlogListing({ initialGame = "all" }) {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-[1.5px] bg-[var(--accent)]" />
-            <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.3em] text-[var(--accent)] italic">
-                <Link href="/blog" className="hover:opacity-60 transition-opacity whitespace-nowrap">News & Blogs</Link>
+          <SectionTitle
+            size="lg"
+            subtitle={
+              <>
+                <Link href="/blog" className="hover:opacity-60 transition-opacity whitespace-nowrap">
+                  News & Blogs
+                </Link>
                 {initialGame !== "all" && (
-                    <>
-                        <span className="opacity-20 translate-y-[1px]">/</span>
-                        <span className="text-[var(--muted)] opacity-50 whitespace-nowrap">{initialGame}</span>
-                    </>
+                  <>
+                    <span className="opacity-20 translate-y-[1px]">/</span>
+                    <span className="text-[var(--muted)] opacity-50 whitespace-nowrap">{initialGame}</span>
+                  </>
                 )}
-            </div>
-          </div>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 relative">
-            <h2 className="text-xl sm:text-3xl font-[1000] italic tracking-tighter uppercase leading-none">
-              {initialGame === "all" ? "Latest" : initialGame} <span className="text-[var(--accent)]">News</span>
-            </h2>
-            
-            {/* 🔍 SEARCH & FILTER */}
-            <div className="flex items-center gap-2 w-full md:w-auto relative z-20">
-              <div className="flex-1 md:w-64">
-                <SearchInput
-                  value={search}
-                  onChange={setSearch}
-                  placeholder="SEARCH ARTICLES..."
-                  size="sm"
-                />
-              </div>
-              
-              <button aria-label="button"
-                onClick={() => setShowFilters(!showFilters)}
-                className={`h-9 w-9 flex items-center justify-center rounded-2xl border transition-colors ${showFilters ? 'bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]' : 'bg-[var(--background)] border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)]'}`}
-              >
-                <FiFilter size={14} />
-              </button>
+              </>
+            }
+            title={initialGame === "all" ? "Latest" : initialGame}
+            highlight="News"
+            action={
+              <div className="flex items-center gap-2 w-full md:w-auto relative z-20">
+                <div className="flex-1 md:w-64">
+                  <SearchInput
+                    value={search}
+                    onChange={setSearch}
+                    placeholder="SEARCH ARTICLES..."
+                    size="sm"
+                  />
+                </div>
+                
+                <button
+                  aria-label="button"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`h-9 w-9 flex items-center justify-center rounded-2xl border transition-colors ${
+                    showFilters
+                      ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]"
+                      : "bg-[var(--background)] border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)]"
+                  }`}
+                >
+                  <FiFilter size={14} />
+                </button>
 
-              {/* 🔖 FILTER DROPDOWN */}
+                {/* 🔖 FILTER DROPDOWN */}
               <AnimatePresence>
                 {showFilters && (
                   <motion.div
@@ -186,7 +191,8 @@ export default function BlogListing({ initialGame = "all" }) {
                 )}
               </AnimatePresence>
             </div>
-          </div>
+          }
+        />
         </motion.header>
 
         {/* 📄 BLOG GRID */}

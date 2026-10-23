@@ -7,18 +7,18 @@ export async function POST(req) {
 
     if (!pin || String(pin).trim() !== String(expectedPin).trim()) {
       return NextResponse.json(
-        { success: false, message: "Incorrect PIN. Please try again." },
+        { success: false, message: "Wrong PIN. Please try again." },
         { status: 401 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: "PIN verified successfully.",
+      message: "PIN verified.",
     });
   } catch (error) {
     return NextResponse.json(
-      { success: false, message: "Verification failed. Please try again." },
+      { success: false, message: "Something went wrong. Please try again." },
       { status: 500 }
     );
   }

@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   XCircle
 } from "lucide-react";
+import { SectionTitle } from "@/components/common";
 
 export default function BannersTab({ banners, onRefresh }) {
   const [form, setForm] = useState({
@@ -151,12 +152,12 @@ export default function BannersTab({ banners, onRefresh }) {
       {/* ================= COMPACT HEADER SECTION ================= */}
       <div className="flex items-center justify-between gap-3 pb-2 border-b border-[var(--border)]">
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5">
-            <h2 className="text-xs font-black tracking-wider text-[var(--foreground)] uppercase">Active Banners</h2>
-            <span className="px-1.5 py-0.2 rounded-md bg-[var(--foreground)]/5 border border-[var(--border)] text-[9px] font-bold text-[var(--muted)]">
-              {banners?.length || 0}
-            </span>
-          </div>
+        <SectionTitle
+          size="xs"
+          subtitle="Media & Promos"
+          title="Active"
+          highlight="Banners"
+        />
           <button aria-label="button"
             onClick={onRefresh}
             className="w-6.5 h-6.5 flex items-center justify-center rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 transition-all cursor-pointer"

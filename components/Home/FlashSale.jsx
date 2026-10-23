@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FiZap, FiClock } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { ProductCardSkeleton } from "../Skeleton/Skeleton";
+import { SectionTitle } from "@/components/common";
 
 const DEFAULT_FLASH_ITEMS = [
   {
@@ -135,30 +136,30 @@ export default function FlashSale() {
     <section className="relative py-2.5 px-4 overflow-hidden border-b border-[var(--border)] bg-[var(--card)]/20">
       <div className="max-w-7xl mx-auto">
         {/* Header Strip */}
-        <div className="flex items-center justify-between mb-2.5">
-          <div className="flex items-center gap-2">
-            <div className="p-1 rounded-lg bg-amber-500 text-black shrink-0">
-              <FiZap size={13} fill="currentColor" />
-            </div>
-            <h2 className="text-sm sm:text-base font-black uppercase tracking-wider italic text-[var(--foreground)]">
-              {saleConfig.title.split(" ")[0]}{" "}
-              <span className="text-amber-500">{saleConfig.title.split(" ").slice(1).join(" ") || "Sale"}</span>
-            </h2>
-          </div>
-
-          <div className="flex items-center gap-1.5 bg-[var(--foreground)]/5 border border-[var(--border)] px-2.5 py-1 rounded-xl">
-            <FiClock className="text-amber-500 hidden sm:block" size={11} />
-            <div className="flex items-center gap-1.5 font-bold text-[10px] tabular-nums text-amber-500">
-              <span className="opacity-60 text-[8px] uppercase tracking-widest text-[var(--foreground)] mr-1 hidden md:block">
-                Ends In
-              </span>
-              <span>{String(timeLeft.hours).padStart(2, "0")}</span>
-              <span className="opacity-30 text-[var(--foreground)]">:</span>
-              <span>{String(timeLeft.minutes).padStart(2, "0")}</span>
-              <span className="opacity-30 text-[var(--foreground)]">:</span>
-              <span>{String(timeLeft.seconds).padStart(2, "0")}</span>
-            </div>
-          </div>
+        <div className="mb-2.5">
+          <SectionTitle
+            size="sm"
+            accentColor="amber"
+            subtitle="Limited Time Deals"
+            icon={<FiZap size={10} className="text-amber-500 fill-amber-500" />}
+            title={saleConfig.title.split(" ")[0]}
+            highlight={saleConfig.title.split(" ").slice(1).join(" ") || "Sale"}
+            action={
+              <div className="flex items-center gap-1.5 bg-[var(--foreground)]/5 border border-[var(--border)] px-2.5 py-1 rounded-xl">
+                <FiClock className="text-amber-500 hidden sm:block" size={11} />
+                <div className="flex items-center gap-1.5 font-bold text-[10px] tabular-nums text-amber-500">
+                  <span className="opacity-60 text-[8px] uppercase tracking-widest text-[var(--foreground)] mr-1 hidden md:block">
+                    Ends In
+                  </span>
+                  <span>{String(timeLeft.hours).padStart(2, "0")}</span>
+                  <span className="opacity-30 text-[var(--foreground)]">:</span>
+                  <span>{String(timeLeft.minutes).padStart(2, "0")}</span>
+                  <span className="opacity-30 text-[var(--foreground)]">:</span>
+                  <span>{String(timeLeft.seconds).padStart(2, "0")}</span>
+                </div>
+              </div>
+            }
+          />
         </div>
 
         {/* Horizontal Cards Slider */}

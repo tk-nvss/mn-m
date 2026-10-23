@@ -82,11 +82,11 @@ export default function DashboardLayout({
 
     return (
         <AuthGuard>
-            <section className="min-h-screen px-4 sm:px-6 pt-0 pb-4 sm:pb-6 bg-[var(--background)]">
+            <section className="min-h-screen px-4 sm:px-6 lg:px-8 pt-0 pb-4 sm:pb-6 bg-[var(--background)]">
                 {/* Ambient Glow */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70%] h-[200px] bg-[var(--accent)]/5 blur-[100px] rounded-full pointer-events-none" />
 
-                <div className="max-w-6xl mx-auto relative z-10">
+                <div className="max-w-7xl xl:max-w-[1440px] mx-auto relative z-10">
                     {/* TACTICAL HEADER */}
                     {pathname === "/dashboard" && (
                         <motion.div

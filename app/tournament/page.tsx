@@ -10,7 +10,7 @@ import { GiTrophy } from "react-icons/gi";
 import Image from "next/image";
 import Link from "next/link";
 import { TournamentSkeleton } from "@/components/Skeleton/Skeleton";
-import { StatusBadge } from "@/components/common";
+import { StatusBadge, SectionTitle } from "@/components/common";
 import { formatCoins, formatDateTime } from "@/utils";
 
 interface Tournament {
@@ -255,33 +255,27 @@ export default function TournamentHub() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-[var(--border)]"
+          className="pb-2 border-b border-[var(--border)]"
         >
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-px bg-[var(--accent)]" />
-              <span className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--accent)]">
-                Blue Buff India Esports
-              </span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight leading-none text-[var(--foreground)]">
-              Competitive <span className="text-[var(--accent)]">Arena</span>
-            </h1>
-            <p className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-wide leading-relaxed max-w-md">
-              Join daily community scrims & cash cups. Compete with your squad, win Weekly Passes, Diamonds & cash prizes.
-            </p>
-          </div>
-
-          {/* Quick Action Navigation */}
-          <div className="flex items-center gap-2.5">
-            <Link
-              href="/dashboard/tournaments"
-              style={{ color: "#ffffff" }}
-              className="px-4 py-2.5 rounded-xl bg-[var(--accent)] !text-white text-[9px] font-black uppercase tracking-widest flex items-center gap-2 hover:opacity-90 transition-opacity shadow-sm"
-            >
-              <GiTrophy size={13} /> My Tournaments
-            </Link>
-          </div>
+          <SectionTitle
+            as="h1"
+            size="xl"
+            subtitle="Blue Buff India Esports"
+            title="Competitive"
+            highlight="Arena"
+            description="Join daily community scrims & cash cups. Compete with your squad, win Weekly Passes, Diamonds & cash prizes."
+            action={
+              <div className="flex items-center gap-2.5">
+                <Link
+                  href="/dashboard/tournaments"
+                  style={{ color: "#ffffff" }}
+                  className="px-4 py-2.5 rounded-xl bg-[var(--accent)] !text-white text-[9px] font-black uppercase tracking-widest flex items-center gap-2 hover:opacity-90 transition-opacity shadow-sm"
+                >
+                  <GiTrophy size={13} /> My Tournaments
+                </Link>
+              </div>
+            }
+          />
         </motion.div>
 
         {/* ── FILTER TABS ── */}

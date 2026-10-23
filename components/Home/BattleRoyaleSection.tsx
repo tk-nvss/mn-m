@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { FiChevronRight, FiZap } from "react-icons/fi";
+import { SectionTitle } from "@/components/common";
 
 const brGames = [
   {
@@ -38,17 +39,20 @@ export default function BattleRoyaleSection() {
     <section className="relative py-2 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Section Header - Compact & Premium */}
-        <div className="flex items-center justify-between mb-2 px-0.5">
-          <div className="flex items-center gap-2">
-            <div className="w-1 h-3.5 bg-gradient-to-b from-orange-500 to-amber-500 rounded-full" />
-            <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.25em] italic text-[var(--foreground)] opacity-90">
-              Battle Royale
-            </h2>
-          </div>
-          <span className="text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)]/70 flex items-center gap-1">
-            <FiZap size={10} className="text-amber-500" />
-            Instant UC
-          </span>
+        <div className="mb-2 px-0.5">
+          <SectionTitle
+            size="sm"
+            accentColor="orange"
+            subtitle="India & Global"
+            title="Battle"
+            highlight="Royale"
+            action={
+              <span className="text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)]/70 flex items-center gap-1">
+                <FiZap size={10} className="text-amber-500" />
+                Instant UC
+              </span>
+            }
+          />
         </div>
 
         {/* Cards Grid - Compact 2 Columns */}

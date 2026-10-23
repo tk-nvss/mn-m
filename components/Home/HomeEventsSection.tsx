@@ -10,6 +10,7 @@ import {
   FiMapPin,
   FiExternalLink
 } from "react-icons/fi";
+import { SectionTitle } from "@/components/common";
 
 export default function HomeEventsSection() {
   const [events, setEvents] = useState<any[]>([]);
@@ -39,29 +40,25 @@ export default function HomeEventsSection() {
   return (
     <section className="w-full max-w-7xl mx-auto px-3 sm:px-6 my-6">
       {/* Header Row */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
-            <FiCalendar size={16} />
-          </div>
-          <div>
-            <h2 className="text-sm sm:text-base font-black tracking-tight uppercase text-[var(--foreground)] flex items-center gap-2">
-              Event Calendar & Scrims
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-            </h2>
-            <p className="text-[10px] text-[var(--muted)] font-mono leading-tight">
-              Tournaments, in-game events, and schedule
-            </p>
-          </div>
-        </div>
-
-        <Link
-          href="/events"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--border)] text-xs font-bold text-[var(--accent)] hover:bg-[var(--accent)]/10 hover:border-[var(--accent)]/30 transition-all active:scale-95 group shrink-0"
-        >
-          <span>View All</span>
-          <FiArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
-        </Link>
+      <div className="mb-4">
+        <SectionTitle
+          size="md"
+          subtitle="Tournaments & Schedule"
+          icon={<FiCalendar size={13} className="text-[var(--accent)]" />}
+          title="Event Calendar &"
+          highlight="Scrims"
+          pulse
+          description="Tournaments, in-game events, and verified schedule"
+          action={
+            <Link
+              href="/events"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--border)] text-xs font-bold text-[var(--accent)] hover:bg-[var(--accent)]/10 hover:border-[var(--accent)]/30 transition-all active:scale-95 group shrink-0"
+            >
+              <span>View All</span>
+              <FiArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+          }
+        />
       </div>
 
       {/* Events Carousel / Grid */}

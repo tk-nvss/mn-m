@@ -17,7 +17,7 @@ import {
   Loader2,
   Package
 } from "lucide-react";
-import { SearchInput, InfoTooltip } from "@/components/common";
+import { SearchInput, InfoTooltip, SectionTitle } from "@/components/common";
 
 const API_BASE = "https://game-off-ten.vercel.app/api/v1";
 
@@ -219,19 +219,13 @@ export default function PricingTab({
       {/* ================= TOP BAR ================= */}
       {/* ================= HEADER ================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-        <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
-                <Settings2 size={16} />
-            </div>
-            <div className="flex items-center gap-1.5">
-                <h2 className="text-sm font-black uppercase tracking-wider leading-tight text-[var(--foreground)]">Pricing Config</h2>
-                <InfoTooltip
-                    content="Manage profit margins and item rates"
-                    position="bottom"
-                    iconClassName="text-[var(--muted)] hover:text-blue-400 transition-colors"
-                />
-            </div>
-        </div>
+        <SectionTitle
+          size="xs"
+          subtitle="Margins & Rates"
+          title="Pricing"
+          highlight="Config"
+          icon={<Settings2 size={13} className="text-[var(--accent)]" />}
+        />
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Mode Switcher */}

@@ -22,7 +22,7 @@ import {
   FiArrowUpRight,
 } from "react-icons/fi";
 import { formatCurrency } from "@/utils";
-import InfoTooltip from "@/components/common/InfoTooltip";
+import { InfoTooltip, SectionTitle } from "@/components/common";
 
 const FILTER_TYPES = [
   { id: "all", label: "All Activity", icon: FiZap },
@@ -225,22 +225,15 @@ export default function ActivityTab({ onNavigate }) {
     <div className="w-full space-y-3 pb-8 max-w-7xl mx-auto">
       {/* ── Header Bar ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1 py-1">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
-            <FiZap size={15} />
-          </div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-sm font-black uppercase tracking-tight text-[var(--foreground)]">
-              Live Activity Feed
-            </h2>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <InfoTooltip
-              content="Real-time audit stream for orders, deposits, signups & support"
-              position="bottom"
-              iconClassName="text-[var(--muted)] hover:text-emerald-400 transition-colors"
-            />
-          </div>
-        </div>
+        <SectionTitle
+          size="xs"
+          accentColor="emerald"
+          subtitle="Real-time Stream"
+          icon={<FiZap size={13} className="text-emerald-400" />}
+          title="Live Activity"
+          highlight="Feed"
+          pulse
+        />
 
         {/* Search, Filter Toggle & Refresh */}
         <div className="flex items-center gap-1.5 w-full sm:w-auto">

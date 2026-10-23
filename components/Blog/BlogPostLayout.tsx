@@ -4,7 +4,7 @@ import { motion, useScroll, useSpring } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { Icons } from "@/components/icons";
-import { CopyButton } from "@/components/common";
+import { CopyButton, SectionTitle } from "@/components/common";
 import { ReactNode, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { BLOGS_DATA } from "@/lib/blogData";
@@ -342,13 +342,13 @@ export default function BlogPostLayout({
 
         {/* RELATED ARTICLES */}
         <section className="mt-8 max-w-6xl mx-auto" aria-label="Related Articles">
-          <div className="text-left mb-6">
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--accent)] opacity-60 mb-1 block uppercase">
-              Read More
-            </span>
-            <h2 className="text-2xl md:text-4xl font-black italic tracking-tighter uppercase leading-none">
-              More <span className="text-[var(--accent)]">Guides</span>
-            </h2>
+          <div className="mb-6">
+            <SectionTitle
+              size="lg"
+              subtitle="Read More"
+              title="More"
+              highlight="Guides"
+            />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">

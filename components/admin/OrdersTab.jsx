@@ -26,7 +26,7 @@ import {
   ExternalLink
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
-import { StatusBadge, SearchInput, EmptyState, Pagination, InfoTooltip } from "@/components/common";
+import { StatusBadge, SearchInput, EmptyState, Pagination, InfoTooltip, SectionTitle } from "@/components/common";
 import { formatCurrency, formatDate, formatTime, formatDateTime } from "@/utils";
 
 export default function OrdersTab() {
@@ -133,19 +133,13 @@ export default function OrdersTab() {
       {/* ================= HEADER & SEARCH BAR ================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-[var(--border)]/70">
         <div className="flex items-center justify-between sm:justify-start gap-2.5">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
-              <ShoppingBag size={16} />
-            </div>
-            <div className="flex items-center gap-1.5">
-              <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">Orders</h2>
-              <InfoTooltip
-                content="Customer Transactions & Fulfillment"
-                position="bottom"
-                iconClassName="text-[var(--muted)] hover:text-[var(--accent)] transition-colors"
-              />
-            </div>
-          </div>
+          <SectionTitle
+            size="xs"
+            subtitle="Fulfillment"
+            title="Customer"
+            highlight="Orders"
+            icon={<ShoppingBag size={13} className="text-[var(--accent)]" />}
+          />
 
           <div className="flex items-center gap-1.5 sm:ml-2">
             <span className="px-2 py-0.5 rounded-md bg-[var(--card)] border border-[var(--border)] text-[10px] font-bold text-[var(--foreground)] tabular-nums shadow-2xs">

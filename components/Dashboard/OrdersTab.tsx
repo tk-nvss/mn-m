@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Filter, X, Check, Search, ShoppingBag } from "lucide-react";
-import { SearchInput, EmptyState, Pagination } from "@/components/common";
+import { SearchInput, EmptyState, Pagination, SectionTitle } from "@/components/common";
 import OrderItem, { OrderType } from "./OrderItem";
 import { OrderSkeleton } from "../Skeleton/Skeleton";
 import api from "@/lib/axios";
@@ -64,58 +64,56 @@ export default function OrdersTab() {
     <div className="space-y-6">
       {/* HEADER */}
       <div className="space-y-2.5 relative z-30">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-          <div className="flex items-center gap-2.5">
-            <div className="text-[var(--accent)] flex items-center justify-center shrink-0">
-              <ShoppingBag size={18} />
-            </div>
-            <h3 className="text-base sm:text-lg font-bold text-[var(--foreground)] tracking-tight">Your Orders</h3>
-          </div>
-
-          {/* SEARCH CONSOLE WITH INTEGRATED FILTER */}
-          <div className="relative w-full sm:w-72">
-            <div className="relative flex items-center">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]/50 pointer-events-none flex items-center justify-center">
-                <Search size={13} />
-              </div>
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => {
-                  setPage(1);
-                  setSearch(e.target.value);
-                }}
-                placeholder="Search orders..."
-                className="w-full h-9 pl-9 pr-14 text-xs rounded-full border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] outline-none transition-all placeholder:text-[var(--muted)]/40 focus:border-[var(--accent)]/50 focus:bg-[var(--background)] focus:ring-2 focus:ring-[var(--accent)]/10 font-sans"
-              />
-
-              <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                {search && (
-                  <button
-                    type="button"
-                    aria-label="Clear search"
-                    onClick={() => {
-                      setPage(1);
-                      setSearch("");
-                    }}
-                    className="p-1 rounded-full text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-                  >
-                    <X size={12} />
-                  </button>
-                )}
-                <FilterBottomSheet
-                  status={statusFilter}
-                  setStatus={setStatusFilter}
-                  sortBy={sortBy}
-                  setSortBy={setSortBy}
-                  dateRange={dateRange}
-                  setDateRange={setDateRange}
-                  activeCount={activeFilterCount}
+        <SectionTitle
+          subtitle="ORDER HISTORY"
+          title="YOUR ORDERS"
+          size="md"
+          icon={<ShoppingBag className="w-3.5 h-3.5 text-[var(--accent)]" />}
+          action={
+            <div className="relative w-full sm:w-72">
+              <div className="relative flex items-center">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]/50 pointer-events-none flex items-center justify-center">
+                  <Search size={13} />
+                </div>
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => {
+                    setPage(1);
+                    setSearch(e.target.value);
+                  }}
+                  placeholder="Search orders..."
+                  className="w-full h-9 pl-9 pr-14 text-xs rounded-full border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] outline-none transition-all placeholder:text-[var(--muted)]/40 focus:border-[var(--accent)]/50 focus:bg-[var(--background)] focus:ring-2 focus:ring-[var(--accent)]/10 font-sans"
                 />
+
+                <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                  {search && (
+                    <button
+                      type="button"
+                      aria-label="Clear search"
+                      onClick={() => {
+                        setPage(1);
+                        setSearch("");
+                      }}
+                      className="p-1 rounded-full text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                    >
+                      <X size={12} />
+                    </button>
+                  )}
+                  <FilterBottomSheet
+                    status={statusFilter}
+                    setStatus={setStatusFilter}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    activeCount={activeFilterCount}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          }
+        />
 
         {/* SUB-HEADER INFO: COUNT ON RIGHT BELOW SEARCH */}
         <div className="flex justify-between items-center pr-0.5">
@@ -166,8 +164,8 @@ export default function OrdersTab() {
       {/* MISSION LIST */}
       <div className="min-h-[400px] relative">
         {loading ? (
-          <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map((i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
               <OrderSkeleton key={i} />
             ))}
           </div>
@@ -178,7 +176,7 @@ export default function OrdersTab() {
             description="You haven't placed any topup orders yet. Check out our game catalog to get started!"
           />
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
             <AnimatePresence mode="popLayout">
               {orders.map((order, idx) => (
                 <motion.div
@@ -187,6 +185,7 @@ export default function OrdersTab() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: idx * 0.03, type: "spring", stiffness: 300, damping: 30 }}
+                  className="h-full"
                 >
                   <OrderItem order={order} index={idx} />
                 </motion.div>

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Icons } from "@/components/icons";
-import { LoadingSpinner } from "@/components/common";
+import { LoadingSpinner, SectionTitle } from "@/components/common";
 import {
   FiSearch,
   FiChevronLeft,
@@ -322,7 +322,7 @@ export default function AdminPanalPage() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setPinError(data.message || "Incorrect PIN. Please try again.");
+        setPinError(data.message || "Wrong PIN. Please try again.");
         setPinDigits(["", "", "", "", "", ""]);
         pinInputRefs.current[0]?.focus();
         return;
@@ -336,7 +336,7 @@ export default function AdminPanalPage() {
       setPinPrompt(false);
       window.location.reload();
     } catch (err) {
-      setPinError("Verification error. Please check your network.");
+      setPinError("Connection error. Please try again.");
     } finally {
       setVerifyingPin(false);
     }
@@ -504,38 +504,29 @@ export default function AdminPanalPage() {
   if (pinPrompt) {
     const isComplete = pinDigits.every((d) => d !== "");
     return (
-      <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/85 backdrop-blur-xl text-white p-4">
-        {/* Ambient background glow behind the card */}
-        <div className="absolute w-72 h-72 rounded-full bg-sky-500/10 blur-[100px] pointer-events-none" />
-
+      <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 text-white p-4">
         <form
           onSubmit={handlePinSubmit}
-          className="relative w-full max-w-[390px] bg-gradient-to-b from-neutral-900/95 via-neutral-900/90 to-neutral-950/95 border border-white/10 p-7 sm:p-9 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),0_0_1px_1px_rgba(255,255,255,0.06)] backdrop-blur-2xl flex flex-col items-center gap-6 overflow-hidden"
+          className="w-full max-w-[380px] bg-neutral-900 border border-neutral-800 p-7 sm:p-8 rounded-2xl flex flex-col items-center gap-6"
         >
-          {/* Subtle top light edge */}
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-400/50 to-transparent pointer-events-none" />
-
-          {/* Key Icon Container with Soft Radial Aura */}
-          <div className="relative group">
-            <div className="absolute -inset-2 rounded-2xl bg-sky-500/20 blur-lg opacity-75 group-hover:opacity-100 transition-opacity" />
-            <div className="relative w-14 h-14 rounded-2xl bg-neutral-950 border border-white/10 shadow-inner flex items-center justify-center text-sky-400">
-              <Icons.key size={24} className="stroke-[2.2] drop-shadow-[0_0_8px_rgba(56,189,248,0.5)]" />
-            </div>
+          {/* Key Icon */}
+          <div className="w-12 h-12 rounded-xl bg-neutral-800 border border-neutral-700 flex items-center justify-center text-sky-400">
+            <Icons.key size={22} className="stroke-[2.2]" />
           </div>
 
-          {/* Header Typography */}
-          <div className="text-center space-y-1.5">
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-              Admin Security PIN
-            </h2>
-            <p className="text-xs sm:text-[13px] text-neutral-400 font-normal leading-relaxed">
-              Enter your authorized 6-digit access code
-            </p>
-          </div>
+          {/* Header */}
+          <SectionTitle
+            align="center"
+            size="md"
+            subtitle="Secure Verification"
+            title="Admin"
+            highlight="PIN"
+            description="Enter your 6-digit PIN"
+          />
 
           {/* Error Banner */}
           {pinError && (
-            <div className="w-full py-2.5 px-3.5 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-xs text-center font-medium shadow-[0_0_20px_rgba(239,68,68,0.15)] animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-full py-2 px-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center font-medium">
               {pinError}
             </div>
           )}
@@ -558,12 +549,12 @@ export default function AdminPanalPage() {
                     onChange={(e) => handleDigitChange(idx, e.target.value)}
                     onKeyDown={(e) => handleDigitKeyDown(idx, e)}
                     autoFocus={idx === 0}
-                    className={`w-11 h-14 sm:w-12 sm:h-14 text-center text-xl font-bold rounded-2xl transition-all duration-200 outline-none select-none ${
+                    className={`w-11 h-14 sm:w-12 sm:h-14 text-center text-xl font-bold rounded-xl outline-none select-none transition-colors ${
                       pinError
-                        ? "bg-red-950/20 border-2 border-red-500/60 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)]"
+                        ? "bg-neutral-950 border-2 border-red-500 text-red-400"
                         : isFilled
-                        ? "bg-neutral-900 border-2 border-sky-400/80 text-sky-400 shadow-[0_0_16px_rgba(56,189,248,0.25)] scale-[1.02]"
-                        : "bg-neutral-950/70 border border-white/10 text-white hover:border-white/20 focus:border-sky-400/70 focus:bg-neutral-900/90 focus:shadow-[0_0_15px_rgba(56,189,248,0.2)]"
+                        ? "bg-neutral-950 border-2 border-sky-400 text-sky-400"
+                        : "bg-neutral-950 border border-neutral-800 text-white hover:border-neutral-700 focus:border-sky-400 focus:bg-neutral-900"
                     }`}
                   />
                 );
@@ -591,7 +582,7 @@ export default function AdminPanalPage() {
                   }}
                   className="text-neutral-400 hover:text-red-400 transition-colors cursor-pointer select-none font-medium"
                 >
-                  Clear all
+                  Clear
                 </button>
               )}
             </div>
@@ -602,15 +593,15 @@ export default function AdminPanalPage() {
             aria-label="Unlock Admin Panel"
             type="submit"
             disabled={!isComplete || verifyingPin}
-            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-300 hover:to-blue-400 text-neutral-950 font-bold text-sm tracking-wide shadow-[0_4px_25px_rgba(56,189,248,0.35)] active:scale-[0.98] disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center justify-center gap-2 cursor-pointer mt-1"
+            className="w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-neutral-950 font-bold text-sm tracking-wide disabled:opacity-40 disabled:pointer-events-none transition-colors flex items-center justify-center gap-2 cursor-pointer mt-1"
           >
             {verifyingPin ? (
               <>
                 <span className="w-4 h-4 border-2 border-neutral-950/40 border-t-neutral-950 rounded-full animate-spin" />
-                <span>Verifying credentials...</span>
+                <span>Checking...</span>
               </>
             ) : (
-              "Unlock Console"
+              "Unlock"
             )}
           </button>
         </form>
@@ -633,23 +624,25 @@ export default function AdminPanalPage() {
       <section className="min-h-screen bg-[var(--background)] px-2 sm:px-6 py-3">
         <div className="w-full max-w-[1600px] mx-auto">
           {/* HEADER (HIGHLIGHTED & CLEAN) */}
-          <header className="mb-2.5 flex items-center justify-between gap-2 pb-2.5 border-b border-[var(--border)]/70">
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-gradient-to-r from-[var(--accent)]/15 via-[var(--accent)]/5 to-transparent border border-[var(--accent)]/25">
-                <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse shadow-sm shadow-[var(--accent)]/50" />
-                <h1 className="text-xs sm:text-sm font-black tracking-widest text-[var(--foreground)] uppercase">
-                  Admin 
-                </h1>
-              </div>
-            </div>
-
-            <button aria-label="Open Admin Menu" 
-              onClick={() => setIsSidebarOpen(true)}
-              className="px-2.5 py-1.5 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--foreground)]/[0.04] hover:border-[var(--accent)]/30 transition-all flex items-center gap-1.5 group shrink-0 shadow-2xs cursor-pointer"
-            >
-              <FiMenu size={15} className="text-[var(--foreground)] group-active:scale-90 transition-transform" />
-              <span className="text-xs font-bold text-[var(--foreground)]">Menu</span>
-            </button>
+          <header className="mb-2.5 pb-2.5 border-b border-[var(--border)]/70">
+            <SectionTitle
+              as="h1"
+              size="sm"
+              subtitle="Control Center"
+              title="Admin"
+              highlight={MENU_CATEGORIES.flatMap((c) => c.items).find((i) => i.id === activeTab)?.label || "Console"}
+              pulse
+              action={
+                <button
+                  aria-label="Open Admin Menu"
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="px-2.5 py-1.5 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--foreground)]/[0.04] hover:border-[var(--accent)]/30 transition-all flex items-center gap-1.5 group shrink-0 shadow-2xs cursor-pointer"
+                >
+                  <FiMenu size={15} className="text-[var(--accent)] group-active:scale-90 transition-transform" />
+                  <span className="text-xs font-bold text-[var(--foreground)]">Menu</span>
+                </button>
+              }
+            />
           </header>
 
 

@@ -28,7 +28,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
-import { SearchInput, StatusBadge, CopyButton, EmptyState, Pagination } from "@/components/common";
+import { SearchInput, StatusBadge, CopyButton, EmptyState, Pagination, SectionTitle } from "@/components/common";
 import { formatDate, formatDateTime, formatCurrency, formatNumber } from "@/utils";
 
 export default function UsersTab() {
@@ -238,9 +238,13 @@ export default function UsersTab() {
     <div className="space-y-4 sm:space-y-6 pb-10">
       {/* ================= HEADER ================= */}
       <div className="flex items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[var(--foreground)]">Users</h2>
-        </div>
+        <SectionTitle
+          size="xs"
+          subtitle="Directory"
+          title="User"
+          highlight="Accounts"
+          icon={<Users size={12} className="text-[var(--accent)]" />}
+        />
 
         <div className="flex items-center justify-between sm:justify-end gap-3">
           <div className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-[var(--foreground)]/[0.03] border border-[var(--border)] flex items-center gap-2">

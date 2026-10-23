@@ -8,6 +8,7 @@ import {
   FiUsers,
   FiCpu
 } from "react-icons/fi";
+import { SectionTitle } from "@/components/common";
 
 const HIGHLIGHTS = [
   {
@@ -59,8 +60,12 @@ export default function TrustHighlights() {
     <section className="py-2.5 bg-[var(--background)] px-4 sm:px-6 overflow-hidden">
       <div className="max-w-6xl mx-auto">
         <div className="mb-2.5">
-            <h2 className="text-base sm:text-lg font-[1000] uppercase text-[var(--foreground)] italic tracking-tighter">WHY <span className="text-[var(--accent)]">US</span></h2>
-            <div className="w-8 h-[1px] bg-[var(--accent)]/40 mt-0.5" />
+          <SectionTitle
+            size="sm"
+            subtitle="Guaranteed Excellence"
+            title="Why"
+            highlight="Us"
+          />
         </div>
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
           {HIGHLIGHTS.map((item, i) => (

@@ -84,7 +84,7 @@ export default function OrderItem({ order, index = 0 }: { order: OrderType, inde
   ).toLowerCase();
 
   return (
-    <div className={`relative overflow-hidden rounded border transition-colors ${index % 2 === 0 ? 'bg-[var(--background)] border-[var(--border)]' : 'bg-[var(--foreground)]/[0.04] border-[var(--foreground)]/[0.1]'}`}>
+    <div className={`relative overflow-hidden rounded-xl border transition-colors flex flex-col justify-between h-full ${index % 2 === 0 ? 'bg-[var(--background)] border-[var(--border)]' : 'bg-[var(--foreground)]/[0.04] border-[var(--foreground)]/[0.1]'}`}>
 
       {/* TOP STATUS BAR */}
       <div className="px-3.5 py-1.5 flex items-center justify-between border-b border-[var(--border)]/50 bg-[var(--foreground)]/[0.02] gap-2">
@@ -114,7 +114,7 @@ export default function OrderItem({ order, index = 0 }: { order: OrderType, inde
       </div>
 
       {/* CONTENT AREA */}
-      <div className="p-3.5">
+      <div className="p-3.5 flex-1 flex flex-col justify-between">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0 flex flex-col gap-1.5">
             <h3 className="text-sm md:text-base font-black text-[var(--foreground)] uppercase leading-none mt-1">

@@ -23,6 +23,7 @@ import {
   Gamepad2,
   ImageIcon
 } from "lucide-react";
+import { SectionTitle } from "@/components/common";
 import { LoadingSpinner, InfoTooltip } from "@/components/common";
 
 const ASSET_PRESETS = [
@@ -235,21 +236,15 @@ export default function FlashSaleTab() {
     <div className="space-y-6 max-w-6xl">
       {/* HEADER BAR */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--border)]">
-        <div>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-              <Zap size={17} />
-            </div>
-            <div>
-              <h1 className="text-sm sm:text-base font-black uppercase tracking-wider text-[var(--foreground)]">
-                Flash Sale & Deals Manager
-              </h1>
-              <p className="text-[11px] text-[var(--muted)]">
-                Feature discounted game items, customize deal & strike-through prices, and manage countdown timers
-              </p>
-            </div>
-          </div>
-        </div>
+        <SectionTitle
+          size="sm"
+          accentColor="amber"
+          subtitle="Deals & Countdown"
+          icon={<Zap size={13} className="text-amber-400" />}
+          title="Flash Sale &"
+          highlight="Deals Manager"
+          description="Feature discounted game items, customize deal prices, and manage countdown timers"
+        />
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <button

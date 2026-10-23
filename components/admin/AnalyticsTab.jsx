@@ -11,7 +11,7 @@ import {
   Sparkles, MessageSquare, BarChart3, Coins, Bell, ChevronRight,
   UserPlus, UserCheck, Zap, Activity, Globe
 } from "lucide-react";
-import { InfoTooltip } from "@/components/common";
+import { InfoTooltip, SectionTitle } from "@/components/common";
 import { formatCurrency, formatNumber } from "@/utils";
 
 const PERIODS = [
@@ -403,17 +403,14 @@ export default function AnalyticsTab({ onNavigate }) {
       
       {/* Top Header & Filter Toolbar */}
       <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[var(--border)]/70">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-          <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
-            Sales & Growth Analytics
-          </h2>
-          <InfoTooltip
-            content="Real-time revenue, customer acquisition, cohort metrics & store performance"
-            position="bottom"
-            iconClassName="text-[var(--muted)] hover:text-emerald-400 transition-colors"
-          />
-        </div>
+        <SectionTitle
+          size="xs"
+          accentColor="emerald"
+          subtitle="Store Performance"
+          title="Sales & Growth"
+          highlight="Analytics"
+          pulse
+        />
 
         {/* Right side: Filter & Refresh */}
         <div className="flex items-center gap-1.5 shrink-0">

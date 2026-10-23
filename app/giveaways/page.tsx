@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Icons } from "@/components/icons";
-import { EmptyState } from "@/components/common";
+import { EmptyState, SectionTitle } from "@/components/common";
 import GiveawayEntryModal from "@/components/Giveaway/GiveawayEntryModal";
 import { useAuthStore } from "@/store/useAuthStore";
 import { FiGift, FiZap, FiAward, FiPackage, FiShare2, FiChevronRight, FiCheckCircle, FiInfo, FiHelpCircle, FiClock, FiUsers } from "react-icons/fi";
@@ -85,29 +85,30 @@ export default function GiveawaysPage() {
       
       {/* ── CLEAN MINIMAL HEADER ───────────────────────────── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-5">
-        <div className="flex items-center justify-between gap-3 pb-3 border-b border-[var(--border)]/60">
-          <div className="min-w-0">
-            <h1 className="text-base sm:text-lg font-bold text-[var(--foreground)] tracking-tight truncate flex items-center gap-2">
-              <span>Giveaways & Free Drops</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            </h1>
-            <p className="text-xs text-[var(--muted)] mt-0.5 truncate">
-              Enter free drops to win MLBB Diamonds, Passes & Vouchers
-            </p>
-          </div>
-
-          <button
-            onClick={() => setShowInfo(!showInfo)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${
-              showInfo
-                ? "bg-[var(--accent)] text-white"
-                : "bg-[var(--card)] hover:bg-[var(--card)]/70 text-[var(--muted)] hover:text-[var(--foreground)]"
-            }`}
-            title="How it works"
-          >
-            <FiInfo size={14} className={showInfo ? "text-white" : "text-[var(--accent)]"} />
-            <span className="hidden sm:inline">How it works</span>
-          </button>
+        <div className="pb-3 border-b border-[var(--border)]/60">
+          <SectionTitle
+            as="h1"
+            size="md"
+            subtitle="Free Rewards & Drops"
+            title="Giveaways & Free"
+            highlight="Drops"
+            pulse
+            description="Enter free drops to win MLBB Diamonds, Passes & Vouchers"
+            action={
+              <button
+                onClick={() => setShowInfo(!showInfo)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${
+                  showInfo
+                    ? "bg-[var(--accent)] text-white"
+                    : "bg-[var(--card)] hover:bg-[var(--card)]/70 text-[var(--muted)] hover:text-[var(--foreground)]"
+                }`}
+                title="How it works"
+              >
+                <FiInfo size={14} className={showInfo ? "text-white" : "text-[var(--accent)]"} />
+                <span className="hidden sm:inline">How it works</span>
+              </button>
+            }
+          />
         </div>
 
         {/* ── EXPANDABLE "HOW IT WORKS" INFO DRAWER ─────────────────────── */}
