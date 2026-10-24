@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Loader2, Users, Crown, ShieldCheck, Calendar, Clock, UserX, Plus, RefreshCw } from "lucide-react";
-import { SectionTitle, LoadingSpinner } from "@/components/common";
+import { Loader2, Users, Crown, ShieldCheck, Calendar, Clock, UserX, Plus, RefreshCw } from "lucide-react";
+import { SectionTitle, LoadingSpinner, SearchInput } from "@/components/common";
 
 export default function MembershipsTab() {
   const [memberships, setMemberships] = useState([]);
@@ -21,10 +21,7 @@ export default function MembershipsTab() {
   const [expiryDate, setExpiryDate] = useState("");
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 500);
-    return () => clearTimeout(handler);
+    setDebouncedSearch(search);
   }, [search]);
 
   useEffect(() => {
@@ -300,13 +297,11 @@ export default function MembershipsTab() {
           </div>
           
           <div className="relative w-full sm:w-60">
-            <Search size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
-            <input
-              type="text"
-              placeholder="Search by name, email or ID..."
+            <SearchInput
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg pl-7 pr-2.5 py-1 text-xs text-[var(--foreground)] font-medium focus:outline-none focus:border-purple-500 transition-all placeholder:text-[var(--muted)]/50 shadow-2xs"
+              onChange={setSearch}
+              placeholder="Search by name, email or ID..."
+              size="sm"
             />
           </div>
         </div>

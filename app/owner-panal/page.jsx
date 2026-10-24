@@ -4,7 +4,7 @@
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Icons } from "@/components/icons";
-import { LoadingSpinner, SectionTitle } from "@/components/common";
+import { LoadingSpinner, SectionTitle, SearchInput } from "@/components/common";
 import {
   FiSearch,
   FiChevronLeft,
@@ -727,27 +727,13 @@ export default function AdminPanalPage() {
 
             {/* Quick Search Input */}
             <div className="p-2.5 border-b border-[var(--border)] bg-[var(--card)]/20">
-              <div className="relative">
-                <FiSearch size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]/60 pointer-events-none" />
-                <input
-                  type="text"
-                  value={menuSearch}
-                  onChange={(e) => setMenuSearch(e.target.value)}
-                  onKeyDown={handleMenuSearchKeyDown}
-                  placeholder="Quick search tabs (e.g. orders, users)..."
-                  className="w-full pl-8 pr-7 py-1.5 text-xs rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] placeholder:text-[var(--muted)]/50 focus:border-[var(--accent)] focus:outline-none transition-all"
-                />
-                {menuSearch && (
-                  <button
-                    type="button"
-                    onClick={() => setMenuSearch("")}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-[var(--muted)] hover:text-[var(--foreground)] cursor-pointer"
-                    title="Clear search"
-                  >
-                    <FiX size={12} />
-                  </button>
-                )}
-              </div>
+              <SearchInput
+                value={menuSearch}
+                onChange={setMenuSearch}
+                onKeyDown={handleMenuSearchKeyDown}
+                placeholder="Quick search tabs..."
+                size="sm"
+              />
             </div>
             
             <div className="flex-1 overflow-y-auto custom-scrollbar pb-6">

@@ -4,11 +4,9 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiRefreshCw,
-  FiSearch,
   FiChevronLeft,
   FiChevronRight,
   FiFilter,
-  FiX,
   FiShoppingCart,
   FiPocket,
   FiUsers,
@@ -22,7 +20,7 @@ import {
   FiArrowUpRight,
 } from "react-icons/fi";
 import { formatCurrency } from "@/utils";
-import { InfoTooltip, SectionTitle } from "@/components/common";
+import { InfoTooltip, SectionTitle, SearchInput } from "@/components/common";
 
 const FILTER_TYPES = [
   { id: "all", label: "All Activity", icon: FiZap },
@@ -52,17 +50,10 @@ export default function ActivityTab({ onNavigate }) {
   const [totalPages, setTotalPages] = useState(1);
   const [totalEvents, setTotalEvents] = useState(0);
 
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-
   const isFilterActive = type !== "all" || timeRange !== "today";
 
-  // 300ms search debounce
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(search);
-      setPage(1);
-    }, 300);
-    return () => clearTimeout(timer);
+    setPage(1);
   }, [search]);
 
   const fetchActivity = useCallback(async () => {
@@ -77,7 +68,7 @@ export default function ActivityTab({ onNavigate }) {
         type,
       });
 
-      if (debouncedSearch.trim()) params.append("search", debouncedSearch.trim());
+      if (search.trim()) params.append("search", search.trim());
 
       // Timezone-accurate IST filtering
       if (timeRange === "today") {
@@ -122,7 +113,7 @@ export default function ActivityTab({ onNavigate }) {
     } finally {
       setLoading(false);
     }
-  }, [page, type, debouncedSearch, timeRange]);
+  }, [page, type, search, timeRange]);
 
   useEffect(() => {
     fetchActivity();
@@ -238,28 +229,12 @@ export default function ActivityTab({ onNavigate }) {
         {/* Search, Filter Toggle & Refresh */}
         <div className="flex items-center gap-1.5 w-full sm:w-auto">
           <div className="relative flex-1 sm:w-64">
-            <FiSearch size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
-            <input
-              type="text"
-              placeholder="Search user, product, email..."
+            <SearchInput
               value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="w-full h-8 pl-7 pr-7 text-[10px] bg-[var(--card)]/60 border border-[var(--border)] rounded-xl focus:outline-none focus:border-[var(--accent)] text-[var(--foreground)] placeholder-[var(--muted)]/60"
+              onChange={setSearch}
+              placeholder="Search user, product, email..."
+              size="sm"
             />
-            {search && (
-              <button
-                onClick={() => {
-                  setSearch("");
-                  setPage(1);
-                }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)] cursor-pointer"
-              >
-                <FiX size={11} />
-              </button>
-            )}
           </div>
 
           {/* Date / Filter Toggle Button showing active selection */}

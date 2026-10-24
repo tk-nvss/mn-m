@@ -9,7 +9,6 @@ import {
   FiGlobe,
   FiStar,
   FiList,
-  FiSearch,
   FiRefreshCw,
   FiPlus,
   FiChevronLeft,
@@ -199,6 +198,7 @@ export default function CoinsAdminTab() {
     }
   }, [token, page, userSearch]);
 
+  useEffect(() => { setPage(1); }, [userSearch, historySearch]);
   useEffect(() => { if (view === "tasks") fetchTasks(); }, [view, fetchTasks]);
   useEffect(() => { if (view === "claims") fetchClaims(); }, [view, fetchClaims]);
   useEffect(() => { if (view === "users") fetchUsers(); }, [view, fetchUsers]);
@@ -425,14 +425,12 @@ export default function CoinsAdminTab() {
       {view === "users" && (
         <div className="space-y-4">
           <div className="flex gap-3 items-center">
-            <div className="relative flex-1">
-              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]/40 text-xs" />
-              <input
-                type="text"
-                placeholder="Search by name, email or ID..."
+            <div className="flex-1">
+              <SearchInput
                 value={userSearch}
-                onChange={(e) => { setUserSearch(e.target.value); setPage(1); }}
-                className="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl pl-9 pr-3 py-2 text-[10px] font-bold outline-none focus:border-[var(--accent)]/40"
+                onChange={setUserSearch}
+                placeholder="Search by name, email or ID..."
+                size="sm"
               />
             </div>
             <button aria-label="button" onClick={fetchUsers} className="text-[var(--muted)]/40 hover:text-[var(--muted)] transition-colors">
@@ -532,14 +530,12 @@ export default function CoinsAdminTab() {
       {view === "history" && (
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]/40 text-xs" />
-              <input
-                type="text"
-                placeholder="Search by User ID, Description, ID..."
+            <div className="flex-1">
+              <SearchInput
                 value={historySearch}
-                onChange={(e) => { setHistorySearch(e.target.value); setPage(1); }}
-                className="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl pl-9 pr-3 py-2 text-[10px] font-bold outline-none focus:border-[var(--accent)]/40"
+                onChange={setHistorySearch}
+                placeholder="Search by User ID, Description, ID..."
+                size="sm"
               />
             </div>
             <div className="flex gap-2">

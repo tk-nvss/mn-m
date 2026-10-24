@@ -15,7 +15,7 @@ export interface SearchInputProps {
   /** Whether data is currently loading (shows a spinner) */
   loading?: boolean;
   /** Size variant */
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
   /** Shape / radius variant */
   variant?: "pill" | "rounded";
   /** Auto focus on mount */
@@ -24,9 +24,18 @@ export interface SearchInputProps {
   className?: string;
   /** Disabled state */
   disabled?: boolean;
+  /** Key down handler for input */
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const SIZE_STYLES = {
+  xs: {
+    container: "h-7 sm:h-8",
+    input: "pl-7 pr-6 text-[10px] sm:text-xs",
+    searchIcon: 11,
+    searchIconLeft: "left-2.5",
+    clearIcon: 10,
+  },
   sm: {
     container: "h-9",
     input: "pl-9 pr-8 text-xs",
@@ -61,6 +70,7 @@ export default function SearchInput({
   autoFocus = false,
   className = "",
   disabled = false,
+  onKeyDown,
 }: SearchInputProps) {
   // Local state for instant typing responsiveness
   const [localValue, setLocalValue] = useState(value);
@@ -116,6 +126,7 @@ export default function SearchInput({
         type="text"
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value)}
+        onKeyDown={onKeyDown}
         placeholder={placeholder}
         disabled={disabled}
         autoFocus={autoFocus}

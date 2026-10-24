@@ -14,14 +14,13 @@ import {
   FiAlertCircle,
   FiArrowLeft,
   FiRefreshCw,
-  FiSearch,
   FiFilter,
   FiClock,
   FiArrowDownLeft,
   FiArrowUpRight,
 } from "react-icons/fi";
 import { Icons } from "@/components/icons";
-import { CopyButton, LoadingSpinner, SectionTitle, StatusBadge } from "@/components/common";
+import { CopyButton, LoadingSpinner, SectionTitle, StatusBadge, SearchInput } from "@/components/common";
 import { formatCurrency, formatNumber } from "@/utils";
 import { TransactionSkeleton } from "../Skeleton/Skeleton";
 import api from "@/lib/axios";
@@ -671,7 +670,6 @@ function TransactionHistorySection({ onResumeUsdt }: { onResumeUsdt: (txn: any) 
   const [status, setStatus] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [search, setSearch] = useState("");
-  const [searchValue, setSearchValue] = useState("");
 
   return (
     <div className="pt-8 border-t border-[var(--border)]/20">
@@ -684,44 +682,20 @@ function TransactionHistorySection({ onResumeUsdt }: { onResumeUsdt: (txn: any) 
         <div className="flex items-center gap-2 w-full sm:w-auto">
           {/* SEARCH CONSOLE WITH INTEGRATED FILTER */}
           <div className="relative w-full sm:w-64">
-            <div className="relative flex items-center">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]/50 pointer-events-none flex items-center justify-center">
-                <FiSearch size={13} />
-              </div>
-              <input 
-                type="text" 
-                placeholder="Search history..."
-                value={searchValue}
-                onChange={(e) => {
-                  setSearchValue(e.target.value);
-                  setSearch(e.target.value);
-                }}
-                className="w-full h-9 pl-9 pr-14 text-xs rounded-full border border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[var(--foreground)] outline-none transition-all placeholder:text-[var(--muted)]/40 focus:border-[var(--accent)]/50 focus:bg-[var(--background)] focus:ring-2 focus:ring-[var(--accent)]/10 font-sans"
-              />
-
-              <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                {searchValue && (
-                  <button
-                    type="button"
-                    aria-label="Clear search"
-                    onClick={() => {
-                      setSearchValue("");
-                      setSearch("");
-                    }}
-                    className="p-1 rounded-full text-[var(--muted)] hover:text-[var(--foreground)] transition-colors cursor-pointer"
-                  >
-                    <Icons.x size={12} />
-                  </button>
-                )}
-                <WalletFilterBottomSheet
-                  status={status}
-                  setStatus={setStatus}
-                  typeFilter={typeFilter}
-                  setTypeFilter={setTypeFilter}
-                />
-              </div>
-            </div>
+            <SearchInput
+              value={search}
+              onChange={setSearch}
+              placeholder="Search history..."
+              size="sm"
+            />
           </div>
+
+          <WalletFilterBottomSheet
+            status={status}
+            setStatus={setStatus}
+            typeFilter={typeFilter}
+            setTypeFilter={setTypeFilter}
+          />
 
           <TransactionHistoryRefresh />
         </div>

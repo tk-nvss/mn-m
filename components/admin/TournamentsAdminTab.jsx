@@ -22,7 +22,6 @@ import {
   FiStar,
   FiChevronRight,
   FiLayers,
-  FiSearch,
   FiMail,
   FiPhone,
   FiShield,
@@ -1665,22 +1664,12 @@ export default function TournamentsAdminTab() {
             {/* Filter & Search Toolbar */}
             <div className="px-3 sm:px-4 py-2 border-b border-[var(--border)] bg-[var(--background)]/70 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shrink-0">
               <div className="relative flex-1 max-w-sm">
-                <FiSearch size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
-                <input
-                  type="text"
-                  placeholder="Search player, user ID, contact..."
+                <SearchInput
                   value={entrySearch}
-                  onChange={(e) => setEntrySearch(e.target.value)}
-                  className="w-full h-7 pl-7 pr-6 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[10px] text-[var(--foreground)] placeholder-[var(--muted)]/60 outline-none focus:border-[var(--accent)]"
+                  onChange={setEntrySearch}
+                  placeholder="Search player, user ID, contact..."
+                  size="xs"
                 />
-                {entrySearch && (
-                  <button
-                    onClick={() => setEntrySearch("")}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
-                  >
-                    <FiX size={10} />
-                  </button>
-                )}
               </div>
 
               {/* Filter Tabs */}
