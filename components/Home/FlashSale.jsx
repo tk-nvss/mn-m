@@ -133,10 +133,10 @@ export default function FlashSale() {
   }
 
   return (
-    <section className="relative py-2.5 px-4 overflow-hidden border-b border-[var(--border)] bg-[var(--card)]/20">
+    <section className="relative py-2 px-4 overflow-hidden border-b border-[var(--border)] bg-[var(--card)]/20">
       <div className="max-w-7xl mx-auto">
         {/* Header Strip */}
-        <div className="mb-2.5">
+        <div className="mb-2">
           <SectionTitle
             size="sm"
             accentColor="amber"
@@ -145,10 +145,10 @@ export default function FlashSale() {
             title={saleConfig.title.split(" ")[0]}
             highlight={saleConfig.title.split(" ").slice(1).join(" ") || "Sale"}
             action={
-              <div className="flex items-center gap-1.5 bg-[var(--foreground)]/5 border border-[var(--border)] px-2.5 py-1 rounded-xl">
+              <div className="flex items-center gap-1.5 bg-[var(--foreground)]/5 border border-[var(--border)] px-2 py-1 rounded-lg">
                 <FiClock className="text-amber-500 hidden sm:block" size={11} />
-                <div className="flex items-center gap-1.5 font-bold text-[10px] tabular-nums text-amber-500">
-                  <span className="opacity-60 text-[8px] uppercase tracking-widest text-[var(--foreground)] mr-1 hidden md:block">
+                <div className="flex items-center gap-1.5 font-bold text-[9.5px] tabular-nums text-amber-500">
+                  <span className="opacity-60 text-[7.5px] uppercase tracking-widest text-[var(--foreground)] mr-0.5 hidden md:block">
                     Ends In
                   </span>
                   <span>{String(timeLeft.hours).padStart(2, "0")}</span>
@@ -164,10 +164,10 @@ export default function FlashSale() {
 
         {/* Horizontal Cards Slider */}
         <div className="overflow-x-auto pb-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory">
-          <div className="flex gap-2.5 sm:gap-3.5 px-0.5 min-w-max md:min-w-0">
+          <div className="flex gap-2 sm:gap-2.5 px-0.5 min-w-max md:min-w-0">
             {loading ? (
               [1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-[125px] sm:w-[150px] md:w-[185px]">
+                <div key={i} className="w-[118px] sm:w-[135px] md:w-[160px]">
                   <ProductCardSkeleton />
                 </div>
               ))
@@ -176,22 +176,42 @@ export default function FlashSale() {
                 <div key={item.id} className="snap-start">
                   <Link
                     href={`/games/${item.slug}`}
-                    className="group relative block w-[122px] sm:w-[145px] md:w-[175px] bg-[var(--card)] border border-[var(--border)] rounded-2xl p-1.5 hover:border-amber-500/50 transition-all duration-200"
+                    className="group relative block w-[118px] sm:w-[135px] md:w-[160px] bg-gradient-to-b from-[var(--card)] to-[var(--card)]/80 backdrop-blur-xl border border-[var(--border)] rounded-lg p-2 hover:border-amber-500/50 transition-all duration-300 hover:-translate-y-0.5 shadow-xs hover:shadow-sm overflow-hidden"
                   >
+                    {/* Top rim specular highlight line */}
+                    <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent pointer-events-none" />
+
+                    {/* Ambient radial glow on hover */}
+                    <div className="absolute -right-6 -bottom-6 w-20 h-20 rounded-full blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500 pointer-events-none bg-amber-500" />
+
+                    {/* Subtle hover gradient wash */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent transition-opacity duration-300 pointer-events-none" />
+
+                    {/* Simple Flash Sale Watermark SVG inside card */}
+                    <svg
+                      viewBox="0 0 100 60"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="absolute right-0 bottom-0 h-full w-20 sm:w-24 text-amber-500 opacity-[0.05] dark:opacity-[0.09] group-hover:opacity-[0.16] transition-all duration-300 pointer-events-none select-none"
+                    >
+                      <path d="M40 60 L65 0 H76 L51 60 H40 Z" fill="currentColor" />
+                      <path d="M62 60 L87 0 H96 L71 60 H62 Z" fill="currentColor" />
+                    </svg>
+
                     {/* Badge & Game Tag */}
                     <div className="absolute top-2 left-2 z-20 flex items-center gap-1">
-                      <span className="text-[7.5px] md:text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-amber-500 text-black shadow-sm">
+                      <span className="text-[7px] md:text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-sm bg-amber-500 text-black shadow-xs">
                         {item.game}
                       </span>
                       {item.badge && item.badge !== "Hot" && (
-                        <span className="text-[7px] md:text-[7.5px] font-black uppercase px-1 py-0.5 rounded bg-rose-600 text-white">
+                        <span className="text-[6.5px] md:text-[7px] font-black uppercase px-1 py-0.5 rounded-sm bg-rose-600 text-white shadow-xs">
                           {item.badge}
                         </span>
                       )}
                     </div>
 
                     {/* Image Container */}
-                    <div className="relative aspect-[16/13] rounded-xl overflow-hidden mb-1 border border-[var(--border)] bg-[var(--background)]">
+                    <div className="relative aspect-[16/13] rounded-md overflow-hidden mb-1.5 border border-white/10 bg-[var(--background)]">
                       <Image
                         src={item.image}
                         alt={item.name}
@@ -203,16 +223,16 @@ export default function FlashSale() {
                     </div>
 
                     {/* Info */}
-                    <div className="space-y-0.5 px-0.5 pt-0.5">
-                      <h3 className="text-[11px] md:text-[12.5px] font-black uppercase tracking-tight text-[var(--foreground)] truncate group-hover:text-amber-500 leading-tight">
+                    <div className="space-y-0.5 px-0.5 pt-0.5 relative z-10">
+                      <h3 className="text-[10.5px] md:text-[12px] font-black uppercase tracking-tight text-[var(--foreground)] truncate group-hover:text-amber-500 leading-tight">
                         {item.name}
                       </h3>
 
                       <div className="flex items-baseline justify-between pt-0.5">
-                        <span className="text-[12.5px] md:text-[14px] font-black italic text-[var(--foreground)] leading-none">
+                        <span className="text-[12px] md:text-[13.5px] font-black italic text-[var(--foreground)] leading-none">
                           {item.price}
                         </span>
-                        <span className="text-[9px] md:text-[10px] font-semibold text-[var(--muted)] line-through decoration-red-500/80">
+                        <span className="text-[8.5px] md:text-[9.5px] font-semibold text-[var(--muted)] line-through decoration-red-500/80">
                           {item.originalPrice}
                         </span>
                       </div>

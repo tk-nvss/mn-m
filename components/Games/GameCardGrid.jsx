@@ -47,42 +47,46 @@ export default function GameCardGrid({ game, isOutOfStock, index = 0 }) {
         {/* IMAGE CONTAINER */}
         <div className="relative w-full aspect-square p-1.5 sm:p-2 flex items-center justify-center shrink-0 bg-black/10 overflow-hidden">
           
-          {/* Left background image */}
-          <div className="absolute w-[80%] h-[88%] z-0 transform -rotate-[6deg] -translate-x-3.5 sm:-translate-x-5 scale-95 opacity-30 blur-[1px]">
-            <Image
-              src={game.gameImageId?.image || logo}
-              alt=""
-              fill
-              sizes="(max-width: 768px) 33vw, 25vw"
-              quality={60}
-              aria-hidden="true"
-              className={`object-cover rounded-none border border-white/10
-                ${disabled ? "grayscale blur-[2px]" : ""}`}
-            />
-          </div>
+          {/* Decorative Tactical SVG Background */}
+          <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
+            {/* Ambient subtle glow */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-[var(--accent)]/[0.08] via-transparent to-purple-500/[0.05] opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
 
-          {/* Right background image */}
-          <div className="absolute w-[80%] h-[88%] z-0 transform rotate-[6deg] translate-x-3.5 sm:translate-x-5 scale-95 opacity-30 blur-[1px]">
-            <Image
-              src={game.gameImageId?.image || logo}
-              alt=""
-              fill
-              sizes="(max-width: 768px) 33vw, 25vw"
-              quality={60}
-              aria-hidden="true"
-              className={`object-cover rounded-none border border-white/10
-                ${disabled ? "grayscale blur-[2px]" : ""}`}
-            />
+            {/* Tactical Dot Matrix Grid SVG */}
+            <svg
+              className="absolute inset-0 w-full h-full text-[var(--foreground)] opacity-[0.06] dark:opacity-[0.10] group-hover:opacity-[0.15] transition-opacity duration-300"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <pattern id={`dot-grid-${game.gameSlug || index}`} width="12" height="12" patternUnits="userSpaceOnUse">
+                  <circle cx="2" cy="2" r="0.75" fill="currentColor" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill={`url(#dot-grid-${game.gameSlug || index})`} />
+            </svg>
+
+            {/* Corner Tech Brackets SVG */}
+            <svg
+              className="absolute inset-1 w-[calc(100%-8px)] h-[calc(100%-8px)] text-[var(--accent)] opacity-40 group-hover:opacity-80 transition-opacity duration-300"
+              viewBox="0 0 100 100"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M 0 12 L 0 0 L 12 0" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M 88 0 L 100 0 L 100 12" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M 0 88 L 0 100 L 12 100" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M 88 100 L 100 100 L 100 88" stroke="currentColor" strokeWidth="1.5" />
+            </svg>
           </div>
 
           {/* Main card */}
-          <div className="relative w-[92%] h-[98%] z-10 border border-white/10 bg-[var(--background)]">
+          <div className="relative w-[90%] h-[92%] z-10 border border-white/10 bg-[var(--background)] shadow-sm group-hover:scale-[1.03] transition-transform duration-300">
             <Image
               src={game.gameImageId?.image || logo}
               alt={game.gameName}
               fill
               sizes="(max-width: 768px) 33vw, 25vw"
-              quality={60}
+              quality={75}
               className={`object-cover rounded-none
                 ${disabled
                   ? "grayscale blur-[2px]"

@@ -46,38 +46,30 @@ export default function GameCardList({ game, isOutOfStock, index = 0 }) {
       >
         {/* LIGHT SWEEP EFFECT REMOVED */}
 
-        {/* AVATAR SYSTEM with 3-stacked effect */}
-        <div className="relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 ml-2 mr-2">
+        {/* AVATAR SYSTEM with tactical SVG frame */}
+        <div className="relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 ml-2 mr-2 p-1.5 flex items-center justify-center overflow-hidden">
           
-          {/* Left background image */}
-          <div className="absolute inset-0 z-0 transform -rotate-[10deg] -translate-x-4 sm:-translate-x-5 scale-90 opacity-40 blur-[1px]">
-            <Image
-              src={game.gameImageId?.image || logo}
-              alt=""
-              fill
-              sizes="120px"
-              quality={60}
-              aria-hidden="true"
-              className="object-cover rounded-none border border-white/5"
-            />
-          </div>
-
-          {/* Right background image */}
-          <div className="absolute inset-0 z-0 transform rotate-[10deg] translate-x-4 sm:translate-x-5 scale-90 opacity-40 blur-[1px]">
-            <Image
-              src={game.gameImageId?.image || logo}
-              alt=""
-              fill
-              sizes="120px"
-              quality={60}
-              aria-hidden="true"
-              className="object-cover rounded-none border border-white/5"
-            />
+          {/* Decorative Tactical SVG Background */}
+          <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
+            <div className="absolute inset-0 bg-gradient-to-tr from-[var(--accent)]/[0.08] via-transparent to-purple-500/[0.05] opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+            
+            {/* Corner Tech Brackets SVG */}
+            <svg
+              className="absolute inset-0.5 w-[calc(100%-4px)] h-[calc(100%-4px)] text-[var(--accent)] opacity-40 group-hover:opacity-80 transition-opacity duration-300"
+              viewBox="0 0 100 100"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M 0 14 L 0 0 L 14 0" stroke="currentColor" strokeWidth="2" />
+              <path d="M 86 0 L 100 0 L 100 14" stroke="currentColor" strokeWidth="2" />
+              <path d="M 0 86 L 0 100 L 14 100" stroke="currentColor" strokeWidth="2" />
+              <path d="M 86 100 L 100 100 L 100 86" stroke="currentColor" strokeWidth="2" />
+            </svg>
           </div>
 
           {/* Center main image */}
           <div className={`
-            relative w-full h-full rounded-none border z-10 bg-[var(--background)]
+            relative w-[90%] h-[90%] rounded-none border z-10 bg-[var(--background)] shadow-xs group-hover:scale-[1.03] transition-transform duration-300
             ${disabled
               ? "border-white/10"
               : "border-white/10"
