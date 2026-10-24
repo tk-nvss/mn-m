@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Loader2, Users, Crown, ShieldCheck, Calendar, Clock, UserX, Plus, RefreshCw } from "lucide-react";
-import { SectionTitle } from "@/components/common";
+import { SectionTitle, LoadingSpinner } from "@/components/common";
 
 export default function MembershipsTab() {
   const [memberships, setMemberships] = useState([]);
@@ -315,7 +315,7 @@ export default function MembershipsTab() {
           <div className="flex flex-col divide-y divide-[var(--border)]/60">
             {loading ? (
               <div className="py-10 text-center text-[var(--muted)] flex flex-col items-center gap-2">
-                <Loader2 size={16} className="animate-spin text-purple-500" />
+                <LoadingSpinner size="md" color="accent" />
                 <p className="font-bold text-xs">Loading Directory...</p>
               </div>
             ) : memberships.length === 0 ? (

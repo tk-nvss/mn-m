@@ -19,7 +19,7 @@ import {
   X,
   Check
 } from "lucide-react";
-import { SearchInput, SectionTitle } from "@/components/common";
+import { SearchInput, SectionTitle, LoadingSpinner } from "@/components/common";
 
 const GAME_OPTIONS = [
   { id: "all", label: "All Games" },
@@ -327,7 +327,7 @@ export default function BlogsTab() {
       {/* ── BLOGS LIST ── */}
       {loading && blogs.length === 0 ? (
         <div className="py-16 flex flex-col items-center justify-center space-y-2">
-          <div className="w-5 h-5 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+          <LoadingSpinner size="md" color="accent" />
           <p className="text-xs text-[var(--muted)] font-medium">Loading articles...</p>
         </div>
       ) : blogs.length === 0 ? (

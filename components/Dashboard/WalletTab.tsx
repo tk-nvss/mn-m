@@ -21,7 +21,7 @@ import {
   FiArrowUpRight,
 } from "react-icons/fi";
 import { Icons } from "@/components/icons";
-import { CopyButton, LoadingSpinner, SectionTitle } from "@/components/common";
+import { CopyButton, LoadingSpinner, SectionTitle, StatusBadge } from "@/components/common";
 import { formatCurrency, formatNumber } from "@/utils";
 import { TransactionSkeleton } from "../Skeleton/Skeleton";
 import api from "@/lib/axios";
@@ -1078,15 +1078,7 @@ function TransactionHistory({ filter, status, typeFilter, search, onResumeUsdt }
                     {txn.balanceAfter !== undefined ? `₹${txn.balanceAfter}` : "---"}
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${
-                      txn.status === 'success' ? 'text-green-500'
-                      : txn.status === 'failed' ? 'text-red-500'
-                      : txn.status === 'refund' || txn.status === 'refunded' ? 'text-blue-500'
-                      : txn.status === 'waiting' ? 'text-amber-500'
-                      : 'text-yellow-500'
-                    }`}>
-                      {txn.status}
-                    </span>
+                    <StatusBadge status={txn.status} size="xs" />
                     {txn.status === 'waiting' && onResumeUsdt && (
                       <button aria-label="button" 
                         onClick={() => onResumeUsdt(txn)}
@@ -1110,11 +1102,6 @@ function TransactionHistory({ filter, status, typeFilter, search, onResumeUsdt }
       <div className="sm:hidden space-y-2.5">
         {history.map((txn, index) => {
           const isCredit = txn.type === "credit";
-          const isPending = txn.status === "pending" || txn.status === "waiting";
-          const isSuccess = txn.status === "success";
-          const isFailed = txn.status === "failed";
-          const isRefund = txn.status === "refund" || txn.status === "refunded";
-
           const idDisplay = txn.transactionId || txn._id || "";
 
           return (
@@ -1139,19 +1126,7 @@ function TransactionHistory({ filter, status, typeFilter, search, onResumeUsdt }
                     {txn.type}
                   </span>
 
-                  <span
-                    className={`text-[9px] font-bold uppercase tracking-wider ${
-                      isSuccess
-                        ? "text-emerald-500"
-                        : isFailed
-                        ? "text-rose-500"
-                        : isRefund
-                        ? "text-blue-500"
-                        : "text-amber-500"
-                    }`}
-                  >
-                    {txn.status}
-                  </span>
+                  <StatusBadge status={txn.status} size="xs" />
                 </div>
 
                 {/* ID & ACTION */}

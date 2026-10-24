@@ -453,7 +453,7 @@ export default function CoinsAdminTab() {
                 {loading ? (
                   <tr className="block sm:table-row">
                     <td colSpan={3} className="py-10 text-center block sm:table-cell">
-                      <FiRefreshCw className="animate-spin text-xl mx-auto text-[var(--muted)]/30" />
+                      <LoadingSpinner size="md" color="muted" />
                     </td>
                   </tr>
                 ) : users.length === 0 ? (
@@ -576,7 +576,7 @@ export default function CoinsAdminTab() {
                 {loading ? (
                   <tr className="block sm:table-row">
                     <td colSpan={4} className="py-10 text-center block sm:table-cell">
-                      <FiRefreshCw className="animate-spin text-xl mx-auto text-[var(--muted)]/30" />
+                      <LoadingSpinner size="md" color="muted" />
                     </td>
                   </tr>
                 ) : history.length === 0 ? (
@@ -779,7 +779,7 @@ export default function CoinsAdminTab() {
           </div>
 
           {loading ? (
-            <div className="text-center py-10"><FiRefreshCw className="animate-spin text-2xl mx-auto text-[var(--muted)]/30" /></div>
+            <div className="text-center py-10 flex justify-center"><LoadingSpinner size="md" color="muted" /></div>
           ) : tasks.length === 0 ? (
             <Empty label="No tasks yet. Create your first task!" />
           ) : (

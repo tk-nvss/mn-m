@@ -444,12 +444,7 @@ export default function StatsTab() {
                                                             {txn.type === 'credit' ? <FiArrowUp size={8} /> : <FiArrowDown size={8} />}
                                                             {txn.type}
                                                         </span>
-                                                        <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[7px] font-bold uppercase tracking-wider ${txn.status === 'success'
-                                                            ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
-                                                            : txn.status === 'failed' ? 'bg-red-500/10 text-red-500 border-red-500/20' : 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
-                                                            }`}>
-                                                            {txn.status || 'success'}
-                                                        </span>
+                                                        <StatusBadge status={txn.status} size="xs" />
                                                     </div>
                                                     
                                                     <div className="flex items-center gap-2 mt-1">
@@ -585,15 +580,7 @@ export default function StatsTab() {
                                                             </span>
                                                         </td>
                                                         <td className="px-6 py-4">
-                                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${txn.status === 'success'
-                                                                ? 'text-emerald-500'
-                                                                : txn.status === 'failed'
-                                                                    ? 'text-red-500'
-                                                                    : 'text-yellow-500'
-                                                                }`}>
-                                                                <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${txn.status === 'success' ? 'bg-emerald-500' : txn.status === 'failed' ? 'bg-red-500' : 'bg-yellow-500'}`} />
-                                                                {txn.status || 'success'}
-                                                            </span>
+                                                            <StatusBadge status={txn.status} size="xs" />
                                                         </td>
                                                         <td className="px-6 py-4 text-right">
                                                             <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">

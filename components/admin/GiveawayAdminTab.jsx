@@ -268,7 +268,7 @@ export default function GiveawayAdminTab() {
       {/* Entries table */}
       {entriesLoading ? (
         <div className="py-6 flex justify-center">
-          <div className="w-5 h-5 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin" />
+          <LoadingSpinner size="md" color="accent" />
         </div>
       ) : !entries.length ? (
         <p className="text-center text-[10px] text-[var(--muted)] py-6">No entries recorded yet</p>
