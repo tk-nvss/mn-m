@@ -822,12 +822,14 @@ export default function AdminPanalPage() {
                             `}
                           >
                             <div className="flex items-center gap-2.5 min-w-0">
-                              <div className={`
-                                flex items-center justify-center w-6 h-6 rounded-md transition-colors shrink-0
-                                ${isActive ? "bg-[var(--accent)] text-white shadow-sm shadow-[var(--accent)]/30" : "bg-[var(--foreground)]/5 group-hover:bg-[var(--foreground)]/10"}
-                              `}>
-                                <Icon size={12} />
-                              </div>
+                              <Icon
+                                size={14}
+                                className={`shrink-0 transition-colors ${
+                                  isActive
+                                    ? "text-[var(--accent)]"
+                                    : "text-[var(--muted)] group-hover:text-[var(--foreground)]"
+                                }`}
+                              />
                               <span className="truncate">{item.label}</span>
                             </div>
 

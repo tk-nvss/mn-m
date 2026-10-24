@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, Fragment } from "react";
+import { createPortal } from "react-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FiPlus, FiUsers, FiAward, FiTrash2, FiChevronDown, FiChevronUp,
-  FiPlay, FiSquare, FiRefreshCw, FiDownload, FiGift, FiX, FiEdit2,
+  FiPlay, FiSquare, FiRefreshCw, FiDownload, FiGift, FiX, FiEdit2, FiFilter,
 } from "react-icons/fi";
-import { StatusBadge, EmptyState, LoadingSpinner, SectionTitle } from "@/components/common";
+import { StatusBadge, EmptyState, LoadingSpinner, SectionTitle, SearchInput } from "@/components/common";
 import { Gift, Sparkles, CheckCircle2, UserCheck, Trash2 } from "lucide-react";
 
 const TASK_TYPES = [
@@ -32,6 +34,37 @@ export default function GiveawayAdminTab() {
   const [winnerCount, setWinnerCount] = useState(1);
   const [pickResult, setPickResult] = useState(null);
   const [picking, setPicking]       = useState(false);
+
+  // Search & Filter state
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [showFilters, setShowFilters] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const stats = useMemo(() => ({
+    total: giveaways.length,
+    live: giveaways.filter(g => g.status === "live").length,
+    draft: giveaways.filter(g => g.status === "draft").length,
+    ended: giveaways.filter(g => g.status === "ended").length,
+  }), [giveaways]);
+
+  const activeFilterCount = statusFilter !== "all" ? 1 : 0;
+  const hasActiveFilters = activeFilterCount > 0 || (search && search.trim() !== "");
+
+  const filteredGiveaways = useMemo(() => {
+    return giveaways.filter(g => {
+      const matchesSearch = !search ||
+        g.title?.toLowerCase().includes(search.toLowerCase()) ||
+        g.prize?.toLowerCase().includes(search.toLowerCase()) ||
+        g.description?.toLowerCase().includes(search.toLowerCase());
+      const matchesStatus = statusFilter === "all" || g.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [giveaways, search, statusFilter]);
 
   // Create form state
   const [form, setForm] = useState({
@@ -196,12 +229,217 @@ export default function GiveawayAdminTab() {
     const a = document.createElement("a"); a.href = url; a.download = `entries-${selected.title}.csv`; a.click();
   };
 
-  return (
-    <div className="space-y-3 pb-8 animate-in fade-in duration-300">
+  const renderEntriesPanel = (g) => (
+    <div className="bg-[var(--background)]">
+      {/* Winners picked result */}
+      {pickResult && (
+        <div className="m-2.5 p-2.5 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+          <p className="text-[10px] font-black text-yellow-400 uppercase tracking-wider mb-1">🏆 Winners Picked!</p>
+          {pickResult.map((w, i) => (
+            <p key={i} className="text-xs text-[var(--foreground)] font-bold">{w.name || w.userId} — MLBB: {w.mlbbId}</p>
+          ))}
+        </div>
+      )}
 
-      {/* Header */}
-      <div className="flex items-center justify-between gap-3 pb-2 border-b border-[var(--border)]">
-        <div className="flex items-center gap-2">
+      {/* Pick winner controls */}
+      {g.status !== "draft" && (
+        <div className="px-3 py-2 flex items-center gap-2.5 flex-wrap border-b border-[var(--border)] bg-[var(--card)]">
+          <div className="flex items-center gap-1.5">
+            <label className="text-[8.5px] text-[var(--muted)] font-black uppercase">Pick Winners:</label>
+            <input
+              type="number" min={1} max={entries.length || 1} value={winnerCount}
+              onChange={e => setWinnerCount(Number(e.target.value))}
+              className="w-12 h-6 bg-[var(--background)] border border-[var(--border)] rounded px-1.5 text-[10px] font-bold text-[var(--foreground)] outline-none"
+            />
+          </div>
+          <button aria-label="button"
+            onClick={pickWinner}
+            disabled={picking || !entries.length}
+            className="h-6 px-2.5 rounded bg-yellow-500 text-black text-[8.5px] font-black uppercase flex items-center gap-1 hover:bg-yellow-400 disabled:opacity-40 transition-opacity cursor-pointer font-bold"
+          >
+            <FiAward size={10} /> {picking ? "Picking..." : "Roll Winner"}
+          </button>
+          <button aria-label="button" onClick={exportCSV} className="ml-auto h-6 px-2 rounded border border-[var(--border)] bg-[var(--foreground)]/5 text-[8.5px] font-bold text-[var(--muted)] hover:text-[var(--foreground)] transition-colors flex items-center gap-1 cursor-pointer">
+            <FiDownload size={10} /> Export CSV
+          </button>
+        </div>
+      )}
+
+      {/* Entries table */}
+      {entriesLoading ? (
+        <div className="py-6 flex justify-center">
+          <div className="w-5 h-5 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : !entries.length ? (
+        <p className="text-center text-[10px] text-[var(--muted)] py-6">No entries recorded yet</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-[10.5px]">
+            <thead className="bg-[var(--foreground)]/[0.02] border-b border-[var(--border)] text-[var(--muted)] font-black uppercase tracking-wider text-[8px]">
+              <tr>
+                {["#", "Player", "Phone", "MLBB Info", "Tasks", "Date", "Action"].map(h => (
+                  <th key={h} className="px-3 py-2 text-left">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[var(--border)]">
+              {entries.map((e, i) => (
+                <tr key={e._id} className={`hover:bg-[var(--foreground)]/[0.02] transition-colors ${e.isWinner ? "bg-yellow-500/5" : ""}`}>
+                  <td className="px-3 py-2 text-[var(--muted)] text-[9px]">{i + 1}</td>
+                  <td className="px-3 py-2 font-bold text-[var(--foreground)] whitespace-nowrap">
+                    <div className="flex flex-col">
+                      <span className="text-[10.5px] font-bold flex items-center gap-1">
+                        {e.isWinner && <span>🏆</span>}
+                        {e.name || "—"}
+                      </span>
+                      <span className="text-[8px] text-[var(--muted)] font-normal">{e.email || "—"}</span>
+                    </div>
+                  </td>
+                  <td className="px-3 py-2 text-[var(--muted)] font-mono text-[9.5px]">{e.phone || "—"}</td>
+                  <td className="px-3 py-2 font-mono text-[var(--foreground)]">
+                    <span className="font-bold text-[10px] text-[var(--accent)]">{e.mlbbId}</span>
+                    <span className="text-[8.5px] text-[var(--muted)] ml-1">({e.mlbbServer})</span>
+                  </td>
+                  <td className="px-3 py-2 text-[var(--muted)] align-middle">
+                    <span className="px-1.5 py-0.2 rounded bg-[var(--foreground)]/5 border border-[var(--border)] text-[8px] font-bold text-[var(--foreground)]">
+                      {Object.keys(e.taskData || {}).length} / {g.tasks?.length || 0}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 text-[var(--muted)] whitespace-nowrap text-[8.5px]">
+                    {new Date(e.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                  </td>
+                  <td className="px-3 py-2">
+                    <div className="flex items-center gap-1 justify-end">
+                      <button aria-label="button" onClick={() => toggleVerify(e._id, e.isVerified)} className={`text-[7.5px] font-black px-1.5 py-0.5 rounded transition-all border cursor-pointer ${e.isVerified ? 'text-green-400 border-green-500/40 bg-green-500/10' : 'text-[var(--muted)] border-[var(--border)] bg-[var(--foreground)]/5 hover:text-[var(--foreground)]'}`}>
+                        {e.isVerified ? "VERIFIED" : "VERIFY"}
+                      </button>
+                      {e.isWinner ? (
+                        <button aria-label="button" onClick={() => revertWinner(e.userId)} className="text-[7.5px] font-black text-rose-400 hover:text-rose-500 border border-rose-500/30 bg-rose-500/10 px-1.5 py-0.5 rounded transition-all cursor-pointer">
+                          REVERT
+                        </button>
+                      ) : (
+                        <button aria-label="button" onClick={() => manuallyPickWinner(e.userId)} className="text-[7.5px] font-black text-[var(--muted)] hover:text-yellow-400 border border-[var(--border)] bg-[var(--card)] px-1.5 py-0.5 rounded transition-all cursor-pointer">
+                          WINNER
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+
+  const filterSheetContent = (
+    <AnimatePresence>
+      {showFilters && (
+        <div className="fixed inset-0 z-[9999] flex items-end justify-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowFilters(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+          />
+
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="relative w-full max-w-lg bg-[var(--card)] border-t border-[var(--border)] rounded-t-2xl p-4 shadow-2xl max-h-[85vh] overflow-y-auto"
+          >
+            <div className="w-10 h-1 rounded-full bg-[var(--border)] mx-auto mb-4" />
+
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--border)]">
+              <h3 className="text-xs font-black uppercase tracking-wider text-[var(--foreground)]">
+                Filter Giveaways
+              </h3>
+              <div className="flex items-center gap-2">
+                {hasActiveFilters && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStatusFilter("all");
+                      setSearch("");
+                    }}
+                    className="text-[10px] font-bold uppercase tracking-wider text-rose-500 hover:text-rose-400 cursor-pointer"
+                  >
+                    Reset
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setShowFilters(false)}
+                  className="w-7 h-7 rounded-full bg-[var(--foreground)]/5 text-[var(--muted)] hover:text-[var(--foreground)] flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <FiX size={14} />
+                </button>
+              </div>
+            </div>
+
+            <div className="mb-5">
+              <p className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-2">
+                Giveaway Status
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: "all", label: "All Giveaways", count: stats.total },
+                  { id: "live", label: "Live Drops", count: stats.live },
+                  { id: "draft", label: "Drafts", count: stats.draft },
+                  { id: "ended", label: "Ended", count: stats.ended },
+                ].map((tab) => {
+                  const active = statusFilter === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setStatusFilter(tab.id)}
+                      className={`py-2 px-2.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-left flex items-center justify-between ${
+                        active
+                          ? "bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)] shadow-2xs font-bold"
+                          : "bg-[var(--foreground)]/[0.02] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
+                      }`}
+                    >
+                      <span className="truncate">{tab.label}</span>
+                      <span
+                        className={`text-[9px] px-1 rounded font-bold ${
+                          active
+                            ? "bg-[var(--background)]/20 text-[var(--background)]"
+                            : "bg-[var(--foreground)]/5 text-[var(--muted)]"
+                        }`}
+                      >
+                        {tab.count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-[var(--border)]/60">
+              <button
+                type="button"
+                onClick={() => setShowFilters(false)}
+                style={{ color: "#ffffff" }}
+                className="w-full py-2.5 rounded-xl bg-[var(--accent)] hover:opacity-90 text-white text-xs font-bold transition-all cursor-pointer text-center shadow-xs"
+              >
+                Apply Filters {activeFilterCount > 0 ? `(${activeFilterCount})` : ""}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+
+  return (
+    <div className="space-y-4 pb-8 animate-in fade-in duration-300">
+      {/* ── Header Toolbar (Row 1) ── */}
+      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-[var(--border)]/70">
         <SectionTitle
           size="xs"
           subtitle="Community Drops"
@@ -209,199 +447,322 @@ export default function GiveawayAdminTab() {
           highlight="Manager"
           icon={<FiGift size={13} className="text-[var(--accent)]" />}
         />
-          <button aria-label="button" onClick={fetchGiveaways} className="w-7 h-7 flex items-center justify-center rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-all cursor-pointer shrink-0">
-            <FiRefreshCw size={12} className={loading ? "animate-spin" : ""} />
+
+        {/* Action Controls */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            onClick={fetchGiveaways}
+            disabled={loading}
+            className="w-7 h-7 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] flex items-center justify-center transition-all cursor-pointer shrink-0"
+            title="Refresh list"
+          >
+            <FiRefreshCw size={11} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
+          </button>
+
+          {/* New Giveaway Button - Icon Only */}
+          <button
+            type="button"
+            aria-label={showCreate && !editTarget ? "Close" : "New Giveaway"}
+            title={showCreate && !editTarget ? "Close" : "New Giveaway"}
+            onClick={() => {
+              if (showCreate && !editTarget) {
+                setShowCreate(false);
+              } else {
+                setEditTarget(null);
+                setForm({ title: "", description: "", prize: "", prizeCount: 1, status: "draft", startDate: "", endDate: "", tasks: [], maxEntries: 0 });
+                setShowCreate(true);
+              }
+            }}
+            style={{ color: showCreate && !editTarget ? undefined : "#ffffff" }}
+            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0 shadow-2xs ${
+              showCreate && !editTarget
+                ? "bg-[var(--foreground)]/10 text-[var(--foreground)]"
+                : "bg-[var(--accent)] text-white hover:brightness-110"
+            }`}
+          >
+            {showCreate && !editTarget ? (
+              <FiX size={13} />
+            ) : (
+              <FiPlus size={14} color="#ffffff" style={{ color: "#ffffff" }} className="stroke-[2.5]" />
+            )}
           </button>
         </div>
-
-        <button aria-label="button"
-          onClick={() => {
-            setEditTarget(null);
-            setForm({ title: "", description: "", prize: "", prizeCount: 1, status: "draft", startDate: "", endDate: "", tasks: [], maxEntries: 0 });
-            setShowCreate(true);
-          }}
-          className="h-7 px-2.5 rounded-lg bg-[var(--accent)] text-white text-[9.5px] font-black uppercase tracking-wider flex items-center gap-1 hover:bg-[var(--accent-hover)] transition-all cursor-pointer shadow-sm active:scale-95"
-        >
-          <FiPlus size={12} /> New Giveaway
-        </button>
       </div>
 
-      {/* Giveaways list */}
+      {/* ── Search & Filter Row (Row 2 - Filter side to search) ── */}
+      <div className="flex items-center gap-2 w-full">
+        <SearchInput
+          value={search}
+          onChange={(val) => setSearch(val)}
+          placeholder="Search giveaways, prizes..."
+          variant="pill"
+          className="flex-1"
+        />
+
+        {/* Filter Trigger Button beside search - Icon Only */}
+        <button
+          type="button"
+          aria-label="Filter giveaways"
+          title="Filters"
+          onClick={() => setShowFilters(true)}
+          className={`w-8.5 h-8.5 rounded-full border flex items-center justify-center transition-all cursor-pointer shrink-0 relative ${
+            activeFilterCount > 0
+              ? "bg-[var(--accent)] border-[var(--accent)] text-white shadow-2xs"
+              : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
+          }`}
+        >
+          <FiFilter size={13} style={{ color: activeFilterCount > 0 ? "#ffffff" : undefined }} />
+          {activeFilterCount > 0 && (
+            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--accent)] text-white text-[8.5px] font-black flex items-center justify-center shadow-xs border border-[var(--background)]">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
+
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={() => {
+              setStatusFilter("all");
+              setSearch("");
+            }}
+            className="px-2 h-8.5 rounded-full text-rose-500 hover:bg-rose-500/10 text-[10px] font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
+      {/* ── Giveaways Ledger / List ── */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
           <LoadingSpinner size="lg" color="accent" />
         </div>
-      ) : !giveaways.length ? (
+      ) : !filteredGiveaways.length ? (
         <EmptyState
           icon={Gift}
-          title="No Giveaways Yet"
-          description="Create your first giveaway to engage players!"
+          title={giveaways.length === 0 ? "No Giveaways Yet" : "No Matching Giveaways"}
+          description={giveaways.length === 0 ? "Create your first giveaway to engage players!" : "Try adjusting your search or filters."}
         />
       ) : (
-        <div className="space-y-2">
-          {giveaways.map(g => (
-            <div key={g._id} className={`rounded-xl border bg-[var(--card)] transition-all overflow-hidden ${selected?._id === g._id ? "border-[var(--accent)]" : "border-[var(--border)]"}`}>
-              <div className="p-2.5 sm:p-3 flex items-center justify-between gap-3 flex-wrap">
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="w-7 h-7 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
-                    <Gift size={13} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <p className="text-xs font-black text-[var(--foreground)] truncate leading-tight">{g.title}</p>
+        <>
+          {/* DESKTOP TABLE */}
+          <div className="hidden md:block rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden shadow-2xs">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="border-b border-[var(--border)] bg-[var(--foreground)]/[0.02] text-[8.5px] font-black uppercase tracking-wider text-[var(--muted)]">
+                  <th className="py-2.5 px-3 w-8">#</th>
+                  <th className="py-2.5 px-3">Giveaway</th>
+                  <th className="py-2.5 px-3">Prize & Winners</th>
+                  <th className="py-2.5 px-3">Status</th>
+                  <th className="py-2.5 px-3">Entries</th>
+                  <th className="py-2.5 px-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--border)]">
+                {filteredGiveaways.map((g, idx) => {
+                  const isExpanded = selected?._id === g._id;
+                  return (
+                    <Fragment key={g._id}>
+                      <tr className={`hover:bg-[var(--foreground)]/[0.02] transition-colors ${isExpanded ? "bg-[var(--accent)]/[0.03]" : ""}`}>
+                        <td className="py-2.5 px-3 font-mono text-[9px] text-[var(--muted)]/60 font-semibold w-8">
+                          {idx + 1}
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <div className="min-w-0">
+                            <p className="font-bold text-[var(--foreground)] text-xs truncate max-w-[260px] leading-tight">{g.title}</p>
+                            {g.description ? (
+                              <p className="text-[9px] text-[var(--muted)] truncate max-w-[260px] mt-0.5">{g.description}</p>
+                            ) : (
+                              <p className="text-[8px] text-[var(--muted)] font-mono mt-0.5">{g.tasks?.length || 0} task{g.tasks?.length === 1 ? "" : "s"}</p>
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className="font-bold text-[var(--foreground)] text-xs block leading-tight">{g.prize}</span>
+                          <span className="text-[9px] text-[var(--muted)] font-mono">{g.prizeCount} winner{g.prizeCount > 1 ? "s" : ""}</span>
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <StatusBadge status={g.status} size="xs" />
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className="font-mono text-xs font-bold text-[var(--foreground)]">{g.entryCount || 0}</span>
+                          <span className="text-[9px] text-[var(--muted)] ml-1">entries</span>
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <div className="flex items-center gap-1 justify-end">
+                            {g.status === "draft" && (
+                              <button
+                                aria-label="button"
+                                onClick={() => updateStatus(g._id, "live")}
+                                className="px-2 py-1 rounded-md text-[8.5px] font-black uppercase text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors flex items-center gap-1 cursor-pointer"
+                              >
+                                <FiPlay size={9} /> Live
+                              </button>
+                            )}
+                            {g.status === "live" && (
+                              <button
+                                aria-label="button"
+                                onClick={() => updateStatus(g._id, "ended")}
+                                className="px-2 py-1 rounded-md text-[8.5px] font-black uppercase text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-colors flex items-center gap-1 cursor-pointer"
+                              >
+                                <FiSquare size={9} /> End
+                              </button>
+                            )}
+                            <button
+                              aria-label="button"
+                              onClick={() => setSelected(isExpanded ? null : g)}
+                              style={{ color: isExpanded ? "#ffffff" : undefined }}
+                              className={`h-6.5 px-2 rounded-md text-[8.5px] font-black uppercase flex items-center gap-1 transition-colors cursor-pointer border ${
+                                isExpanded
+                                  ? "bg-[var(--accent)] text-white border-[var(--accent)]"
+                                  : "bg-[var(--foreground)]/5 text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--foreground)]/10"
+                              }`}
+                            >
+                              <FiUsers size={10} />
+                              <span>Entries</span>
+                              {isExpanded ? <FiChevronUp size={9} /> : <FiChevronDown size={9} />}
+                            </button>
+                            <button
+                              aria-label="button"
+                              onClick={() => openEdit(g)}
+                              className="w-6.5 h-6.5 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors flex items-center justify-center cursor-pointer"
+                              title="Edit Giveaway"
+                            >
+                              <FiEdit2 size={11} />
+                            </button>
+                            <button
+                              aria-label="button"
+                              onClick={() => deleteGiveaway(g._id, g.title)}
+                              className="w-6.5 h-6.5 rounded-md text-[var(--muted)] hover:text-rose-500 hover:bg-rose-500/10 transition-colors flex items-center justify-center cursor-pointer"
+                              title="Delete Giveaway"
+                            >
+                              <FiTrash2 size={11} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      {isExpanded && (
+                        <tr>
+                          <td colSpan={6} className="p-0 border-b border-[var(--border)]">
+                            {renderEntriesPanel(g)}
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* MOBILE LIST */}
+          <div className="md:hidden rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden divide-y divide-[var(--border)] shadow-2xs">
+            {filteredGiveaways.map((g, idx) => {
+              const isExpanded = selected?._id === g._id;
+              return (
+                <div key={g._id} className="p-2.5 space-y-1.5 transition-colors">
+                  {/* Row 1: Index, Status, Title on Left; Prize on Right */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                      <span className="text-[8px] font-mono font-bold text-[var(--muted)]/60 shrink-0">
+                        #{idx + 1}
+                      </span>
                       <StatusBadge status={g.status} size="xs" />
+                      <h3 className="text-[11px] font-bold text-[var(--foreground)] truncate leading-tight">
+                        {g.title}
+                      </h3>
                     </div>
-                    <p className="text-[8.5px] text-[var(--muted)] font-mono mt-0.5 truncate">
-                      {g.prize} · {g.entryCount || 0} entries · {g.prizeCount} winner{g.prizeCount > 1 ? "s" : ""}
-                    </p>
+                    <span className="font-mono text-amber-400 font-bold text-[10px] shrink-0">
+                      {g.prize}
+                    </span>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-1 shrink-0">
-                  {g.status === "draft" && (
-                    <button aria-label="button" onClick={() => updateStatus(g._id, "live")} className="px-2 py-1 rounded-md text-[8.5px] font-black uppercase text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors flex items-center gap-1 cursor-pointer">
-                      <FiPlay size={9} /> Go Live
-                    </button>
-                  )}
-                  {g.status === "live" && (
-                    <button aria-label="button" onClick={() => updateStatus(g._id, "ended")} className="px-2 py-1 rounded-md text-[8.5px] font-black uppercase text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-colors flex items-center gap-1 cursor-pointer">
-                      <FiSquare size={9} /> End
-                    </button>
-                  )}
-                  <button aria-label="button"
-                    onClick={() => openEdit(g)}
-                    className="w-6.5 h-6.5 rounded-md bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors flex items-center justify-center cursor-pointer"
-                    title="Edit Giveaway"
-                  >
-                    <FiEdit2 size={11} />
-                  </button>
-                  <button aria-label="button"
-                    onClick={() => deleteGiveaway(g._id, g.title)}
-                    className="w-6.5 h-6.5 rounded-md bg-rose-500/5 hover:bg-rose-500/15 text-rose-500 transition-colors flex items-center justify-center cursor-pointer"
-                    title="Delete Giveaway"
-                  >
-                    <FiTrash2 size={11} />
-                  </button>
-                  <button aria-label="button"
-                    onClick={() => setSelected(selected?._id === g._id ? null : g)}
-                    className={`h-6.5 px-2 rounded-md text-[8.5px] font-black uppercase flex items-center gap-1 transition-colors cursor-pointer border ${selected?._id === g._id ? "bg-[var(--accent)] text-white border-[var(--accent)]" : "bg-[var(--foreground)]/5 text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--foreground)]/10"}`}
-                  >
-                    <FiUsers size={10} />
-                    <span>Entries</span>
-                    {selected?._id === g._id ? <FiChevronUp size={9} /> : <FiChevronDown size={9} />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Entries panel */}
-              {selected?._id === g._id && (
-                <div className="border-t border-[var(--border)] bg-[var(--background)]">
-
-                  {/* Winners picked result */}
-                  {pickResult && (
-                    <div className="m-2.5 p-2.5 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                      <p className="text-[10px] font-black text-yellow-400 uppercase tracking-wider mb-1">🏆 Winners Picked!</p>
-                      {pickResult.map((w, i) => (
-                        <p key={i} className="text-xs text-[var(--foreground)] font-bold">{w.name || w.userId} — MLBB: {w.mlbbId}</p>
-                      ))}
+                  {/* Row 2: Metadata (Entries, Winners, Tasks) on Left; Actions on Right */}
+                  <div className="flex items-center justify-between gap-2 pt-0.5">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1 text-[8.5px] text-[var(--muted)] font-mono truncate">
+                      <span>{g.entryCount || 0}{g.maxEntries > 0 ? `/${g.maxEntries}` : ""} entries</span>
+                      <span>•</span>
+                      <span>{g.prizeCount} winner{g.prizeCount > 1 ? "s" : ""}</span>
+                      {g.tasks?.length > 0 && (
+                        <>
+                          <span>•</span>
+                          <span>{g.tasks.length} task{g.tasks.length > 1 ? "s" : ""}</span>
+                        </>
+                      )}
                     </div>
-                  )}
 
-                  {/* Pick winner controls */}
-                  {g.status !== "draft" && (
-                    <div className="px-3 py-2 flex items-center gap-2.5 flex-wrap border-b border-[var(--border)] bg-[var(--card)]">
-                      <div className="flex items-center gap-1.5">
-                        <label className="text-[8.5px] text-[var(--muted)] font-black uppercase">Pick Winners:</label>
-                        <input
-                          type="number" min={1} max={entries.length || 1} value={winnerCount}
-                          onChange={e => setWinnerCount(Number(e.target.value))}
-                          className="w-12 h-6 bg-[var(--background)] border border-[var(--border)] rounded px-1.5 text-[10px] font-bold text-[var(--foreground)] outline-none"
-                        />
-                      </div>
-                      <button aria-label="button"
-                        onClick={pickWinner}
-                        disabled={picking || !entries.length}
-                        className="h-6 px-2.5 rounded bg-yellow-500 text-black text-[8.5px] font-black uppercase flex items-center gap-1 hover:bg-yellow-400 disabled:opacity-40 transition-opacity cursor-pointer"
+                    <div className="flex items-center gap-1 shrink-0">
+                      {g.status === "draft" && (
+                        <button
+                          type="button"
+                          aria-label="button"
+                          onClick={() => updateStatus(g._id, "live")}
+                          className="px-1.5 py-0.5 rounded text-[7.5px] font-black uppercase text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors flex items-center gap-0.5 cursor-pointer"
+                        >
+                          <FiPlay size={8} /> Live
+                        </button>
+                      )}
+                      {g.status === "live" && (
+                        <button
+                          type="button"
+                          aria-label="button"
+                          onClick={() => updateStatus(g._id, "ended")}
+                          className="px-1.5 py-0.5 rounded text-[7.5px] font-black uppercase text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-colors flex items-center gap-0.5 cursor-pointer"
+                        >
+                          <FiSquare size={8} /> End
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        aria-label="button"
+                        onClick={() => setSelected(isExpanded ? null : g)}
+                        style={{ color: isExpanded ? "#ffffff" : undefined }}
+                        className={`h-6 px-1.5 rounded text-[8px] font-black uppercase flex items-center gap-1 transition-colors cursor-pointer border ${
+                          isExpanded
+                            ? "bg-[var(--accent)] text-white border-[var(--accent)]"
+                            : "bg-[var(--foreground)]/5 text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--foreground)]/10"
+                        }`}
                       >
-                        <FiAward size={10} /> {picking ? "Picking..." : "Roll Winner"}
+                        <FiUsers size={9} />
+                        <span>Entries</span>
+                        {isExpanded ? <FiChevronUp size={8} /> : <FiChevronDown size={8} />}
                       </button>
-                      <button aria-label="button" onClick={exportCSV} className="ml-auto h-6 px-2 rounded border border-[var(--border)] bg-[var(--foreground)]/5 text-[8.5px] font-bold text-[var(--muted)] hover:text-[var(--foreground)] transition-colors flex items-center gap-1 cursor-pointer">
-                        <FiDownload size={10} /> Export CSV
+                      <button
+                        type="button"
+                        aria-label="button"
+                        onClick={() => openEdit(g)}
+                        className="w-6 h-6 rounded bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors flex items-center justify-center cursor-pointer"
+                        title="Edit Giveaway"
+                      >
+                        <FiEdit2 size={10} />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="button"
+                        onClick={() => deleteGiveaway(g._id, g.title)}
+                        className="w-6 h-6 rounded text-[var(--muted)] hover:text-rose-500 hover:bg-rose-500/10 transition-colors flex items-center justify-center cursor-pointer"
+                        title="Delete Giveaway"
+                      >
+                        <FiTrash2 size={10} />
                       </button>
                     </div>
-                  )}
+                  </div>
 
-                  {/* Entries table */}
-                  {entriesLoading ? (
-                    <div className="py-6 flex justify-center">
-                      <div className="w-5 h-5 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin" />
-                    </div>
-                  ) : !entries.length ? (
-                    <p className="text-center text-[10px] text-[var(--muted)] py-6">No entries recorded yet</p>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-[10.5px]">
-                        <thead className="bg-[var(--foreground)]/[0.02] border-b border-[var(--border)] text-[var(--muted)] font-black uppercase tracking-wider text-[8px]">
-                          <tr>
-                            {["#", "Player", "Phone", "MLBB Info", "Tasks", "Date", "Action"].map(h => (
-                              <th key={h} className="px-3 py-2 text-left">{h}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-[var(--border)]">
-                          {entries.map((e, i) => (
-                            <tr key={e._id} className={`hover:bg-[var(--foreground)]/[0.02] transition-colors ${e.isWinner ? "bg-yellow-500/5" : ""}`}>
-                              <td className="px-3 py-2 text-[var(--muted)] text-[9px]">{i + 1}</td>
-                              <td className="px-3 py-2 font-bold text-[var(--foreground)] whitespace-nowrap">
-                                <div className="flex flex-col">
-                                  <span className="text-[10.5px] font-bold flex items-center gap-1">
-                                    {e.isWinner && <span>🏆</span>}
-                                    {e.name || "—"}
-                                  </span>
-                                  <span className="text-[8px] text-[var(--muted)] font-normal">{e.email || "—"}</span>
-                                </div>
-                              </td>
-                              <td className="px-3 py-2 text-[var(--muted)] font-mono text-[9.5px]">{e.phone || "—"}</td>
-                              <td className="px-3 py-2 font-mono text-[var(--foreground)]">
-                                <span className="font-bold text-[10px] text-[var(--accent)]">{e.mlbbId}</span>
-                                <span className="text-[8.5px] text-[var(--muted)] ml-1">({e.mlbbServer})</span>
-                              </td>
-                              <td className="px-3 py-2 text-[var(--muted)] align-middle">
-                                <span className="px-1.5 py-0.2 rounded bg-[var(--foreground)]/5 border border-[var(--border)] text-[8px] font-bold text-[var(--foreground)]">
-                                  {Object.keys(e.taskData || {}).length} / {g.tasks?.length || 0}
-                                </span>
-                              </td>
-                              <td className="px-3 py-2 text-[var(--muted)] whitespace-nowrap text-[8.5px]">
-                                {new Date(e.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
-                              </td>
-                              <td className="px-3 py-2">
-                                <div className="flex items-center gap-1 justify-end">
-                                  <button aria-label="button" onClick={() => toggleVerify(e._id, e.isVerified)} className={`text-[7.5px] font-black px-1.5 py-0.5 rounded transition-all border cursor-pointer ${e.isVerified ? 'text-green-400 border-green-500/40 bg-green-500/10' : 'text-[var(--muted)] border-[var(--border)] bg-[var(--foreground)]/5 hover:text-[var(--foreground)]'}`}>
-                                    {e.isVerified ? "VERIFIED" : "VERIFY"}
-                                  </button>
-                                  {e.isWinner ? (
-                                    <button aria-label="button" onClick={() => revertWinner(e.userId)} className="text-[7.5px] font-black text-rose-400 hover:text-rose-500 border border-rose-500/30 bg-rose-500/10 px-1.5 py-0.5 rounded transition-all cursor-pointer">
-                                      REVERT
-                                    </button>
-                                  ) : (
-                                    <button aria-label="button" onClick={() => manuallyPickWinner(e.userId)} className="text-[7.5px] font-black text-[var(--muted)] hover:text-yellow-400 border border-[var(--border)] bg-[var(--card)] px-1.5 py-0.5 rounded transition-all cursor-pointer">
-                                      WINNER
-                                    </button>
-                                  )}
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                  {/* Entries panel on mobile */}
+                  {isExpanded && (
+                    <div className="border-t border-[var(--border)] pt-2 mt-1">
+                      {renderEntriesPanel(g)}
                     </div>
                   )}
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        </>
       )}
+
+
 
       {/* Create / Edit Giveaway Modal (Shadowless & Flat) */}
       {showCreate && (
@@ -493,6 +854,7 @@ export default function GiveawayAdminTab() {
                 <div className="flex gap-2 pt-2 border-t border-[var(--border)]">
                   <button aria-label="button" onClick={() => { setShowCreate(false); setEditTarget(null); }} className="flex-1 h-8 rounded-lg border border-[var(--border)] text-[9px] font-black uppercase text-[var(--muted)] hover:text-[var(--foreground)] transition-colors cursor-pointer">Cancel</button>
                   <button aria-label="button" onClick={createGiveaway} disabled={!form.title || !form.prize}
+                    style={{ color: "#ffffff" }}
                     className="flex-1 h-8 rounded-lg bg-[var(--accent)] text-white text-[9px] font-black uppercase disabled:opacity-40 hover:bg-[var(--accent-hover)] transition-colors cursor-pointer">
                     {editTarget ? "Save Changes" : "Create Giveaway"}
                   </button>
@@ -502,6 +864,9 @@ export default function GiveawayAdminTab() {
           </div>
         </>
       )}
+
+      {/* Filter Bottom Sheet Portal */}
+      {mounted && typeof document !== "undefined" && createPortal(filterSheetContent, document.body)}
     </div>
   );
 }
