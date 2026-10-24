@@ -18,6 +18,7 @@ import {
   FiClock,
   FiArrowDownLeft,
   FiArrowUpRight,
+  FiX,
 } from "react-icons/fi";
 import { CopyButton, LoadingSpinner, SectionTitle, StatusBadge, SearchInput, Pagination, EmptyState } from "@/components/common";
 import { formatCurrency, formatNumber } from "@/utils";
@@ -784,7 +785,7 @@ function WalletFilterBottomSheet({ status, setStatus, typeFilter, setTypeFilter 
                   onClick={() => setIsOpen(false)}
                   className="w-7 h-7 flex items-center justify-center rounded-full text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors cursor-pointer"
                 >
-                  <Icons.x size={16} />
+                  <FiX size={16} />
                 </button>
               </div>
             </div>
