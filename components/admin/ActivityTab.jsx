@@ -18,7 +18,7 @@ import {
   FiArrowUpRight,
 } from "react-icons/fi";
 import { formatCurrency } from "@/utils";
-import { InfoTooltip, SectionTitle, SearchInput, Pagination } from "@/components/common";
+import { InfoTooltip, SectionTitle, SearchInput, Pagination, EmptyState } from "@/components/common";
 
 const FILTER_TYPES = [
   { id: "all", label: "All Activity", icon: FiZap },
@@ -362,10 +362,12 @@ export default function ActivityTab({ onNavigate }) {
             <span className="text-[10px] font-bold uppercase tracking-wider">Loading activity stream...</span>
           </div>
         ) : events.length === 0 ? (
-          <div className="py-16 text-center text-xs text-[var(--muted)] space-y-1">
-            <p className="font-bold text-[var(--foreground)]">No Activity Found</p>
-            <p className="text-[10px] text-[var(--muted)]">No event records matched your current filters.</p>
-          </div>
+          <EmptyState
+            title="No Activity Found"
+            description="No event records matched your current filters."
+            size="sm"
+            variant="plain"
+          />
         ) : (
           <div className="divide-y divide-[var(--border)]/50">
             {events.map((event) => (

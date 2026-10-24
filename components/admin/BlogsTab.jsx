@@ -17,7 +17,7 @@ import {
   X,
   Check
 } from "lucide-react";
-import { SearchInput, SectionTitle, LoadingSpinner, Pagination } from "@/components/common";
+import { SearchInput, SectionTitle, LoadingSpinner, Pagination, EmptyState } from "@/components/common";
 
 const GAME_OPTIONS = [
   { id: "all", label: "All Games" },
@@ -329,11 +329,13 @@ export default function BlogsTab() {
           <p className="text-xs text-[var(--muted)] font-medium">Loading articles...</p>
         </div>
       ) : blogs.length === 0 ? (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center shadow-2xs">
-          <FileText size={24} className="mx-auto text-[var(--muted)]/50 mb-2" />
-          <p className="text-[var(--foreground)] font-bold text-xs">No blogs found</p>
-          <p className="text-[var(--muted)] text-[11px] mt-0.5">Try adjusting your filters or search query.</p>
-        </div>
+        <EmptyState
+          icon={FileText}
+          title="No Blogs Found"
+          description="Try adjusting your filters or search query."
+          size="sm"
+          variant="card"
+        />
       ) : (
         <div className="space-y-2">
           {blogs.map((blog) => (

@@ -35,7 +35,7 @@ import {
   FiFilter,
 } from "react-icons/fi";
 import { GiTrophy, GiSwords } from "react-icons/gi";
-import { LoadingSpinner, InfoTooltip, SectionTitle, SearchInput } from "@/components/common";
+import { LoadingSpinner, InfoTooltip, SectionTitle, SearchInput, EmptyState } from "@/components/common";
 
 const GAMES = ["mlbb", "freefire", "codm", "honorkings", "other"];
 const STATUSES = ["upcoming", "open", "ongoing", "closed", "ended"];
@@ -1259,19 +1259,17 @@ export default function TournamentsAdminTab() {
           </p>
         </div>
       ) : filteredTournaments.length === 0 ? (
-        <div className="py-16 text-center rounded-2xl border border-[var(--border)] bg-[var(--card)] space-y-2">
-          <div className="w-10 h-10 rounded-xl border border-[var(--border)] flex items-center justify-center text-[var(--muted)]/40 mx-auto">
-            <GiTrophy size={18} />
-          </div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted)]">
-            No Tournaments Found
-          </p>
-          <p className="text-[8.5px] text-[var(--muted)]/60 uppercase font-medium">
-            {search || statusFilter !== "all" || gameFilter !== "all"
+        <EmptyState
+          icon={GiTrophy}
+          title="No Tournaments Found"
+          description={
+            search || statusFilter !== "all" || gameFilter !== "all"
               ? "Try adjusting your search or filters."
-              : "Click 'New Tournament' or select a preset to launch your first event!"}
-          </p>
-        </div>
+              : "Click 'New Tournament' or select a preset to launch your first event!"
+          }
+          size="sm"
+          variant="card"
+        />
       ) : (
         /* ── HIGH-DENSITY LIST / TABLE VIEW ── */
         <div className="space-y-3">

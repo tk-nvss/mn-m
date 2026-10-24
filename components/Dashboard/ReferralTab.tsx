@@ -8,7 +8,7 @@ import {
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/lib/axios";
-import { CopyButton, LoadingSpinner, SectionTitle, Pagination } from "@/components/common";
+import { CopyButton, LoadingSpinner, SectionTitle, Pagination, EmptyState } from "@/components/common";
 
 interface ReferralTabProps {
     userReferral?: {
@@ -316,11 +316,13 @@ export default function ReferralTab({ userReferral }: ReferralTabProps) {
                                         <FiLoader className="animate-spin text-[var(--muted)]/40" size={20} />
                                     </div>
                                 ) : referrals.length === 0 ? (
-                                    <div className="text-center py-8 space-y-2">
-                                        <FiUsers className="text-[var(--muted)]/30 mx-auto" size={24} />
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-[var(--muted)]/60">No friends yet</p>
-                                        <p className="text-[8px] text-[var(--muted)]/40 uppercase tracking-wide">Share your invite code to start earning</p>
-                                    </div>
+                                    <EmptyState
+                                        icon={FiUsers}
+                                        title="No Friends Yet"
+                                        description="Share your invite code to start earning rewards."
+                                        size="sm"
+                                        variant="plain"
+                                    />
                                 ) : (
                                     <div className="space-y-2">
                                         {referrals.map((ref, idx) => (

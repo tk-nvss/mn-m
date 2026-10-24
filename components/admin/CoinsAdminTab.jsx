@@ -60,14 +60,6 @@ function Toast({ msg, type }) {
   );
 }
 
-function Empty({ label }) {
-  return (
-    <div className="text-center py-16 text-[var(--muted)]/30">
-      <FiList className="text-3xl mx-auto mb-2" />
-      <p className="text-xs font-black uppercase tracking-wide">{label}</p>
-    </div>
-  );
-}
 
 export default function CoinsAdminTab() {
   const [view, setView] = useState("claims");
@@ -455,7 +447,12 @@ export default function CoinsAdminTab() {
                 ) : users.length === 0 ? (
                   <tr className="block sm:table-row">
                     <td colSpan={3} className="py-10 text-center block sm:table-cell">
-                      <Empty label="No users found" />
+                      <EmptyState
+                        title="No Users Found"
+                        description="No user records matched your search query."
+                        size="sm"
+                        variant="plain"
+                      />
                     </td>
                   </tr>
                 ) : (
@@ -562,7 +559,12 @@ export default function CoinsAdminTab() {
                 ) : history.length === 0 ? (
                   <tr className="block sm:table-row">
                     <td colSpan={4} className="py-10 text-center block sm:table-cell">
-                      <Empty label="No transactions matched" />
+                      <EmptyState
+                        title="No Transactions Matched"
+                        description="No transactions matched your search or filters."
+                        size="sm"
+                        variant="plain"
+                      />
                     </td>
                   </tr>
                 ) : (
@@ -733,7 +735,12 @@ export default function CoinsAdminTab() {
           {loading ? (
             <div className="text-center py-10 flex justify-center"><LoadingSpinner size="md" color="muted" /></div>
           ) : tasks.length === 0 ? (
-            <Empty label="No tasks yet. Create your first task!" />
+            <EmptyState
+              title="No Tasks Yet"
+              description="Create your first coin task for users."
+              size="sm"
+              variant="plain"
+            />
           ) : (
             <div className="space-y-3">
               {tasks.map((task) => (

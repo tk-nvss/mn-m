@@ -23,8 +23,7 @@ import {
   Gamepad2,
   ImageIcon
 } from "lucide-react";
-import { SectionTitle } from "@/components/common";
-import { LoadingSpinner, InfoTooltip } from "@/components/common";
+import { SectionTitle, LoadingSpinner, InfoTooltip, EmptyState } from "@/components/common";
 
 const ASSET_PRESETS = [
   { label: "Weekly Pass", src: "/game-assets/weeklypass.webp", game: "MLBB" },
@@ -451,17 +450,14 @@ export default function FlashSaleTab() {
         {/* ITEMS LIST */}
         <div className="space-y-2.5">
           {items.length === 0 ? (
-            <div className="p-8 text-center rounded-2xl bg-[var(--card)]/30 border border-dashed border-[var(--border)]">
-              <Zap size={28} className="mx-auto text-[var(--muted)]/40 mb-2" />
-              <p className="text-xs font-bold text-[var(--muted)]">No items featured in Flash Sale yet.</p>
-              <button
-                type="button"
-                onClick={handleOpenAdd}
-                className="mt-3 text-xs text-amber-400 font-bold hover:underline"
-              >
-                + Add your first flash deal
-              </button>
-            </div>
+            <EmptyState
+              icon={Zap}
+              title="No Flash Sale Items"
+              description="No items featured in Flash Sale yet."
+              variant="dashed"
+              size="sm"
+              action={{ label: "+ Add your first deal", onClick: handleOpenAdd }}
+            />
           ) : (
             items.map((item, idx) => {
               const discount = calculateDiscountPercent(item.price, item.originalPrice);

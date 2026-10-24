@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiGift, FiPlus, FiClock, FiUser, FiTrash2, FiZap, FiHash, FiType, FiRefreshCw } from "react-icons/fi";
 import { Ticket, Gift, CheckCircle2, Percent } from "lucide-react";
-import { StatusBadge, CopyButton, SectionTitle, Pagination } from "@/components/common";
+import { StatusBadge, CopyButton, SectionTitle, Pagination, EmptyState } from "@/components/common";
 import { formatCurrency, formatDate, formatDateTime, formatNumber } from "@/utils";
 
 export default function RedeemCodesTab() {
@@ -310,7 +310,16 @@ export default function RedeemCodesTab() {
                             {loading ? (
                                 <tr><td colSpan={6} className="px-4 py-8 text-center text-[var(--muted)] font-bold uppercase tracking-widest opacity-40 text-xs">Loading Codes...</td></tr>
                             ) : recentCodes.length === 0 ? (
-                                <tr><td colSpan={6} className="px-4 py-8 text-center text-[var(--muted)] font-bold uppercase tracking-widest opacity-40 text-xs">No Records Found</td></tr>
+                                <tr>
+                                    <td colSpan={6} className="py-8 text-center">
+                                        <EmptyState
+                                            title="No Redeem Codes Found"
+                                            description="Generate single-use or series voucher codes to distribute."
+                                            size="sm"
+                                            variant="plain"
+                                        />
+                                    </td>
+                                </tr>
                             ) : recentCodes.map((code) => (
                                 <tr key={code._id} className="hover:bg-[var(--foreground)]/[0.02] transition-colors group">
                                     <td className="px-4 py-2.5">
@@ -385,6 +394,14 @@ export default function RedeemCodesTab() {
 
                 {/* MOBILE LIST */}
                 <div className="lg:hidden space-y-2">
+                    {!loading && recentCodes.length === 0 && (
+                        <EmptyState
+                            title="No Redeem Codes Found"
+                            description="Generate single-use or series voucher codes to distribute."
+                            size="sm"
+                            variant="plain"
+                        />
+                    )}
                     {recentCodes.map((code) => (
                         <div key={code._id} className="p-2.5 sm:p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] space-y-2">
                             <div className="flex justify-between items-start">

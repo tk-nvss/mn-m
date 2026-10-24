@@ -19,8 +19,7 @@ import {
   FiArrowDownLeft,
   FiArrowUpRight,
 } from "react-icons/fi";
-import { Icons } from "@/components/icons";
-import { CopyButton, LoadingSpinner, SectionTitle, StatusBadge, SearchInput, Pagination } from "@/components/common";
+import { CopyButton, LoadingSpinner, SectionTitle, StatusBadge, SearchInput, Pagination, EmptyState } from "@/components/common";
 import { formatCurrency, formatNumber } from "@/utils";
 import { TransactionSkeleton } from "../Skeleton/Skeleton";
 import api from "@/lib/axios";
@@ -989,9 +988,12 @@ function TransactionHistory({ filter, status, typeFilter, search, onResumeUsdt }
 
   if (history.length === 0) {
     return (
-      <div className="text-center py-10 text-[var(--muted)] text-sm">
-        No transactions found.
-      </div>
+      <EmptyState
+        title="No Transactions Found"
+        description="Your wallet history is clean. Top up funds or make a purchase to see records here."
+        size="sm"
+        variant="card"
+      />
     );
   }
 

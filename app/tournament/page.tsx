@@ -10,7 +10,7 @@ import { GiTrophy } from "react-icons/gi";
 import Image from "next/image";
 import Link from "next/link";
 import { TournamentSkeleton } from "@/components/Skeleton/Skeleton";
-import { StatusBadge, SectionTitle } from "@/components/common";
+import { StatusBadge, SectionTitle, EmptyState } from "@/components/common";
 import { formatCoins, formatDateTime } from "@/utils";
 
 interface Tournament {
@@ -312,29 +312,26 @@ export default function TournamentHub() {
             ))}
           </div>
         ) : filteredActive.length === 0 ? (
-          <div className="py-20 text-center space-y-4 rounded-2xl border border-[var(--border)] bg-[var(--card)]/40 p-8">
-            <div className="w-14 h-14 rounded-2xl border border-[var(--border)] bg-[var(--card)] flex items-center justify-center text-[var(--muted)]/40 mx-auto">
-              <FiSearch size={22} />
-            </div>
-            <div className="space-y-1">
-              <p className="text-[11px] font-black uppercase tracking-widest text-[var(--foreground)]">
-                No Tournaments Found
-              </p>
-              <p className="text-[9px] text-[var(--muted)]/50 uppercase tracking-wide">
-                {selectedFilter !== "all"
-                  ? "No active tournaments under this category right now."
-                  : "New community tournaments and scrims are posted daily. Check back soon!"}
-              </p>
-            </div>
-            {selectedFilter !== "all" && (
-              <button
-                onClick={() => setSelectedFilter("all")}
-                className="px-3.5 py-1.5 rounded-xl border border-[var(--border)] text-[9px] font-black uppercase tracking-widest text-[var(--accent)] hover:border-[var(--accent)]/40"
-              >
-                View All Events
-              </button>
-            )}
-          </div>
+          <EmptyState
+            icon={FiSearch}
+            title="No Tournaments Found"
+            description={
+              selectedFilter !== "all"
+                ? "No active tournaments under this category right now."
+                : "New community tournaments and scrims are posted daily. Check back soon!"
+            }
+            size="md"
+            variant="card"
+            action={
+              selectedFilter !== "all"
+                ? {
+                    label: "View All Events",
+                    onClick: () => setSelectedFilter("all"),
+                    variant: "outline",
+                  }
+                : undefined
+            }
+          />
         ) : (
           <div className="space-y-12">
             {/* ── ACTIVE TOURNAMENTS GRID ── */}
