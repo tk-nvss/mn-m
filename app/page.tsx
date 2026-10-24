@@ -18,6 +18,9 @@ export const metadata = {
   alternates: {
     canonical: "https://mlbbtopup.in",
   },
+  verification: {
+    google: "9-O7krLq_lN5tqYm67n0IO8Adb0XqDNpas3gX4PLvj4",
+  },
 };
 
 async function getGameBanners() {

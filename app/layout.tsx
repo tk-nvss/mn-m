@@ -113,6 +113,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <head>
+        <meta name="google-site-verification" content="9-O7krLq_lN5tqYm67n0IO8Adb0XqDNpas3gX4PLvj4" />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         {/* Pre-initialize theme before first paint to prevent layout reflows */}
