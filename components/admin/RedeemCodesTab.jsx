@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiGift, FiPlus, FiClock, FiUser, FiTrash2, FiZap, FiHash, FiType, FiRefreshCw } from "react-icons/fi";
 import { Ticket, Gift, CheckCircle2, Percent } from "lucide-react";
-import { StatusBadge, CopyButton, SectionTitle } from "@/components/common";
+import { StatusBadge, CopyButton, SectionTitle, Pagination } from "@/components/common";
 import { formatCurrency, formatDate, formatDateTime, formatNumber } from "@/utils";
 
 export default function RedeemCodesTab() {
@@ -439,29 +439,7 @@ export default function RedeemCodesTab() {
             </div>
 
             {/* PAGINATION */}
-            {pagination.pages > 1 && (
-                <div className="flex items-center justify-between px-1 pt-1">
-                    <p className="text-[9px] font-bold text-[var(--muted)] uppercase tracking-wider">
-                        Page {pagination.currentPage} of {pagination.pages}
-                    </p>
-                    <div className="flex gap-1.5">
-                        <button aria-label="button"
-                            onClick={() => setPage(prev => Math.max(1, prev - 1))}
-                            disabled={page === 1 || loading}
-                            className="px-2.5 py-1 rounded-lg bg-[var(--foreground)]/5 border border-[var(--border)] text-[9px] font-bold uppercase tracking-wider hover:bg-[var(--foreground)]/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
-                        >
-                            Previous
-                        </button>
-                        <button aria-label="button"
-                            onClick={() => setPage(prev => Math.min(pagination.pages, prev + 1))}
-                            disabled={page === pagination.pages || loading}
-                            className="px-2.5 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[9px] font-bold uppercase tracking-wider hover:bg-blue-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
-                        >
-                            Next
-                        </button>
-                    </div>
-                </div>
-            )}
+            <Pagination page={page} totalPages={pagination.pages} onPageChange={setPage} disabled={loading} size="sm" hideOnSinglePage />
         </div>
     );
 }

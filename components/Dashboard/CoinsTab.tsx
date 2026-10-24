@@ -861,21 +861,7 @@ export default function CoinsTab() {
                       </>
                     )}
 
-                    {tasksPages > 1 && (
-                      <div className="flex items-center justify-center gap-3 pt-4">
-                        <button aria-label="button" onClick={() => setTasksPage(p => Math.max(1, p - 1))} disabled={tasksPage === 1}
-                          className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 disabled:opacity-30">
-                          <FiChevronLeft className="text-xs" />
-                        </button>
-                        <span className="text-[10px] font-black uppercase tracking-wide text-[var(--muted)]">
-                          {tasksPage} / {tasksPages}
-                        </span>
-                        <button aria-label="button" onClick={() => setTasksPage(p => Math.min(tasksPages, p + 1))} disabled={tasksPage === tasksPages}
-                          className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 disabled:opacity-30">
-                          <FiChevronRight className="text-xs" />
-                        </button>
-                      </div>
-                    )}
+                    <Pagination page={tasksPage} totalPages={tasksPages} onPageChange={setTasksPage} size="sm" hideOnSinglePage />
                   </div>
                 )}
               </motion.div>

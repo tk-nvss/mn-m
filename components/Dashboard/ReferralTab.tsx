@@ -8,7 +8,7 @@ import {
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/lib/axios";
-import { CopyButton, LoadingSpinner, SectionTitle } from "@/components/common";
+import { CopyButton, LoadingSpinner, SectionTitle, Pagination } from "@/components/common";
 
 interface ReferralTabProps {
     userReferral?: {
@@ -347,29 +347,7 @@ export default function ReferralTab({ userReferral }: ReferralTabProps) {
                                             </div>
                                         ))}
 
-                                        {totalPages > 1 && (
-                                            <div className="flex justify-center items-center gap-4 pt-3 border-t border-[var(--border)]/50 mt-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                                                    disabled={page === 1}
-                                                    className="text-[8.5px] font-black uppercase tracking-widest text-[var(--muted)] disabled:opacity-25 hover:text-[var(--foreground)] transition-colors cursor-pointer"
-                                                >
-                                                    Prev
-                                                </button>
-                                                <span className="text-[8.5px] font-black text-[var(--muted)]/40">
-                                                    {page} / {totalPages}
-                                                </span>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                                                    disabled={page === totalPages}
-                                                    className="text-[8.5px] font-black uppercase tracking-widest text-[var(--muted)] disabled:opacity-25 hover:text-[var(--foreground)] transition-colors cursor-pointer"
-                                                >
-                                                    Next
-                                                </button>
-                                            </div>
-                                        )}
+                                        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} size="sm" hideOnSinglePage />
                                     </div>
                                 )}
                             </motion.div>

@@ -11,8 +11,6 @@ import {
   FiList,
   FiRefreshCw,
   FiPlus,
-  FiChevronLeft,
-  FiChevronRight,
   FiX,
   FiClock,
   FiToggleRight,
@@ -405,7 +403,7 @@ export default function CoinsAdminTab() {
         {/* Today's Activity */}
         <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-[var(--muted)] mb-1">
-            <span>Today's Flow</span>
+            <span>Today&apos;s Flow</span>
             <span className="text-[8.5px] font-bold uppercase bg-[var(--foreground)]/[0.05] px-1.5 py-0.2 rounded text-[var(--muted)]">Today</span>
           </div>
           <div className="flex items-baseline justify-between pt-1">
@@ -509,21 +507,7 @@ export default function CoinsAdminTab() {
             </table>
           </div>
 
-          {pages > 1 && (
-            <div className="flex items-center justify-center gap-3 pt-2">
-              <button aria-label="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 disabled:opacity-30">
-                <FiChevronLeft className="text-xs" />
-              </button>
-              <span className="text-[10px] font-black uppercase tracking-wide text-[var(--muted)]">
-                {page} / {pages}
-              </span>
-              <button aria-label="button" onClick={() => setPage(p => Math.min(pages, p + 1))} disabled={page === pages}
-                className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 disabled:opacity-30">
-                <FiChevronRight className="text-xs" />
-              </button>
-            </div>
-          )}
+          <Pagination page={page} totalPages={pages} onPageChange={setPage} size="sm" hideOnSinglePage />
         </div>
       )}
       {/* ── HISTORY VIEW ───────────────────────────────────────────────── */}
@@ -623,21 +607,7 @@ export default function CoinsAdminTab() {
             </table>
           </div>
 
-          {pages > 1 && (
-            <div className="flex items-center justify-center gap-3 pt-2">
-              <button aria-label="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 disabled:opacity-30">
-                <FiChevronLeft className="text-xs" />
-              </button>
-              <span className="text-[10px] font-black uppercase tracking-wide text-[var(--muted)]">
-                {page} / {pages}
-              </span>
-              <button aria-label="button" onClick={() => setPage(p => Math.min(pages, p + 1))} disabled={page === pages}
-                className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 disabled:opacity-30">
-                <FiChevronRight className="text-xs" />
-              </button>
-            </div>
-          )}
+          <Pagination page={page} totalPages={pages} onPageChange={setPage} size="sm" hideOnSinglePage />
         </div>
       )}
 
@@ -734,21 +704,7 @@ export default function CoinsAdminTab() {
             </div>
           )}
 
-          {pages > 1 && (
-            <div className="flex items-center justify-center gap-3 pt-2">
-              <button aria-label="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 disabled:opacity-30">
-                <FiChevronLeft className="text-xs" />
-              </button>
-              <span className="text-[10px] font-black uppercase tracking-wide text-[var(--muted)]">
-                {page} / {pages}
-              </span>
-              <button aria-label="button" onClick={() => setPage(p => Math.min(pages, p + 1))} disabled={page === pages}
-                className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 disabled:opacity-30">
-                <FiChevronRight className="text-xs" />
-              </button>
-            </div>
-          )}
+          <Pagination page={page} totalPages={pages} onPageChange={setPage} size="sm" hideOnSinglePage />
         </div>
       )}
 
@@ -835,21 +791,7 @@ export default function CoinsAdminTab() {
             </div>
           )}
 
-          {pages > 1 && (
-            <div className="flex items-center justify-center gap-3 pt-2">
-              <button aria-label="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 disabled:opacity-30">
-                <FiChevronLeft className="text-xs" />
-              </button>
-              <span className="text-[10px] font-black uppercase tracking-wide text-[var(--muted)]">
-                {page} / {pages}
-              </span>
-              <button aria-label="button" onClick={() => setPage(p => Math.min(pages, p + 1))} disabled={page === pages}
-                className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 disabled:opacity-30">
-                <FiChevronRight className="text-xs" />
-              </button>
-            </div>
-          )}
+          <Pagination page={page} totalPages={pages} onPageChange={setPage} size="sm" hideOnSinglePage />
         </div>
       )}
 

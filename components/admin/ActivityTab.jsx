@@ -4,8 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiRefreshCw,
-  FiChevronLeft,
-  FiChevronRight,
   FiFilter,
   FiShoppingCart,
   FiPocket,
@@ -20,7 +18,7 @@ import {
   FiArrowUpRight,
 } from "react-icons/fi";
 import { formatCurrency } from "@/utils";
-import { InfoTooltip, SectionTitle, SearchInput } from "@/components/common";
+import { InfoTooltip, SectionTitle, SearchInput, Pagination } from "@/components/common";
 
 const FILTER_TYPES = [
   { id: "all", label: "All Activity", icon: FiZap },
@@ -427,33 +425,16 @@ export default function ActivityTab({ onNavigate }) {
         )}
 
         {/* Pagination Footer */}
-        {totalPages > 1 && (
-          <div className="px-3.5 py-2.5 border-t border-[var(--border)] flex items-center justify-between text-[10px] text-[var(--muted)] bg-[var(--card)]">
-            <span>
-              Page <strong className="text-[var(--foreground)]">{page}</strong> of{" "}
-              <strong className="text-[var(--foreground)]">{totalPages}</strong> (
-              <strong className="text-[var(--foreground)]">{totalEvents}</strong> Total)
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.max(p - 1, 1))}
-                disabled={page <= 1 || loading}
-                className="h-6.5 px-2.5 rounded-lg border border-[var(--border)] hover:bg-[var(--foreground)]/[0.04] disabled:opacity-40 transition-all cursor-pointer flex items-center gap-1 text-[9px] font-black uppercase tracking-wider"
-              >
-                <FiChevronLeft size={10} /> Prev
-              </button>
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-                disabled={page >= totalPages || loading}
-                className="h-6.5 px-2.5 rounded-lg border border-[var(--border)] hover:bg-[var(--foreground)]/[0.04] disabled:opacity-40 transition-all cursor-pointer flex items-center gap-1 text-[9px] font-black uppercase tracking-wider"
-              >
-                Next <FiChevronRight size={10} />
-              </button>
-            </div>
-          </div>
-        )}
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          totalItems={totalEvents}
+          itemLabel="Events"
+          onPageChange={setPage}
+          size="sm"
+          hideOnSinglePage
+          className="px-3.5 py-2.5"
+        />
       </div>
     </div>
   );

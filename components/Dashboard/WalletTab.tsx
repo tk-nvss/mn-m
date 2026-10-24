@@ -20,7 +20,7 @@ import {
   FiArrowUpRight,
 } from "react-icons/fi";
 import { Icons } from "@/components/icons";
-import { CopyButton, LoadingSpinner, SectionTitle, StatusBadge, SearchInput } from "@/components/common";
+import { CopyButton, LoadingSpinner, SectionTitle, StatusBadge, SearchInput, Pagination } from "@/components/common";
 import { formatCurrency, formatNumber } from "@/utils";
 import { TransactionSkeleton } from "../Skeleton/Skeleton";
 import api from "@/lib/axios";
@@ -1181,27 +1181,7 @@ function TransactionHistory({ filter, status, typeFilter, search, onResumeUsdt }
       </div>
 
       {/* Simple Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2">
-          <button aria-label="button"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="px-3 py-1 rounded-lg bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--foreground)]/[0.05] text-[10px] font-bold text-[var(--muted)] hover:text-[var(--foreground)] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-          >
-            Prev
-          </button>
-          <span className="text-xs font-mono self-center text-[var(--muted)]">
-            {page} / {totalPages}
-          </span>
-          <button aria-label="button"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="px-3 py-1 rounded-lg bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--foreground)]/[0.05] text-[10px] font-bold text-[var(--muted)] hover:text-[var(--foreground)] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-          >
-            Next
-          </button>
-        </div>
-      )}
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} hideOnSinglePage />
     </div>
   );
 }

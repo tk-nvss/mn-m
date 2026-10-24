@@ -14,12 +14,10 @@ import {
   ExternalLink,
   RefreshCcw,
   Filter,
-  ChevronLeft,
-  ChevronRight,
   X,
   Check
 } from "lucide-react";
-import { SearchInput, SectionTitle, LoadingSpinner } from "@/components/common";
+import { SearchInput, SectionTitle, LoadingSpinner, Pagination } from "@/components/common";
 
 const GAME_OPTIONS = [
   { id: "all", label: "All Games" },
@@ -408,31 +406,7 @@ export default function BlogsTab() {
           ))}
 
           {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="px-3 py-2 flex items-center justify-between text-[11px] text-[var(--muted)]">
-              <span>
-                Page <strong className="text-[var(--foreground)]">{currentPage}</strong> of <strong className="text-[var(--foreground)]">{totalPages}</strong>
-              </span>
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="px-2 py-1 rounded-lg border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--foreground)]/[0.04] disabled:opacity-40 transition-all cursor-pointer flex items-center gap-1 text-[10px] font-bold text-[var(--foreground)]"
-                >
-                  <ChevronLeft size={10} /> Prev
-                </button>
-                <button
-                  type="button"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="px-2 py-1 rounded-lg border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--foreground)]/[0.04] disabled:opacity-40 transition-all cursor-pointer flex items-center gap-1 text-[10px] font-bold text-[var(--foreground)]"
-                >
-                  Next <ChevronRight size={10} />
-                </button>
-              </div>
-            </div>
-          )}
+          <Pagination page={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} size="sm" hideOnSinglePage />
         </div>
       )}
 
