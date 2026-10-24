@@ -2,13 +2,13 @@
 
 import { useEffect, useMemo, useState, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { FiFilter, FiX, FiSearch, FiGrid, FiList, FiZap, FiPackage, FiLayers, FiAward, FiTag } from "react-icons/fi";
+import { FiFilter, FiGrid, FiList, FiZap, FiPackage, FiLayers, FiAward, FiTag } from "react-icons/fi";
 import GameGrid from "@/components/Games/GameGrid";
 import GameList from "@/components/Games/GameList";
 import FilterModal from "@/components/Games/FilterModal";
 import ServiceGridSection from "@/components/Games/ServiceGridSection";
 import { ProductCardSkeleton, ProductListSkeleton } from "@/components/Skeleton/Skeleton";
-import { EmptyState, SectionTitle } from "@/components/common";
+import { EmptyState, SectionTitle, SearchInput } from "@/components/common";
 import { Icons } from "@/components/icons";
 import api from "@/lib/axios";
 
@@ -200,72 +200,60 @@ function GameCatalogContent() {
           />
         </div>
 
-        {/* ================= COMPACT SEARCH & CONTROLS (NO SHADOWS) ================= */}
-        <div className="space-y-3 mb-6">
-          <div className="relative bg-[var(--card)] backdrop-blur-3xl border border-[var(--border)] rounded-full p-1 flex items-center gap-1 focus-within:border-[var(--accent)]">
-            {/* SEARCH */}
-            <div className="relative flex-1 group/search z-10">
-              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] group-focus-within/search:text-[var(--accent)] transition-colors" size={12} />
-              <input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search..."
-                className="w-full pl-8 pr-7 py-1.5 rounded-full bg-transparent outline-none text-[10px] sm:text-[11px] font-bold tracking-widest placeholder:text-[var(--muted)]/60 text-[var(--foreground)]"
-              />
-              {searchQuery && (
+        {/* ================= COMPACT SEARCH & CONTROLS ================= */}
+        <div className="flex items-center gap-2 mb-6">
+          {/* SEARCH */}
+          <div className="flex-1 min-w-0">
+            <SearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search games, passes & topups..."
+              size="sm"
+            />
+          </div>
+
+          {/* ACTION CONTROLS */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {/* VIEW TOGGLE */}
+            <div className="flex p-0.5 rounded-2xl bg-[var(--card)] border border-[var(--border)] gap-0.5">
+              {[
+                { id: "grid", icon: FiGrid, label: "Grid view" },
+                { id: "list", icon: FiList, label: "List view" },
+              ].map((mode) => (
                 <button
-                  aria-label="Clear search"
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-red-500/10 text-red-500/60 hover:text-red-500 transition-colors"
+                  key={mode.id}
+                  onClick={() => setViewMode(mode.id)}
+                  aria-label={`Switch to ${mode.label}`}
+                  title={mode.label}
+                  className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all duration-200 ${
+                    viewMode === mode.id
+                      ? "bg-[var(--foreground)] text-[var(--background)] shadow-xs"
+                      : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
+                  }`}
                 >
-                  <FiX size={12} />
+                  <mode.icon size={13} />
                 </button>
+              ))}
+            </div>
+
+            {/* FILTER BUTTON */}
+            <button
+              onClick={() => setShowFilter(true)}
+              aria-label="Open filter options"
+              title="Filter games"
+              className={`relative flex items-center justify-center w-9 h-9 rounded-2xl border transition-all duration-200 ${
+                activeFilterCount > 0
+                  ? "border-transparent bg-[var(--accent)] text-white"
+                  : "border-[var(--border)] bg-[var(--card)] text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              }`}
+            >
+              <FiFilter size={13} />
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center bg-white text-black rounded-full text-[8px] font-black border border-[var(--card)]">
+                  {activeFilterCount}
+                </span>
               )}
-            </div>
-
-            {/* ACTION GRID */}
-            <div className="flex items-center gap-1 relative z-10 pr-0.5">
-              {/* VIEW TOGGLE - NO SHADOW */}
-              <div className="flex p-0.5 rounded-full bg-[var(--background)] border border-[var(--border)] gap-0.5">
-                {[
-                  { id: "grid", icon: FiGrid, label: "Grid view" },
-                  { id: "list", icon: FiList, label: "List view" },
-                ].map((mode) => (
-                  <button
-                    key={mode.id}
-                    onClick={() => setViewMode(mode.id)}
-                    aria-label={`Switch to ${mode.label}`}
-                    title={mode.label}
-                    className={`w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full transition-all duration-200 ${
-                      viewMode === mode.id
-                        ? "bg-[var(--foreground)] text-[var(--background)]"
-                        : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5"
-                    }`}
-                  >
-                    <mode.icon size={13} />
-                  </button>
-                ))}
-              </div>
-
-              {/* FILTER BUTTON - NO SHADOW */}
-              <button
-                onClick={() => setShowFilter(true)}
-                aria-label="Open filter options"
-                title="Filter games"
-                className={`relative flex items-center justify-center w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full border transition-all duration-200 ${
-                  activeFilterCount > 0
-                    ? "border-transparent bg-[var(--accent)] text-white"
-                    : "border-[var(--border)] bg-[var(--background)] text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                }`}
-              >
-                <FiFilter size={13} />
-                {activeFilterCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center bg-white text-black rounded-full text-[8px] font-black border border-[var(--card)]">
-                    {activeFilterCount}
-                  </span>
-                )}
-              </button>
-            </div>
+            </button>
           </div>
         </div>
 

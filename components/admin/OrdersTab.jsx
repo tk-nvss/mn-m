@@ -21,12 +21,10 @@ import {
   ChevronDown,
   ShoppingBag,
   Smartphone,
-  Copy,
-  Check,
   ExternalLink
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
-import { StatusBadge, SearchInput, EmptyState, Pagination, InfoTooltip, SectionTitle } from "@/components/common";
+import { StatusBadge, SearchInput, EmptyState, Pagination, InfoTooltip, SectionTitle, CopyButton } from "@/components/common";
 import { formatCurrency, formatDate, formatTime, formatDateTime } from "@/utils";
 
 const ORDER_STATUS_OPTIONS = [
@@ -42,17 +40,6 @@ export default function OrdersTab() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
-  const [copiedKey, setCopiedKey] = useState(null);
-
-  const handleCopy = (text, key, e) => {
-    if (e) e.stopPropagation();
-    if (!text) return;
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    setTimeout(() => {
-      setCopiedKey((prev) => (prev === key ? null : prev));
-    }, 1500);
-  };
 
   const [page, setPage] = useState(1);
   const [limit] = useState(30);
@@ -299,21 +286,13 @@ export default function OrdersTab() {
                               {o.playerId}{o.zoneId ? ` (${o.zoneId})` : ""} {o.playerName ? `• ${o.playerName}` : ""}
                             </span>
                             {o.playerId && (
-                              <button
-                                type="button"
-                                onClick={(e) => handleCopy(o.zoneId ? `${o.playerId} ${o.zoneId}` : o.playerId, `player-${o._id}`, e)}
-                                className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0 cursor-pointer"
+                              <CopyButton
+                                text={o.zoneId ? `${o.playerId} ${o.zoneId}` : o.playerId}
+                                size="xs"
+                                variant="ghost"
+                                className="!p-0.5"
                                 title="Copy Player ID & Zone"
-                              >
-                                {copiedKey === `player-${o._id}` ? (
-                                  <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-0.5">
-                                    <Check size={10} className="text-emerald-500" />
-                                    <span className="text-[8px] uppercase font-bold">Copied</span>
-                                  </span>
-                                ) : (
-                                  <Copy size={10} />
-                                )}
-                              </button>
+                              />
                             )}
                           </div>
                         </td>
@@ -391,18 +370,13 @@ export default function OrdersTab() {
                             {o.playerId}{o.zoneId ? ` (${o.zoneId})` : ""} {o.playerName ? `• ${o.playerName}` : ""}
                           </p>
                           {o.playerId && (
-                            <button
-                              type="button"
-                              onClick={(e) => handleCopy(o.zoneId ? `${o.playerId} ${o.zoneId}` : o.playerId, `m-player-${o._id}`, e)}
-                              className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0 cursor-pointer"
-                              title="Copy Player ID"
-                            >
-                              {copiedKey === `m-player-${o._id}` ? (
-                                <Check size={9} className="text-emerald-500" />
-                              ) : (
-                                <Copy size={9} />
-                              )}
-                            </button>
+                            <CopyButton
+                              text={o.zoneId ? `${o.playerId} ${o.zoneId}` : o.playerId}
+                              size="xs"
+                              variant="ghost"
+                              className="!p-0.5"
+                              title="Copy Player ID & Zone"
+                            />
                           )}
                         </div>
                       </div>
@@ -467,20 +441,13 @@ export default function OrdersTab() {
                       <p className="text-[8.5px] font-mono font-bold text-[var(--accent)] uppercase tracking-wider opacity-85">
                         #{selectedOrder.orderId.toUpperCase()}
                       </p>
-                      <button
-                        type="button"
-                        onClick={(e) => handleCopy(selectedOrder.orderId, `drawer-oid-${selectedOrder._id}`, e)}
-                        className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] transition-all shrink-0 cursor-pointer"
+                      <CopyButton
+                        text={selectedOrder.orderId}
+                        size="xs"
+                        variant="ghost"
+                        className="!p-0.5"
                         title="Copy Order ID"
-                      >
-                        {copiedKey === `drawer-oid-${selectedOrder._id}` ? (
-                          <span className="text-[7.5px] font-bold text-emerald-500 flex items-center gap-0.5">
-                            <Check size={9} className="text-emerald-500" /> Copied
-                          </span>
-                        ) : (
-                          <Copy size={9} />
-                        )}
-                      </button>
+                      />
                     </div>
                     <h3 className="text-sm sm:text-base font-black uppercase tracking-tight text-[var(--foreground)] leading-tight">Order Details</h3>
                   </div>
@@ -521,23 +488,17 @@ export default function OrdersTab() {
                     label="Player Name"
                     value={selectedOrder.playerName || "Unknown"}
                     copyText={selectedOrder.playerName}
-                    onCopy={(txt, e) => handleCopy(txt, `drawer-pname-${selectedOrder._id}`, e)}
-                    isCopied={copiedKey === `drawer-pname-${selectedOrder._id}`}
                   />
                   <DrawerDetail
                     label="Player ID"
                     value={selectedOrder.playerId}
                     emphasize
                     copyText={selectedOrder.playerId}
-                    onCopy={(txt, e) => handleCopy(txt, `drawer-pid-${selectedOrder._id}`, e)}
-                    isCopied={copiedKey === `drawer-pid-${selectedOrder._id}`}
                   />
                   <DrawerDetail
                     label="Server/Zone"
                     value={selectedOrder.zoneId || "GLOBAL"}
                     copyText={selectedOrder.zoneId}
-                    onCopy={(txt, e) => handleCopy(txt, `drawer-zone-${selectedOrder._id}`, e)}
-                    isCopied={copiedKey === `drawer-zone-${selectedOrder._id}`}
                   />
                 </DrawerSection>
 
@@ -559,15 +520,11 @@ export default function OrdersTab() {
                     label="Email"
                     value={selectedOrder.email || "GUEST"}
                     copyText={selectedOrder.email}
-                    onCopy={(txt, e) => handleCopy(txt, `drawer-email-${selectedOrder._id}`, e)}
-                    isCopied={copiedKey === `drawer-email-${selectedOrder._id}`}
                   />
                   <DrawerDetail
                     label="Phone"
                     value={selectedOrder.phone || "N/A"}
                     copyText={selectedOrder.phone}
-                    onCopy={(txt, e) => handleCopy(txt, `drawer-phone-${selectedOrder._id}`, e)}
-                    isCopied={copiedKey === `drawer-phone-${selectedOrder._id}`}
                     whatsappUrl={selectedOrder.phone ? getWhatsAppUrl(selectedOrder.phone, selectedOrder) : null}
                   />
                   <DrawerDetail label="Time" value={formatDateTime(selectedOrder.createdAt)} />
@@ -856,7 +813,7 @@ function DrawerSection({ icon, title, children }) {
   );
 }
 
-function DrawerDetail({ label, value, emphasize, copyText, onCopy, isCopied, whatsappUrl }) {
+function DrawerDetail({ label, value, emphasize, copyText, whatsappUrl }) {
   return (
     <div className="flex items-end justify-between gap-1 group w-full">
       <span className="text-[10px] font-bold text-[var(--muted)]/60 uppercase tracking-widest whitespace-nowrap mb-0.5">{label}</span>
@@ -879,20 +836,13 @@ function DrawerDetail({ label, value, emphasize, copyText, onCopy, isCopied, wha
           </span>
         )}
         {copyText && (
-          <button
-            type="button"
-            onClick={(e) => onCopy && onCopy(copyText, e)}
-            className="p-1 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0"
+          <CopyButton
+            text={copyText}
+            size="xs"
+            variant="ghost"
+            className="!p-0.5"
             title={`Copy ${label}`}
-          >
-            {isCopied ? (
-              <span className="text-[8.5px] font-bold text-emerald-500 flex items-center gap-0.5">
-                <Check size={10} className="text-emerald-500" />
-              </span>
-            ) : (
-              <Copy size={10} />
-            )}
-          </button>
+          />
         )}
       </div>
     </div>

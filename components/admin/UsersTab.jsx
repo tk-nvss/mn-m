@@ -23,8 +23,6 @@ import {
   Plus,
   Tag,
   IdCard,
-  Copy,
-  Check,
   ExternalLink,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
@@ -36,15 +34,6 @@ export default function UsersTab() {
   const [loading, setLoading] = useState(true);
   const [updatingUserId, setUpdatingUserId] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [copiedKey, setCopiedKey] = useState(null);
-
-  const handleCopy = (text, key, e) => {
-    if (e) e.stopPropagation();
-    if (!text) return;
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 2000);
-  };
   const [activeStats, setActiveStats] = useState({
     day: 0,
     week: 0,
@@ -469,18 +458,13 @@ export default function UsersTab() {
                             {u.userId}
                           </p>
                           {u.userId && (
-                            <button
-                              type="button"
-                              onClick={(e) => handleCopy(u.userId, `u-id-${u._id}`, e)}
-                              className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0 cursor-pointer"
+                            <CopyButton
+                              text={u.userId}
+                              size="xs"
+                              variant="ghost"
+                              className="!p-0.5"
                               title="Copy User ID"
-                            >
-                              {copiedKey === `u-id-${u._id}` ? (
-                                <Check size={8.5} className="text-emerald-500" />
-                              ) : (
-                                <Copy size={8.5} />
-                              )}
-                            </button>
+                            />
                           )}
                         </div>
                       </div>
@@ -517,18 +501,13 @@ export default function UsersTab() {
                           {u.email}
                         </span>
                         {u.email && (
-                          <button
-                            type="button"
-                            onClick={(e) => handleCopy(u.email, `u-email-${u._id}`, e)}
-                            className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0 cursor-pointer"
+                          <CopyButton
+                            text={u.email}
+                            size="xs"
+                            variant="ghost"
+                            className="!p-0.5"
                             title="Copy Email"
-                          >
-                            {copiedKey === `u-email-${u._id}` ? (
-                              <Check size={8} className="text-emerald-500" />
-                            ) : (
-                              <Copy size={8} />
-                            )}
-                          </button>
+                          />
                         )}
                       </div>
                       <div className="flex items-center gap-2 text-[7.5px] text-[var(--muted)]/50 tabular-nums">
@@ -709,15 +688,11 @@ export default function UsersTab() {
                       label="Full Name"
                       value={selectedUser.name}
                       copyText={selectedUser.name}
-                      onCopy={(txt, e) => handleCopy(txt, `user-name-${selectedUser._id}`, e)}
-                      isCopied={copiedKey === `user-name-${selectedUser._id}`}
                     />
                     <DrawerDetail
                       label="User ID"
                       value={selectedUser.userId}
                       copyText={selectedUser.userId}
-                      onCopy={(txt, e) => handleCopy(txt, `user-id-${selectedUser._id}`, e)}
-                      isCopied={copiedKey === `user-id-${selectedUser._id}`}
                       code
                     />
                     <DrawerDetail label="Orders Count" value={selectedUser.totalOrders || 0} />
@@ -730,15 +705,11 @@ export default function UsersTab() {
                       label="Email Address"
                       value={selectedUser.email}
                       copyText={selectedUser.email}
-                      onCopy={(txt, e) => handleCopy(txt, `user-email-${selectedUser._id}`, e)}
-                      isCopied={copiedKey === `user-email-${selectedUser._id}`}
                     />
                     <DrawerDetail
                       label="Phone Number"
                       value={selectedUser.phone || "Not provided"}
                       copyText={selectedUser.phone}
-                      onCopy={(txt, e) => handleCopy(txt, `user-phone-${selectedUser._id}`, e)}
-                      isCopied={copiedKey === `user-phone-${selectedUser._id}`}
                       whatsappUrl={selectedUser.phone ? getWhatsAppUrl(selectedUser.phone, selectedUser) : null}
                     />
 
@@ -965,7 +936,7 @@ function DrawerSection({ icon, title, children }) {
   );
 }
 
-function DrawerDetail({ label, value, emphasize, copyText, onCopy, isCopied, whatsappUrl, code }) {
+function DrawerDetail({ label, value, emphasize, copyText, whatsappUrl, code }) {
   return (
     <div className="flex items-end justify-between gap-1 group w-full py-0.5">
       <span className="text-[9px] font-bold text-[var(--muted)]/70 uppercase tracking-wider whitespace-nowrap mb-0.5">{label}</span>
@@ -988,20 +959,13 @@ function DrawerDetail({ label, value, emphasize, copyText, onCopy, isCopied, wha
           </span>
         )}
         {copyText && (
-          <button
-            type="button"
-            onClick={(e) => onCopy && onCopy(copyText, e)}
-            className="p-0.5 rounded hover:bg-[var(--foreground)]/10 text-[var(--muted)] hover:text-[var(--accent)] active:scale-95 transition-all shrink-0 cursor-pointer"
+          <CopyButton
+            text={copyText}
+            size="xs"
+            variant="ghost"
+            className="!p-0.5"
             title={`Copy ${label}`}
-          >
-            {isCopied ? (
-              <span className="text-[8px] font-bold text-emerald-500 flex items-center gap-0.5">
-                <Check size={9} className="text-emerald-500" />
-              </span>
-            ) : (
-              <Copy size={9} />
-            )}
-          </button>
+          />
         )}
       </div>
     </div>

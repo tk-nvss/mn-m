@@ -14,12 +14,10 @@ import {
   FiStar,
   FiShare2,
   FiDownload,
-  FiCopy,
-  FiCheck
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import { toPng } from "html-to-image";
-import { LoadingSpinner, SectionTitle } from "@/components/common";
+import { LoadingSpinner, SectionTitle, CopyButton } from "@/components/common";
 
 interface EventItem {
   _id?: string;
@@ -64,7 +62,6 @@ export default function EventCalendarPage() {
   // Share Card Modal State
   const [shareModalEvent, setShareModalEvent] = useState<EventItem | null>(null);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
-  const [copiedToast, setCopiedToast] = useState<boolean>(false);
   const shareCardRef = useRef<HTMLDivElement>(null);
 
   // Events data
@@ -182,27 +179,6 @@ export default function EventCalendarPage() {
     return event._id ? `${origin}/events?id=${event._id}` : `${origin}/events`;
   };
 
-  // Copy direct link to clipboard
-  const handleCopyLink = async (event: EventItem) => {
-    const url = getShareUrl(event);
-    try {
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(url);
-      } else {
-        const input = document.createElement("input");
-        input.value = url;
-        document.body.appendChild(input);
-        input.select();
-        document.execCommand("copy");
-        document.body.removeChild(input);
-      }
-      setCopiedToast(true);
-      setTimeout(() => setCopiedToast(false), 2200);
-    } catch (err) {
-      console.error("Failed to copy link", err);
-    }
-  };
-
   // WhatsApp Share
   const handleWhatsAppShare = (event: EventItem) => {
     const url = getShareUrl(event);
@@ -231,8 +207,8 @@ export default function EventCalendarPage() {
       } catch (err) {
         // User cancelled or unsupported
       }
-    } else {
-      handleCopyLink(event);
+    } else if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(url);
     }
   };
 
@@ -790,22 +766,15 @@ export default function EventCalendarPage() {
                   </button>
 
                   {/* Copy Link */}
-                  <button
-                    onClick={() => handleCopyLink(shareModalEvent)}
-                    className="py-2 px-1 sm:px-2 rounded-xl bg-[var(--background)] hover:bg-[var(--foreground)]/5 text-[var(--foreground)] font-bold text-[11px] transition-all border border-[var(--border)] flex items-center justify-center gap-1 active:scale-95 whitespace-nowrap"
-                  >
-                    {copiedToast ? (
-                      <>
-                        <FiCheck size={13} className="text-emerald-500 shrink-0" />
-                        <span className="text-emerald-500">Copied!</span>
-                      </>
-                    ) : (
-                      <>
-                        <FiCopy size={13} className="text-[var(--muted)] shrink-0" />
-                        <span>Copy Link</span>
-                      </>
-                    )}
-                  </button>
+                  {shareModalEvent && (
+                    <CopyButton
+                      text={getShareUrl(shareModalEvent)}
+                      label="Copy Link"
+                      size="sm"
+                      variant="subtle"
+                      className="py-2 px-1 sm:px-2 rounded-xl text-[11px] font-bold border border-[var(--border)] whitespace-nowrap !normal-case tracking-normal hover:bg-[var(--foreground)]/5"
+                    />
+                  )}
                 </div>
               </div>
             </motion.div>

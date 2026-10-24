@@ -11,7 +11,6 @@ import { BLOGS_DATA } from "@/lib/blogData";
 import Script from "next/script";
 import NativeBanner from "@/components/Ads/NativeBanner";
 import { FaWhatsapp, FaXTwitter } from "react-icons/fa6";
-import { FiCopy, FiCheck } from "react-icons/fi";
 
 const SITE_URL = "https://mlbbtopup.in";
 
@@ -52,7 +51,6 @@ export default function BlogPostLayout({
   dateModified,
 }: BlogPostLayoutProps) {
   const pathname = usePathname();
-  const [copied, setCopied] = useState(false);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -427,19 +425,14 @@ export default function BlogPostLayout({
               <FaXTwitter size={15} />
             </a>
 
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(canonicalUrl);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-              }}
-              aria-label="Copy Link"
-              className="h-9 px-3 rounded-xl bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 text-[var(--accent)] border border-[var(--accent)]/20 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            <CopyButton
+              text={canonicalUrl}
+              label="Copy"
+              variant="subtle"
+              size="sm"
+              className="h-9 px-3 rounded-xl bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 text-[var(--accent)] border border-[var(--accent)]/20 text-[10px] font-bold uppercase tracking-wider"
               title="Copy Link"
-            >
-              {copied ? <FiCheck size={13} className="text-emerald-500" /> : <FiCopy size={13} />}
-              <span>{copied ? "Copied!" : "Copy"}</span>
-            </button>
+            />
           </div>
         </footer>
       </article>

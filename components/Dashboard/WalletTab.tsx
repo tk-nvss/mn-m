@@ -10,7 +10,6 @@ import {
   FiLoader,
   FiDollarSign,
   FiZap,
-  FiCopy,
   FiCheckCircle,
   FiAlertCircle,
   FiArrowLeft,
@@ -61,8 +60,6 @@ export default function WalletTab({
   const [txHash, setTxHash] = useState("");
   const [usdtLoading, setUsdtLoading] = useState(false);
   const [usdtError, setUsdtError] = useState("");
-  const [copiedAddress, setCopiedAddress] = useState(false);
-  const [copiedHash, setCopiedHash] = useState(false);
   const pollRef = useRef<NodeJS.Timeout | null>(null);
 
   const presetAmounts = [50, 100, 250, 500];
@@ -251,13 +248,6 @@ export default function WalletTab({
   useEffect(() => {
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, []);
-
-  const copyToClipboard = (text: string, type: "address" | "hash") => {
-    navigator.clipboard.writeText(text).then(() => {
-      if (type === "address") { setCopiedAddress(true); setTimeout(() => setCopiedAddress(false), 2000); }
-      else { setCopiedHash(true); setTimeout(() => setCopiedHash(false), 2000); }
-    });
-  };
 
   const resetUsdtFlow = () => {
     if (pollRef.current) clearInterval(pollRef.current);
