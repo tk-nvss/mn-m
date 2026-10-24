@@ -158,44 +158,30 @@ export default function ThemeToggle() {
 
   return (
     <>
-      {/* Header Pill Button - Clean, no text label, no shadow on dot */}
+      {/* Header Button - Clean, compact, matches header action buttons */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}
-        className="relative flex items-center gap-1 p-1.5 sm:px-2 sm:py-1.5 rounded-full transition-all duration-300 group border bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 border-[var(--border)] cursor-pointer"
+        className="relative flex items-center justify-center w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full border border-[var(--border)]/60 bg-[var(--foreground)]/[0.04] hover:bg-[var(--foreground)]/[0.08] hover:border-[var(--accent)]/40 transition-all duration-200 cursor-pointer group"
         title="Appearance & Theme"
         aria-label="Theme Settings"
         aria-expanded={isOpen}
       >
-        {/* ICON CONTAINER */}
-        <div className="relative flex items-center justify-center w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-full overflow-hidden transition-all duration-300 bg-[var(--foreground)]/5 text-[var(--foreground)]">
-          <motion.div
-            key={theme}
-            initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
-            animate={{ rotate: 0, opacity: 1, scale: 1 }}
-            exit={{ rotate: 90, opacity: 0, scale: 0.6 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="flex items-center justify-center text-xs"
-          >
-            {theme === "light" ? "☀️" : "🌙"}
-          </motion.div>
+        <motion.div
+          key={theme}
+          initial={{ rotate: -90, opacity: 0, scale: 0.7 }}
+          animate={{ rotate: 0, opacity: 1, scale: 1 }}
+          exit={{ rotate: 90, opacity: 0, scale: 0.7 }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
+          className="flex items-center justify-center text-[13px] sm:text-sm select-none"
+        >
+          {theme === "light" ? "☀️" : "🌙"}
+        </motion.div>
 
-          {/* DASHED ACCENT RING */}
-          <div className="absolute inset-0 rounded-full border border-dashed border-[var(--foreground)]/20 pointer-events-none" />
-        </div>
-
-        {/* CHEVRON */}
-        <ChevronDown
-          size={11}
-          className={`text-[var(--foreground)]/60 transition-transform duration-200 ${
-            isOpen ? "rotate-180 text-[var(--accent)]" : "group-hover:translate-y-0.5"
-          }`}
-        />
-
-        {/* ACCENT COLOR INDICATOR DOT - NO SHADOW */}
+        {/* Micro Accent Color Pip */}
         <div
-          className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-[var(--background)] transition-colors duration-300"
+          className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full border border-[var(--background)] transition-colors duration-300"
           style={{ backgroundColor: currentAccentDisplay }}
         />
       </motion.button>

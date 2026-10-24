@@ -275,32 +275,23 @@ export default function Header() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleInstallPWA}
-                className={`relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full border transition-colors group backdrop-blur-md ${
+                className={`relative flex items-center justify-center w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full border transition-all duration-200 group backdrop-blur-md ${
                   isStandalone || isPwaInstalled
                     ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
-                    : "bg-[var(--foreground)]/5 border-[var(--border)]/30 text-[var(--foreground)]/60 hover:text-[var(--accent)]"
+                    : "bg-[var(--foreground)]/[0.04] hover:bg-[var(--foreground)]/[0.08] border-[var(--border)]/60 text-[var(--foreground)]/60 hover:text-[var(--accent)] hover:border-[var(--accent)]/40"
                 }`}
                 aria-label={isStandalone ? "App Running" : isPwaInstalled ? "App Installed" : "Install App"}
                 title={isStandalone ? "App Running (Standalone Mode)" : isPwaInstalled ? "App Installed" : "Install App"}
               >
                 {isStandalone || isPwaInstalled ? (
-                  <FiCheckCircle size={14} className="z-10 text-emerald-400" />
+                  <FiCheckCircle size={14} className="text-emerald-400" />
                 ) : (
-                  <FiDownload size={14} className="group-hover:translate-y-[1px] transition-transform z-10" />
+                  <FiDownload size={14} className="group-hover:translate-y-[1px] transition-transform" />
                 )}
                 
-                {/* SPINNING RING */}
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                  className={`absolute inset-0 rounded-full border border-dashed pointer-events-none ${
-                    isStandalone || isPwaInstalled ? "border-emerald-500/30" : "border-[var(--foreground)]/20"
-                  }`}
-                />
-                
                 {/* INDICATOR */}
-                <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-[var(--background)] z-20 transition-colors ${
-                  isStandalone || isPwaInstalled ? "bg-emerald-500" : "bg-[#0088cc] animate-pulse"
+                <div className={`absolute top-0.5 right-0.5 w-2 h-2 rounded-full border border-[var(--background)] z-20 transition-colors ${
+                  isStandalone || isPwaInstalled ? "bg-emerald-500" : "bg-[#0088cc]"
                 }`} />
               </motion.button>
 
@@ -320,20 +311,20 @@ export default function Header() {
             <div className="flex items-center gap-1.5 sm:gap-2" ref={dropdownRef}>
               <ThemeToggle />
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => user ? setUserMenuOpen((p) => !p) : window.location.href = "/login"}
-                className="relative flex items-center gap-1 pl-1 pr-1.5 py-1 rounded-[2rem] transition-all duration-300 group hover:scale-105 active:scale-95 bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 border border-[var(--border)]"
+                className="relative flex items-center justify-center w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full border border-[var(--border)]/60 bg-[var(--foreground)]/[0.04] hover:bg-[var(--foreground)]/[0.08] hover:border-[var(--accent)]/40 transition-all duration-200 cursor-pointer overflow-hidden group"
                 aria-label="User Menu"
+                title={user?.name || "Account"}
               >
-                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden flex items-center justify-center bg-[var(--background)] shadow-sm">
-                  {user?.avatar ? (
-                    <Image src={user.avatar} alt={`${user.name || "User"} Profile Avatar`} width={28} height={28} className="object-cover" />
-                  ) : (
-                    <FiUser className="text-[var(--foreground)]/60 text-xs" />
-                  )}
-                </div>
-                <FiChevronRight className="text-[var(--foreground)]/60 text-[10px] sm:text-xs group-hover:translate-x-0.5 transition-transform" />
-              </button>
+                {user?.avatar ? (
+                  <Image src={user.avatar} alt={`${user.name || "User"} Profile Avatar`} width={28} height={28} className="w-full h-full object-cover" />
+                ) : (
+                  <FiUser className="text-[var(--foreground)]/60 group-hover:text-[var(--foreground)] text-xs transition-colors" />
+                )}
+              </motion.button>
 
               <>
                 <div
@@ -631,22 +622,15 @@ function NotificationToggle({ user }) {
         whileTap={{ scale: 0.95 }}
         onClick={handleToggle}
         disabled={loading}
-        className="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[var(--foreground)]/5 border border-[var(--border)]/30 text-[var(--foreground)]/60 hover:text-[var(--accent)] transition-colors group backdrop-blur-md"
+        className="relative flex items-center justify-center w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-[var(--foreground)]/[0.04] hover:bg-[var(--foreground)]/[0.08] border border-[var(--border)]/60 text-[var(--foreground)]/60 hover:text-[var(--accent)] hover:border-[var(--accent)]/40 transition-all duration-200 group backdrop-blur-md"
         aria-label="Turn on notifications"
         title={subscribed ? "Notifications Enabled" : "Turn ON Notifications"}
       >
-        <FiBell size={14} className={`group-hover:rotate-12 transition-transform z-10 ${loading ? "animate-spin" : ""}`} />
-        
-        {/* SPINNING RING */}
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 rounded-full border border-dashed border-[var(--foreground)]/20 pointer-events-none"
-        />
+        <FiBell size={14} className={`group-hover:rotate-12 transition-transform ${loading ? "animate-spin" : ""}`} />
         
         {/* INDICATOR DOT */}
-        <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-[var(--background)] z-20 transition-colors ${
-          subscribed ? "bg-emerald-500" : "bg-amber-500 animate-pulse"
+        <div className={`absolute top-0.5 right-0.5 w-2 h-2 rounded-full border border-[var(--background)] z-20 transition-colors ${
+          subscribed ? "bg-emerald-500" : "bg-amber-500"
         }`} />
       </motion.button>
 
