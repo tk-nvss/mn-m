@@ -458,8 +458,11 @@ export default function EventsAdminTab() {
             <FiRefreshCw size={11} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
           </button>
 
+          {/* New Event Button - Icon Only */}
           <button
             type="button"
+            aria-label={isFormOpen && !editingId ? "Close" : "New Event"}
+            title={isFormOpen && !editingId ? "Close" : "New Event"}
             onClick={() => {
               if (isFormOpen && !editingId) {
                 setIsFormOpen(false);
@@ -469,24 +472,16 @@ export default function EventsAdminTab() {
               }
             }}
             style={{ color: isFormOpen && !editingId ? undefined : "#ffffff" }}
-            className={`h-7 px-2.5 rounded-lg text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1 transition-all active:scale-95 cursor-pointer shrink-0 shadow-2xs ${
+            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0 shadow-2xs ${
               isFormOpen && !editingId
                 ? "bg-[var(--foreground)]/10 text-[var(--foreground)]"
                 : "bg-[var(--accent)] text-white hover:brightness-110"
             }`}
           >
             {isFormOpen && !editingId ? (
-              <>
-                <FiChevronUp size={12} />
-                <span>Close</span>
-              </>
+              <FiX size={13} />
             ) : (
-              <>
-                <FiPlus size={12} color="#ffffff" style={{ color: "#ffffff" }} className="stroke-[2.5]" />
-                <span style={{ color: "#ffffff" }} className="whitespace-nowrap font-black">
-                  New Event
-                </span>
-              </>
+              <FiPlus size={14} color="#ffffff" style={{ color: "#ffffff" }} className="stroke-[2.5]" />
             )}
           </button>
         </div>
@@ -502,23 +497,21 @@ export default function EventsAdminTab() {
           className="flex-1"
         />
 
-        {/* Filter Trigger Button beside search */}
+        {/* Filter Trigger Button beside search - Icon Only */}
         <button
           type="button"
           aria-label="Filter events"
+          title="Filters"
           onClick={() => setIsFilterOpen(true)}
-          className={`h-8.5 px-3 rounded-full border flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
+          className={`w-8.5 h-8.5 rounded-full border flex items-center justify-center transition-all cursor-pointer shrink-0 relative ${
             activeFilterCount > 0
               ? "bg-[var(--accent)] border-[var(--accent)] text-white shadow-2xs"
               : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
           }`}
         >
           <FiFilter size={13} style={{ color: activeFilterCount > 0 ? "#ffffff" : undefined }} />
-          <span className="text-[11px] font-bold" style={{ color: activeFilterCount > 0 ? "#ffffff" : undefined }}>
-            Filters
-          </span>
           {activeFilterCount > 0 && (
-            <span className="w-4 h-4 rounded-full bg-white text-[var(--accent)] text-[9px] font-black flex items-center justify-center shadow-xs">
+            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--accent)] text-white text-[8.5px] font-black flex items-center justify-center shadow-xs border border-[var(--background)]">
               {activeFilterCount}
             </span>
           )}

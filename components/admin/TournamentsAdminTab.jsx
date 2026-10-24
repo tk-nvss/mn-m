@@ -1,5 +1,6 @@
 "use client";
 
+// Fresh HMR invalidation
 import { useEffect, useState, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -762,9 +763,11 @@ export default function TournamentsAdminTab() {
             <FiRefreshCw size={11} className={loading ? "animate-spin text-[var(--accent)]" : ""} />
           </button>
 
-          {/* New Tournament Button */}
+          {/* New Tournament Button - Icon Only */}
           <button
             type="button"
+            aria-label={showForm ? "Close Form" : "New Tournament"}
+            title={showForm ? "Close Form" : "New Tournament"}
             onClick={() => {
               if (showForm) {
                 setShowForm(false);
@@ -777,16 +780,17 @@ export default function TournamentsAdminTab() {
               }
             }}
             style={{ color: showForm ? undefined : "#ffffff" }}
-            className={`h-7 px-2.5 rounded-lg text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shrink-0 active:scale-95 shadow-2xs ${
+            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer shrink-0 active:scale-95 shadow-2xs ${
               showForm
                 ? "bg-[var(--foreground)]/10 text-[var(--foreground)]"
                 : "bg-[var(--accent)] text-white hover:brightness-110"
             }`}
           >
-            {showForm ? <FiX size={11} /> : <FiPlus size={12} color="#ffffff" style={{ color: "#ffffff" }} className="stroke-[2.5]" />}
-            <span style={{ color: showForm ? undefined : "#ffffff" }} className="whitespace-nowrap font-black">
-              {showForm ? "Close" : "New Tournament"}
-            </span>
+            {showForm ? (
+              <FiX size={13} />
+            ) : (
+              <FiPlus size={14} color="#ffffff" style={{ color: "#ffffff" }} className="stroke-[2.5]" />
+            )}
           </button>
         </div>
       </div>
@@ -801,23 +805,21 @@ export default function TournamentsAdminTab() {
           className="flex-1"
         />
 
-        {/* Filter Trigger Button beside search */}
+        {/* Filter Trigger Button beside search - Icon Only */}
         <button
           type="button"
           aria-label="Filter tournaments"
+          title="Filters"
           onClick={() => setShowFilters(true)}
-          className={`h-8.5 px-3 rounded-full border flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
+          className={`w-8.5 h-8.5 rounded-full border flex items-center justify-center transition-all cursor-pointer shrink-0 relative ${
             activeFilterCount > 0
               ? "bg-[var(--accent)] border-[var(--accent)] text-white shadow-2xs"
               : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/30"
           }`}
         >
           <FiFilter size={13} style={{ color: activeFilterCount > 0 ? "#ffffff" : undefined }} />
-          <span className="text-[11px] font-bold" style={{ color: activeFilterCount > 0 ? "#ffffff" : undefined }}>
-            Filters
-          </span>
           {activeFilterCount > 0 && (
-            <span className="w-4 h-4 rounded-full bg-white text-[var(--accent)] text-[9px] font-black flex items-center justify-center shadow-xs">
+            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--accent)] text-white text-[8.5px] font-black flex items-center justify-center shadow-xs border border-[var(--background)]">
               {activeFilterCount}
             </span>
           )}
@@ -1272,156 +1274,337 @@ export default function TournamentsAdminTab() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
-          {filteredTournaments.map((t) => {
-            const isPending = confirmAction?.id === t._id;
-            const slotsPct = Math.min(100, Math.round(((t.slotsFilled || 0) / (t.slots || 1)) * 100));
+        /* ── HIGH-DENSITY LIST / TABLE VIEW ── */
+        <div className="space-y-3">
+          {/* DESKTOP TABLE */}
+          <div className="hidden md:block rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden shadow-2xs">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-[var(--foreground)]/[0.02] border-b border-[var(--border)]">
+                <tr className="text-[9px] font-black uppercase tracking-wider text-[var(--muted)]">
+                  <th className="py-2 px-3">Tournament</th>
+                  <th className="py-2 px-2.5">Status</th>
+                  <th className="py-2 px-2.5">Prize Pool</th>
+                  <th className="py-2 px-2.5">Slots</th>
+                  <th className="py-2 px-2.5">Schedule / Room</th>
+                  <th className="py-2 px-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--border)]/50 text-xs">
+                {filteredTournaments.map((t) => {
+                  const isPending = confirmAction?.id === t._id;
+                  const slotsPct = Math.min(100, Math.round(((t.slotsFilled || 0) / (t.slots || 1)) * 100));
 
-            return (
-              <div
-                key={t._id}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-2.5 sm:p-3 hover:border-[var(--accent)]/40 transition-all flex flex-col justify-between group relative gap-2"
-              >
-                {/* Card Top: Game badge + Status Pill */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between gap-1">
-                    <span className="text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-[var(--foreground)]/5 border border-[var(--border)] text-[var(--foreground)]">
-                      {t.game}
-                    </span>
-
-                    <button
-                      type="button"
-                      onClick={(e) => cycleStatus(t, e)}
-                      title="Click to cycle status"
-                      className={`text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md border transition-all cursor-pointer ${
-                        STATUS_COLOR[t.status] || ""
-                      }`}
+                  return (
+                    <tr
+                      key={t._id}
+                      className="group hover:bg-[var(--foreground)]/[0.02] transition-colors relative"
                     >
-                      {t.status}
-                    </button>
-                  </div>
+                      {/* 1. Tournament Info */}
+                      <td className="py-2 px-3">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--foreground)]/5 border border-[var(--border)] text-[var(--foreground)] shrink-0">
+                            {t.game}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[11px] font-black uppercase tracking-tight text-[var(--foreground)] group-hover:text-[var(--accent)] transition-colors truncate">
+                              {t.title}
+                            </p>
+                            <p className="text-[8.5px] text-[var(--muted)] truncate">
+                              {t.format} {t.subtitle ? `• ${t.subtitle}` : ""}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
 
-                  {/* Title & Format & Prize in compact arrangement */}
-                  <div>
-                    <h3 className="text-[11.5px] font-black uppercase tracking-tight text-[var(--foreground)] line-clamp-1 group-hover:text-[var(--accent)] transition-colors">
-                      {t.title}
-                    </h3>
-                    <div className="flex items-center justify-between gap-1 mt-0.5 text-[8px]">
-                      <span className="text-[var(--muted)] uppercase font-semibold tracking-wide truncate">
-                        {t.format} {t.subtitle ? `• ${t.subtitle}` : ""}
+                      {/* 2. Status Pill */}
+                      <td className="py-2 px-2.5 whitespace-nowrap">
+                        <button
+                          type="button"
+                          onClick={(e) => cycleStatus(t, e)}
+                          title="Click to cycle status"
+                          className={`text-[7.5px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border transition-all cursor-pointer ${
+                            STATUS_COLOR[t.status] || ""
+                          }`}
+                        >
+                          {t.status}
+                        </button>
+                      </td>
+
+                      {/* 3. Prize & Entry */}
+                      <td className="py-2 px-2.5 whitespace-nowrap">
+                        <div className="flex flex-col">
+                          <span className="flex items-center gap-1 font-black text-amber-400 text-[10.5px] truncate">
+                            <GiTrophy size={11} className="shrink-0" />
+                            {t.prize}
+                          </span>
+                          <span className="text-[8px] text-[var(--muted)] font-mono">
+                            {Number(t.entryCoins) > 0 ? `${t.entryCoins} Coins` : "Free Entry"}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* 4. Slots Progress */}
+                      <td className="py-2 px-2.5 min-w-[110px]">
+                        <div className="space-y-0.5">
+                          <div className="flex items-center justify-between text-[8px] font-mono text-[var(--muted)]">
+                            <span>
+                              <strong className="text-[var(--foreground)]">{t.slotsFilled || 0}</strong>/{t.slots}
+                            </span>
+                            <span>{slotsPct}%</span>
+                          </div>
+                          <div className="w-full h-1 rounded-full bg-[var(--foreground)]/5 overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all duration-300 ${
+                                slotsPct >= 100 ? "bg-rose-500" : slotsPct >= 75 ? "bg-amber-400" : "bg-emerald-400"
+                              }`}
+                              style={{ width: `${slotsPct}%` }}
+                            />
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* 5. Schedule & Room */}
+                      <td className="py-2 px-2.5 whitespace-nowrap">
+                        <div className="flex flex-col gap-0.5 text-[8px] font-mono">
+                          {t.roomId ? (
+                            <span className="flex items-center gap-1 text-emerald-400">
+                              <FiLock size={8} /> {t.roomId}
+                            </span>
+                          ) : (
+                            <span className="text-[var(--muted)]/50">No Room ID</span>
+                          )}
+                          {t.startsAt ? (
+                            <span className="flex items-center gap-1 text-[var(--muted)]">
+                              <FiClock size={8} />
+                              {new Date(t.startsAt).toLocaleDateString([], { month: "short", day: "numeric" })}{" "}
+                              {new Date(t.startsAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                          ) : (
+                            <span className="text-[var(--muted)]/50">TBD</span>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* 6. Actions */}
+                      <td className="py-2 px-3 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => openEntries(t)}
+                            className="h-6 px-2 rounded-lg bg-[var(--foreground)] text-[var(--background)] text-[8px] font-black uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center gap-1 cursor-pointer"
+                          >
+                            <FiUsers size={9} />
+                            <span>({t.slotsFilled || 0})</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => duplicateTournament(t)}
+                            className="w-6 h-6 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 flex items-center justify-center transition-colors cursor-pointer"
+                            title="Duplicate"
+                          >
+                            <FiCopy size={11} />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => openEdit(t)}
+                            className="w-6 h-6 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 flex items-center justify-center transition-colors cursor-pointer"
+                            title="Edit"
+                          >
+                            <FiEdit2 size={11} />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => deleteTournament(t._id)}
+                            className="w-6 h-6 rounded-lg text-[var(--muted)] hover:text-rose-400 hover:bg-rose-500/10 flex items-center justify-center transition-colors cursor-pointer"
+                            title="Delete"
+                          >
+                            <FiTrash2 size={11} />
+                          </button>
+                        </div>
+
+                        {/* Inline Delete Confirmation Overlay for Table Row */}
+                        {isPending && (
+                          <div className="absolute inset-0 bg-[var(--card)]/95 backdrop-blur-xs px-3 flex items-center justify-between z-10 border border-rose-500/30">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[9px] font-black text-rose-400 uppercase">
+                                Delete "{t.title}"?
+                              </span>
+                              <span className="text-[8px] text-[var(--muted)]">
+                                All entries will be permanently removed.
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={executeConfirm}
+                                className="h-5.5 px-2.5 rounded-lg bg-rose-500 text-white text-[8px] font-black uppercase tracking-wider"
+                              >
+                                Delete
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setConfirmAction(null)}
+                                className="h-5.5 px-2 rounded-lg border border-[var(--border)] text-[var(--muted)] text-[8px] font-black uppercase tracking-wider"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* MOBILE LIST */}
+          <div className="md:hidden space-y-1.5">
+            {filteredTournaments.map((t) => {
+              const isPending = confirmAction?.id === t._id;
+              const slotsPct = Math.min(100, Math.round(((t.slotsFilled || 0) / (t.slots || 1)) * 100));
+
+              return (
+                <div
+                  key={t._id}
+                  className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-2.5 hover:border-[var(--accent)]/30 transition-all space-y-1.5 relative overflow-hidden"
+                >
+                  {/* Row 1: Game, Status, Title on Left; Prize on Right */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                      <span className="text-[7px] font-black uppercase tracking-wider px-1 py-0.2 rounded bg-[var(--foreground)]/5 border border-[var(--border)] text-[var(--foreground)] shrink-0">
+                        {t.game}
                       </span>
-                      <span className="flex items-center gap-0.5 font-black text-amber-400 shrink-0">
-                        <GiTrophy size={10} className="shrink-0" />
-                        <span className="truncate">{t.prize}</span>
-                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => cycleStatus(t, e)}
+                        className={`text-[7px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-full border shrink-0 ${
+                          STATUS_COLOR[t.status] || ""
+                        }`}
+                      >
+                        {t.status}
+                      </button>
+                      <h3 className="text-[11px] font-black uppercase tracking-tight text-[var(--foreground)] truncate">
+                        {t.title}
+                      </h3>
                     </div>
+                    <span className="flex items-center gap-0.5 font-black text-amber-400 text-[10px] shrink-0">
+                      <GiTrophy size={10} className="shrink-0" />
+                      <span className="truncate">{t.prize}</span>
+                    </span>
                   </div>
 
-                  {/* Slots Progress */}
-                  <div className="space-y-0.5 pt-0.5">
-                    <div className="flex items-center justify-between text-[7.5px] font-mono text-[var(--muted)]">
-                      <span>Slots</span>
-                      <span>
+                  {/* Row 2: Subtitle/Format, Room, Time, and Slots */}
+                  <div className="flex items-center justify-between gap-2 text-[8px] text-[var(--muted)] pt-0.5">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1 truncate">
+                      <span className="truncate">{t.format}</span>
+                      {t.roomId && (
+                        <>
+                          <span>•</span>
+                          <span className="text-emerald-400 font-mono flex items-center gap-0.5 shrink-0">
+                            <FiLock size={7.5} /> {t.roomId}
+                          </span>
+                        </>
+                      )}
+                      {t.startsAt && (
+                        <>
+                          <span>•</span>
+                          <span className="font-mono truncate">
+                            {new Date(t.startsAt).toLocaleDateString([], { month: "short", day: "numeric" })}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="font-mono text-[8px]">
                         <strong className="text-[var(--foreground)]">{t.slotsFilled || 0}</strong>/{t.slots} ({slotsPct}%)
                       </span>
-                    </div>
-                    <div className="w-full h-1 rounded-full bg-[var(--foreground)]/5 overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-300 ${
-                          slotsPct >= 100 ? "bg-rose-500" : slotsPct >= 75 ? "bg-amber-400" : "bg-emerald-400"
-                        }`}
-                        style={{ width: `${slotsPct}%` }}
-                      />
+                      <div className="w-10 h-1 rounded-full bg-[var(--foreground)]/5 overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${
+                            slotsPct >= 100 ? "bg-rose-500" : slotsPct >= 75 ? "bg-amber-400" : "bg-emerald-400"
+                          }`}
+                          style={{ width: `${slotsPct}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  {/* Room ID & Match Time (Single Compact Row) */}
-                  {(t.roomId || t.startsAt) && (
-                    <div className="flex items-center justify-between gap-1 text-[7.5px] font-mono pt-0.5">
-                      {t.roomId ? (
-                        <span className="flex items-center gap-1 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1 py-0.5 rounded truncate">
-                          <FiLock size={7.5} /> {t.roomId}
-                        </span>
-                      ) : <span />}
+                  {/* Row 3: Action Buttons */}
+                  <div className="flex items-center justify-between gap-1 pt-1.5 border-t border-[var(--border)]/40">
+                    <span className="text-[7.5px] text-[var(--muted)] font-mono">
+                      {Number(t.entryCoins) > 0 ? `${t.entryCoins} Coins` : "Free Entry"}
+                    </span>
 
-                      {t.startsAt && (
-                        <span className="flex items-center gap-1 text-[var(--muted)] shrink-0 ml-auto">
-                          <FiClock size={7.5} />
-                          <span>{new Date(t.startsAt).toLocaleDateString([], { month: "short", day: "numeric" })} {new Date(t.startsAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
-                        </span>
-                      )}
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => openEntries(t)}
+                        className="h-5.5 px-2 rounded-md bg-[var(--foreground)] text-[var(--background)] text-[7.5px] font-black uppercase tracking-wider flex items-center gap-1 cursor-pointer"
+                      >
+                        <FiUsers size={8} /> Entries ({t.slotsFilled || 0})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => duplicateTournament(t)}
+                        className="w-5.5 h-5.5 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 flex items-center justify-center transition-colors cursor-pointer"
+                        title="Duplicate"
+                      >
+                        <FiCopy size={9} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => openEdit(t)}
+                        className="w-5.5 h-5.5 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5 flex items-center justify-center transition-colors cursor-pointer"
+                        title="Edit"
+                      >
+                        <FiEdit2 size={9} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => deleteTournament(t._id)}
+                        className="w-5.5 h-5.5 rounded-md text-[var(--muted)] hover:text-rose-400 hover:bg-rose-500/10 flex items-center justify-center transition-colors cursor-pointer"
+                        title="Delete"
+                      >
+                        <FiTrash2 size={9} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Mobile Inline Delete Confirmation */}
+                  {isPending && (
+                    <div className="absolute inset-0 bg-[var(--card)]/95 backdrop-blur-xs p-2 flex items-center justify-between z-10 border border-rose-500/30">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[8px] font-black text-rose-400 uppercase truncate">
+                          Delete "{t.title}"?
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          type="button"
+                          onClick={executeConfirm}
+                          className="h-5 px-2 rounded bg-rose-500 text-white text-[7.5px] font-black uppercase"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setConfirmAction(null)}
+                          className="h-5 px-1.5 rounded border border-[var(--border)] text-[var(--muted)] text-[7.5px] font-black uppercase"
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
-
-                {/* Card Actions Bottom */}
-                <div className="pt-1.5 border-t border-[var(--border)]/60 flex items-center justify-between gap-1">
-                  <button
-                    type="button"
-                    onClick={() => openEntries(t)}
-                    className="flex-1 h-6 px-2 rounded-lg bg-[var(--foreground)] text-[var(--background)] text-[8px] font-black uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center justify-center gap-1 cursor-pointer"
-                  >
-                    <FiUsers size={9} /> Entries ({t.slotsFilled || 0})
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => duplicateTournament(t)}
-                    className="w-6 h-6 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)] flex items-center justify-center transition-colors cursor-pointer"
-                    title="Duplicate"
-                  >
-                    <FiCopy size={10} />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => openEdit(t)}
-                    className="w-6 h-6 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] flex items-center justify-center transition-colors cursor-pointer"
-                    title="Edit"
-                  >
-                    <FiEdit2 size={10} />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => deleteTournament(t._id)}
-                    className="w-6 h-6 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-rose-400 hover:border-rose-500/30 flex items-center justify-center transition-colors cursor-pointer"
-                    title="Delete"
-                  >
-                    <FiTrash2 size={10} />
-                  </button>
-                </div>
-
-                {/* Inline Delete Confirmation */}
-                {isPending && (
-                  <div className="absolute inset-0 bg-[var(--card)]/95 backdrop-blur-xs rounded-2xl p-3 flex flex-col justify-center items-center text-center gap-2 border border-rose-500/30 z-10">
-                    <p className="text-[9px] font-black text-rose-400 uppercase tracking-wider">
-                      Delete Tournament?
-                    </p>
-                    <p className="text-[7.5px] text-[var(--muted)]">
-                      All registered participant entries will be deleted.
-                    </p>
-                    <div className="flex items-center gap-1.5 w-full">
-                      <button
-                        type="button"
-                        onClick={executeConfirm}
-                        className="flex-1 h-6 rounded-lg bg-rose-500 text-white text-[8px] font-black uppercase tracking-wider"
-                      >
-                        Delete
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setConfirmAction(null)}
-                        className="flex-1 h-6 rounded-lg border border-[var(--border)] text-[var(--muted)] text-[8px] font-black uppercase tracking-wider"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       )}
 

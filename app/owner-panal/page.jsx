@@ -1,5 +1,6 @@
 "use client";
 
+// Fresh HMR invalidation
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Icons } from "@/components/icons";
