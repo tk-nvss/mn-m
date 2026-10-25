@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
-import { FiArrowRight } from "react-icons/fi";
+import { FiArrowRight, FiRefreshCw } from "react-icons/fi";
 
 export default function Maintaince() {
   const [show, setShow] = useState(true);
@@ -133,33 +133,44 @@ export default function Maintaince() {
               </motion.svg>
             </div>
 
-            {/* Playful Pill */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/70 text-amber-700 text-[10px] font-bold tracking-wide mb-3">
-              <span>☕</span>
-              <span>Quick Coffee Break • ~15 mins</span>
+            {/* Simple Status Pill */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/70 text-amber-700 text-[10.5px] font-bold tracking-wide mb-3">
+              <span>🛠️</span>
+              <span>Maintenance In Progress • Back Soon</span>
             </div>
 
-            {/* Heading */}
+            {/* Clear Heading in Simple English */}
             <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-snug mb-1.5">
-              Taking a quick power nap! 😴
+              We&apos;re Upgrading the Website! 🛠️
             </h1>
 
-            {/* Playful, friendly description */}
-            <p className="text-xs text-slate-500 leading-relaxed mb-6 max-w-[280px] mx-auto">
-              Feeding coffee to our server hamsters and polishing the diamonds. We&apos;ll be back in just a few minutes!
+            {/* Simple, reassuring description explaining to the user */}
+            <p className="text-xs text-slate-500 leading-relaxed mb-5 max-w-[290px] mx-auto">
+              We are making a quick update to make the website faster and smoother for you. Don&apos;t worry, your account and orders are 100% safe!
             </p>
 
-            {/* WhatsApp Direct Help Button */}
-            <a
-              href="https://whatsapp.com/channel/0029Vb87jgR17En1n5PKy129"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-md shadow-emerald-500/20 hover:shadow-lg transition-all active:scale-[0.98] mb-4 group"
-            >
-              <FaWhatsapp size={16} />
-              <span>Join WhatsApp Channel</span>
-              <FiArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
-            </a>
+            {/* Actions: Refresh & WhatsApp */}
+            <div className="flex flex-col gap-2 w-full mb-4">
+              <button
+                onClick={() => window.location.reload()}
+                className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition-all active:scale-[0.98] cursor-pointer"
+              >
+                <FiRefreshCw size={13} />
+                <span>Check If Website Is Back</span>
+              </button>
+
+              {/* WhatsApp Direct Help Button */}
+              <a
+                href="https://whatsapp.com/channel/0029Vb87jgR17En1n5PKy129"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-sm shadow-emerald-500/20 hover:shadow-md transition-all active:scale-[0.98] group"
+              >
+                <FaWhatsapp size={15} />
+                <span>Join WhatsApp for Updates</span>
+                <FiArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+              </a>
+            </div>
 
             {/* Admin Login / Logout subtle links */}
             <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">

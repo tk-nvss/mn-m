@@ -1,5 +1,5 @@
 // Service worker for PWA, Push Notifications, 0ms Asset Caching & Offline Fallback
-const CACHE_NAME = 'mlbbtopup-assets-v2';
+const CACHE_NAME = 'mlbbtopup-assets-v3';
 
 // Static core assets to pre-cache on install
 const PRECACHE_ASSETS = [

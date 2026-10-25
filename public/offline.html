@@ -5,203 +5,756 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Offline | mlbbtopup.in</title>
   <link rel="icon" href="/favicon.ico">
-  <meta name="theme-color" content="#0a0a0c">
+  <meta name="theme-color" content="#f8fafc">
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
+
     body {
-      background: #0a0a0c;
-      color: #ffffff;
+      background: #f8fafc;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(59, 130, 246, 0.05) 0px, transparent 60%);
+      color: #0f172a;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 16px;
       text-align: center;
       position: relative;
-      overflow: hidden;
+      overflow-x: hidden;
     }
-    .ambient-glow {
+
+    /* Subtle background grid pattern */
+    .bg-grid {
       position: absolute;
-      width: 320px;
-      height: 320px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(168, 85, 247, 0.08) 50%, transparent 70%);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      inset: 0;
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
       pointer-events: none;
-      filter: blur(50px);
+      mask-image: radial-gradient(circle at center, black 40%, transparent 85%);
+      -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 85%);
     }
+
     .card {
       position: relative;
       z-index: 10;
-      max-width: 340px;
+      max-width: 380px;
       width: 100%;
-      background: rgba(18, 18, 24, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 24px;
-      padding: 28px 20px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 28px;
+      padding: 32px 24px 28px;
+      box-shadow: 
+        0 20px 40px -15px rgba(15, 23, 42, 0.08),
+        0 0 0 1px rgba(15, 23, 42, 0.03);
       display: flex;
       flex-direction: column;
       align-items: center;
+      animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    .icon-box {
-      width: 54px;
-      height: 54px;
-      border-radius: 16px;
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.2);
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.94) translateY(12px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Cute Mascot Container */
+    .mascot-container {
+      position: relative;
+      width: 110px;
+      height: 100px;
+      margin-bottom: 12px;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #f87171;
-      margin-bottom: 16px;
     }
+
+    .mascot-svg {
+      width: 100%;
+      height: 100%;
+      animation: gentleFloat 3s ease-in-out infinite;
+      transform-origin: center bottom;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .mascot-container:active .mascot-svg {
+      transform: scale(0.9) rotate(-5deg);
+    }
+
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-7px); }
+    }
+
+    /* Floating Zzz */
+    .zzz-bubble {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #94a3b8;
+      animation: sleepZzz 2.4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes sleepZzz {
+      0% { opacity: 0; transform: scale(0.6) translate(0, 0); }
+      40% { opacity: 1; }
+      100% { opacity: 0; transform: scale(1.2) translate(14px, -18px); }
+    }
+
+    /* Status Badge */
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 3px 10px;
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      color: #f87171;
-      border-radius: 20px;
-      font-size: 9.5px;
+      gap: 7px;
+      padding: 5px 12px;
+      background: #fff1f2;
+      border: 1px solid #ffe4e6;
+      color: #e11d48;
+      border-radius: 999px;
+      font-size: 11px;
       font-weight: 800;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
+
     .pulse-dot {
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: #ef4444;
-      box-shadow: 0 0 8px #ef4444;
-      animation: blink 1.2s infinite;
+      background: #e11d48;
+      box-shadow: 0 0 0 rgba(225, 29, 72, 0.4);
+      animation: pulse 1.6s infinite;
     }
-    @keyframes blink {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.8); }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.6); }
+      70% { box-shadow: 0 0 0 7px rgba(225, 29, 72, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
     }
+
     h1 {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 800;
-      color: #ffffff;
-      margin-bottom: 6px;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
     }
+
     .desc {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.6);
-      line-height: 1.45;
-      margin-bottom: 22px;
-      max-width: 280px;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 18px;
+      max-width: 320px;
     }
+
+    /* Funny Excuse Box */
+    .excuse-box {
+      width: 100%;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      padding: 11px 14px;
+      margin-bottom: 20px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .excuse-box:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .excuse-box:active {
+      transform: scale(0.99);
+    }
+
+    .excuse-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .excuse-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #3b82f6;
+    }
+
+    .excuse-btn {
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .excuse-text {
+      font-size: 12px;
+      color: #334155;
+      font-style: italic;
+      line-height: 1.4;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      transition: opacity 0.15s ease;
+    }
+
+    /* Action Buttons */
+    .action-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
     .btn-retry {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       width: 100%;
-      padding: 12px 16px;
-      border-radius: 12px;
-      font-size: 12.5px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      padding: 13px 18px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
       background: #2563eb;
       color: #ffffff;
       border: none;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
       transition: all 0.2s ease;
     }
+
     .btn-retry:hover {
       background: #1d4ed8;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
       transform: translateY(-1px);
     }
+
     .btn-retry:active {
       transform: scale(0.98);
     }
-    .status-footer {
+
+    .btn-game-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: 100%;
+      padding: 11px 16px;
+      border-radius: 14px;
+      font-size: 12.5px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-game-toggle:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    .btn-game-toggle:active {
+      transform: scale(0.98);
+    }
+
+    /* Mini Jump Game Area (Hidden by default, toggled on click) */
+    .game-section {
+      display: none;
+      width: 100%;
       margin-top: 14px;
-      font-size: 10px;
+      padding-top: 14px;
+      border-top: 1px dashed #e2e8f0;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .game-section.active {
+      display: flex;
+    }
+
+    .game-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 8px;
+      padding: 0 4px;
+    }
+
+    .game-canvas-wrapper {
+      position: relative;
+      width: 100%;
+      height: 120px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .game-hint {
+      font-size: 10.5px;
+      color: #94a3b8;
+      margin-top: 6px;
+    }
+
+    /* Reconnecting status footer */
+    .status-footer {
+      margin-top: 16px;
+      font-size: 11px;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.4);
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .spin {
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <div class="ambient-glow"></div>
+  <div class="bg-grid"></div>
 
   <div class="card">
-    <div class="icon-box">
-      <!-- Wi-Fi Off SVG Icon -->
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="1" y1="1" x2="23" y2="23"></line>
-        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
-        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
-        <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
-        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
-        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+    <!-- Cute Sleepy Router Mascot with Interactive Click -->
+    <div class="mascot-container" onclick="pokeMascot()" title="Tap to wake me up!">
+      <div class="zzz-bubble">Zzz...</div>
+      <svg class="mascot-svg" id="mascot" viewBox="0 0 120 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Floating disconnected plug cord dangling -->
+        <path d="M 60 88 Q 60 102 76 102 T 94 96" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" fill="none" />
+        <rect x="92" y="90" width="10" height="12" rx="2" fill="#64748b" transform="rotate(25 92 90)" />
+        <line x1="102" y1="95" x2="108" y2="98" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" />
+        <line x1="100" y1="101" x2="106" y2="104" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" />
+
+        <!-- Router Antennas -->
+        <line x1="36" y1="36" x2="22" y2="14" stroke="#64748b" stroke-width="4" stroke-linecap="round" />
+        <circle cx="20" cy="12" r="5" fill="#f43f5e" />
+        
+        <line x1="84" y1="36" x2="98" y2="14" stroke="#64748b" stroke-width="4" stroke-linecap="round" />
+        <circle cx="100" cy="12" r="5" fill="#f43f5e" />
+
+        <!-- Router Body -->
+        <rect x="20" y="34" width="80" height="56" rx="20" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="3" />
+        
+        <!-- Sleepy / Cute Face -->
+        <!-- Cheeks -->
+        <circle cx="36" cy="67" r="5.5" fill="#fecdd3" />
+        <circle cx="84" cy="67" r="5.5" fill="#fecdd3" />
+        
+        <!-- Sleepy Closed Curved Eyes -->
+        <path id="left-eye" d="M 40 59 Q 47 65 54 59" stroke="#334155" stroke-width="3" stroke-linecap="round" fill="none" />
+        <path id="right-eye" d="M 66 59 Q 73 65 80 59" stroke="#334155" stroke-width="3" stroke-linecap="round" fill="none" />
+        
+        <!-- Cute Little Mouth -->
+        <path id="mascot-mouth" d="M 57 71 Q 60 74 63 71" stroke="#475569" stroke-width="2.5" stroke-linecap="round" fill="none" />
+        
+        <!-- Router Signal LEDs -->
+        <circle cx="48" cy="43" r="2.5" fill="#cbd5e1" />
+        <circle cx="60" cy="43" r="2.5" fill="#cbd5e1" />
+        <circle cx="72" cy="43" r="2.5" fill="#f43f5e">
+          <animate attributeName="opacity" values="1;0.2;1" dur="1.2s" repeatCount="indefinite" />
+        </circle>
       </svg>
     </div>
 
+    <!-- Status Badge -->
     <div class="badge">
       <span class="pulse-dot"></span>
-      Offline
+      You Are Offline
     </div>
 
-    <h1>No Internet Connection</h1>
-    <p class="desc">Please check your Wi-Fi or mobile data network. We'll automatically reconnect once you're back online.</p>
+    <!-- Headline & Copy in Simple English -->
+    <h1>Oops, No Internet!</h1>
+    <p class="desc">
+      Your device lost connection to the internet. Please check your Wi-Fi or turn on mobile data. Don't worry, your orders and diamonds are 100% safe!
+    </p>
 
-    <button class="btn-retry" onclick="checkConnection()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="23 4 23 10 17 10"></polyline>
-        <polyline points="1 20 1 14 7 14"></polyline>
-        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-      </svg>
-      Retry Connection
-    </button>
+    <!-- Interactive Funny Tip / Excuse Box in Simple English -->
+    <div class="excuse-box" onclick="cycleExcuse()" title="Tap for another funny tip!">
+      <div class="excuse-header">
+        <span class="excuse-tag">
+          💡 Quick Fun Tip
+        </span>
+        <span class="excuse-btn">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          New Tip
+        </span>
+      </div>
+      <div class="excuse-text" id="excuse-text">
+        "Your Wi-Fi is taking a quick power nap."
+      </div>
+    </div>
 
-    <div class="status-footer">Auto-reconnecting as soon as online...</div>
+    <!-- Buttons -->
+    <div class="action-group">
+      <button class="btn-retry" onclick="checkConnection()">
+        <svg id="retry-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+        <span id="retry-label">Retry Connection</span>
+      </button>
+
+      <button class="btn-game-toggle" onclick="toggleMiniGame()">
+        <span>🎮</span>
+        <span id="game-btn-text">Bored? Play Mini Game</span>
+      </button>
+    </div>
+
+    <!-- Collapsible Mini Offline Runner Game -->
+    <div class="game-section" id="game-section">
+      <div class="game-header">
+        <span>🎮 Jump Over The Cables!</span>
+        <span>Score: <b id="game-score">0</b> | Best: <b id="game-best">0</b></span>
+      </div>
+      <div class="game-canvas-wrapper" id="canvas-wrapper">
+        <canvas id="game-canvas"></canvas>
+      </div>
+      <div class="game-hint">Tap screen or press Spacebar to jump</div>
+    </div>
+
+    <div class="status-footer">
+      <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#94a3b8;"></span>
+      Auto-reconnecting once you're back online...
+    </div>
   </div>
 
   <script>
+    // ==========================================
+    // FUNNY & SIMPLE EXCUSES GENERATOR
+    // ==========================================
+    const excuses = [
+      '"Your Wi-Fi is taking a quick power nap."',
+      '"Did someone unplug the Wi-Fi box by mistake?"',
+      '"Quick Tip: Turn Wi-Fi off and back on — it usually fixes it!"',
+      '"Even the best gamers lose connection sometimes."',
+      '"Don\'t worry, your diamonds and account are 100% safe!"',
+      '"Did the cat step on the internet cable again?"',
+      '"Waiting for the internet signals to wake up..."',
+      '"No internet? Good time to relax your eyes and drink water!"'
+    ];
+    let excuseIdx = 0;
+
+    function cycleExcuse() {
+      excuseIdx = (excuseIdx + 1) % excuses.length;
+      const el = document.getElementById('excuse-text');
+      el.style.opacity = '0';
+      setTimeout(() => {
+        el.innerText = excuses[excuseIdx];
+        el.style.opacity = '1';
+      }, 150);
+    }
+
+    // ==========================================
+    // MASCOT INTERACTION (POKE)
+    // ==========================================
+    let pokeTimer = null;
+    function pokeMascot() {
+      const mascot = document.getElementById('mascot');
+      const leftEye = document.getElementById('left-eye');
+      const rightEye = document.getElementById('right-eye');
+      const mouth = document.getElementById('mascot-mouth');
+
+      // Surprise eyes (circles)
+      leftEye.setAttribute('d', 'M 47 56 A 4 4 0 1 1 47 64 A 4 4 0 1 1 47 56');
+      rightEye.setAttribute('d', 'M 73 56 A 4 4 0 1 1 73 64 A 4 4 0 1 1 73 56');
+      mouth.setAttribute('d', 'M 57 73 A 3 3 0 1 1 63 73');
+
+      mascot.style.transform = 'scale(1.15) rotate(6deg)';
+
+      clearTimeout(pokeTimer);
+      pokeTimer = setTimeout(() => {
+        // Return to sleepy
+        leftEye.setAttribute('d', 'M 40 59 Q 47 65 54 59');
+        rightEye.setAttribute('d', 'M 66 59 Q 73 65 80 59');
+        mouth.setAttribute('d', 'M 57 71 Q 60 74 63 71');
+        mascot.style.transform = '';
+      }, 900);
+
+      cycleExcuse();
+    }
+
+    // ==========================================
+    // RETRY CONNECTION LOGIC
+    // ==========================================
     function checkConnection() {
       const btn = document.querySelector('.btn-retry');
-      btn.innerText = 'Connecting...';
-      btn.style.opacity = '0.7';
+      const icon = document.getElementById('retry-icon');
+      const label = document.getElementById('retry-label');
+
+      icon.classList.add('spin');
+      label.innerText = 'Checking internet...';
+      btn.style.opacity = '0.85';
 
       if (navigator.onLine) {
-        window.location.reload();
+        label.innerText = 'Connected! Opening website...';
+        setTimeout(() => {
+          window.location.reload();
+        }, 400);
       } else {
         setTimeout(() => {
-          btn.innerHTML = `
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="23 4 23 10 17 10"></polyline>
-              <polyline points="1 20 1 14 7 14"></polyline>
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-            </svg>
-            Retry Connection
-          `;
+          icon.classList.remove('spin');
+          label.innerText = 'Still Offline! Check Wi-Fi';
           btn.style.opacity = '1';
-        }, 800);
+          setTimeout(() => {
+            label.innerText = 'Retry Connection';
+          }, 2200);
+        }, 1000);
       }
     }
 
-    // Auto-reload as soon as internet connection is restored
+    // Auto-reload when back online
     window.addEventListener('online', () => {
-      window.location.reload();
+      const label = document.getElementById('retry-label');
+      if (label) label.innerText = 'Internet Restored! Loading...';
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     });
+
+    // ==========================================
+    // LIGHTWEIGHT MINI JUMPER GAME
+    // ==========================================
+    let gameActive = false;
+    let canvas, ctx;
+    let animFrame;
+    let player, obstacles, score, bestScore = 0, isGameOver = false;
+
+    function toggleMiniGame() {
+      const sec = document.getElementById('game-section');
+      const btnText = document.getElementById('game-btn-text');
+      if (sec.classList.contains('active')) {
+        sec.classList.remove('active');
+        btnText.innerText = 'Bored? Play Mini Game';
+        gameActive = false;
+        cancelAnimationFrame(animFrame);
+      } else {
+        sec.classList.add('active');
+        btnText.innerText = 'Hide Mini Game';
+        gameActive = true;
+        initGame();
+      }
+    }
+
+    function initGame() {
+      canvas = document.getElementById('game-canvas');
+      const wrapper = document.getElementById('canvas-wrapper');
+      
+      const rect = wrapper.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      
+      ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+
+      const W = rect.width;
+      const H = rect.height;
+
+      player = {
+        x: 35,
+        y: H - 32,
+        w: 22,
+        h: 22,
+        vy: 0,
+        gravity: 0.58,
+        jumpPower: -9.5,
+        isGrounded: true
+      };
+
+      obstacles = [];
+      score = 0;
+      isGameOver = false;
+      document.getElementById('game-score').innerText = '0';
+
+      wrapper.onpointerdown = (e) => {
+        e.preventDefault();
+        jump();
+      };
+
+      window.onkeydown = (e) => {
+        if (e.code === 'Space' && gameActive) {
+          e.preventDefault();
+          jump();
+        }
+      };
+
+      let spawnTimer = 0;
+
+      function loop() {
+        if (!gameActive) return;
+
+        // Clear canvas
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillRect(0, 0, W, H);
+
+        // Ground line
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, H - 10);
+        ctx.lineTo(W, H - 10);
+        ctx.stroke();
+
+        if (!isGameOver) {
+          // Physics
+          player.vy += player.gravity;
+          player.y += player.vy;
+
+          if (player.y >= H - 32) {
+            player.y = H - 32;
+            player.vy = 0;
+            player.isGrounded = true;
+          }
+
+          // Spawn obstacle
+          spawnTimer++;
+          if (spawnTimer > 75 + Math.random() * 40) {
+            obstacles.push({
+              x: W + 10,
+              y: H - 30,
+              w: 14,
+              h: 20
+            });
+            spawnTimer = 0;
+          }
+
+          // Move obstacles & collision
+          for (let i = obstacles.length - 1; i >= 0; i--) {
+            const obs = obstacles[i];
+            obs.x -= 3.8;
+
+            // Collision check
+            if (
+              player.x + player.w - 4 > obs.x &&
+              player.x + 4 < obs.x + obs.w &&
+              player.y + player.h > obs.y
+            ) {
+              isGameOver = true;
+              if (score > bestScore) {
+                bestScore = score;
+                document.getElementById('game-best').innerText = bestScore;
+              }
+            }
+
+            // Score point
+            if (!obs.passed && obs.x + obs.w < player.x) {
+              obs.passed = true;
+              score += 1;
+              document.getElementById('game-score').innerText = score;
+            }
+
+            if (obs.x + obs.w < -20) {
+              obstacles.splice(i, 1);
+            }
+          }
+        }
+
+        // Draw Player (Cute little jumping diamond / cart)
+        ctx.fillStyle = '#2563eb';
+        ctx.beginPath();
+        ctx.roundRect(player.x, player.y, player.w, player.h, 6);
+        ctx.fill();
+
+        // Player face
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(player.x + 13, player.y + 6, 3, 3);
+        ctx.fillRect(player.x + 6, player.y + 6, 3, 3);
+        ctx.fillRect(player.x + 8, player.y + 13, 6, 2);
+
+        // Draw Obstacles (Disconnected Wi-Fi towers)
+        ctx.fillStyle = '#ef4444';
+        obstacles.forEach(obs => {
+          ctx.beginPath();
+          ctx.roundRect(obs.x, obs.y, obs.w, obs.h, 3);
+          ctx.fill();
+          // Broken top
+          ctx.strokeStyle = '#ef4444';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(obs.x + obs.w / 2, obs.y - 3, 4, Math.PI, 0);
+          ctx.stroke();
+        });
+
+        // Game Over message
+        if (isGameOver) {
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
+          ctx.font = 'bold 13px -apple-system, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('⚡ Lag Spike! Tap to try again', W / 2, H / 2 - 4);
+        }
+
+        animFrame = requestAnimationFrame(loop);
+      }
+
+      loop();
+    }
+
+    function jump() {
+      if (!gameActive) return;
+      if (isGameOver) {
+        initGame();
+        return;
+      }
+      if (player && player.isGrounded) {
+        player.vy = player.jumpPower;
+        player.isGrounded = false;
+      }
+    }
   </script>
 </body>
 </html>

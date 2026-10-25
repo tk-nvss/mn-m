@@ -284,15 +284,19 @@ export default function Header() {
                 title={isStandalone ? "App Running (Standalone Mode)" : isPwaInstalled ? "App Installed" : "Install App"}
               >
                 {isStandalone || isPwaInstalled ? (
-                  <FiCheckCircle size={14} className="text-emerald-400" />
+                  <FiCheckCircle size={14} className="z-10 text-emerald-400" />
                 ) : (
-                  <FiDownload size={14} className="group-hover:translate-y-[1px] transition-transform" />
+                  <FiDownload size={14} className="z-10 group-hover:translate-y-[1px] transition-transform" />
                 )}
                 
-                {/* INDICATOR */}
-                <div className={`absolute top-0.5 right-0.5 w-2 h-2 rounded-full border border-[var(--background)] z-20 transition-colors ${
-                  isStandalone || isPwaInstalled ? "bg-emerald-500" : "bg-[#0088cc]"
-                }`} />
+                {/* SPINNING ORBIT RING */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                  className={`absolute inset-0 rounded-full border border-dashed pointer-events-none ${
+                    isStandalone || isPwaInstalled ? "border-emerald-500/30" : "border-[var(--foreground)]/20"
+                  }`}
+                />
               </motion.button>
 
               {/* TOAST POPUP */}
@@ -626,8 +630,15 @@ function NotificationToggle({ user }) {
         aria-label="Turn on notifications"
         title={subscribed ? "Notifications Enabled" : "Turn ON Notifications"}
       >
-        <FiBell size={14} className={`group-hover:rotate-12 transition-transform ${loading ? "animate-spin" : ""}`} />
+        <FiBell size={14} className={`z-10 group-hover:rotate-12 transition-transform ${loading ? "animate-spin" : ""}`} />
         
+        {/* SPINNING ORBIT RING */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          className="absolute inset-0 rounded-full border border-dashed border-[var(--foreground)]/20 pointer-events-none"
+        />
+
         {/* INDICATOR DOT */}
         <div className={`absolute top-0.5 right-0.5 w-2 h-2 rounded-full border border-[var(--background)] z-20 transition-colors ${
           subscribed ? "bg-emerald-500" : "bg-amber-500"

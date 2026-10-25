@@ -174,15 +174,16 @@ export default function ThemeToggle() {
           animate={{ rotate: 0, opacity: 1, scale: 1 }}
           exit={{ rotate: 90, opacity: 0, scale: 0.7 }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="flex items-center justify-center text-[13px] sm:text-sm select-none"
+          className="z-10 flex items-center justify-center text-[13px] sm:text-sm select-none"
         >
           {theme === "light" ? "☀️" : "🌙"}
         </motion.div>
 
-        {/* Micro Accent Color Pip */}
-        <div
-          className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full border border-[var(--background)] transition-colors duration-300"
-          style={{ backgroundColor: currentAccentDisplay }}
+        {/* SPINNING ORBIT RING */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          className="absolute inset-0 rounded-full border border-dashed border-[var(--foreground)]/20 pointer-events-none"
         />
       </motion.button>
 
