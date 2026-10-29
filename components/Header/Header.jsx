@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import ThemeToggle from "../ThemeToggle/ThemeToggle";
 import CustomWebBanner from "../Home/CustomWebBanner";
+import CustomBanner2 from "../Ads/CustomBanner2";
 import api from "@/lib/axios";
 import { FiHeart, FiChevronRight, FiChevronDown, FiLogOut, FiCheckCircle, FiShield, FiZap, FiMenu, FiX, FiLayers, FiCompass, FiGrid, FiShoppingBag, FiMessageSquare, FiUser, FiUsers, FiKey, FiGift, FiAward, FiDownload, FiBell, FiCalendar } from "react-icons/fi";
 import { CopyButton } from "@/components/common";
@@ -318,7 +319,7 @@ export default function Header() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => user ? setUserMenuOpen((p) => !p) : window.location.href = "/login"}
+                onClick={() => setUserMenuOpen((p) => !p)}
                 className="relative flex items-center justify-center w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full border border-[var(--border)]/60 bg-[var(--foreground)]/[0.04] hover:bg-[var(--foreground)]/[0.08] hover:border-[var(--accent)]/40 transition-all duration-200 cursor-pointer overflow-hidden group"
                 aria-label="User Menu"
                 title={user?.name || "Account"}
@@ -388,13 +389,54 @@ export default function Header() {
                   <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
 
                     {!user ? (
-                      <div className="flex flex-col items-center justify-center text-center py-10 space-y-6">
-                        <div className="w-16 h-16 rounded-[2rem] bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]"><FiZap size={32} /></div>
+                      <div className="flex flex-col items-center justify-center text-center py-6 space-y-4">
+                        {/* Quick Nav for Guests */}
+                        <div className="grid grid-cols-3 gap-2 w-full mb-1">
+                          {HEADER_CONFIG.nav.map((item) => (
+                            <Link 
+                              key={item.label} 
+                              href={item.href} 
+                              onClick={() => setUserMenuOpen(false)} 
+                              className="flex items-center justify-center gap-1.5 py-2 px-1.5 rounded-xl bg-[var(--card)]/60 border border-[var(--border)] hover:border-[var(--accent)]/30 hover:bg-[var(--card)] text-[var(--foreground)] transition-all group shadow-sm"
+                            >
+                              <span className="text-[var(--accent)] group-hover:scale-110 transition-transform">{item.icon}</span>
+                              <span className="text-[9px] font-extrabold uppercase tracking-wider">{item.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+
+                        <div className="w-14 h-14 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]">
+                          <FiZap size={28} />
+                        </div>
                         <div className="space-y-1">
-                          <h3 className="text-lg font-bold text-[var(--foreground)]">Sign in required</h3>
+                          <h3 className="text-base font-bold text-[var(--foreground)]">Sign in required</h3>
                           <p className="text-xs text-[var(--muted)]">Login to access your personalized squad dashboard</p>
                         </div>
-                        <Link href="/login" onClick={() => setUserMenuOpen(false)} className="w-full py-3.5 rounded-2xl bg-[var(--accent)] text-white text-xs font-bold hover:brightness-110 active:scale-[0.98] transition-all text-center">Authenticate Now</Link>
+                        <Link 
+                          href="/login" 
+                          onClick={() => setUserMenuOpen(false)} 
+                          className="w-full py-3 px-4 rounded-xl bg-[var(--accent)] hover:opacity-95 active:scale-[0.98] transition-all text-center shadow-lg flex items-center justify-center gap-2 group cursor-pointer !text-black"
+                          style={{ color: '#000000' }}
+                        >
+                          <FiUser className="w-4 h-4 text-black stroke-[2.5]" style={{ color: '#000000' }} />
+                          <span className="text-black font-black text-xs uppercase tracking-wider" style={{ color: '#000000' }}>
+                            Login / Sign In
+                          </span>
+                        </Link>
+
+                        <div className="w-full pt-3 border-t border-[var(--border)]/40 flex flex-col gap-1">
+                          <Link
+                            href="/dashboard/support"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center justify-between py-2 px-3 rounded-xl bg-[var(--foreground)]/[0.03] hover:bg-[var(--card)] border border-[var(--border)] transition-all group"
+                          >
+                            <div className="flex items-center gap-2">
+                              <FiMessageSquare size={14} className="text-sky-400 group-hover:scale-110 transition-transform" />
+                              <span className="text-xs font-bold text-[var(--foreground)]">Support & Help</span>
+                            </div>
+                            <FiChevronRight size={13} className="text-[var(--muted)] group-hover:translate-x-0.5 transition-transform" />
+                          </Link>
+                        </div>
                       </div>
                     ) : (
                       <>
@@ -542,9 +584,14 @@ export default function Header() {
                   </div>
 
                   {/* Drawer Footer */}
-                  <div className="relative z-10 py-2.5 px-4 border-t border-[var(--border)] bg-[var(--foreground)]/[0.02]">
+                  <div className="relative z-10 py-2.5 px-3 border-t border-[var(--border)] bg-[var(--foreground)]/[0.02] flex flex-col items-center justify-center gap-1.5 shrink-0">
                     <div className="text-center text-[9px] text-[var(--foreground)] opacity-75 font-mono tracking-wider flex flex-col items-center justify-center">
                       <span>A Product from <a href="https://bluebuff.in" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] font-bold hover:underline">bluebuff.in</a></span>
+                    </div>
+
+                    {/* Banner Ad below product attribution */}
+                    <div className="w-full flex justify-center">
+                      <CustomBanner2 className="!py-0" />
                     </div>
                   </div>
                 </div>

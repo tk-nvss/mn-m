@@ -488,13 +488,15 @@ body {
 }
 
 /* Links */
-a {
-  color: var(--accent);
-  transition: color 0.3s ease;
-}
+@layer base {
+  a {
+    color: var(--accent);
+    transition: color 0.3s ease;
+  }
 
-a:hover {
-  color: var(--accent-hover);
+  a:hover {
+    color: var(--accent-hover);
+  }
 }
 
 /* Utilities */
