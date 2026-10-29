@@ -15,6 +15,17 @@ export interface AdsConfiguration {
   defaultCooldownMinutes: number;
   cooldownMs: number;
   enabled: boolean;
+  enableBanners?: boolean;
+  enableSocialBar?: boolean;
+  enablePopunder?: boolean;
+  showAdBadge?: boolean;
+  adBadgeText?: string;
+  nativeBannerId?: string;
+  nativeBannerSrc?: string;
+  socialBarSrc?: string;
+  popunderSrc?: string;
+  banner320x50Key?: string;
+  banner300x250Key?: string;
   channels: AdChannel[];
 }
 
@@ -32,6 +43,17 @@ export const DEFAULT_ADS_CONFIG = {
   REWARD_COINS: 1,
   COOLDOWN_MS: 30 * 60 * 1000,
   ENABLED: true,
+  ENABLE_BANNERS: true,
+  ENABLE_SOCIAL_BAR: false,
+  ENABLE_POPUNDER: false,
+  SHOW_AD_BADGE: true,
+  AD_BADGE_TEXT: "Ad",
+  NATIVE_BANNER_ID: "c755433b5487dae7313fbaa97a482b40",
+  NATIVE_BANNER_SRC: "https://pl29207483.effectivecpmnetwork.com/c755433b5487dae7313fbaa97a482b40/invoke.js",
+  SOCIAL_BAR_SRC: "https://pl29247592.effectivecpmnetwork.com/a5/bb/66/a5bb66c93c9892d321190ff4ef0081a4.js",
+  POPUNDER_SRC: "https://pl29813171.effectivecpmnetwork.com/22/23/95/2223956ef92dbcb14085fcaa81bc9718.js",
+  BANNER_320x50_KEY: "183ee4e45520fb7aa8e1d934a0970c31",
+  BANNER_300x250_KEY: "12769ff4f11c1254fd7310aea93f838d",
 };
 
 // Static fallback for client & legacy imports

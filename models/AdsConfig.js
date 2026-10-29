@@ -30,6 +30,52 @@ const AdsConfigSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    // Ad format toggles
+    enableBanners: {
+      type: Boolean,
+      default: true,
+    },
+    enableSocialBar: {
+      type: Boolean,
+      default: false,
+    },
+    enablePopunder: {
+      type: Boolean,
+      default: false,
+    },
+    showAdBadge: {
+      type: Boolean,
+      default: true,
+    },
+    adBadgeText: {
+      type: String,
+      default: "Ad",
+    },
+    // Adsterra Keys and Scripts
+    nativeBannerId: {
+      type: String,
+      default: "c755433b5487dae7313fbaa97a482b40",
+    },
+    nativeBannerSrc: {
+      type: String,
+      default: "https://pl29207483.effectivecpmnetwork.com/c755433b5487dae7313fbaa97a482b40/invoke.js",
+    },
+    socialBarSrc: {
+      type: String,
+      default: "https://pl29247592.effectivecpmnetwork.com/a5/bb/66/a5bb66c93c9892d321190ff4ef0081a4.js",
+    },
+    popunderSrc: {
+      type: String,
+      default: "https://pl29813171.effectivecpmnetwork.com/22/23/95/2223956ef92dbcb14085fcaa81bc9718.js",
+    },
+    banner320x50Key: {
+      type: String,
+      default: "183ee4e45520fb7aa8e1d934a0970c31",
+    },
+    banner300x250Key: {
+      type: String,
+      default: "12769ff4f11c1254fd7310aea93f838d",
+    },
     channels: [ChannelSchema],
   },
   { timestamps: true }

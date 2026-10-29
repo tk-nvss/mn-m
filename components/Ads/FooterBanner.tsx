@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import { FiX } from "react-icons/fi";
-import { ADSTERRA_CONFIG } from "./AdConfig";
+import { ADSTERRA_CONFIG, useDynamicAdConfig } from "./AdConfig";
 
 export default function FooterBanner() {
   const [isVisible, setIsVisible] = useState(true);
+  const config = useDynamicAdConfig();
 
-  if (!ADSTERRA_CONFIG.enableAds || !isVisible) return null;
+  if (!config.enableAds || !config.enableBanners || !isVisible) return null;
+
+  const adKey = config.banner320x50Key || ADSTERRA_CONFIG.banner320x50Key;
 
   const iframeHtml = `
     <!DOCTYPE html>
@@ -19,14 +22,14 @@ export default function FooterBanner() {
       <body>
         <script>
           atOptions = {
-            'key' : '183ee4e45520fb7aa8e1d934a0970c31',
+            'key' : '${adKey}',
             'format' : 'iframe',
             'height' : 50,
             'width' : 320,
             'params' : {}
           };
         </script>
-        <script src="https://www.highperformanceformat.com/183ee4e45520fb7aa8e1d934a0970c31/invoke.js"></script>
+        <script src="https://www.highperformanceformat.com/${adKey}/invoke.js"></script>
       </body>
     </html>
   `;

@@ -40,6 +40,17 @@ export async function GET(req: Request) {
         defaultRewardCoins: DEFAULT_ADS_CONFIG.REWARD_COINS,
         defaultCooldownMinutes: Math.round(DEFAULT_ADS_CONFIG.COOLDOWN_MS / 60000),
         enabled: DEFAULT_ADS_CONFIG.ENABLED,
+        enableBanners: DEFAULT_ADS_CONFIG.ENABLE_BANNERS,
+        enableSocialBar: DEFAULT_ADS_CONFIG.ENABLE_SOCIAL_BAR,
+        enablePopunder: DEFAULT_ADS_CONFIG.ENABLE_POPUNDER,
+        showAdBadge: DEFAULT_ADS_CONFIG.SHOW_AD_BADGE,
+        adBadgeText: DEFAULT_ADS_CONFIG.AD_BADGE_TEXT,
+        nativeBannerId: DEFAULT_ADS_CONFIG.NATIVE_BANNER_ID,
+        nativeBannerSrc: DEFAULT_ADS_CONFIG.NATIVE_BANNER_SRC,
+        socialBarSrc: DEFAULT_ADS_CONFIG.SOCIAL_BAR_SRC,
+        popunderSrc: DEFAULT_ADS_CONFIG.POPUNDER_SRC,
+        banner320x50Key: DEFAULT_ADS_CONFIG.BANNER_320x50_KEY,
+        banner300x250Key: DEFAULT_ADS_CONFIG.BANNER_300x250_KEY,
         channels: DEFAULT_ADS_CONFIG.WATCH_EARN_CHANNELS,
       });
     }
@@ -71,6 +82,17 @@ export async function PATCH(req: Request) {
         defaultRewardCoins: DEFAULT_ADS_CONFIG.REWARD_COINS,
         defaultCooldownMinutes: Math.round(DEFAULT_ADS_CONFIG.COOLDOWN_MS / 60000),
         enabled: DEFAULT_ADS_CONFIG.ENABLED,
+        enableBanners: DEFAULT_ADS_CONFIG.ENABLE_BANNERS,
+        enableSocialBar: DEFAULT_ADS_CONFIG.ENABLE_SOCIAL_BAR,
+        enablePopunder: DEFAULT_ADS_CONFIG.ENABLE_POPUNDER,
+        showAdBadge: DEFAULT_ADS_CONFIG.SHOW_AD_BADGE,
+        adBadgeText: DEFAULT_ADS_CONFIG.AD_BADGE_TEXT,
+        nativeBannerId: DEFAULT_ADS_CONFIG.NATIVE_BANNER_ID,
+        nativeBannerSrc: DEFAULT_ADS_CONFIG.NATIVE_BANNER_SRC,
+        socialBarSrc: DEFAULT_ADS_CONFIG.SOCIAL_BAR_SRC,
+        popunderSrc: DEFAULT_ADS_CONFIG.POPUNDER_SRC,
+        banner320x50Key: DEFAULT_ADS_CONFIG.BANNER_320x50_KEY,
+        banner300x250Key: DEFAULT_ADS_CONFIG.BANNER_300x250_KEY,
         channels: DEFAULT_ADS_CONFIG.WATCH_EARN_CHANNELS,
       });
     }
@@ -81,6 +103,52 @@ export async function PATCH(req: Request) {
 
     if (typeof body.enabled === "boolean") {
       config.enabled = body.enabled;
+    }
+
+    // Format toggles
+    if (typeof body.enableBanners === "boolean") {
+      config.enableBanners = body.enableBanners;
+    }
+
+    if (typeof body.enableSocialBar === "boolean") {
+      config.enableSocialBar = body.enableSocialBar;
+    }
+
+    if (typeof body.enablePopunder === "boolean") {
+      config.enablePopunder = body.enablePopunder;
+    }
+
+    if (typeof body.showAdBadge === "boolean") {
+      config.showAdBadge = body.showAdBadge;
+    }
+
+    if (typeof body.adBadgeText === "string") {
+      config.adBadgeText = body.adBadgeText.trim();
+    }
+
+    // Adsterra keys & scripts
+    if (typeof body.nativeBannerId === "string") {
+      config.nativeBannerId = body.nativeBannerId.trim();
+    }
+
+    if (typeof body.nativeBannerSrc === "string") {
+      config.nativeBannerSrc = body.nativeBannerSrc.trim();
+    }
+
+    if (typeof body.socialBarSrc === "string") {
+      config.socialBarSrc = body.socialBarSrc.trim();
+    }
+
+    if (typeof body.popunderSrc === "string") {
+      config.popunderSrc = body.popunderSrc.trim();
+    }
+
+    if (typeof body.banner320x50Key === "string") {
+      config.banner320x50Key = body.banner320x50Key.trim();
+    }
+
+    if (typeof body.banner300x250Key === "string") {
+      config.banner300x250Key = body.banner300x250Key.trim();
     }
 
     if (typeof body.defaultRewardCoins === "number" && body.defaultRewardCoins >= 0) {

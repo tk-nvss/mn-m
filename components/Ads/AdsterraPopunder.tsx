@@ -1,16 +1,20 @@
 "use client";
 
 import Script from "next/script";
-import { ADSTERRA_CONFIG } from "./AdConfig";
+import { ADSTERRA_CONFIG, useDynamicAdConfig } from "./AdConfig";
 
 export default function AdsterraPopunder() {
-  if (!ADSTERRA_CONFIG.enableAds || !ADSTERRA_CONFIG.enablePopunder || !ADSTERRA_CONFIG.popunder.enabled) {
+  const config = useDynamicAdConfig();
+
+  if (!config.enableAds || !config.enablePopunder) {
     return null;
   }
 
+  const src = config.popunder?.src || ADSTERRA_CONFIG.popunder.src;
+
   return (
     <Script
-      src={ADSTERRA_CONFIG.popunder.src}
+      src={src}
       strategy="afterInteractive"
     />
   );

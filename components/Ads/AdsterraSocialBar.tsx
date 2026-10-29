@@ -1,16 +1,20 @@
 "use client";
 
 import Script from "next/script";
-import { ADSTERRA_CONFIG } from "./AdConfig";
+import { ADSTERRA_CONFIG, useDynamicAdConfig } from "./AdConfig";
 
 export default function AdsterraSocialBar() {
-  if (!ADSTERRA_CONFIG.enableAds || !ADSTERRA_CONFIG.enableSocialBar || !ADSTERRA_CONFIG.socialBar.enabled) {
+  const config = useDynamicAdConfig();
+
+  if (!config.enableAds || !config.enableSocialBar) {
     return null;
   }
 
+  const src = config.socialBar?.src || ADSTERRA_CONFIG.socialBar.src;
+
   return (
     <Script
-      src={ADSTERRA_CONFIG.socialBar.src}
+      src={src}
       strategy="afterInteractive"
     />
   );

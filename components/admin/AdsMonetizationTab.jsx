@@ -22,7 +22,17 @@ import {
   Copy,
   Eye,
   EyeOff,
-  Link2
+  Link2,
+  Layers,
+  Bell,
+  MousePointer,
+  Tag,
+  ChevronDown,
+  ChevronUp,
+  Code,
+  Power,
+  ShieldAlert,
+  ShieldCheck
 } from "lucide-react";
 import { LoadingSpinner, InfoTooltip, SectionTitle } from "@/components/common";
 
@@ -37,6 +47,22 @@ export default function AdsMonetizationTab() {
   const [defaultRewardCoins, setDefaultRewardCoins] = useState(1);
   const [defaultCooldownMinutes, setDefaultCooldownMinutes] = useState(30);
   const [channels, setChannels] = useState([]);
+
+  // Ad Format Controls
+  const [enableBanners, setEnableBanners] = useState(true);
+  const [enableSocialBar, setEnableSocialBar] = useState(false);
+  const [enablePopunder, setEnablePopunder] = useState(false);
+  const [showAdBadge, setShowAdBadge] = useState(true);
+  const [adBadgeText, setAdBadgeText] = useState("Ad");
+
+  // Adsterra Keys & Scripts
+  const [nativeBannerId, setNativeBannerId] = useState("c755433b5487dae7313fbaa97a482b40");
+  const [nativeBannerSrc, setNativeBannerSrc] = useState("https://pl29207483.effectivecpmnetwork.com/c755433b5487dae7313fbaa97a482b40/invoke.js");
+  const [socialBarSrc, setSocialBarSrc] = useState("https://pl29247592.effectivecpmnetwork.com/a5/bb/66/a5bb66c93c9892d321190ff4ef0081a4.js");
+  const [popunderSrc, setPopunderSrc] = useState("https://pl29813171.effectivecpmnetwork.com/22/23/95/2223956ef92dbcb14085fcaa81bc9718.js");
+  const [banner320x50Key, setBanner320x50Key] = useState("183ee4e45520fb7aa8e1d934a0970c31");
+  const [banner300x250Key, setBanner300x250Key] = useState("12769ff4f11c1254fd7310aea93f838d");
+  const [showAdvancedKeys, setShowAdvancedKeys] = useState(false);
 
   // Modal State for Add / Edit
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,6 +94,19 @@ export default function AdsMonetizationTab() {
         const d = json.data;
         setAdsterraLink(d.adsterraLink || "");
         setEnabled(d.enabled !== false);
+        setEnableBanners(d.enableBanners !== false);
+        setEnableSocialBar(d.enableSocialBar === true);
+        setEnablePopunder(d.enablePopunder === true);
+        setShowAdBadge(d.showAdBadge !== false);
+        setAdBadgeText(d.adBadgeText || "Ad");
+
+        if (d.nativeBannerId) setNativeBannerId(d.nativeBannerId);
+        if (d.nativeBannerSrc) setNativeBannerSrc(d.nativeBannerSrc);
+        if (d.socialBarSrc) setSocialBarSrc(d.socialBarSrc);
+        if (d.popunderSrc) setPopunderSrc(d.popunderSrc);
+        if (d.banner320x50Key) setBanner320x50Key(d.banner320x50Key);
+        if (d.banner300x250Key) setBanner300x250Key(d.banner300x250Key);
+
         setDefaultRewardCoins(d.defaultRewardCoins ?? 1);
         setDefaultCooldownMinutes(d.defaultCooldownMinutes ?? 30);
 
@@ -100,6 +139,17 @@ export default function AdsMonetizationTab() {
       const payload = {
         adsterraLink: adsterraLink.trim(),
         enabled,
+        enableBanners,
+        enableSocialBar,
+        enablePopunder,
+        showAdBadge,
+        adBadgeText: adBadgeText.trim(),
+        nativeBannerId: nativeBannerId.trim(),
+        nativeBannerSrc: nativeBannerSrc.trim(),
+        socialBarSrc: socialBarSrc.trim(),
+        popunderSrc: popunderSrc.trim(),
+        banner320x50Key: banner320x50Key.trim(),
+        banner300x250Key: banner300x250Key.trim(),
         defaultRewardCoins: Number(defaultRewardCoins),
         defaultCooldownMinutes: Number(defaultCooldownMinutes),
         channels: channelsToSave.map((c) => ({
@@ -220,6 +270,61 @@ export default function AdsMonetizationTab() {
     setTimeout(() => setCopiedLink(false), 2000);
   };
 
+  const isAllAdsDisabled = !enabled && !enableBanners && !enableSocialBar && !enablePopunder;
+
+  const handleToggleAllAds = async () => {
+    try {
+      setSaving(true);
+      setMessage({ type: "", text: "" });
+      const token = localStorage.getItem("token");
+
+      const willEnable = isAllAdsDisabled;
+      const nextEnabled = willEnable;
+      const nextEnableBanners = willEnable;
+      const nextEnableSocialBar = false;
+      const nextEnablePopunder = false;
+
+      setEnabled(nextEnabled);
+      setEnableBanners(nextEnableBanners);
+      setEnableSocialBar(nextEnableSocialBar);
+      setEnablePopunder(nextEnablePopunder);
+
+      const payload = {
+        enabled: nextEnabled,
+        enableBanners: nextEnableBanners,
+        enableSocialBar: nextEnableSocialBar,
+        enablePopunder: nextEnablePopunder,
+      };
+
+      const res = await fetch("/api/admin/ads-config", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const json = await res.json();
+      if (json.success) {
+        setMessage({
+          type: "success",
+          text: willEnable
+            ? "Ads re-enabled across all locations (Banners active)!"
+            : "All ads disabled across all locations site-wide!",
+        });
+        setTimeout(() => setMessage({ type: "", text: "" }), 4000);
+      } else {
+        setMessage({ type: "error", text: json.message || "Failed to update ads status" });
+      }
+    } catch (err) {
+      console.error("Error toggling all ads:", err);
+      setMessage({ type: "error", text: "Network error updating ads status" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
@@ -253,6 +358,22 @@ export default function AdsMonetizationTab() {
             title="Refresh"
           >
             <RefreshCcw size={12} className={saving ? "animate-spin" : ""} />
+          </button>
+
+          {/* 1-Click Master Kill / Enable Switch */}
+          <button
+            type="button"
+            onClick={handleToggleAllAds}
+            disabled={saving}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer disabled:opacity-50 border shadow-xs ${
+              isAllAdsDisabled
+                ? "bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border-emerald-500/30"
+                : "bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border-rose-500/30"
+            }`}
+            title={isAllAdsDisabled ? "Enable all ads" : "1-Click Disable all ads across all places"}
+          >
+            <Power size={13} />
+            <span>{isAllAdsDisabled ? "Enable Ads" : "1-Click Disable All"}</span>
           </button>
 
           <button
@@ -292,6 +413,56 @@ export default function AdsMonetizationTab() {
         </motion.div>
       )}
 
+      {/* 1-CLICK MASTER KILL SWITCH HERO CARD */}
+      <div className={`p-4 sm:p-5 rounded-2xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm ${
+        isAllAdsDisabled
+          ? "bg-rose-500/10 border-rose-500/30 text-rose-300"
+          : "bg-[var(--card)]/60 border-[var(--border)] text-[var(--foreground)]"
+      }`}>
+        <div className="flex items-start sm:items-center gap-3.5">
+          <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border shadow-inner ${
+            isAllAdsDisabled
+              ? "bg-rose-500/20 border-rose-500/40 text-rose-400"
+              : "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+          }`}>
+            <Power size={22} className={isAllAdsDisabled ? "opacity-70" : "animate-pulse"} />
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-sm font-black uppercase tracking-wider">
+                {isAllAdsDisabled ? "All Ads Are Completely Disabled" : "Site-Wide Ad Monetization is Active"}
+              </h2>
+              <span className={`text-[8.5px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border ${
+                isAllAdsDisabled
+                  ? "bg-rose-500/20 text-rose-300 border-rose-500/40"
+                  : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+              }`}>
+                {isAllAdsDisabled ? "ALL ADS OFF" : "ALL ADS ACTIVE"}
+              </span>
+            </div>
+            <p className="text-[11px] text-[var(--muted)] leading-relaxed max-w-xl">
+              {isAllAdsDisabled
+                ? "Every ad location (sidebar, blog, footer, coins, and popups) is completely muted. No ad scripts or empty placeholders are rendered."
+                : "One single click immediately disables and hides every banner ad, popup alert, popunder, and rewarded coin ad site-wide instantly."}
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleToggleAllAds}
+          disabled={saving}
+          className={`px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shrink-0 transition-all shadow-md active:scale-95 disabled:opacity-50 ${
+            isAllAdsDisabled
+              ? "bg-emerald-500 hover:bg-emerald-600 text-black shadow-emerald-500/20"
+              : "bg-rose-600 hover:bg-rose-700 text-white shadow-rose-600/30"
+          }`}
+        >
+          <Power size={15} />
+          <span>{isAllAdsDisabled ? "Enable All Ads" : "1-Click Disable All Ads"}</span>
+        </button>
+      </div>
+
       {/* QUICK STATS CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3.5 rounded-2xl bg-[var(--card)]/40 border border-[var(--border)] space-y-1">
@@ -303,24 +474,278 @@ export default function AdsMonetizationTab() {
         </div>
 
         <div className="p-3.5 rounded-2xl bg-[var(--card)]/40 border border-[var(--border)] space-y-1">
+          <span className="text-[10px] uppercase font-black text-[var(--muted)] tracking-wider">Banner Ads</span>
+          <div className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${enableBanners ? "bg-emerald-500" : "bg-neutral-600"}`} />
+            <span className="text-sm font-black text-[var(--foreground)]">{enableBanners ? "ENABLED" : "MUTED"}</span>
+          </div>
+        </div>
+
+        <div className="p-3.5 rounded-2xl bg-[var(--card)]/40 border border-[var(--border)] space-y-1">
+          <span className="text-[10px] uppercase font-black text-[var(--muted)] tracking-wider">Pop-up & Popunder</span>
+          <div className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${enableSocialBar || enablePopunder ? "bg-amber-500 animate-pulse" : "bg-neutral-600"}`} />
+            <span className="text-sm font-black text-[var(--foreground)]">
+              {enableSocialBar && enablePopunder ? "BOTH ON" : enableSocialBar ? "POP-UP ON" : enablePopunder ? "POPUNDER ON" : "MUTED"}
+            </span>
+          </div>
+        </div>
+
+        <div className="p-3.5 rounded-2xl bg-[var(--card)]/40 border border-[var(--border)] space-y-1">
           <span className="text-[10px] uppercase font-black text-[var(--muted)] tracking-wider">Active Channels</span>
           <div className="text-sm font-black text-[var(--foreground)] tabular-nums">
             {activeChannelsCount} <span className="text-[11px] text-[var(--muted)] font-normal">/ {channels.length} Total</span>
           </div>
         </div>
+      </div>
 
-        <div className="p-3.5 rounded-2xl bg-[var(--card)]/40 border border-[var(--border)] space-y-1">
-          <span className="text-[10px] uppercase font-black text-[var(--muted)] tracking-wider">Default Reward</span>
-          <div className="text-sm font-black text-blue-400 tabular-nums">
-            +{defaultRewardCoins} <span className="text-[11px] font-bold">BBC</span>
+      {/* SECTION: AD FORMATS & DISPLAY CONTROLS */}
+      <div className="p-5 rounded-2xl bg-[var(--card)]/30 border border-[var(--border)] space-y-5">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+              <Layers size={16} />
+            </div>
+            <div>
+              <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
+                Ad Formats & Display Controls
+              </h2>
+              <p className="text-[11px] text-[var(--muted)]">
+                Enable or disable banner ads, floating popups, popunders, and customize badges
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[var(--card)]/40 border border-[var(--border)] space-y-1">
-          <span className="text-[10px] uppercase font-black text-[var(--muted)] tracking-wider">Default Cooldown</span>
-          <div className="text-sm font-black text-amber-400 tabular-nums">
-            {defaultCooldownMinutes} <span className="text-[11px] font-bold">Minutes</span>
+        {/* 4 FORMAT TOGGLES GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* 1. Banner Ads */}
+          <div className="p-4 rounded-xl bg-[var(--background)] border border-[var(--border)] flex flex-col justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[var(--foreground)] flex items-center gap-1.5">
+                  <Tv size={13} className="text-blue-400" />
+                  Banner Ads
+                </span>
+                <span className={`text-[8.5px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                  enableBanners ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-neutral-500/10 text-neutral-400 border border-neutral-500/20"
+                }`}>
+                  {enableBanners ? "Active" : "Disabled"}
+                </span>
+              </div>
+              <p className="text-[10px] text-[var(--muted)] leading-relaxed">
+                320x50, 300x250, native, and footer banners across sidebar, blog, and coins.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setEnableBanners(!enableBanners)}
+              className={`w-full py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                enableBanners ? "bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 border border-emerald-500/30" : "bg-[var(--card)] text-[var(--muted)] hover:text-[var(--foreground)] border border-[var(--border)]"
+              }`}
+            >
+              <span>{enableBanners ? "Enabled (Click to Pause)" : "Paused (Click to Enable)"}</span>
+            </button>
           </div>
+
+          {/* 2. Pop-up / Notification Ads */}
+          <div className="p-4 rounded-xl bg-[var(--background)] border border-[var(--border)] flex flex-col justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[var(--foreground)] flex items-center gap-1.5">
+                  <Bell size={13} className="text-amber-400" />
+                  Pop-up / SocialBar
+                </span>
+                <span className={`text-[8.5px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                  enableSocialBar ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-neutral-500/10 text-neutral-400 border border-neutral-500/20"
+                }`}>
+                  {enableSocialBar ? "Active" : "Disabled"}
+                </span>
+              </div>
+              <p className="text-[10px] text-[var(--muted)] leading-relaxed">
+                Floating push alerts & mini alert popups (e.g. VPN alerts).
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setEnableSocialBar(!enableSocialBar)}
+              className={`w-full py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                enableSocialBar ? "bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 border border-emerald-500/30" : "bg-[var(--card)] text-[var(--muted)] hover:text-[var(--foreground)] border border-[var(--border)]"
+              }`}
+            >
+              <span>{enableSocialBar ? "Enabled (Click to Disable)" : "Disabled (Click to Enable)"}</span>
+            </button>
+          </div>
+
+          {/* 3. Popunder Redirects */}
+          <div className="p-4 rounded-xl bg-[var(--background)] border border-[var(--border)] flex flex-col justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[var(--foreground)] flex items-center gap-1.5">
+                  <MousePointer size={13} className="text-purple-400" />
+                  Popunder Ads
+                </span>
+                <span className={`text-[8.5px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                  enablePopunder ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-neutral-500/10 text-neutral-400 border border-neutral-500/20"
+                }`}>
+                  {enablePopunder ? "Active" : "Disabled"}
+                </span>
+              </div>
+              <p className="text-[10px] text-[var(--muted)] leading-relaxed">
+                Full-page background tab redirects triggered when users click.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setEnablePopunder(!enablePopunder)}
+              className={`w-full py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                enablePopunder ? "bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 border border-emerald-500/30" : "bg-[var(--card)] text-[var(--muted)] hover:text-[var(--foreground)] border border-[var(--border)]"
+              }`}
+            >
+              <span>{enablePopunder ? "Enabled (Click to Disable)" : "Disabled (Click to Enable)"}</span>
+            </button>
+          </div>
+
+          {/* 4. Overlapping "Ad" Mention Badge */}
+          <div className="p-4 rounded-xl bg-[var(--background)] border border-[var(--border)] flex flex-col justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[var(--foreground)] flex items-center gap-1.5">
+                  <Tag size={13} className="text-emerald-400" />
+                  Overlapping Badge
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowAdBadge(!showAdBadge)}
+                  className={`text-[8.5px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider cursor-pointer ${
+                    showAdBadge ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-neutral-500/10 text-neutral-400 border border-neutral-500/20"
+                  }`}
+                >
+                  {showAdBadge ? "Visible" : "Hidden"}
+                </button>
+              </div>
+              <p className="text-[10px] text-[var(--muted)] leading-relaxed">
+                Floating pill tag overlapping top edge of banners.
+              </p>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[9px] font-bold uppercase text-[var(--muted)]">Badge Label</label>
+              <input
+                type="text"
+                value={adBadgeText}
+                onChange={(e) => setAdBadgeText(e.target.value)}
+                placeholder="Ad"
+                className="w-full px-2.5 py-1.5 rounded-lg bg-[var(--card)] border border-[var(--border)] text-xs font-bold text-[var(--foreground)] outline-none focus:border-[var(--accent)]"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* ADVANCED SCRIPT KEYS ACCORDION */}
+        <div className="pt-2 border-t border-[var(--border)]/50">
+          <button
+            type="button"
+            onClick={() => setShowAdvancedKeys(!showAdvancedKeys)}
+            className="flex items-center justify-between w-full py-2 px-3 rounded-xl bg-[var(--card)]/40 hover:bg-[var(--card)] border border-[var(--border)] text-xs font-bold text-[var(--foreground)] transition-colors cursor-pointer"
+          >
+            <div className="flex items-center gap-2">
+              <Code size={14} className="text-purple-400" />
+              <span>Adsterra Script URLs & Banner Keys (Advanced)</span>
+            </div>
+            {showAdvancedKeys ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
+
+          {showAdvancedKeys && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3 p-4 rounded-xl bg-[var(--background)] border border-[var(--border)] animate-in fade-in duration-200">
+              {/* 320x50 Key */}
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)]">
+                  320x50 Banner Key (Sidebar & Footer)
+                </label>
+                <input
+                  type="text"
+                  value={banner320x50Key}
+                  onChange={(e) => setBanner320x50Key(e.target.value)}
+                  placeholder="183ee4e45520fb7aa8e1d934a0970c31"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--card)] border border-[var(--border)] text-xs font-mono text-[var(--foreground)] outline-none focus:border-[var(--accent)]"
+                />
+              </div>
+
+              {/* 300x250 Key */}
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)]">
+                  300x250 Banner Key (Medium Rectangle)
+                </label>
+                <input
+                  type="text"
+                  value={banner300x250Key}
+                  onChange={(e) => setBanner300x250Key(e.target.value)}
+                  placeholder="12769ff4f11c1254fd7310aea93f838d"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--card)] border border-[var(--border)] text-xs font-mono text-[var(--foreground)] outline-none focus:border-[var(--accent)]"
+                />
+              </div>
+
+              {/* Native Banner ID */}
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)]">
+                  Native Banner Container ID
+                </label>
+                <input
+                  type="text"
+                  value={nativeBannerId}
+                  onChange={(e) => setNativeBannerId(e.target.value)}
+                  placeholder="c755433b5487dae7313fbaa97a482b40"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--card)] border border-[var(--border)] text-xs font-mono text-[var(--foreground)] outline-none focus:border-[var(--accent)]"
+                />
+              </div>
+
+              {/* Native Banner Script URL */}
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)]">
+                  Native Banner Script URL
+                </label>
+                <input
+                  type="text"
+                  value={nativeBannerSrc}
+                  onChange={(e) => setNativeBannerSrc(e.target.value)}
+                  placeholder="https://pl29207483.effectivecpmnetwork.com/..."
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--card)] border border-[var(--border)] text-xs font-mono text-[var(--foreground)] outline-none focus:border-[var(--accent)]"
+                />
+              </div>
+
+              {/* Social Bar Script URL */}
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)]">
+                  Social Bar (Pop-up) Script URL
+                </label>
+                <input
+                  type="text"
+                  value={socialBarSrc}
+                  onChange={(e) => setSocialBarSrc(e.target.value)}
+                  placeholder="https://pl29247592.effectivecpmnetwork.com/..."
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--card)] border border-[var(--border)] text-xs font-mono text-[var(--foreground)] outline-none focus:border-[var(--accent)]"
+                />
+              </div>
+
+              {/* Popunder Script URL */}
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-wider text-[var(--muted)]">
+                  Popunder Script URL
+                </label>
+                <input
+                  type="text"
+                  value={popunderSrc}
+                  onChange={(e) => setPopunderSrc(e.target.value)}
+                  placeholder="https://pl29813171.effectivecpmnetwork.com/..."
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--card)] border border-[var(--border)] text-xs font-mono text-[var(--foreground)] outline-none focus:border-[var(--accent)]"
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

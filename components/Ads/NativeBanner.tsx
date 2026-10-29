@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import Script from "next/script";
-import { ADSTERRA_CONFIG } from "./AdConfig";
+import { ADSTERRA_CONFIG, useDynamicAdConfig } from "./AdConfig";
 
 interface NativeBannerProps {
   className?: string;
@@ -16,31 +16,21 @@ interface NativeBannerProps {
  */
 export default function NativeBanner({
   className = "",
-  showBadge = true,
-  badgeLabel = "Ad",
+  showBadge,
+  badgeLabel,
   badgePosition = "right"
 }: NativeBannerProps) {
+  const config = useDynamicAdConfig();
+  const effectiveShowBadge = showBadge !== undefined ? showBadge : config.showAdBadge;
+  const effectiveBadgeLabel = badgeLabel || config.adBadgeText || "Ad";
   const badgePositionClass = badgePosition === "left" ? "left-3" : "right-3";
 
-  if (!ADSTERRA_CONFIG.enableAds) {
-    return (
-      <div className={`relative pt-2 pb-1 ${className}`}>
-        <div className="relative flex justify-center items-center rounded-xl border border-dashed border-[var(--border)] bg-[var(--foreground)]/[0.02] min-h-[50px]">
-          {showBadge && (
-            <div className={`absolute -top-2 ${badgePositionClass} z-20 px-1.5 py-0.2 rounded-full bg-[var(--background)] border border-[var(--border)] shadow-xs flex items-center gap-1 pointer-events-none select-none`}>
-              <span className="w-1 h-1 rounded-full bg-[var(--accent)] opacity-70"></span>
-              <span className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)]">
-                {badgeLabel}
-              </span>
-            </div>
-          )}
-          <span className="text-xs text-[var(--muted)] opacity-50">Ad Space</span>
-        </div>
-      </div>
-    );
+  if (!config.enableAds || !config.enableBanners) {
+    return null;
   }
 
-  const { id, src } = ADSTERRA_CONFIG.nativeBanner;
+  const id = config.nativeBanner?.id || ADSTERRA_CONFIG.nativeBanner.id;
+  const src = config.nativeBanner?.src || ADSTERRA_CONFIG.nativeBanner.src;
 
   const srcDoc = `
     <!DOCTYPE html>
@@ -63,11 +53,11 @@ export default function NativeBanner({
     <div className={`relative pt-2 pb-1 ${className}`}>
       <div className="relative rounded-xl border border-[var(--border)] bg-[var(--foreground)]/[0.03] min-h-[50px] shadow-xs flex items-center justify-center">
         {/* Overlapping Ad Mention Badge */}
-        {showBadge && (
+        {effectiveShowBadge && (
           <div className={`absolute -top-2 ${badgePositionClass} z-20 px-1.5 py-0.2 rounded-full bg-[var(--background)] border border-[var(--border)] shadow-xs flex items-center gap-1 pointer-events-none select-none`}>
             <span className="w-1 h-1 rounded-full bg-[var(--accent)] opacity-70"></span>
             <span className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)]">
-              {badgeLabel}
+              {effectiveBadgeLabel}
             </span>
           </div>
         )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { ADSTERRA_CONFIG } from "./AdConfig";
+import { ADSTERRA_CONFIG, useDynamicAdConfig } from "./AdConfig";
 
 interface CustomBannerProps {
   className?: string;
@@ -14,31 +14,18 @@ interface CustomBannerProps {
  */
 export default function CustomBanner2({ 
   className = "",
-  showBadge = true,
-  badgeLabel = "Ad",
+  showBadge,
+  badgeLabel,
   badgePosition = "right"
 }: CustomBannerProps) {
+  const config = useDynamicAdConfig();
+  const effectiveShowBadge = showBadge !== undefined ? showBadge : config.showAdBadge;
+  const effectiveBadgeLabel = badgeLabel || config.adBadgeText || "Ad";
   const badgePositionClass = badgePosition === "left" ? "left-2.5" : "right-2.5";
+  const adKey = config.banner320x50Key || ADSTERRA_CONFIG.banner320x50Key;
 
-  if (!ADSTERRA_CONFIG.enableAds) {
-    return (
-      <div className={`flex justify-center items-center py-2 ${className}`}>
-        <div 
-          className="relative border border-dashed border-[var(--border)] rounded-lg bg-[var(--foreground)]/[0.02] flex items-center justify-center text-[10px] text-[var(--muted)]" 
-          style={{ width: '320px', height: '50px' }}
-        >
-          {showBadge && (
-            <div className={`absolute -top-2 ${badgePositionClass} z-20 px-1.5 py-0.2 rounded-full bg-[var(--background)] border border-[var(--border)] shadow-xs flex items-center gap-1 pointer-events-none select-none`}>
-              <span className="w-1 h-1 rounded-full bg-[var(--accent)] opacity-70"></span>
-              <span className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)]">
-                {badgeLabel}
-              </span>
-            </div>
-          )}
-          <span>Advertisement Space</span>
-        </div>
-      </div>
-    );
+  if (!config.enableAds || !config.enableBanners) {
+    return null;
   }
 
   const iframeHtml = `
@@ -52,14 +39,14 @@ export default function CustomBanner2({
       <body>
         <script>
           atOptions = {
-            'key' : '183ee4e45520fb7aa8e1d934a0970c31',
+            'key' : '${adKey}',
             'format' : 'iframe',
             'height' : 50,
             'width' : 320,
             'params' : {}
           };
         </script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/183ee4e45520fb7aa8e1d934a0970c31/invoke.js"></script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/${adKey}/invoke.js"></script>
       </body>
     </html>
   `;
@@ -71,11 +58,11 @@ export default function CustomBanner2({
         style={{ width: '320px', height: '50px' }}
       >
         {/* Overlapping Ad Mention Badge */}
-        {showBadge && (
+        {effectiveShowBadge && (
           <div className={`absolute -top-2 ${badgePositionClass} z-20 px-1.5 py-0.2 rounded-full bg-[var(--background)] border border-[var(--border)] shadow-xs flex items-center gap-1 pointer-events-none select-none`}>
             <span className="w-1 h-1 rounded-full bg-[var(--accent)] opacity-70"></span>
             <span className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)]">
-              {badgeLabel}
+              {effectiveBadgeLabel}
             </span>
           </div>
         )}
