@@ -30,6 +30,7 @@ export default function PWAInstallBanner({
   const [dismissed, setDismissed]                     = useState(false);
   const [playStoreVisible, setPlayStoreVisible]       = useState(false);
   const [playStoreDismissed, setPlayStoreDismissed]   = useState(false);
+  const [playStoreSqueezed, setPlayStoreSqueezed]     = useState(false);
   const [showModal, setShowModal]                     = useState(false);
   const [isIos, setIsIos]                             = useState(false);
   const [isChromeIos, setIsChromeIos]                 = useState(false);
@@ -133,6 +134,19 @@ export default function PWAInstallBanner({
       window.removeEventListener("show-pwa-modal", handleShowModal);
     };
   }, [showPwa, showPlayStore]);
+
+  // Auto-squeeze Play Store banner into rounded icon after 4.5 seconds
+  useEffect(() => {
+    let squeezeTimer: NodeJS.Timeout | null = null;
+    if (playStoreVisible && !playStoreDismissed && !playStoreSqueezed) {
+      squeezeTimer = setTimeout(() => {
+        setPlayStoreSqueezed(true);
+      }, 4500);
+    }
+    return () => {
+      if (squeezeTimer) clearTimeout(squeezeTimer);
+    };
+  }, [playStoreVisible, playStoreDismissed, playStoreSqueezed]);
 
   const handleInstall = async () => {
     const prompt = window.__pwaPrompt;
@@ -246,6 +260,100 @@ export default function PWAInstallBanner({
           display: flex;
           align-items: center;
           gap: 8px;
+        }
+
+        .playstore-pill-wrapper {
+          position: relative;
+          pointer-events: auto;
+          display: inline-flex;
+          align-items: center;
+          justify-content: flex-end;
+        }
+
+        .playstore-floating-pill {
+          pointer-events: auto;
+          border-radius: 9999px;
+          background: var(--card);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid var(--border);
+          box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3), 0 0 1px 1px var(--border);
+          display: flex;
+          align-items: center;
+          transition: all 0.45s cubic-bezier(0.34, 1.25, 0.64, 1);
+          overflow: hidden;
+          user-select: none;
+        }
+
+        .playstore-floating-pill.is-expanded {
+          padding: 5px 6px 5px 8px;
+          gap: 8px;
+          max-width: 360px;
+          animation: pwa-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        .playstore-floating-pill.is-squeezed {
+          width: 44px;
+          height: 44px;
+          padding: 4px;
+          border-radius: 50%;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--border);
+          animation: pwa-float 3s ease-in-out infinite;
+        }
+
+        .playstore-floating-pill.is-squeezed:hover {
+          transform: scale(1.08);
+          box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.45), 0 0 0 1.5px var(--accent);
+        }
+
+        .playstore-squeezed-close-btn {
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          z-index: 30;
+          width: 17px;
+          height: 17px;
+          border-radius: 50%;
+          background: var(--card);
+          border: 1.5px solid var(--border);
+          color: var(--muted);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 8.5px;
+          font-weight: 800;
+          cursor: pointer;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+          transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+          animation: pwa-in 0.25s ease both;
+          pointer-events: auto;
+        }
+
+        .playstore-squeezed-close-btn:hover {
+          color: var(--foreground);
+          background: var(--background);
+          transform: scale(1.15);
+          border-color: var(--foreground);
+        }
+
+        .playstore-expandable-content {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          transition: opacity 0.25s ease, max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
+          white-space: nowrap;
+        }
+
+        .playstore-floating-pill.is-squeezed .playstore-expandable-content {
+          opacity: 0;
+          max-width: 0;
+          overflow: hidden;
+          transform: translateX(-10px);
+          pointer-events: none;
+          margin: 0;
+          padding: 0;
         }
 
         .pwa-install-btn {
@@ -365,63 +473,136 @@ export default function PWAInstallBanner({
 
       {/* ── Floating cards container ── */}
       <div id="pwa-banners-container">
-        {/* ── Google Play Store Floating Card ── */}
+        {/* ── Google Play Store Floating Card (Squeezes to rounded icon) ── */}
         {isPlayStoreActive && (
-          <div id="playstore-card" className="pwa-floating-pill" role="dialog" aria-label={`Install ${playStoreAppName} on Google Play`}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div className="playstore-pill-wrapper">
+            {/* Close button on top-right when squeezed */}
+            {playStoreSqueezed && (
+              <button
+                type="button"
+                className="playstore-squeezed-close-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDismissPlayStore();
+                }}
+                aria-label="Dismiss Play Store prompt"
+                title="Dismiss"
+              >
+                ✕
+              </button>
+            )}
+
+            <div
+              id="playstore-card"
+              className={`playstore-floating-pill ${playStoreSqueezed ? "is-squeezed" : "is-expanded"}`}
+              role="dialog"
+              aria-label={`Install ${playStoreAppName} on Google Play`}
+              onClick={() => {
+                if (playStoreSqueezed) {
+                  setPlayStoreSqueezed(false);
+                }
+              }}
+              title={playStoreSqueezed ? `Open ${playStoreAppName}` : undefined}
+            >
               {/* App icon + Playstore badge */}
-              <div style={{ position: "relative", flexShrink: 0, width: 28, height: 28 }}>
-                <div style={{ width: 28, height: 28, borderRadius: "50%", overflow: "hidden", border: "1px solid rgba(255,255,255,0.15)", background: "#09090b" }}>
-                  <Image src="/bluebuff-app-icon.png" alt={playStoreAppName} width={28} height={28} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+              <div
+                style={{
+                  position: "relative",
+                  flexShrink: 0,
+                  width: playStoreSqueezed ? 34 : 28,
+                  height: playStoreSqueezed ? 34 : 28,
+                  transition: "all 0.35s ease",
+                }}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "50%",
+                    overflow: "hidden",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    background: "#09090b",
+                  }}
+                >
+                  <Image
+                    src="/bluebuff-app-icon.png"
+                    alt={playStoreAppName}
+                    width={34}
+                    height={34}
+                    style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                  />
                 </div>
                 {/* Play Store badge icon */}
                 <div
                   title="Google Play"
                   style={{
                     position: "absolute",
-                    bottom: -2,
-                    right: -2,
-                    width: 13,
-                    height: 13,
+                    bottom: playStoreSqueezed ? -1 : -2,
+                    right: playStoreSqueezed ? -1 : -2,
+                    width: playStoreSqueezed ? 14 : 13,
+                    height: playStoreSqueezed ? 14 : 13,
                     borderRadius: "50%",
                     background: "#18181b",
                     border: "1.5px solid var(--card)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    boxShadow: "0 1px 4px rgba(0,0,0,0.5)"
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.5)",
+                    transition: "all 0.35s ease",
                   }}
                 >
-                  <GooglePlayTriangleIcon size={8} />
+                  <GooglePlayTriangleIcon size={playStoreSqueezed ? 9 : 8} />
                 </div>
               </div>
 
-              {/* Text */}
-              <div style={{ minWidth: 0, display: "flex", flexDirection: "column", paddingRight: "4px" }}>
-                <p style={{ margin: 0, fontWeight: 800, fontSize: "11px", color: "var(--foreground)", lineHeight: 1.2, letterSpacing: "-0.01em" }}>
-                  {playStoreAppName}
-                </p>
-                <p style={{ margin: "1px 0 0", fontSize: "9px", color: "var(--muted)", fontWeight: 600 }}>
-                  {playStoreAppSubtext || "Google Play App"}
-                </p>
-              </div>
-            </div>
+              {/* Expandable Text & Actions */}
+              <div className="playstore-expandable-content">
+                {/* Text */}
+                <div style={{ minWidth: 0, display: "flex", flexDirection: "column", paddingRight: "4px" }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontWeight: 800,
+                      fontSize: "11px",
+                      color: "var(--foreground)",
+                      lineHeight: 1.2,
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {playStoreAppName}
+                  </p>
+                  <p style={{ margin: "1px 0 0", fontSize: "9px", color: "var(--muted)", fontWeight: 600 }}>
+                    {playStoreAppSubtext || "Google Play App"}
+                  </p>
+                </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-              <a
-                href={playStoreUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Install ${playStoreAppName} on Google Play`}
-                className="pwa-install-btn"
-                id="playstore-install-btn"
-                onClick={handlePlayStoreClick}
-                style={{ textDecoration: "none" }}
-              >
-                <GooglePlayTriangleIcon size={10} />
-                Install
-              </a>
-              <button className="pwa-close-btn" onClick={handleDismissPlayStore} aria-label="Dismiss Play Store prompt">✕</button>
+                {/* Actions */}
+                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <a
+                    href={playStoreUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Install ${playStoreAppName} on Google Play`}
+                    className="pwa-install-btn"
+                    id="playstore-install-btn"
+                    onClick={handlePlayStoreClick}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <GooglePlayTriangleIcon size={10} />
+                    Install
+                  </a>
+                  <button
+                    className="pwa-close-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDismissPlayStore();
+                    }}
+                    aria-label="Dismiss Play Store prompt"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
