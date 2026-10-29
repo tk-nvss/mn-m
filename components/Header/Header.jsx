@@ -591,7 +591,7 @@ export default function Header() {
 
                     {/* Banner Ad below product attribution */}
                     <div className="w-full flex justify-center">
-                      <CustomBanner2 className="!py-0" />
+                      <CustomBanner2 />
                     </div>
                   </div>
                 </div>

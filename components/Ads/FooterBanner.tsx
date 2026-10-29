@@ -44,10 +44,20 @@ export default function FooterBanner() {
 
       {/* Ad Container */}
       <div 
-        className="relative overflow-hidden rounded-md" 
-          style={{ width: '320px', height: '50px' }}
-        >
+        className="relative border border-[var(--border)] rounded-lg bg-[var(--foreground)]/[0.03] shadow-xs flex items-center justify-center" 
+        style={{ width: '320px', height: '50px' }}
+      >
+        {/* Overlapping Ad Mention Badge */}
+        <div className="absolute -top-2 left-2.5 z-20 px-1.5 py-0.2 rounded-full bg-[var(--background)] border border-[var(--border)] shadow-xs flex items-center gap-1 pointer-events-none select-none">
+          <span className="w-1 h-1 rounded-full bg-[var(--accent)] opacity-70"></span>
+          <span className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)]">
+            Ad
+          </span>
+        </div>
+
+        <div className="w-full h-full rounded-lg overflow-hidden flex items-center justify-center">
           <iframe
+            title="Advertisement Banner"
             srcDoc={iframeHtml}
             width="320"
             height="50"
@@ -57,6 +67,7 @@ export default function FooterBanner() {
             style={{ border: 'none', overflow: 'hidden' }}
           />
         </div>
+      </div>
     </div>
   );
 }
