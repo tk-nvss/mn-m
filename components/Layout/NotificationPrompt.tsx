@@ -12,14 +12,10 @@ import {
 import { useAuthStore } from "@/store/useAuthStore";
 
 export default function NotificationPrompt() {
-  const pathname = usePathname();
-  const [showPrompt, setShowPrompt] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [subscribed, setSubscribed] = useState(false);
+  return null;
+}
 
-  const { user } = useAuthStore();
-
-  useEffect(() => {
+function _DisabledNotificationPrompt() {
     // Only run on client
     if (!isPushNotificationSupported()) return;
 

@@ -13,7 +13,6 @@ import { getAppSettings } from "@/lib/settings";
 
 const SeasonalEffectManager = nextDynamic(() => import("@/components/Seasonal/SeasonalEffectManager"));
 const PWAInstallBanner = nextDynamic(() => import("@/components/Layout/PWAInstallBanner"));
-const NotificationPrompt = nextDynamic(() => import("@/components/Layout/NotificationPrompt"));
 const BottomNav = nextDynamic(() => import("@/components/Layout/BottomNav"));
 
 
@@ -244,7 +243,6 @@ export default async function RootLayout({
             playStoreAppName={settings.playStoreAppName}
             playStoreAppSubtext={settings.playStoreAppSubtext}
           />
-          <NotificationPrompt />
       </body>
     </html>
   );
