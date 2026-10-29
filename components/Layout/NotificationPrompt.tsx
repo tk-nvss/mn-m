@@ -90,73 +90,78 @@ export default function NotificationPrompt() {
   if (isHiddenRoute || !showPrompt) return null;
 
   return (
-    <div className="fixed top-5 right-4 sm:right-6 z-[99998] max-w-[340px] w-[calc(100%-2rem)] sm:w-auto animate-in fade-in slide-in-from-top-4 duration-300">
-      <div className="relative overflow-hidden rounded-2xl bg-neutral-950/90 dark:bg-neutral-950/90 backdrop-blur-xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.45)] p-3.5 transition-all">
-        {/* Subtle top highlight gradient */}
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-400/40 to-transparent pointer-events-none" />
+    <div className="fixed top-4 right-3 sm:right-6 z-[99998] max-w-[360px] w-[calc(100%-1.5rem)] sm:w-auto animate-in fade-in slide-in-from-top-3 duration-300">
+      <div className="relative overflow-hidden rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-xl shadow-black/10 dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)] p-2.5 sm:p-3 backdrop-blur-xl transition-all">
+        {/* Subtle accent highlight on top */}
+        <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-[var(--accent)]/50 to-transparent pointer-events-none" />
 
-        <div className="flex items-start gap-3">
+        <div className="flex items-center gap-2.5">
           {/* Status Icon */}
           <div
-            className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+            className={`w-7.5 h-7.5 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
               subscribed
-                ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
-                : "bg-sky-500/10 text-sky-400 border border-sky-500/20 shadow-[0_0_15px_rgba(56,189,248,0.15)]"
+                ? "bg-emerald-500/15 text-emerald-500 border border-emerald-500/25"
+                : "bg-sky-500/10 text-sky-500 dark:text-sky-400 border border-sky-500/20"
             }`}
           >
             {subscribed ? (
-              <FiCheck className="text-base stroke-[2.5]" />
+              <FiCheck className="text-sm stroke-[2.5]" />
             ) : (
-              <FiBell className="text-[15px]" />
+              <FiBell className="text-sm" />
             )}
           </div>
 
           {/* Content */}
-          <div className="flex-1 min-w-0 pr-4">
-            <h4 className="text-xs font-semibold text-white tracking-tight leading-snug">
+          <div className="flex-1 min-w-0 pr-1">
+            <h4 className="text-xs font-bold text-[var(--foreground)] tracking-tight leading-snug">
               {subscribed ? "Alerts Activated" : "Instant Order Alerts"}
             </h4>
-            <p className="text-[11.5px] text-neutral-400 mt-0.5 leading-relaxed">
+            <p className="text-[10.5px] text-[var(--muted)] leading-tight truncate mt-0.5">
               {subscribed
-                ? "You'll be notified immediately when your top-up is completed."
-                : "Get live order status and completion updates directly on this device."}
+                ? "You'll be notified on completion"
+                : "Live order updates on this device"}
             </p>
-
-            {!subscribed && (
-              <div className="flex items-center gap-2 mt-3">
-                <button
-                  onClick={handleSubscribe}
-                  disabled={loading}
-                  className="inline-flex items-center justify-center text-xs font-semibold px-3 py-1.5 rounded-lg bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-[0_2px_12px_rgba(56,189,248,0.35)] active:scale-[0.97] transition-all disabled:opacity-60 cursor-pointer"
-                >
-                  {loading ? (
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Enabling...
-                    </span>
-                  ) : (
-                    "Enable alerts"
-                  )}
-                </button>
-                <button
-                  onClick={handleDismiss}
-                  className="text-xs text-neutral-400 hover:text-white px-2.5 py-1.5 rounded-lg hover:bg-white/5 transition-colors font-medium cursor-pointer"
-                >
-                  Later
-                </button>
-              </div>
-            )}
           </div>
-        </div>
 
-        {/* Close Button */}
-        <button
-          onClick={handleDismiss}
-          className="absolute top-2.5 right-2.5 p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-          aria-label="Close"
-        >
-          <FiX className="text-sm" />
-        </button>
+          {/* Actions */}
+          {!subscribed ? (
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button
+                type="button"
+                onClick={handleSubscribe}
+                disabled={loading}
+                className="h-7 px-2.5 rounded-lg bg-[var(--accent)] hover:brightness-110 active:scale-95 text-white text-[11px] font-bold shadow-xs transition-all disabled:opacity-60 cursor-pointer flex items-center justify-center whitespace-nowrap"
+              >
+                {loading ? (
+                  <span className="flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Wait...</span>
+                  </span>
+                ) : (
+                  "Enable"
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={handleDismiss}
+                className="w-6 h-6 flex items-center justify-center rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors cursor-pointer"
+                aria-label="Dismiss alert prompt"
+                title="Later"
+              >
+                <FiX className="text-xs" />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowPrompt(false)}
+              className="w-6 h-6 flex items-center justify-center rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/[0.06] transition-colors cursor-pointer shrink-0"
+              aria-label="Close"
+            >
+              <FiX className="text-xs" />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
