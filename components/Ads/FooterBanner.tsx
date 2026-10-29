@@ -51,9 +51,9 @@ export default function FooterBanner() {
         style={{ width: '320px', height: '50px' }}
       >
         {/* Overlapping Ad Mention Badge */}
-        <div className="absolute -top-2 left-2.5 z-20 px-1.5 py-0.2 rounded-full bg-[var(--background)] border border-[var(--border)] shadow-xs flex items-center gap-1 pointer-events-none select-none">
-          <span className="w-1 h-1 rounded-full bg-[var(--accent)] opacity-70"></span>
-          <span className="text-[7.5px] font-black uppercase tracking-widest text-[var(--muted)]">
+        <div className="absolute -top-2 left-2.5 z-20 px-2 py-0.5 rounded-full bg-[var(--background)]/90 backdrop-blur-sm border border-[var(--border)] shadow-xs flex items-center gap-1.5 pointer-events-none select-none">
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] opacity-80"></span>
+          <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--muted)]">
             Ad
           </span>
         </div>
