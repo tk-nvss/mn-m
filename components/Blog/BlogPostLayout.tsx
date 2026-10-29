@@ -228,7 +228,7 @@ export default function BlogPostLayout({
       </div>
 
       <article
-        className="max-w-6xl mx-auto px-6 pt-6 md:pt-12 relative z-10"
+        className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 md:pt-12 relative z-10"
         itemScope
         itemType="https://schema.org/Article"
       >
@@ -246,14 +246,14 @@ export default function BlogPostLayout({
           <motion.div
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            className="mb-2 md:mb-3 flex items-center gap-1 md:gap-2 text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted)]/50"
+            className="mb-2 md:mb-3 flex items-center gap-1.5 md:gap-2 text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted)]/50"
           >
             <Link
               href="/blog"
-              className="flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)]/30 transition-all mr-1 md:mr-2 group"
+              className="inline-flex items-center justify-center text-[var(--muted)] hover:text-[var(--accent)] transition-all mr-1 group"
               aria-label="Back to Blog"
             >
-              <Icons.arrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+              <Icons.arrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
             </Link>
             <Link href="/blog" className="hover:text-[var(--accent)] transition-colors">
               Insights
@@ -283,19 +283,16 @@ export default function BlogPostLayout({
             transition={{ duration: 0.6 }}
             className="space-y-2 md:space-y-3"
           >
-            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 md:gap-x-2.5 md:gap-y-0 text-[7px] md:text-[9px] font-black uppercase tracking-wider md:tracking-[0.1em]">
-              <span className="text-[var(--accent)] bg-[var(--accent)]/10 px-1.5 md:px-2 py-0.5 rounded-md italic border border-[var(--accent)]/20">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[7px] md:text-[9px] font-black uppercase tracking-wider md:tracking-[0.1em]">
+              <span className="text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 rounded-md italic font-black">
                 # {category}
               </span>
-              <span className="opacity-20 hidden sm:inline">|</span>
               <span className="flex items-center gap-1 text-[var(--muted)]">
                 <Icons.user size={10} className="text-[var(--accent)]" /> {author}
               </span>
-              <span className="opacity-20 hidden sm:inline">|</span>
               <span className="flex items-center gap-1 text-[var(--muted)]">
                 <Icons.clock size={10} className="text-[var(--accent)]" /> {readTime}
               </span>
-              <span className="opacity-20 hidden sm:inline">|</span>
               <time
                 dateTime={isoPubDate}
                 className="flex items-center gap-1 text-[var(--muted)]"
@@ -320,26 +317,26 @@ export default function BlogPostLayout({
                 fill
                 className="object-cover"
                 priority
-                sizes="(max-width: 768px) 100vw, 900px"
+                sizes="(max-width: 768px) 100vw, 1280px"
               />
             </div>
           )}
         </header>
 
         {/* Top Ad Banner */}
-        <div className="max-w-5xl mx-auto mb-8">
+        <div className="w-full max-w-7xl mx-auto mb-8">
           <NativeBanner />
         </div>
 
         {/* CONTENT SECTION */}
-        <section className="max-w-5xl mx-auto" itemProp="articleBody">
+        <section className="w-full max-w-7xl mx-auto" itemProp="articleBody">
           <div className="prose dark:prose-invert max-w-none prose-p:text-lg prose-p:leading-relaxed prose-p:text-[var(--foreground)]/90 prose-p:font-medium prose-headings:text-[var(--foreground)] prose-headings:italic prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tighter prose-h2:text-3xl md:prose-h2:text-4xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:pb-4 prose-h2:border-b prose-h2:border-[var(--border)] prose-h2:flex prose-h2:items-center prose-h2:gap-4 prose-strong:text-[var(--accent)] prose-strong:font-black prose-a:text-[var(--accent)] prose-a:no-underline hover:prose-a:underline prose-ul:list-none prose-ul:pl-0 prose-li:relative prose-li:pl-8 prose-li:before:absolute prose-li:before:left-0 prose-li:before:top-[0.7em] prose-li:before:w-3 prose-li:before:h-[2px] prose-li:before:bg-[var(--accent)] prose-blockquote:border-l-4 prose-blockquote:border-[var(--accent)] prose-blockquote:bg-[var(--accent)]/5 prose-blockquote:rounded-r-2xl prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:italic-none prose-table:border prose-table:border-[var(--border)] prose-th:bg-[var(--accent)]/10 prose-th:p-4 prose-td:p-4 prose-img:rounded-[2rem] space-y-8">
             {children}
           </div>
         </section>
 
         {/* RELATED ARTICLES */}
-        <section className="mt-8 max-w-6xl mx-auto" aria-label="Related Articles">
+        <section className="mt-8 w-full max-w-7xl mx-auto" aria-label="Related Articles">
           <div className="mb-6">
             <SectionTitle
               size="lg"
@@ -408,7 +405,7 @@ export default function BlogPostLayout({
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Share on WhatsApp"
-              className="w-9 h-9 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+              className="w-9 h-9 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
               title="Share on WhatsApp"
             >
               <FaWhatsapp size={16} />
@@ -419,7 +416,7 @@ export default function BlogPostLayout({
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Share on X"
-              className="w-9 h-9 rounded-xl bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 text-[var(--foreground)] border border-[var(--border)] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+              className="w-9 h-9 rounded-xl bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 text-[var(--foreground)] flex items-center justify-center transition-all hover:scale-105 active:scale-95"
               title="Share on X (Twitter)"
             >
               <FaXTwitter size={15} />
@@ -430,7 +427,7 @@ export default function BlogPostLayout({
               label="Copy"
               variant="subtle"
               size="sm"
-              className="h-9 px-3 rounded-xl bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 text-[var(--accent)] border border-[var(--accent)]/20 text-[10px] font-bold uppercase tracking-wider"
+              className="h-9 px-3 rounded-xl bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 text-[var(--accent)] text-[10px] font-bold uppercase tracking-wider"
               title="Copy Link"
             />
           </div>

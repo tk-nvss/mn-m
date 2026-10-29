@@ -80,7 +80,7 @@ export default function BlogListing({ initialGame = "all" }) {
   return (
     <main className="min-h-screen bg-[var(--background)] relative pb-20 transition-colors duration-300 px-3 sm:px-6">
 
-      <div className="max-w-6xl mx-auto pt-3 sm:pt-6 relative z-10">
+      <div className="max-w-7xl mx-auto pt-3 sm:pt-6 relative z-10">
 
         <motion.header
           className="mb-4 sm:mb-6"
